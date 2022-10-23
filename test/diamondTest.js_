@@ -1,5 +1,5 @@
 /* global describe it before ethers */
-const { ethers } = require("hardhat");
+// const { ethers } = require("hardhat");
 // const crypto = require('crypto');
 const helpers = require('@nomicfoundation/hardhat-network-helpers');
 
@@ -228,6 +228,8 @@ describe('DiamondTest', async function () {
       'LibAppStorage': libAddresses.LibAppStorage,
       'LibUtils': libAddresses.LibUtils,
     }})
+    await TasksFacet.deploy();
+
     // Any number of functions from any number of facets can be added/replaced/removed in a
     // single transaction
     const cut = [
@@ -280,15 +282,19 @@ describe('DiamondTest', async function () {
     assert.sameMembers(facets[findAddressPositionInFacets(addresses[5], facets)][1], getSelectors(Test2Facet))
   })
 
+
+
+
   async function testAuditDecision(favour){
     signers = await ethers.getSigners();
 
     const tasksFacet = await ethers.getContractAt('TasksFacet', diamondAddress)
+    const taskType = 'private';
     const nanoId = 'test';
     const title = 'test job';
     const description = 'test desc';
     const symbol = 'ETH';
-    createTaskContract = await tasksFacet.createTaskContract(nanoId, title, description, symbol, "1",
+    createTaskContract = await tasksFacet.createTaskContract(nanoId, taskType, title, description, symbol, "1",
     { gasLimit: 30000000 })
     getTaskContracts = await tasksFacet.getTaskContracts()
     const taskContract = await ethers.getContractAt('TaskContract', getTaskContracts[getTaskContracts.length - 1])

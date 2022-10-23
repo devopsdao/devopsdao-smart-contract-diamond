@@ -28,12 +28,12 @@
 //         IAxelarGateway gateway = IAxelarGateway(gateway_);
 
 //         address payable contractOwner = _storage.tasks[address(this)].contractOwner;
-//         address payable participantAddress = _storage.tasks[address(this)].participantAddress;
+//         address payable participant = _storage.tasks[address(this)].participant;
 //         uint256 balance = address(this).balance;
 //         string memory jobState = _storage.tasks[address(this)].jobState;
 //         string memory symbol = _storage.tasks[address(this)].symbol;
 
-//         if(msg.sender != participantAddress || msg.sender != contractOwner){
+//         if(msg.sender != participant || msg.sender != contractOwner){
 //             revert('caller not allowed');
 //         }
 
@@ -51,18 +51,18 @@
             
 //             //check ETH balance
 //             if (balance!= 0) {
-//                 // emit Logs(address(this), string.concat("withdrawing ", symbol, " to Ethereum address: ",LibUtils.addressToString(participantAddress)));
-//                 participantAddress.transfer(balance);
+//                 // emit Logs(address(this), string.concat("withdrawing ", symbol, " to Ethereum address: ",LibUtils.addressToString(participant)));
+//                 participant.transfer(balance);
 //             } 
 //             // if (contractUSDCAmount !=0 && (
 //             //     keccak256(chainBytes) == keccak256(bytes("PolygonAxelar"))
 //             // )) {
-//             //     emit Logs(address(this), string.concat("withdrawing via sendToMany ", symbol, " to ", _chain, "value: ", LibUtils.uint2str(msg.value), " address:",LibUtils.addressToString(participantAddress)));
+//             //     emit Logs(address(this), string.concat("withdrawing via sendToMany ", symbol, " to ", _chain, "value: ", LibUtils.uint2str(msg.value), " address:",LibUtils.addressToString(participant)));
 //             //     emit LogsValue(address(this), string.concat("msg.sender: ", LibUtils.addressToString(msg.sender)," call value: "), msg.value);
 //             //     // string memory _addressToSend2 = bytes(_addressToSend);
 //             //     IERC20(tokenAddress).approve(0xE9F4b6dB26f964E5B62Fa3bEC5115a56B4DBd79A, contractUSDCAmount);
 //             //     address[] memory destinationAddresses;
-//             //     destinationAddresses[0] = participantAddress;
+//             //     destinationAddresses[0] = participant;
 //             //     IDistributionExecutable(0xE9F4b6dB26f964E5B62Fa3bEC5115a56B4DBd79A).sendToMany{value: msg.value}("polygon", LibUtils.addressToString(0xEAAA71f74b01617BA2235083334a1c952BAC0a6C), destinationAddresses, 'aUSDC', contractUSDCAmount);
 //             // }
 //             else if (keccak256(symbolBytes) == keccak256(bytes("aUSDC")) && (
@@ -72,21 +72,21 @@
 //                 keccak256(chainBytes) == keccak256(bytes("Avalanche")) ||
 //                 keccak256(chainBytes) == keccak256(bytes("Polygon"))
 //             )) {
-//                 // emit Logs(address(this), string.concat("withdrawing ", symbol, " to ", _chain, "address:",LibUtils.addressToString(participantAddress)));
+//                 // emit Logs(address(this), string.concat("withdrawing ", symbol, " to ", _chain, "address:",LibUtils.addressToString(participant)));
 //                 // _destinationAddresses.push(_addressToSend);
 //                 // distributor.sendToMany(chain, _addressToSend, _destinationAddresses, 'aUSDC', contractAddress.balance);
 //                 // string memory _addressToSend2 = bytes(_addressToSend);
 
 //                 IERC20(tokenAddress).approve(address(gateway), contractUSDCAmount);
-//                 // gateway.sendToken(chain, toAsciiString(participantAddress), "aUSDC", amount);
-//                 gateway.sendToken(_chain, LibUtils.addressToString(participantAddress), "aUSDC", contractUSDCAmount);
+//                 // gateway.sendToken(chain, toAsciiString(participant), "aUSDC", amount);
+//                 gateway.sendToken(_chain, LibUtils.addressToString(participant), "aUSDC", contractUSDCAmount);
 //             } else if (keccak256(symbolBytes) == keccak256(bytes("aUSDC")) && keccak256(chainBytes) == keccak256(bytes("Moonbase"))) {
 //                 // revert InvalidToken({
-//                 //     token: string.concat("we are in moonbase, participantAddress",LibUtils.addressToString(participantAddress))
+//                 //     token: string.concat("we are in moonbase, participant",LibUtils.addressToString(participant))
 //                 // });
-//                 // emit Logs(address(this), string.concat("withdrawing ", symbol, " to ", _chain, "address:",LibUtils.addressToString(participantAddress)));
+//                 // emit Logs(address(this), string.concat("withdrawing ", symbol, " to ", _chain, "address:",LibUtils.addressToString(participant)));
 //                 IERC20(tokenAddress).approve(address(this), contractUSDCAmount);
-//                 IERC20(tokenAddress).transferFrom(address(this), participantAddress, contractUSDCAmount);
+//                 IERC20(tokenAddress).transferFrom(address(this), participant, contractUSDCAmount);
 //             }
 //             else{
 //                 revert RevertReason({

@@ -1,6 +1,8 @@
 /* global ethers */
 /* eslint prefer-const: "off" */
 const { ethers } = require("hardhat");
+const fs = require('fs').promises;
+
 
 const { getSelectors, FacetCutAction } = require('./libraries/diamond.js')
 
@@ -34,9 +36,6 @@ async function deployDiamond () {
   console.log('')
   console.log('Deploying facets')
   const FacetInits = [
-    'DiamondCutFacet',
-    'DiamondLoupeFacet',
-    'OwnershipFacet',
     {
       name: 'DiamondCutFacet',
     },
@@ -46,6 +45,9 @@ async function deployDiamond () {
     {
       name: 'OwnershipFacet',
     },
+    // {
+    //   name: 'NFTFacet',
+    // },
     {
       name: 'TasksFacet',
       libraries: {
@@ -80,7 +82,7 @@ async function deployDiamond () {
 
   // Creating a function call
   // This call gets executed during deployment and can also be executed in upgrades
-  // It is executed with delegatecall on the DiamondInit address.
+  // It is `executed` with delegatecall on the DiamondInit address.
   let functionCall = diamondInit.interface.encodeFunctionData('init')
 
   // Setting arguments that will be used in the diamond constructor
@@ -96,6 +98,29 @@ async function deployDiamond () {
   await diamond.deployed()
   console.log()
   console.log('Diamond deployed:', diamond.address)
+  // let contractAddresses = {
+  //   'contracts': {
+  //     31337:{
+  //     "Diamond": diamond.address
+  //     },
+  //   }
+  // }
+
+  const existingAddresses = await fs.readFile(`${this.__hardhatContext.environment.config.abiExporter[0].path}/addresses.json`);
+  if(typeof existingAddresses !== 'undefined'){
+    contractAddresses = JSON.parse(existingAddresses);
+  }
+  else{
+    contractAddresses = {
+      "contracts":{}
+    };
+  }
+
+  contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId] = {};
+  contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'] = diamond.address;
+
+
+  await fs.writeFile(`${this.__hardhatContext.environment.config.abiExporter[0].path}/addresses.json`, JSON.stringify(contractAddresses));
 
   // returning the address of the diamond
   return diamond.address

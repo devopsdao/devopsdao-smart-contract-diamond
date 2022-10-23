@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for contracts/libraries/LibTransfer.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">contracts/libraries/</a> LibTransfer.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>0/0</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/0</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/0</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>0/0</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// import "../libraries/LibAppStorage.sol";
+// import "../libraries/LibUtils.sol";
+&nbsp;
+// import { IAxelarGateway } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol';
+// import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol';
+&nbsp;
+// string constant TASK_STATE_NEW = "new";
+// string constant TASK_STATE_AGREED = "agreed";
+// string constant TASK_STATE_PROGRESS = "progress";
+// string constant TASK_STATE_REVIEW = "review";
+// string constant TASK_STATE_AUDIT = "audit";
+// string constant TASK_STATE_COMPLETED = "completed";
+// string constant TASK_STATE_CANCELED = "cancelled";
+&nbsp;
+// string constant JOB_AUDIT_STATE_REQUESTED = "requested";
+// string constant JOB_AUDIT_STATE_PERFORMING = "performing";
+// string constant JOB_AUDIT_STATE_FINISHED = "finished";
+&nbsp;
+// error RevertReason (string message);
+&nbsp;
+// library LibTransfer{
+    
+&nbsp;
+&nbsp;
+// function transferToaddress(address payable _addressToSend, string memory _chain) external payable {
+//         TasksStorage storage _storage = LibAppStorage.diamondStorage();
+//         address gateway_ = 0x5769D84DD62a6fD969856c75c7D321b84d455929;
+//         IAxelarGateway gateway = IAxelarGateway(gateway_);
+&nbsp;
+//         address payable contractOwner = _storage.tasks[address(this)].contractOwner;
+//         address payable participantAddress = _storage.tasks[address(this)].participantAddress;
+//         uint256 balance = address(this).balance;
+//         string memory jobState = _storage.tasks[address(this)].jobState;
+//         string memory symbol = _storage.tasks[address(this)].symbol;
+&nbsp;
+//         if(msg.sender != participantAddress || msg.sender != contractOwner){
+//             revert('caller not allowed');
+//         }
+&nbsp;
+//         if (keccak256(bytes(jobState)) == keccak256(bytes(TASK_STATE_CANCELED))) {
+//             contractOwner.transfer(balance);
+//         } else if (
+//             keccak256(bytes(jobState)) == keccak256(bytes(TASK_STATE_COMPLETED)) //|| 1==1
+//         ) {
+//             bytes memory symbolBytes = bytes(symbol);
+//             bytes memory chainBytes = bytes(_chain);
+&nbsp;
+//             //check USDC balance
+//             address tokenAddress = gateway.tokenAddresses("aUSDC");
+//             uint256 contractUSDCAmount = IERC20(tokenAddress).balanceOf(address(this))/10;
+            
+//             //check ETH balance
+//             if (balance!= 0) {
+//                 // emit Logs(address(this), string.concat("withdrawing ", symbol, " to Ethereum address: ",LibUtils.addressToString(participantAddress)));
+//                 participantAddress.transfer(balance);
+//             } 
+//             // if (contractUSDCAmount !=0 &amp;&amp; (
+//             //     keccak256(chainBytes) == keccak256(bytes("PolygonAxelar"))
+//             // )) {
+//             //     emit Logs(address(this), string.concat("withdrawing via sendToMany ", symbol, " to ", _chain, "value: ", LibUtils.uint2str(msg.value), " address:",LibUtils.addressToString(participantAddress)));
+//             //     emit LogsValue(address(this), string.concat("msg.sender: ", LibUtils.addressToString(msg.sender)," call value: "), msg.value);
+//             //     // string memory _addressToSend2 = bytes(_addressToSend);
+//             //     IERC20(tokenAddress).approve(0xE9F4b6dB26f964E5B62Fa3bEC5115a56B4DBd79A, contractUSDCAmount);
+//             //     address[] memory destinationAddresses;
+//             //     destinationAddresses[0] = participantAddress;
+//             //     IDistributionExecutable(0xE9F4b6dB26f964E5B62Fa3bEC5115a56B4DBd79A).sendToMany{value: msg.value}("polygon", LibUtils.addressToString(0xEAAA71f74b01617BA2235083334a1c952BAC0a6C), destinationAddresses, 'aUSDC', contractUSDCAmount);
+//             // }
+//             else if (keccak256(symbolBytes) == keccak256(bytes("aUSDC")) &amp;&amp; (
+//                 keccak256(chainBytes) == keccak256(bytes("Ethereum")) || 
+//                 keccak256(chainBytes) == keccak256(bytes("Binance")) ||
+//                 keccak256(chainBytes) == keccak256(bytes("Fantom")) ||
+//                 keccak256(chainBytes) == keccak256(bytes("Avalanche")) ||
+//                 keccak256(chainBytes) == keccak256(bytes("Polygon"))
+//             )) {
+//                 // emit Logs(address(this), string.concat("withdrawing ", symbol, " to ", _chain, "address:",LibUtils.addressToString(participantAddress)));
+//                 // _destinationAddresses.push(_addressToSend);
+//                 // distributor.sendToMany(chain, _addressToSend, _destinationAddresses, 'aUSDC', contractAddress.balance);
+//                 // string memory _addressToSend2 = bytes(_addressToSend);
+&nbsp;
+//                 IERC20(tokenAddress).approve(address(gateway), contractUSDCAmount);
+//                 // gateway.sendToken(chain, toAsciiString(participantAddress), "aUSDC", amount);
+//                 gateway.sendToken(_chain, LibUtils.addressToString(participantAddress), "aUSDC", contractUSDCAmount);
+//             } else if (keccak256(symbolBytes) == keccak256(bytes("aUSDC")) &amp;&amp; keccak256(chainBytes) == keccak256(bytes("Moonbase"))) {
+//                 // revert InvalidToken({
+//                 //     token: string.concat("we are in moonbase, participantAddress",LibUtils.addressToString(participantAddress))
+//                 // });
+//                 // emit Logs(address(this), string.concat("withdrawing ", symbol, " to ", _chain, "address:",LibUtils.addressToString(participantAddress)));
+//                 IERC20(tokenAddress).approve(address(this), contractUSDCAmount);
+//                 IERC20(tokenAddress).transferFrom(address(this), participantAddress, contractUSDCAmount);
+//             }
+//             else{
+//                 revert RevertReason({
+//                     message: "invalid destination network"
+//                 });
+//             }
+//         }
+//         else{
+//             revert('job is completed or canceled');
+//         }
+//     }
+// }
+&nbsp;
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Oct 20 2022 20:08:29 GMT+0300 (Eastern European Summer Time)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

@@ -23,7 +23,7 @@ interface ITaskContract2 {
     
     // struct Task {
     //     address[] participants;
-    //     address[] auditParticipants;
+    //     address[] auditors;
     //     string nanoId;
     //     string title;
     //     string description;
@@ -35,7 +35,7 @@ interface ITaskContract2 {
     //     address contractParent;
     //     address contractAddress;
     //     address contractOwner;
-    //     address payable participantAddress;
+    //     address payable participant;
     //     uint256 createTime;
     //     address[] _destinationAddresses;
     //     string symbol;
@@ -43,12 +43,12 @@ interface ITaskContract2 {
     //     uint256 rating;
     //     address auditInitiator;
     //     string auditState;
-    //     address auditorAddress;
+    //     address auditor;
     // }
     
     // function getJobInfo() external;
     // function getJobInfo() external view returns (ITaskContract taskContract);
 
-    // function jobParticipate(address _participantAddress) external ;
+    // function jobParticipate(address _participant) external ;
     
 }
