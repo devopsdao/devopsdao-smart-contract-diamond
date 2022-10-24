@@ -5,7 +5,7 @@ require("@nomiclabs/hardhat-ethers");
 require('hardhat-contract-sizer');
 require("hardhat-interface-generator");
 require('solidity-coverage');
-require("hardhat-gas-reporter");
+// require("hardhat-gas-reporter");
 require("hardhat-tracer");
 require('hardhat-abi-exporter');
 // const { ethers } = require("ethers");

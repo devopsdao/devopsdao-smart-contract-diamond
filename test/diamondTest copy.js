@@ -167,7 +167,7 @@ describe('DiamondTest', async function () {
     taskStateChangeAgreed = await taskContract.connect(signers[0]).taskStateChange(getTaskInfoParticipate.participants[0], taskStateAgreed, messageTextAgreed, messageReplyTo, 0);
     getTaskInfoAgreed = await taskContract.getTaskInfo()
     assert.equal(getTaskInfoAgreed.taskState, taskStateAgreed)
-    assert.equal(getTaskInfoAgreed.participantAddress, signers[1].address)
+    assert.equal(getTaskInfoAgreed.participant, signers[1].address)
     assert.equal(getTaskInfoAgreed.messages[1].id, 2)
     assert.equal(getTaskInfoAgreed.messages[1].text, messageTextAgreed)
     assert.isAbove(getTaskInfoAgreed.messages[1].timestamp, 1666113343, 'timestamp is more than 0');
@@ -218,7 +218,7 @@ describe('DiamondTest', async function () {
     const messageTextAuditParticipate = 'I am honorable auditor'
     taskAuditParticipate = await taskContract.connect(signers[2]).taskAuditParticipate(messageTextAuditParticipate, messageReplyTo)
     getTaskInfoAuditParticipate = await taskContract.getTaskInfo()
-    assert.equal(getTaskInfoAuditParticipate.auditParticipants[0], signers[2].address)
+    assert.equal(getTaskInfoAuditParticipate.auditors[0], signers[2].address)
     assert.equal(getTaskInfoAuditParticipate.messages[5].id, 6)
     assert.equal(getTaskInfoAuditParticipate.messages[5].text, messageTextAuditParticipate)
     assert.isAbove(getTaskInfoAuditParticipate.messages[5].timestamp, 1666113343, 'timestamp is more than 0');
@@ -228,10 +228,10 @@ describe('DiamondTest', async function () {
 
     const messageTextSelectAuditor = 'selected a proper auditor'
     const taskAuditStatePerforming = 'performing';
-    taskStateChangeSelectAuditor = await taskContract.connect(signers[0]).taskStateChange(getTaskInfoAuditParticipate.auditParticipants[0], taskStateAudit, messageTextSelectAuditor, messageReplyTo, 0);
+    taskStateChangeSelectAuditor = await taskContract.connect(signers[0]).taskStateChange(getTaskInfoAuditParticipate.auditors[0], taskStateAudit, messageTextSelectAuditor, messageReplyTo, 0);
     getTaskInfoSelectAuditor = await taskContract.getTaskInfo()
     assert.equal(getTaskInfoSelectAuditor.auditState, taskAuditStatePerforming)
-    assert.equal(getTaskInfoSelectAuditor.auditorAddress, signers[2].address)
+    assert.equal(getTaskInfoSelectAuditor.auditor, signers[2].address)
     assert.equal(getTaskInfoSelectAuditor.messages[6].id, 7)
     assert.equal(getTaskInfoSelectAuditor.messages[6].text, messageTextSelectAuditor)
     assert.isAbove(getTaskInfoSelectAuditor.messages[6].timestamp, 1666113343, 'timestamp is more than 0');
@@ -264,13 +264,13 @@ describe('DiamondTest', async function () {
     assert.equal(getTaskInfoDecision.messages[7].taskState, taskStateAuditDecision)
     assert.equal(getTaskInfoDecision.messages[7].replyTo, messageReplyTo)
 
-    assert.equal(getTaskInfoDecision.countMessages, 8)
+    assert.equal(getTaskInfoDecision.messages.length, 8)
     // console.log(getTaskInfoDecision)
   }
 
-  // it('should test createTaskContract, getTaskContracts, taskParticipate, getTaskInfo, taskStateChange(all except canceled), taskAuditParticipate, taskAuditDecision(in customer favour) ', async () => {
-  //   await testAuditDecision('customer')
-  // })
+  it('should test createTaskContract, getTaskContracts, taskParticipate, getTaskInfo, taskStateChange(all except canceled), taskAuditParticipate, taskAuditDecision(in customer favour) ', async () => {
+    await testAuditDecision('customer')
+  })
 
   // it('should test createTaskContract, getTaskContracts, taskParticipate, getTaskInfo, taskStateChange(all except canceled), taskAuditParticipate, taskAuditDecision(in performer favour) ', async () => {
   //   await testAuditDecision('performer')
