@@ -116,6 +116,7 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
 
     function taskAuditParticipate(string memory _message, uint256 _replyTo) external {
       TasksStorage storage _storage = diamondStorage();
+      require(msg.sender != _storage.tasks[address(this)].contractOwner || msg.sender != _storage.tasks[address(this)].participant, "contract owner or participant cannot audit");
       require(keccak256(bytes(_storage.tasks[address(this)].taskState)) == keccak256(bytes(TASK_STATE_AUDIT)), "task is not in the audit state");
       // TODO: add NFT based auditor priviledge check
       //_storage.tasks[address(this)].countMessages++;

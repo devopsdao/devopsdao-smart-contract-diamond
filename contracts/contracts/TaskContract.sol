@@ -4,6 +4,9 @@ import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interf
 import "../libraries/LibAppStorage.sol";
 import "../libraries/LibUtils.sol";
 
+// import "../facets/NFTFacet.sol";
+
+import "hardhat/console.sol";
 
 error RevertReason (string message);
 
@@ -17,6 +20,7 @@ contract TaskContract  {
 
     event Logs(address contractAdr, string message);
     event LogsValue(address contractAdr, string message, uint value);
+    event TaskUpdated(address contractAdr, string message, uint timestamp);
 
     constructor(
         string memory _nanoId,
@@ -41,6 +45,9 @@ contract TaskContract  {
         // _storage.tasks[address(this)].index = _index;
         address gateway_ = 0x5769D84DD62a6fD969856c75c7D321b84d455929;
         gateway = IAxelarGateway(gateway_);
+
+        // string memory uri = 'https://';
+        emit TaskUpdated(address(this), 'TaskContract', block.timestamp);
         // console.log(
         // "createTaskContract %s to %s %stokens",
         //     msg.sender,
@@ -179,10 +186,12 @@ contract TaskContract  {
         else{
             revert('task is completed or canceled');
         }
+        emit TaskUpdated(address(this), 'transferToaddress', block.timestamp);
     }
 
     function taskParticipate(string memory _message, uint256 _replyTo) external {
         LibAppStorage.taskParticipate(_message, _replyTo);
+        emit TaskUpdated(address(this), 'taskParticipate', block.timestamp);
     }
 
 
@@ -204,9 +213,15 @@ contract TaskContract  {
     //     }
     // }
     function taskAuditParticipate(string memory _message, uint256 _replyTo) external {
-        //uint256 auditorNFTbalance = NFTFacet(address(this)).balanceOf(msg.sender, 5);
-        //require(auditorNFTbalance > 0, 'no auditor priviledge');
+        // NFTFacet nftFacet = new NFTFacet();
+        // nftFacet.mintAuditorNFT(_storage.tasks[address(this)].participant, 5);
+        // nftFacet.mintAuditorNFT(_storage.tasks[address(this)].participant, 5);
+        // // nftFacet.initialize('https://{id}');
+        // uint256 auditorNFTbalance = nftFacet.balanceOf(_storage.tasks[address(this)].participant, 5);
+        // console.log(auditorNFTbalance);
+        // require(auditorNFTbalance > 0, 'no auditor priviledge');
         LibAppStorage.taskAuditParticipate(_message, _replyTo);
+        emit TaskUpdated(address(this), 'taskAuditParticipate', block.timestamp);
     }
 
     // function jobAuditParticipate() external {
@@ -236,6 +251,7 @@ contract TaskContract  {
             uint256 _score
         ) external {
             LibAppStorage.taskStateChange(_participant, _state, _message, _replyTo, _score);
+            emit TaskUpdated(address(this), 'taskStateChange', block.timestamp);
         }
     // //todo: only allow calling child contract functions from the parent contract!!!
     // function taskStateChange(
@@ -329,6 +345,7 @@ contract TaskContract  {
     uint256 rating
     ) external {
         LibAppStorage.taskAuditDecision(_favour, _message, _replyTo, rating);
+        emit TaskUpdated(address(this), 'taskAuditDecision', block.timestamp);
     }
 
     function sendMessage(
@@ -336,6 +353,7 @@ contract TaskContract  {
     uint256 _replyTo
     ) external {
         LibAppStorage.sendMessage(_message, _replyTo);
+        emit TaskUpdated(address(this), 'sendMessage', block.timestamp);
     }
 
 

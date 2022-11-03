@@ -44,9 +44,9 @@ describe('DiamondTest', async function () {
   it('should test NFTFacet', async () => {
     const NFTFacet = await ethers.getContractFactory('NFTFacet')
     const NFTFacetDepl = await NFTFacet.deploy();
-    const nftContract = await NFTFacetDepl.mintAuditorNFT(5);
-    const nftContract2 = await NFTFacetDepl.mintAuditorNFT(1);
-    const nftContract3 = await NFTFacetDepl.mintAuditorNFT(1);
+    const nftContract = await NFTFacetDepl.mintAuditorNFT(signers[2].address, 5);
+    const nftContract2 = await NFTFacetDepl.mintAuditorNFT(signers[0].address, 1);
+    const nftContract3 = await NFTFacetDepl.mintAuditorNFT(signers[0].address, 1);
 
     const balance = await NFTFacetDepl.balanceOf(signers[2].address, 5);
     const balance2 = await NFTFacetDepl.balanceOf(signers[0].address, 1);

@@ -34,7 +34,8 @@ contract TasksFacet {
 
     // TaskContract[] public jobArray;
 
-    event OneEventForAll(address contractAdr, string message);
+    // event OneEventForAll(address contractAdr, string message);
+    event TaskCreated(address contractAdr, string message, uint timestamp);
 
 
     event JobContractCreated(
@@ -84,6 +85,7 @@ contract TasksFacet {
         // IERC20(tokenAddress).approve(address(gateway), _amount);
         _storage.taskContracts.push(address(taskContract));
         _storage.ownerTasks[msg.sender].push(address(taskContract));
+        emit TaskCreated(address(taskContract), 'createTaskContract', block.timestamp);
 
         return address(taskContract);
 

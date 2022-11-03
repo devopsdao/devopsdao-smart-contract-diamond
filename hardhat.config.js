@@ -67,15 +67,54 @@ module.exports = {
       // only: [':ERC20$'],
     }
   },
-  abiExporter: {
+  abiExporter: 
+  [
+    {
     // path: '../devopsdao/build/abi',
     path: '../devopsdao/lib/blockchain/abi',
     runOnCompile: true,
-    clear: true,
+    // clear: true,
     flat: true,
     // only: [':ERC20$'],
     spacing: 2,
     // pretty: true,
     format: "json",
   },
+  {
+    // path: '../devopsdao/build/abi',
+    path: '../devopsdao/lib/blockchain/abi',
+    runOnCompile: true,
+    // clear: true,
+    // flat: true,
+    only: [':TaskContract$'],
+    rename: () => 'TaskContract.abi',
+    spacing: 2,
+    // pretty: true,
+    format: "json",
+  },
+  {
+    // path: '../devopsdao/build/abi',
+    path: '../devopsdao/lib/blockchain/abi',
+    runOnCompile: true,
+    // clear: true,
+    // flat: true,
+    only: [':TasksFacet$'],
+    rename: () => 'TasksFacet.abi',
+    spacing: 2,
+    // pretty: true,
+    format: "json",
+  },
+  {
+    // path: '../devopsdao/build/abi',
+    path: '../devopsdao/lib/blockchain/abi',
+    runOnCompile: true,
+    // clear: true,
+    // flat: true,
+    only: [':IERC20$'],
+    rename: () => 'IERC20.abi',
+    spacing: 2,
+    // pretty: true,
+    format: "json",
+  }
+],
 }
