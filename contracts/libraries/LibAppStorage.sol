@@ -173,16 +173,21 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
       if (msg.sender == contractOwner && msg.sender != _participant && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_NEW))
       && keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_AGREED)) 
       && (keccak256(bytes(taskType)) == keccak256(bytes(TASK_TYPE_PRIVATE)) || keccak256(bytes(taskType)) == keccak256(bytes(TASK_TYPE_PUBLIC)))) {
-          for (uint256 i = 0; i < participants.length; i++) {
-              if (participants[i] == _participant) {
-                  _storage.tasks[address(this)].taskState = _state;
-                  _storage.tasks[address(this)].participant = _participant;
-                  _storage.tasks[address(this)].messages.push(message);
-              }
-              else{
-                  revert('participant has not applied');
-              }
-          }
+        bool participantApplied = false;
+        for (uint256 i = 0; i < participants.length; i++) {
+            if (participants[i] == _participant) {
+            participantApplied = true;
+            break;
+            }
+        }
+        if(participantApplied){
+            _storage.tasks[address(this)].taskState = _state;
+            _storage.tasks[address(this)].participant = _participant;
+            _storage.tasks[address(this)].messages.push(message);
+        }
+        else{
+            revert('participant has not applied');
+        }
       }
       else if (msg.sender == contractOwner && msg.sender != _participant && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_NEW))
       && keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_AGREED)) 
@@ -235,17 +240,24 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
               //TODO: audit history need to add 
           }
           else if(msg.sender == contractOwner &&
-              keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT)) && 
-              keccak256(bytes(auditState)) == keccak256(bytes(TASK_AUDIT_STATE_REQUESTED)) &&
-              auditors.length != 0){
-              for (uint256 i = 0; i < auditors.length; i++) {
-                  if (auditors[i] == _participant) {
-                      _storage.tasks[address(this)].auditState = TASK_AUDIT_STATE_PERFORMING;
-                      _storage.tasks[address(this)].messages.push(message);
-                      _storage.tasks[address(this)].auditor = _participant;
-                      break;
-                  }
-              }
+            keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT)) && 
+            keccak256(bytes(auditState)) == keccak256(bytes(TASK_AUDIT_STATE_REQUESTED)) &&
+            auditors.length != 0){
+            bool auditorApplied = false;
+            for (uint256 i = 0; i < auditors.length; i++) {
+                if (auditors[i] == _participant) {
+                    auditorApplied = true;
+                    break;
+                }
+            }
+            if(auditorApplied){
+                _storage.tasks[address(this)].auditState = TASK_AUDIT_STATE_PERFORMING;
+                _storage.tasks[address(this)].messages.push(message);
+                _storage.tasks[address(this)].auditor = _participant;
+            }
+            else{
+                revert('auditor has not applied');
+            }
           }
       }
       else{
