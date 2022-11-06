@@ -50,6 +50,9 @@ module.exports = {
         mnemonic: MNEMONIC
       }
       // mnemonic: MNEMONIC
+    },
+    localhost:{
+      chainId: 31337
     }
   },
   settings: {
