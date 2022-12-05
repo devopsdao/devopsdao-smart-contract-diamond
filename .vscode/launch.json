@@ -12,6 +12,7 @@
             "<node_internals>/**"
         ],
         "type": "node",
+        "args": ["upgrade", "", ""],
     },
     {
         "name": "Hardhat deploy",
@@ -51,7 +52,6 @@
         "runtimeExecutable": "${workspaceFolder}/packages/hardhat/node_modules/.bin/hardhat",
         "args": ["test", "--network", "localhost"],
         "cwd": "${workspaceFolder}/packages/hardhat"
-    },
-        
+    },  
     ]
 }

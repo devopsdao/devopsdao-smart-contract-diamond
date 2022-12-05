@@ -2,9 +2,48 @@
 /* eslint prefer-const: "off" */
 const { ethers } = require("hardhat");
 const fs = require('fs').promises;
+// const { program } = require('commander');
 
 
-const { getSelectors, FacetCutAction } = require('./libraries/diamond.js')
+// program
+//   .name('devopsdao-contract-deploy')
+//   .description('CLI to deploy devopsdao contract')
+//   .version('0.0.1');
+
+// program.command('deploy')
+//   .description('Deploy smart contract to the chain')
+//   .argument('<chain>', 'chain name')
+//   .option('-d, --diamond', 'deploy diamond completely')
+//   .option('-c, --facet-cut <facet>', 'upgrade facet')
+//   .action((str, options) => {
+//     // const limit = options.first ? 1 : undefined;
+//     // console.log(str.split(options.separator, limit));
+//     run();
+//   });
+
+// program.command('upgrade')
+//   .description('Upgrade diamond facet')
+//   .argument('<chain>', 'chain name')
+//   .option('-c, --facet <facet>', 'upgrade facet')
+//   .action((str, options) => {
+//     // const limit = options.first ? 1 : undefined;
+//     // console.log(str.split(options.separator, limit));
+//     upgradeDiamond();
+//   });
+
+// program.parse();
+
+// const args = program.commands
+// const options = program.opts();
+
+// const { getSelectors, FacetCutAction } = require('./libraries/diamond.js')
+
+const {
+  getSelectors,
+  FacetCutAction,
+  removeSelectors,
+  findAddressPositionInFacets
+} = require('../scripts/libraries/diamond.js')
 
 async function deployDiamond () {
   const accounts = await ethers.getSigners()
@@ -45,15 +84,15 @@ async function deployDiamond () {
     {
       name: 'OwnershipFacet',
     },
-    // {
-    //   name: 'NFTFacet',
-    // },
     {
       name: 'TasksFacet',
       libraries: {
         'LibAppStorage': libAddresses.LibAppStorage,
         'LibUtils': libAddresses.LibUtils,
       }
+    },
+    {
+      name: 'TokenFacet',
     }
   ]
   // The `facetCuts` variable is the FacetCut[] that contains the functions to add during diamond deployment
@@ -126,8 +165,89 @@ async function deployDiamond () {
   return diamond.address
 }
 
+async function upgradeDiamond () {
+  const existingAddresses = await fs.readFile(`${this.__hardhatContext.environment.config.abiExporter[0].path}/addresses.json`);
+  let contractAddresses;
+  if(typeof existingAddresses !== 'undefined'){
+    contractAddresses = JSON.parse(existingAddresses);
+  }
+  else{
+    return false;
+  }
+  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
+  console.log(`upgrading Diamond: ${diamondAddress}`)
+
+
+  const diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress)
+  const diamondCutFacet = await ethers.getContractAt('DiamondCutFacet', diamondAddress)
+  const existingTasksFacet = await ethers.getContractAt('TasksFacet', diamondAddress)
+  const existingTasksFacetSelectors = getSelectors(existingTasksFacet)
+
+  // tx = await diamondCutFacet.diamondCut(
+  //   [{
+  //     facetAddress: ethers.constants.AddressZero,
+  //     action: FacetCutAction.Remove,
+  //     functionSelectors: existingTasksFacetSelectors
+  //   }],
+  //   ethers.constants.AddressZero, '0x', { gasLimit: 800000 })
+  // receipt = await tx.wait()
+
+  const LibNames = ['LibAppStorage', 'LibUtils'];
+  let libAddresses = {};
+
+  for (const LibName of LibNames) {
+    const Lib = await ethers.getContractFactory(LibName);
+    const lib = await Lib.deploy();
+    await lib.deployed();
+    libAddresses[LibName] = lib.address;
+    console.log(`${LibName} deployed:`, lib.address)
+  }  
+
+  
+  const TasksFacet = await ethers.getContractFactory('TasksFacet', {libraries: {
+    'LibAppStorage': libAddresses.LibAppStorage,
+    'LibUtils': libAddresses.LibUtils,
+  }})
+  const tasksFacet = await TasksFacet.deploy();
+  console.log(`tasksFacet deployed:`, tasksFacet.address)
+
+  // Any number of functions from any number of facets can be added/replaced/removed in a
+  // single transaction
+  const cut = [
+    {
+      facetAddress: tasksFacet.address,
+      action: FacetCutAction.Add,
+      functionSelectors: getSelectors(TasksFacet)
+    }
+  ]
+  tx = await diamondCutFacet.diamondCut(cut, ethers.constants.AddressZero, '0x', { gasLimit: 8000000 })
+  receipt = await tx.wait()
+  if (!receipt.status) {
+    throw Error(`Diamond upgrade failed: ${tx.hash}`)
+  }
+  console.log(`Diamond cut:`, tx)
+
+  const facets = await diamondLoupeFacet.facets()
+  // const facetAddresses = await diamondLoupeFacet.facetAddresses()
+  console.log(facets[findAddressPositionInFacets(tasksFacet.address, facets)][1])
+  // console.log(getSelectors(TasksFacet))
+  // assert.sameMembers(facets[findAddressPositionInFacets(tasksFacet.address, facets)][1], getSelectors(TasksFacet))
+}
+
+
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
+function run(){
+  if (require.main === module) {
+    deployDiamond()
+      .then(() => process.exit(0))
+      .catch(error => {
+        console.error(error)
+        process.exit(1)
+      })
+  }
+}
+
 if (require.main === module) {
   deployDiamond()
     .then(() => process.exit(0))
@@ -136,5 +256,6 @@ if (require.main === module) {
       process.exit(1)
     })
 }
+
 
 exports.deployDiamond = deployDiamond

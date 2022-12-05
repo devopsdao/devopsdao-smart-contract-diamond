@@ -116,7 +116,7 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
 
     function taskAuditParticipate(string memory _message, uint256 _replyTo) external {
       TasksStorage storage _storage = diamondStorage();
-      require(msg.sender != _storage.tasks[address(this)].contractOwner || msg.sender != _storage.tasks[address(this)].participant, "contract owner or participant cannot audit");
+      require(msg.sender != _storage.tasks[address(this)].contractOwner && msg.sender != _storage.tasks[address(this)].participant, "contract owner or participant cannot audit");
       require(keccak256(bytes(_storage.tasks[address(this)].taskState)) == keccak256(bytes(TASK_STATE_AUDIT)), "task is not in the audit state");
       // TODO: add NFT based auditor priviledge check
       //_storage.tasks[address(this)].countMessages++;
@@ -321,6 +321,8 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
     function sendMessage(string memory _message,
         uint256 _replyTo) external{
             TasksStorage storage _storage = diamondStorage();
+            require((_storage.tasks[address(this)].participants.length == 0 && keccak256(bytes(_storage.tasks[address(this)].taskState)) == keccak256(bytes(TASK_STATE_NEW))) 
+            || (msg.sender == _storage.tasks[address(this)].contractOwner || msg.sender == _storage.tasks[address(this)].participant  || msg.sender == _storage.tasks[address(this)].auditor), "only task owner, participant or auditor can send a message when a participant is selected");
             Message memory message;
             message.id = _storage.tasks[address(this)].messages.length + 1;
             message.text = _message;
@@ -330,14 +332,5 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
             message.taskState = _storage.tasks[address(this)].taskState;
             _storage.tasks[address(this)].messages.push(message);
         }
-  
-    // function myLibraryFunction() internal {
-    //     TasksStorage storage s = LibAppStorage.diamondStorage();
-    //   s.lastVar = s.firstVar + s.secondVar;
-    // }
-  
-    // function myLibraryFunction2(AppStorage storage s) internal {
-    //   s.lastVar = s.firstVar + s.secondVar;
-    // }
   
   }

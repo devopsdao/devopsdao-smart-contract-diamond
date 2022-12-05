@@ -30,6 +30,7 @@ const BLASTAPI_KEY = '5adb17c5-f79f-4542-b37c-b9cf98d6b28f';
 const ONFINALITY_API_KEY = 'a574e9f5-b1db-4984-8362-89b749437b81';
 
 const MNEMONIC = `possible claw silk quiz decade ozone decide monster tired material crazy maple`
+const MNEMONIC2 = `diamond mass aerobic upgrade canoe immune code summer predict match lunar owner`
 
 // let key = ethers.Wallet.fromMnemonic(MNEMONIC);
 // console.log(key);
@@ -53,6 +54,13 @@ module.exports = {
     },
     localhost:{
       chainId: 31337
+    },
+    ganache:{
+      url: 'http://localhost:8500/0',
+      chainId: 2500,
+      accounts: {
+        mnemonic: MNEMONIC2
+      }
     }
   },
   settings: {

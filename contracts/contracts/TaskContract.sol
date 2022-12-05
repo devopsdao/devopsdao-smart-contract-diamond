@@ -4,7 +4,13 @@ import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interf
 import "../libraries/LibAppStorage.sol";
 import "../libraries/LibUtils.sol";
 
-// import "../facets/NFTFacet.sol";
+import {LibDiamond} from '../libraries/LibDiamond.sol';
+
+
+import "../facets/TokenFacet.sol";
+
+import "../facets/DiamondLoupeFacet.sol";
+
 
 import "hardhat/console.sol";
 
@@ -122,8 +128,8 @@ contract TaskContract  {
         string memory taskState = _storage.tasks[address(this)].taskState;
         string memory symbol = _storage.tasks[address(this)].symbol;
 
-        if(msg.sender != participant || msg.sender != contractOwner){
-            revert('caller not allowed');
+        if(msg.sender != participant && msg.sender != contractOwner){
+            revert('not a participant or contractOwner');
         }
 
         if (keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_CANCELED))) {
@@ -140,7 +146,7 @@ contract TaskContract  {
             
             //check ETH balance
             if (balance!= 0) {
-                // emit Logs(address(this), string.concat("withdrawing ", symbol, " to Ethereum address: ",LibUtils.addressToString(participant)));
+                emit Logs(address(this), string.concat("withdrawing ", symbol, " to Ethereum address: ",LibUtils.addressToString(participant)));
                 participant.transfer(balance);
             } 
             // if (contractUSDCAmount !=0 && (
@@ -173,7 +179,7 @@ contract TaskContract  {
                 // revert InvalidToken({
                 //     token: string.concat("we are in moonbase, participant",LibUtils.addressToString(participant))
                 // });
-                // emit Logs(address(this), string.concat("withdrawing ", symbol, " to ", _chain, "address:",LibUtils.addressToString(participant)));
+                emit Logs(address(this), string.concat("withdrawing ", symbol, " to ", _chain, "address:",LibUtils.addressToString(participant)));
                 IERC20(tokenAddress).approve(address(this), contractUSDCAmount);
                 IERC20(tokenAddress).transferFrom(address(this), participant, contractUSDCAmount);
             }
@@ -217,8 +223,27 @@ contract TaskContract  {
         // nftFacet.mintAuditorNFT(_storage.tasks[address(this)].participant, 5);
         // nftFacet.mintAuditorNFT(_storage.tasks[address(this)].participant, 5);
         // // nftFacet.initialize('https://{id}');
-        // uint256 auditorNFTbalance = nftFacet.balanceOf(_storage.tasks[address(this)].participant, 5);
+        // uint256 auditorNFTbalance = TokenFacet(address(this)).balanceOf(_storage.tasks[address(this)].participant, 5);
         // console.log(auditorNFTbalance);
+
+        // LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
+        // bytes4 functionSelector = bytes4(keccak256("getTaskContracts()"));
+        // get facet address of function
+        // address facet = ds.facetAddressAndSelectorPosition[functionSelector].facetAddress;
+        // address facet2 = DiamondLoupeFacet(address(this)).facetAddress(functionSelector);
+        // bytes memory myFunctionCall = abi.encodeWithSelector(functionSelector, 4);
+        // // bytes memory myFunctionCall = abi.encodeWithSignature("mint()");
+        // (bool success, bytes memory result) = address(_storage.tasks[address(this)].contractParent).delegatecall(myFunctionCall);
+        // console.log('facet addr');
+        // console.log(msg.sender);
+
+        // TokenFacet(_storage.tasks[address(this)].contractParent).mint(msg.sender);
+
+        uint256 balance = TokenFacet(_storage.tasks[address(this)].contractParent).balanceOf(msg.sender, 1);
+        console.log(balance);
+        require(balance>0, 'must hold Auditor NFT to audit');
+        
+
         // require(auditorNFTbalance > 0, 'no auditor priviledge');
         LibAppStorage.taskAuditParticipate(_message, _replyTo);
         emit TaskUpdated(address(this), 'taskAuditParticipate', block.timestamp);

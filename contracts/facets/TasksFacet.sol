@@ -19,7 +19,7 @@ import "../libraries/LibUtils.sol";
 
 import "../contracts/TaskContract.sol";
 
-import "./NFTFacet.sol";
+// import "./TokenFacet.sol";
 
 
 import "hardhat/console.sol";
@@ -87,6 +87,18 @@ contract TasksFacet {
         _storage.ownerTasks[msg.sender].push(address(taskContract));
         emit TaskCreated(address(taskContract), 'createTaskContract', block.timestamp);
 
+        // LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
+        // bytes4 functionSelector = bytes4(keccak256("mint()"));
+        // // get facet address of function
+        // address facet = ds.facetAddressAndSelectorPosition[functionSelector].facetAddress;
+        // // address facet2 = DiamondLoupeFacet(address(this)).facetAddress(functionSelector);
+        // bytes memory myFunctionCall = abi.encodeWithSelector(functionSelector, 4);
+        // (bool success, bytes memory result) = address(facet).delegatecall(myFunctionCall);
+        // console.log('facet addr');
+        // console.log(facet);
+
+        // TokenFacet(address(this)).mint();
+
         return address(taskContract);
 
 
@@ -110,22 +122,42 @@ contract TasksFacet {
         return _storage.taskContracts;
     }
 
-    function getTaskContractsbyState(string memory _taskState)
+    function getTaskContractsByState(string memory _taskState)
     external
     view
     returns (address[] memory)
     {
-        address[] memory newTaskContracts;
-        uint256 newTaskCount = 0;
+        address[] memory taskContracts;
+        uint256 taskCount = 0;
         for (uint256 i = 0; i < _storage.taskContracts.length; i++) {
             if(keccak256(bytes(_storage.tasks[_storage.taskContracts[i]].taskState)) == keccak256(bytes(_taskState))){
-                newTaskContracts[newTaskCount] = _storage.taskContracts[i];
-                newTaskCount++;
+                taskContracts[taskCount] = _storage.taskContracts[i];
+                taskCount++;
             }
         }
-        return newTaskContracts;
+        return taskContracts;
     }
 
+
+    function getTaskContractsCustomer(address contractOwner)
+    external
+    view
+    returns (address[] memory)
+    {
+        // if(ownerTasks[contractOwner].length > 0){
+        //     return ownerTasks[contractOwner];
+        // }
+        return _storage.ownerTasks[contractOwner];
+    }
+
+    function getTaskContractsPerformer(address participant)
+    external
+    view
+    returns (address[] memory)
+    {
+        return _storage.participantTasks[participant];
+    }
+    
     // function findJobs(uint256 _myIndex) external view returns (address) {
     //     return address(jobArray[_myIndex]);
     // }
