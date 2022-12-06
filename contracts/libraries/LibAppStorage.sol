@@ -24,6 +24,8 @@ struct TasksStorage {
     uint256 countCompleted;
     uint256 countCanceled;
     string stateNew;
+    address[] taskContractsBlacklist;
+    mapping(address => bool) taskContractsBlacklistMapping;
 }
 
 struct Task {

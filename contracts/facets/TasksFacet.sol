@@ -110,6 +110,25 @@ contract TasksFacet {
         // emit OneEventForAll(address(taskContract), 'createJobContract success');
     }
 
+    function addTaskToBlacklist(address taskAddress)
+    external
+    {
+        _storage.taskContractsBlacklist.push(taskAddress);
+        _storage.taskContractsBlacklistMapping[taskAddress] = true;
+    }
+
+    function removeTaskFromBlacklist(address taskAddress) external{
+        for (uint256 index = 0; index < _storage.taskContractsBlacklist.length; index++) {
+            if(_storage.taskContractsBlacklist[index] == taskAddress){
+                _storage.taskContractsBlacklistMapping[taskAddress] = false;
+                for (uint i = index; i<_storage.taskContractsBlacklist.length-1; i++){
+                    _storage.taskContractsBlacklist[i] = _storage.taskContractsBlacklist[i+1];
+                }
+                _storage.taskContractsBlacklist.pop();
+            }
+        }
+    }
+
     function getTaskContracts()
     external
     view
@@ -130,7 +149,9 @@ contract TasksFacet {
         address[] memory taskContracts;
         uint256 taskCount = 0;
         for (uint256 i = 0; i < _storage.taskContracts.length; i++) {
-            if(keccak256(bytes(_storage.tasks[_storage.taskContracts[i]].taskState)) == keccak256(bytes(_taskState))){
+            if(keccak256(bytes(_storage.tasks[_storage.taskContracts[i]].taskState)) == keccak256(bytes(_taskState))
+            && ((keccak256(bytes(_storage.tasks[_storage.taskContracts[i]].taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false) 
+            || keccak256(bytes(_storage.tasks[_storage.taskContracts[i]].taskState)) != keccak256(bytes(TASK_STATE_NEW)))){
                 taskContracts[taskCount] = _storage.taskContracts[i];
                 taskCount++;
             }
