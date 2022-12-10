@@ -615,6 +615,22 @@
     "@ethersproject/properties" "^5.7.0"
     "@ethersproject/strings" "^5.7.0"
 
+"@hyperlane-xyz/core@^1.0.0-beta1":
+  "integrity" "sha512-sWCPOxeByuI7uxZ2q6iMsedgDzVcx+OZr0X52gqOsM+LkZHqBChj+qXsYlf8AYMo7cVjRqRt8WYb5NG+oa6ydw=="
+  "resolved" "https://registry.npmjs.org/@hyperlane-xyz/core/-/core-1.0.0-beta1.tgz"
+  "version" "1.0.0-beta1"
+  dependencies:
+    "@hyperlane-xyz/utils" "1.0.0-beta1"
+    "@openzeppelin/contracts" "^4.8.0"
+    "@openzeppelin/contracts-upgradeable" "^4.8.0"
+
+"@hyperlane-xyz/utils@1.0.0-beta1":
+  "integrity" "sha512-ghEK3IQNIyMT6lHMRcNscqJL9qAPxIIOGYBMroBwG9kANQzXD9oWW8ok8MiYRtoTjzUY2uIkcttnVavzP74Ejw=="
+  "resolved" "https://registry.npmjs.org/@hyperlane-xyz/utils/-/utils-1.0.0-beta1.tgz"
+  "version" "1.0.0-beta1"
+  dependencies:
+    "ethers" "^5.6.8"
+
 "@metamask/eth-sig-util@^4.0.0":
   "integrity" "sha512-tghyZKLHZjcdlDqCA3gNZmLeR0XvOE9U1qoQO9ohyAZT6Pya+H9vkBPcsyXytmYLNgVoin7CKCmweo/R43V+tQ=="
   "resolved" "https://registry.npmjs.org/@metamask/eth-sig-util/-/eth-sig-util-4.0.1.tgz"
@@ -865,6 +881,16 @@
   dependencies:
     "find-up" "^4.1.0"
     "fs-extra" "^8.1.0"
+
+"@openzeppelin/contracts-upgradeable@^4.8.0":
+  "integrity" "sha512-5GeFgqMiDlqGT8EdORadp1ntGF0qzWZLmEY7Wbp/yVhN7/B3NNzCxujuI77ktlyG81N3CUZP8cZe3ZAQ/cW10w=="
+  "resolved" "https://registry.npmjs.org/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.8.0.tgz"
+  "version" "4.8.0"
+
+"@openzeppelin/contracts@^4.8.0":
+  "integrity" "sha512-AGuwhRRL+NaKx73WKRNzeCxOCOCxpaqF+kp8TJ89QzAipSwZy/NoflkWaL9bywXFRhIzXt8j38sfF7KBKCPWLw=="
+  "resolved" "https://registry.npmjs.org/@openzeppelin/contracts/-/contracts-4.8.0.tgz"
+  "version" "4.8.0"
 
 "@openzeppelin/hardhat-upgrades@^1.21.0":
   "integrity" "sha512-Kwl7IN0Hlhj4HluMTTl0DrtU90OI/Q6rG3sAyd2pv3fababe9EuZqs9DydOlkWM45JwTzC+eBzX3TgHsqI13eA=="
@@ -4435,7 +4461,7 @@
     "uuid" "2.0.1"
     "xmlhttprequest" "1.8.0"
 
-"ethers@^5.0.0", "ethers@^5.0.1", "ethers@^5.0.13", "ethers@^5.0.2", "ethers@^5.0.5", "ethers@^5.5.2", "ethers@^5.5.3", "ethers@^5.6.1", "ethers@^5.7.2", "ethers@~5.7.0":
+"ethers@^5.0.0", "ethers@^5.0.1", "ethers@^5.0.13", "ethers@^5.0.2", "ethers@^5.0.5", "ethers@^5.5.2", "ethers@^5.5.3", "ethers@^5.6.1", "ethers@^5.6.8", "ethers@^5.7.2", "ethers@~5.7.0":
   "integrity" "sha512-wswUsmWo1aOK8rR7DIKiWSw9DbLWe6x98Jrn8wcTflTVvaXhAMaB5zGAXy0GYQEQp9iO1iSHWVyARQm11zUtyg=="
   "resolved" "https://registry.npmjs.org/ethers/-/ethers-5.7.2.tgz"
   "version" "5.7.2"

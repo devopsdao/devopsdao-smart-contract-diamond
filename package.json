@@ -24,6 +24,7 @@
     "solidity-coverage": "^0.8.2"
   },
   "dependencies": {
+    "@hyperlane-xyz/core": "^1.0.0-beta1",
     "commander": "^9.4.1"
   }
 }

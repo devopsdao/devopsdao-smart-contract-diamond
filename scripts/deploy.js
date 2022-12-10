@@ -69,8 +69,6 @@ async function deployDiamond () {
     console.log(`${LibName} deployed:`, lib.address)
   }
 
-
-
   // Deploy facets and set the `facetCuts` variable
   console.log('')
   console.log('Deploying facets')
@@ -95,6 +93,7 @@ async function deployDiamond () {
       name: 'TokenFacet',
     }
   ]
+
   // The `facetCuts` variable is the FacetCut[] that contains the functions to add during diamond deployment
   const facetCuts = []
   for (const FacetInit of FacetInits) {
@@ -118,6 +117,21 @@ async function deployDiamond () {
       functionSelectors: getSelectors(facet)
     })
   }
+
+  // goerliGateway = '0xe432150cce91c13a887f7D836923d5597adD8E31'
+  // goerliGasService = '0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6'
+  // moonbaseGateway = '0x5769D84DD62a6fD969856c75c7D321b84d455929'
+  // moonbaseGasService = '0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6'
+
+  // const AxelarGMP = await ethers.getContractFactory('AxelarGMP')
+  // const axelarGMP = await AxelarGMP.deploy(goerliGateway, goerliGasService)
+  // await axelarGMP.deployed()
+
+  // facetCuts.push({
+  //   facetAddress: axelarGMP.address,
+  //   action: FacetCutAction.Add,
+  //   functionSelectors: getSelectors(AxelarGMP)
+  // })
 
   // Creating a function call
   // This call gets executed during deployment and can also be executed in upgrades
@@ -145,6 +159,8 @@ async function deployDiamond () {
   //   }
   // }
 
+
+
   const existingAddresses = await fs.readFile(`${this.__hardhatContext.environment.config.abiExporter[0].path}/addresses.json`);
   if(typeof existingAddresses !== 'undefined'){
     contractAddresses = JSON.parse(existingAddresses);
@@ -165,7 +181,7 @@ async function deployDiamond () {
   return diamond.address
 }
 
-async function upgradeDiamond () {
+async function upgradeDiamondTasksFacet () {
   const existingAddresses = await fs.readFile(`${this.__hardhatContext.environment.config.abiExporter[0].path}/addresses.json`);
   let contractAddresses;
   if(typeof existingAddresses !== 'undefined'){
@@ -230,6 +246,78 @@ async function upgradeDiamond () {
   const facets = await diamondLoupeFacet.facets()
   // const facetAddresses = await diamondLoupeFacet.facetAddresses()
   console.log(facets[findAddressPositionInFacets(tasksFacet.address, facets)][1])
+  // console.log(getSelectors(TasksFacet))
+  // assert.sameMembers(facets[findAddressPositionInFacets(tasksFacet.address, facets)][1], getSelectors(TasksFacet))
+}
+
+async function upgradeDiamondAxelarFacet () {
+  const existingAddresses = await fs.readFile(`${this.__hardhatContext.environment.config.abiExporter[0].path}/addresses.json`);
+  let contractAddresses;
+  if(typeof existingAddresses !== 'undefined'){
+    contractAddresses = JSON.parse(existingAddresses);
+  }
+  else{
+    return false;
+  }
+  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
+  console.log(`upgrading Diamond: ${diamondAddress}`)
+
+
+  const diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress)
+  const diamondCutFacet = await ethers.getContractAt('DiamondCutFacet', diamondAddress)
+  const existingAxelarGMPFacet = await ethers.getContractAt('AxelarGMP', diamondAddress)
+  const existingAxelarGMPFacetSelectors = getSelectors(existingAxelarGMPFacet)
+
+  // console.log(`existingAxelarGMPFacet: ${existingAxelarGMPFacet.address}`);
+
+  // tx = await diamondCutFacet.diamondCut(
+  //   [{
+  //     facetAddress: ethers.constants.AddressZero,
+  //     action: FacetCutAction.Remove,
+  //     functionSelectors: existingAxelarGMPFacetSelectors
+  //   }],
+  //   ethers.constants.AddressZero, '0x', { gasLimit: 800000 })
+  // receipt = await tx.wait()
+
+  goerliGateway = '0xe432150cce91c13a887f7D836923d5597adD8E31'
+  goerliGasService = '0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6'
+  moonbaseGateway = '0x5769D84DD62a6fD969856c75c7D321b84d455929'
+  moonbaseGasService = '0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6'
+
+  const AxelarGMP = await ethers.getContractFactory('AxelarGMP')
+  const axelarGMP = await AxelarGMP.deploy(goerliGateway, goerliGasService)
+  await axelarGMP.deployed()
+
+  // const facetCuts = []
+
+  // facetCuts.push({
+  //   facetAddress: axelarGMP.address,
+  //   action: FacetCutAction.Add,
+  //   functionSelectors: getSelectors(AxelarGMP)
+  // })
+
+  console.log(`axelarGMP facet deployed:`, axelarGMP.address)
+
+  
+  // Any number of functions from any number of facets can be added/replaced/removed in a
+  // single transaction
+  const cut = [
+    {
+      facetAddress: axelarGMP.address,
+      action: FacetCutAction.Replace,
+      functionSelectors: getSelectors(AxelarGMP)
+    }
+  ]
+  tx = await diamondCutFacet.diamondCut(cut, ethers.constants.AddressZero, '0x', { gasLimit: 8000000 })
+  receipt = await tx.wait()
+  if (!receipt.status) {
+    throw Error(`Diamond upgrade failed: ${tx.hash}`)
+  }
+  console.log(`Diamond cut:`, tx)
+
+  const facets = await diamondLoupeFacet.facets()
+  // const facetAddresses = await diamondLoupeFacet.facetAddresses()
+  console.log(facets[findAddressPositionInFacets(axelarGMP.address, facets)][2])
   // console.log(getSelectors(TasksFacet))
   // assert.sameMembers(facets[findAddressPositionInFacets(tasksFacet.address, facets)][1], getSelectors(TasksFacet))
 }

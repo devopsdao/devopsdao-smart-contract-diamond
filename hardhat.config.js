@@ -52,6 +52,28 @@ module.exports = {
       }
       // mnemonic: MNEMONIC
     },
+    goerli: {
+      // url: `https://moonbase-alpha.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f`,
+      // url: `https://moonbeam-alpha.api.onfinality.io/rpc?apikey=a574e9f5-b1db-4984-8362-89b749437b81`,
+      url: 'https://rpc.ankr.com/eth_goerli',
+      // url: 'https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0',
+      chainId: 5,
+      accounts: {
+        mnemonic: MNEMONIC
+      }
+      // mnemonic: MNEMONIC
+    },
+    mumbai: {
+      // url: `https://moonbase-alpha.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f`,
+      // url: `https://moonbeam-alpha.api.onfinality.io/rpc?apikey=a574e9f5-b1db-4984-8362-89b749437b81`,
+      url: 'https://rpc-mumbai.maticvigil.com',
+      // url: 'https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0',
+      chainId: 80001,
+      accounts: {
+        mnemonic: MNEMONIC
+      }
+      // mnemonic: MNEMONIC
+    },
     localhost:{
       chainId: 31337
     },
@@ -111,6 +133,42 @@ module.exports = {
     // flat: true,
     only: [':TasksFacet$'],
     rename: () => 'TasksFacet.abi',
+    spacing: 2,
+    // pretty: true,
+    format: "json",
+  },
+  {
+    // path: '../devopsdao/build/abi',
+    path: '../devopsdao/lib/blockchain/abi',
+    runOnCompile: true,
+    // clear: true,
+    // flat: true,
+    only: [':TokenFacet$'],
+    rename: () => 'TokenFacet.abi',
+    spacing: 2,
+    // pretty: true,
+    format: "json",
+  },
+  {
+    // path: '../devopsdao/build/abi',
+    path: '../devopsdao/lib/blockchain/abi',
+    runOnCompile: true,
+    // clear: true,
+    // flat: true,
+    only: [':AxelarGMP$'],
+    rename: () => 'AxelarGMP.abi',
+    spacing: 2,
+    // pretty: true,
+    format: "json",
+  },
+  {
+    // path: '../devopsdao/build/abi',
+    path: '../devopsdao/lib/blockchain/abi',
+    runOnCompile: true,
+    // clear: true,
+    // flat: true,
+    only: [':Hyperlane$'],
+    rename: () => 'Hyperlane.abi',
     spacing: 2,
     // pretty: true,
     format: "json",
