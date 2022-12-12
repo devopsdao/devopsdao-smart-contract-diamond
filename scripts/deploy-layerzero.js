@@ -11,23 +11,21 @@ const {
   findAddressPositionInFacets
 } = require('../scripts/libraries/diamond.js')
 
+const LZ_ENDPOINTS = require("../contracts/external/layerzero/constants/layerzeroEndpoints.json")
+
+const endpointAddr = LZ_ENDPOINTS[hre.network.name]
+console.log(`[${hre.network.name}] Endpoint address: ${endpointAddr}`)
+
 async function deploy () {
   const accounts = await ethers.getSigners()
   const contractOwner = accounts[0]
   console.log(`wallet: ${contractOwner.address}`);
 
-  goerliGateway = '0xe432150cce91c13a887f7D836923d5597adD8E31'
-  goerliGasService = '0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6'
-  maticGateway = '0xBF62ef1486468a6bd26Dd669C06db43dEd5B849B'
-  maticGasService = '0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6'
-  moonbaseGateway = '0x5769D84DD62a6fD969856c75c7D321b84d455929'
-  moonbaseGasService = '0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6'
+  const LayerZero = await ethers.getContractFactory('LayerZero')
+  const layerZero = await LayerZero.deploy(endpointAddr)
+  await layerZero.deployed()
 
-  const AxelarGMP = await ethers.getContractFactory('AxelarGMP')
-  const axelarGMP = await AxelarGMP.deploy(maticGateway, maticGasService)
-  await axelarGMP.deployed()
-
-  console.log(`AxelarGMP deployed:`, axelarGMP.address)
+  console.log(`LayerZero deployed:`, layerZero.address)
 
   let existingAddresses;
   try {
@@ -45,13 +43,13 @@ async function deploy () {
   }
 
   contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId] = {};
-  contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'] = axelarGMP.address;
+  contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'] = layerZero.address;
 
 
   await fs.writeFile(`${this.__hardhatContext.environment.config.abiExporter[0].path}/axelar-addresses.json`, JSON.stringify(contractAddresses));
 
   // returning the address of the diamond
-  return axelarGMP.address
+  return layerZero.address
 }
 
 

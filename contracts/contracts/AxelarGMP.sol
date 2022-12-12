@@ -22,7 +22,9 @@ contract AxelarGMP is AxelarExecutable {
 
         bytes memory payload = abi.encode(_nanoId, _taskType, _title, _description, _symbol, _amount);
         string memory destinationChain = 'Moonbeam';
-        string memory destinationAddress = '0xc1630769E8828dac92Ddf213037FD04BE4f52827';
+        string memory destinationAddress = '0x35beAD8D8056292E390EAea0DDb74E51E021da26';
+        // string memory destinationChain = 'Polygon';
+        // string memory destinationAddress = '0x536423D551fd05D814d3A8b35A37189ceeA530E3';
 
         if (msg.value > 0) {
             gasReceiver.payNativeGasForContractCall{ value: msg.value }(
@@ -60,7 +62,8 @@ contract AxelarGMP is AxelarExecutable {
     //     gateway.callContractWithToken(destinationChain, destinationAddress, payload, _symbol, _amount);
     // }
 
-    event Logs(string sourceChain, string sourceAddress, bytes payload);
+    event Logs(string logname, string sourceChain, string sourceAddress, bytes payload);
+    event LogSimple(string logname);
 
     event TaskContractCreating(
         string _nanoId,
@@ -76,10 +79,13 @@ contract AxelarGMP is AxelarExecutable {
         string calldata sourceAddress_,
         bytes calldata payload_
     ) internal override {
-        emit Logs(sourceChain_, sourceAddress_, payload_);
+        emit LogSimple('axelarExecute');
+        emit Logs('axelarExecute', sourceChain_, sourceAddress_, payload_);
         (string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount) = abi.decode(payload_, (string, string, string, string, string, uint256));
         emit TaskContractCreating(_nanoId, _taskType, _title, _description, _symbol, _amount);
-        TasksFacet(address(0xb437AB13C2613d36eA831c6F3E993AC6ea69Cd01)).createTaskContract(_nanoId, _taskType, _title, _description, _symbol, _amount);
+        address moonbeamDiaomond = 0xb437AB13C2613d36eA831c6F3E993AC6ea69Cd01;
+        address mumbaiDiaomond = 0x8bbF9b0f29f5507e3a366b1aa78D8418997E08F8;
+        TasksFacet(moonbeamDiaomond).createTaskContract(_nanoId, _taskType, _title, _description, _symbol, _amount);
     }
 
 
