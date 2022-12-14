@@ -615,19 +615,19 @@
     "@ethersproject/properties" "^5.7.0"
     "@ethersproject/strings" "^5.7.0"
 
-"@hyperlane-xyz/core@^1.0.0-beta1":
-  "integrity" "sha512-sWCPOxeByuI7uxZ2q6iMsedgDzVcx+OZr0X52gqOsM+LkZHqBChj+qXsYlf8AYMo7cVjRqRt8WYb5NG+oa6ydw=="
-  "resolved" "https://registry.npmjs.org/@hyperlane-xyz/core/-/core-1.0.0-beta1.tgz"
-  "version" "1.0.0-beta1"
+"@hyperlane-xyz/core@^0.5.6":
+  "integrity" "sha512-TK0qZ+MImiEN/jWXthT6juOhoqgnmPqjaozv3TO8cmTrfQt2UaN76SKUwX58jCEcxs/stqwT9o4eZuDR3yW0pQ=="
+  "resolved" "https://registry.npmjs.org/@hyperlane-xyz/core/-/core-0.5.6.tgz"
+  "version" "0.5.6"
   dependencies:
-    "@hyperlane-xyz/utils" "1.0.0-beta1"
-    "@openzeppelin/contracts" "^4.8.0"
-    "@openzeppelin/contracts-upgradeable" "^4.8.0"
+    "@hyperlane-xyz/utils" "0.5.6"
+    "@openzeppelin/contracts" "^4.6.0"
+    "@openzeppelin/contracts-upgradeable" "^4.6.0"
 
-"@hyperlane-xyz/utils@1.0.0-beta1":
-  "integrity" "sha512-ghEK3IQNIyMT6lHMRcNscqJL9qAPxIIOGYBMroBwG9kANQzXD9oWW8ok8MiYRtoTjzUY2uIkcttnVavzP74Ejw=="
-  "resolved" "https://registry.npmjs.org/@hyperlane-xyz/utils/-/utils-1.0.0-beta1.tgz"
-  "version" "1.0.0-beta1"
+"@hyperlane-xyz/utils@0.5.6":
+  "integrity" "sha512-ud4j33yKSAzo0Od5mqIOnC+3iHOnH3BGOFE7dABz8LMOt6Ettx8N/PC9Ou3LHdiYNc9e4CHfbv7+G1Z6POKHEQ=="
+  "resolved" "https://registry.npmjs.org/@hyperlane-xyz/utils/-/utils-0.5.6.tgz"
+  "version" "0.5.6"
   dependencies:
     "ethers" "^5.6.8"
 
@@ -882,12 +882,12 @@
     "find-up" "^4.1.0"
     "fs-extra" "^8.1.0"
 
-"@openzeppelin/contracts-upgradeable@^4.8.0":
+"@openzeppelin/contracts-upgradeable@^4.6.0":
   "integrity" "sha512-5GeFgqMiDlqGT8EdORadp1ntGF0qzWZLmEY7Wbp/yVhN7/B3NNzCxujuI77ktlyG81N3CUZP8cZe3ZAQ/cW10w=="
   "resolved" "https://registry.npmjs.org/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.8.0.tgz"
   "version" "4.8.0"
 
-"@openzeppelin/contracts@^4.8.0":
+"@openzeppelin/contracts@^4.6.0", "@openzeppelin/contracts@^4.8.0":
   "integrity" "sha512-AGuwhRRL+NaKx73WKRNzeCxOCOCxpaqF+kp8TJ89QzAipSwZy/NoflkWaL9bywXFRhIzXt8j38sfF7KBKCPWLw=="
   "resolved" "https://registry.npmjs.org/@openzeppelin/contracts/-/contracts-4.8.0.tgz"
   "version" "4.8.0"
@@ -1426,6 +1426,24 @@
   "integrity" "sha512-sL/cEvJWAnClXw0wHk85/2L0G6Sj8UB0Ctc1TEMbKSsmpRosqhwj9gWgFRZSrBr2f9tiXISwNhCPmlfqUqyb9Q=="
   "resolved" "https://registry.npmjs.org/@ungap/promise-all-settled/-/promise-all-settled-1.1.2.tgz"
   "version" "1.1.2"
+
+"@uniswap/lib@1.1.1":
+  "integrity" "sha512-2yK7sLpKIT91TiS5sewHtOa7YuM8IuBXVl4GZv2jZFys4D2sY7K5vZh6MqD25TPA95Od+0YzCVq6cTF2IKrOmg=="
+  "resolved" "https://registry.npmjs.org/@uniswap/lib/-/lib-1.1.1.tgz"
+  "version" "1.1.1"
+
+"@uniswap/v2-core@1.0.0":
+  "integrity" "sha512-BJiXrBGnN8mti7saW49MXwxDBRFiWemGetE58q8zgfnPPzQKq55ADltEILqOt6VFZ22kVeVKbF8gVd8aY3l7pA=="
+  "resolved" "https://registry.npmjs.org/@uniswap/v2-core/-/v2-core-1.0.0.tgz"
+  "version" "1.0.0"
+
+"@uniswap/v2-periphery@^1.1.0-beta.0":
+  "integrity" "sha512-6dkwAMKza8nzqYiXEr2D86dgW3TTavUvCR0w2Tu33bAbM8Ah43LKAzH7oKKPRT5VJQaMi1jtkGs1E8JPor1n5g=="
+  "resolved" "https://registry.npmjs.org/@uniswap/v2-periphery/-/v2-periphery-1.1.0-beta.0.tgz"
+  "version" "1.1.0-beta.0"
+  dependencies:
+    "@uniswap/lib" "1.1.1"
+    "@uniswap/v2-core" "1.0.0"
 
 "@yarnpkg/lockfile@^1.1.0":
   "integrity" "sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ=="

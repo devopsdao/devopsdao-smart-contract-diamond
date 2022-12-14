@@ -1,27 +1,82 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-import { AxelarExecutable } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/executables/AxelarExecutable.sol';
-import { IAxelarGateway } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol';
+import "../external/wormhole/interfaces/IWormhole.sol";
 import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol';
-import { IAxelarGasService } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol';
 import "../facets/TasksFacet.sol";
 import "../contracts/TaskContract.sol";
 
 
-contract AxelarGMP is AxelarExecutable {
-    IAxelarGasService public immutable gasReceiver;
-    string destinationChain;
+contract Wormhole {
+    mapping(address => string) public lastMessage;
+
+    IWormhole immutable core_bridge;
+
+    mapping(bytes32 => mapping(uint16 => bool)) public myTrustedContracts;
+    mapping(bytes32 => bool) public processedMessages;
+    uint16 immutable chainId;
     string destinationAddress;
     address destinationDiamond;
+    uint16 nonce = 0;
 
-    constructor(address gateway_, address gasReceiver_, string memory destinationChain_, string memory destinationAddress_, address destinationDiamond_) AxelarExecutable(gateway_) {
-        gasReceiver = IAxelarGasService(gasReceiver_);
-        destinationChain = destinationChain_;
+    constructor(uint16 _chainId, address wormhole_core_bridge_address, string memory destinationAddress_, address destinationDiamond_) {
+        chainId = _chainId;
+        core_bridge = IWormhole(wormhole_core_bridge_address);
         destinationAddress = destinationAddress_;
         destinationDiamond = destinationDiamond_;
-        
     }
+
+        // Public facing function to send a message across chains
+    function sendMessage(
+        string memory message,
+        address destAddress,
+        uint16 destChainId
+    ) external payable {
+        // Wormhole recommends that message-publishing functions should return their sequence value
+        _sendMessageToRecipient(destAddress, destChainId, message, nonce);
+        nonce++;
+    }
+
+    // This function defines a super simple Wormhole 'module'.
+    // A module is just a piece of code which knows how to emit a composable message
+    // which can be utilized by other contracts.
+    function _sendMessageToRecipient(
+        address recipient,
+        uint16 _chainId,
+        string memory message,
+        uint32 _nonce
+    ) private returns (uint64) {
+        bytes memory payload = abi.encode(
+            recipient,
+            _chainId,
+            msg.sender,
+            message
+        );
+
+        // Nonce is passed though to the core bridge.
+        // This allows other contracts to utilize it for batching or processing.
+
+        // 1 is the consistency level, this message will be emitted after only 1 block
+        uint64 sequence = core_bridge.publishMessage(_nonce, payload, 1);
+
+        // The sequence is passed back to the caller, which can be useful relay information.
+        // Relaying is not done here, because it would 'lock' others into the same relay mechanism.
+        return sequence;
+    }
+
+    // TODO: A production app would add onlyOwner security, but this is for testing.
+    function addTrustedAddress(bytes32 sender, uint16 _chainId) external {
+        myTrustedContracts[sender][_chainId] = true;
+    }
+
+
+    // constructor(address gateway_, address gasReceiver_, string memory destinationChain_, string memory destinationAddress_, address destinationDiamond_) AxelarExecutable(gateway_) {
+    //     gasReceiver = IAxelarGasService(gasReceiver_);
+    //     destinationChain = destinationChain_;
+    //     destinationAddress = destinationAddress_;
+    //     destinationDiamond = destinationDiamond_;
+        
+    // }
 
     function createTaskContract(string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount)
     external
@@ -197,6 +252,7 @@ contract AxelarGMP is AxelarExecutable {
         string _message, 
         uint256 _replyTo
     );
+    
     // Handles calls created by setAndSend. Updates this contract's value
     function _execute(
         string calldata _sourceChain,

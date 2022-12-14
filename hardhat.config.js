@@ -26,11 +26,11 @@ task('accounts', 'Prints the list of accounts', async () => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 
-const BLASTAPI_KEY = '5adb17c5-f79f-4542-b37c-b9cf98d6b28f';
-const ONFINALITY_API_KEY = 'a574e9f5-b1db-4984-8362-89b749437b81';
+const BLASTAPI_KEY = '';
+const ONFINALITY_API_KEY = '';
 
-const MNEMONIC = `possible claw silk quiz decade ozone decide monster tired material crazy maple`
-const MNEMONIC2 = `diamond mass aerobic upgrade canoe immune code summer predict match lunar owner`
+const MNEMONIC = ``
+const MNEMONIC2 = ``
 
 // let key = ethers.Wallet.fromMnemonic(MNEMONIC);
 // console.log(key);
@@ -169,6 +169,30 @@ module.exports = {
     // flat: true,
     only: [':Hyperlane$'],
     rename: () => 'Hyperlane.abi',
+    spacing: 2,
+    // pretty: true,
+    format: "json",
+  },
+  {
+    // path: '../devopsdao/build/abi',
+    path: '../devopsdao/lib/blockchain/abi',
+    runOnCompile: true,
+    // clear: true,
+    // flat: true,
+    only: [':Layerzero$'],
+    rename: () => 'Layerzero.abi',
+    spacing: 2,
+    // pretty: true,
+    format: "json",
+  },
+  {
+    // path: '../devopsdao/build/abi',
+    path: '../devopsdao/lib/blockchain/abi',
+    runOnCompile: true,
+    // clear: true,
+    // flat: true,
+    only: [':Wormhole$'],
+    rename: () => 'Wormhole.abi',
     spacing: 2,
     // pretty: true,
     format: "json",

@@ -23,8 +23,15 @@ async function deploy () {
   moonbaseGateway = '0x5769D84DD62a6fD969856c75c7D321b84d455929'
   moonbaseGasService = '0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6'
 
+  destinationChain = 'Moonbeam';
+  destinationAddress = '0x35beAD8D8056292E390EAea0DDb74E51E021da26'; //moonbeam
+  // destinationAddress = '0x536423D551fd05D814d3A8b35A37189ceeA530E3' //mumbai
+  destinationDiamond = '0xb437AB13C2613d36eA831c6F3E993AC6ea69Cd01'; //moonbeam
+  //destinationDiamond = '0x8bbF9b0f29f5507e3a366b1aa78D8418997E08F8'; //mumbai
+
+
   const AxelarGMP = await ethers.getContractFactory('AxelarGMP')
-  const axelarGMP = await AxelarGMP.deploy(maticGateway, maticGasService)
+  const axelarGMP = await AxelarGMP.deploy(maticGateway, maticGasService, destinationChain, destinationAddress, destinationDiamond)
   await axelarGMP.deployed()
 
   console.log(`AxelarGMP deployed:`, axelarGMP.address)

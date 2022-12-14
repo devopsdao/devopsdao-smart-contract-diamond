@@ -8,28 +8,125 @@ import "../facets/TasksFacet.sol";
 
 contract Hyperlane {
 
+    uint32 destinationDomain;
+    address destinationAddress;
+    address ethereumOutbox;
+    address destinationDiamond;
 
-    // uint32 constant destinationDomain = 80001; //mumbai
-    uint32 constant destinationDomain = 0x6d6f2d61; //moonbase
-    address constant recipient = 0xf2E3439ca3acf8B63Adb3C576299395576C8fF19;
-    address constant ethereumOutbox = 0xe17c37212d785760E8331D4A4395B17b34Ba8cDF; //mumbai
-    // address constant ethereumOutbox = 0x54148470292C24345fb828B003461a9444414517; //moonbase
-    event SentMessage(uint32 destinationDomain, address recipient, bytes payload);
+    constructor(uint32 destinationDomain_, address ethereumOutbox_, address destinationAddress_, address destinationDiamond_) {
+        destinationDomain = destinationDomain_;
+        ethereumOutbox = ethereumOutbox_;
+        destinationAddress = destinationAddress_;
+        destinationDiamond = destinationDiamond_;
+    }
+
+    event SentMessage(uint32 destinationDomain, address destinationAddress, bytes payload);
 
     function createTaskContract(string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount)
     external
     payable
     {
-        bytes memory payload = abi.encode(_nanoId, _taskType, _title, _description, _symbol, _amount);
+        bytes memory funcPayload = abi.encode(_nanoId, _taskType, _title, _description, _symbol, _amount);
+        bytes memory payload = abi.encode("createTaskContract", funcPayload);
         IOutbox(ethereumOutbox).dispatch(
             destinationDomain,
-            addressToBytes32(recipient),
+            addressToBytes32(destinationAddress),
             payload
         );
-        emit SentMessage(destinationDomain, recipient, payload);
+        emit SentMessage(destinationDomain, destinationAddress, payload);
     }
 
+    function taskParticipate(address _contractAddress, string memory _message, uint256 _replyTo)
+    external
+    payable
+    {
+        bytes memory funcPayload = abi.encode(_contractAddress, _message, _replyTo);
+        bytes memory payload = abi.encode("taskParticipate", funcPayload);
+        IOutbox(ethereumOutbox).dispatch(
+            destinationDomain,
+            addressToBytes32(destinationAddress),
+            payload
+        );
+        emit SentMessage(destinationDomain, destinationAddress, payload);
+    }
+
+    function taskAuditParticipate(address _contractAddress, string memory _message, uint256 _replyTo)
+    external
+    payable
+    {
+        bytes memory funcPayload = abi.encode(_contractAddress, _message, _replyTo);
+        bytes memory payload = abi.encode("taskAuditParticipate", funcPayload);
+        IOutbox(ethereumOutbox).dispatch(
+            destinationDomain,
+            addressToBytes32(destinationAddress),
+            payload
+        );
+        emit SentMessage(destinationDomain, destinationAddress, payload);
+    }
+
+    function taskStateChange(
+        address _contractAddress,
+        address payable _participant,
+        string memory _state,
+        string memory _message,
+        uint256 _replyTo,
+        uint256 _rating
+    )
+    external
+    payable
+    {
+
+        bytes memory funcPayload = abi.encode(_contractAddress, _participant, _state, _message, _replyTo, _rating);
+        bytes memory payload = abi.encode("taskStateChange", funcPayload);
+        IOutbox(ethereumOutbox).dispatch(
+            destinationDomain,
+            addressToBytes32(destinationAddress),
+            payload
+        );
+        emit SentMessage(destinationDomain, destinationAddress, payload);
+    }
+
+    function taskAuditDecision(
+        address _contractAddress,
+        string memory _favour,
+        string memory _message,
+        uint256 _replyTo,
+        uint256 _rating
+    )
+    external
+    payable
+    {
+
+        bytes memory funcPayload = abi.encode(_contractAddress, _favour, _message, _replyTo, _rating);
+        bytes memory payload = abi.encode("taskAuditDecision", funcPayload);
+        IOutbox(ethereumOutbox).dispatch(
+            destinationDomain,
+            addressToBytes32(destinationAddress),
+            payload
+        );
+        emit SentMessage(destinationDomain, destinationAddress, payload);
+    }
+
+    function sendMessage(address _contractAddress, string memory _message, uint256 _replyTo)
+    external
+    payable
+    {
+
+        bytes memory funcPayload = abi.encode(_contractAddress, _message, _replyTo);
+        bytes memory payload = abi.encode("sendMessage", funcPayload);
+        IOutbox(ethereumOutbox).dispatch(
+            destinationDomain,
+            addressToBytes32(destinationAddress),
+            payload
+        );
+        emit SentMessage(destinationDomain, destinationAddress, payload);
+    }
+
+
+
     event ReceivedMessage(uint32 origin, bytes32 sender, bytes message);
+
+
     event TaskContractCreating(
         string _nanoId,
         string _taskType,
@@ -38,17 +135,91 @@ contract Hyperlane {
         string _symbol,
         uint256 _amount
     );
+
+    event TaskParticipating(
+        address _contractAddress, 
+        string _message, 
+        uint256 _replyTo
+    );
+
+    event TaskStateChanging(
+        address _contractAddress,
+        address _participant,
+        string _state,
+        string _message,
+        uint256 _replyTo,
+        uint256 _rating
+    );
+
+    event taskAuditDecisioning(
+        address _contractAddress,
+        string _favour,
+        string _message,
+        uint256 _replyTo,
+        uint256 _rating
+    );
+
+    event TaskSendMessaging(
+        address _contractAddress, 
+        string _message, 
+        uint256 _replyTo
+    );
+
     function handle(
         uint32 _origin,
         bytes32 _sender,
         bytes calldata _payload
     ) external {
         emit ReceivedMessage(_origin, _sender, _payload);
-        (string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount) = abi.decode(_payload, (string, string, string, string, string, uint256));
-        emit TaskContractCreating(_nanoId, _taskType, _title, _description, _symbol, _amount);
-        address moonbeamDiaomond = 0xb437AB13C2613d36eA831c6F3E993AC6ea69Cd01;
-        address mumbaiDiaomond = 0x8bbF9b0f29f5507e3a366b1aa78D8418997E08F8;
-        TasksFacet(moonbeamDiaomond).createTaskContract(_nanoId, _taskType, _title, _description, _symbol, _amount);
+        
+        (string memory functionName, bytes memory funcPayload) = abi.decode(_payload, (string, bytes));
+
+        if(keccak256(bytes(functionName)) == keccak256("createTaskContract")){
+            (string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount) = abi.decode(funcPayload, (string, string, string, string, string, uint256));
+            emit TaskContractCreating(_nanoId, _taskType, _title, _description, _symbol, _amount);
+            TasksFacet(destinationDiamond).createTaskContract(_nanoId, _taskType, _title, _description, _symbol, _amount);
+        }
+
+        else if(keccak256(bytes(functionName)) == keccak256("taskParticipate")){
+            (address payable _contractAddress, string memory _message, uint256 _replyTo) = abi.decode(funcPayload, (address, string, uint256));
+            emit TaskParticipating(_contractAddress, _message, _replyTo);
+            TaskContract(_contractAddress).taskParticipate(_message, _replyTo);
+        }
+
+        else if(keccak256(bytes(functionName)) == keccak256("taskAuditParticipate")){
+            (address payable _contractAddress, string memory _message, uint256 _replyTo) = abi.decode(funcPayload, (address, string, uint256));
+            emit TaskParticipating(_contractAddress, _message, _replyTo);
+            TaskContract(_contractAddress).taskAuditParticipate(_message, _replyTo);
+        }
+
+        else if(keccak256(bytes(functionName)) == keccak256("taskStateChange")){
+            (address payable _contractAddress,
+                address payable _participant,
+                string memory _state,
+                string memory _message,
+                uint256 _replyTo,
+                uint256 _rating) = abi.decode(funcPayload, (address, address, string, string, uint256, uint256));
+            emit TaskStateChanging(_contractAddress, _participant, _state, _message, _replyTo, _rating);
+            TaskContract(_contractAddress).taskStateChange(_participant, _state, _message, _replyTo, _rating);
+        }
+
+
+        else if(keccak256(bytes(functionName)) == keccak256("taskAuditDecision")){
+            (address payable _contractAddress,
+                string memory _favour,
+                string memory _message,
+                uint256 _replyTo,
+                uint256 _rating) = abi.decode(funcPayload, (address, string, string, uint256, uint256));
+            emit taskAuditDecisioning(_contractAddress, _favour, _message, _replyTo, _rating);
+            TaskContract(_contractAddress).taskAuditDecision(_favour, _message, _replyTo, _rating);
+        }
+
+        else if(keccak256(bytes(functionName)) == keccak256("sendMessage")){
+            (address payable _contractAddress, string memory _message, uint256 _replyTo) = abi.decode(funcPayload, (address, string, uint256));
+            emit TaskSendMessaging(_contractAddress, _message, _replyTo);
+            TaskContract(_contractAddress).sendMessage(_message, _replyTo);
+        }
+
     }
 
 
