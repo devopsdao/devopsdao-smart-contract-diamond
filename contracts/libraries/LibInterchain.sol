@@ -12,6 +12,7 @@ struct InterchainStorage {
     ConfigHyperlane configHyperlane;
     ConfigLayerzero configLayerzero;
     ConfigWormhole configWormhole;
+    dataWormhole dataWormhole;
 }
 
 struct ConfigAxelar {
@@ -42,6 +43,12 @@ struct ConfigWormhole {
     address bridgeAddress;
     address destinationAddress;
     address destinationDiamond;
+}
+
+struct dataWormhole {
+    mapping(bytes32 => mapping(uint16 => bool)) myTrustedContracts;
+    mapping(bytes32 => bool) processedMessages;
+    uint16 nonce;
 }
 
 import { LibDiamond } from "../libraries/LibDiamond.sol";

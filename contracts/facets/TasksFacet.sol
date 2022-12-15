@@ -50,9 +50,9 @@ contract TasksFacet {
     {
 
         address sender;
-        if(msg.sender == ''){
+        // if(msg.sender == ''){
             
-        }
+        // }
 
         TaskContract taskContract = new TaskContract{value: msg.value}(
             _nanoId,

@@ -4,10 +4,12 @@ pragma abicoder v2;
 
 import "../../external/layerzero/interfaces/ILayerZeroEndpoint.sol";
 import "../../external/layerzero/interfaces/ILayerZeroReceiver.sol";
-
+import "../../libraries/LibInterchain.sol";
 import "../TasksFacet.sol";
 
 contract LayerzeroFacet is ILayerZeroReceiver {
+    InterchainStorage internal _storage;
+
     event ReceiveMsg(
         uint16 _srcChainId,
         address _from,
@@ -15,17 +17,10 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         bytes _payload
     );
 
-    ILayerZeroEndpoint public endpoint;
-    uint16 destinationChain;
-    address destinationAddress;
-    address destinationDiamond;
 
-    constructor(address _endpoint, uint16 destinationChain_, address destinationAddress_, address destinationDiamond_) {
-        endpoint = ILayerZeroEndpoint(_endpoint);
-        destinationChain = destinationChain_;
-        destinationAddress = destinationAddress_;
-        destinationDiamond = destinationDiamond_;
-    }
+    // constructor(address _endpoint, uint16 destinationChain_, address destinationAddress_, address destinationDiamond_) {
+    //     endpoint = ILayerZeroEndpoint(_storage.configLayerzero.endpoint);
+    // }
     
     event Logs(string logname, uint16 sourceChain, bytes sourceAddress, uint _nonce, bytes payload);
 
@@ -38,11 +33,11 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         bytes memory funcPayload = abi.encode(_nanoId, _taskType, _title, _description, _symbol, _amount);
         bytes memory payload = abi.encode("createTaskContract", funcPayload);
 
-        bytes memory remoteAndLocalAddresses = abi.encodePacked(address(destinationAddress), address(this));
+        bytes memory remoteAndLocalAddresses = abi.encodePacked(address(_storage.configLayerzero.destinationAddress), address(this));
         bytes memory _adapterParams = abi.encodePacked(uint16(1), uint(3000000));
 
-        endpoint.send{value: msg.value}(
-            destinationChain,
+        ILayerZeroEndpoint(_storage.configLayerzero.endpoint).send{value: msg.value}(
+            _storage.configLayerzero.destinationChain,
             remoteAndLocalAddresses,
             payload,
             payable(msg.sender),
@@ -60,11 +55,11 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         bytes memory funcPayload = abi.encode(_contractAddress, _message, _replyTo);
         bytes memory payload = abi.encode("taskParticipate", funcPayload);
 
-        bytes memory remoteAndLocalAddresses = abi.encodePacked(address(destinationAddress), address(this));
+        bytes memory remoteAndLocalAddresses = abi.encodePacked(address(_storage.configLayerzero.destinationAddress), address(this));
         bytes memory _adapterParams = abi.encodePacked(uint16(1), uint(3000000));
 
-        endpoint.send{value: msg.value}(
-            destinationChain,
+        ILayerZeroEndpoint(_storage.configLayerzero.endpoint).send{value: msg.value}(
+            _storage.configLayerzero.destinationChain,
             remoteAndLocalAddresses,
             payload,
             payable(msg.sender),
@@ -81,11 +76,11 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         bytes memory funcPayload = abi.encode(_contractAddress, _message, _replyTo);
         bytes memory payload = abi.encode("taskAuditParticipate", funcPayload);
 
-        bytes memory remoteAndLocalAddresses = abi.encodePacked(address(destinationAddress), address(this));
+        bytes memory remoteAndLocalAddresses = abi.encodePacked(address(_storage.configLayerzero.destinationAddress), address(this));
         bytes memory _adapterParams = abi.encodePacked(uint16(1), uint(3000000));
 
-        endpoint.send{value: msg.value}(
-            destinationChain,
+        ILayerZeroEndpoint(_storage.configLayerzero.endpoint).send{value: msg.value}(
+            _storage.configLayerzero.destinationChain,
             remoteAndLocalAddresses,
             payload,
             payable(msg.sender),
@@ -109,11 +104,11 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         bytes memory funcPayload = abi.encode(_contractAddress, _participant, _state, _message, _replyTo, _rating);
         bytes memory payload = abi.encode("taskStateChange", funcPayload);
 
-        bytes memory remoteAndLocalAddresses = abi.encodePacked(address(destinationAddress), address(this));
+        bytes memory remoteAndLocalAddresses = abi.encodePacked(address(_storage.configLayerzero.destinationAddress), address(this));
         bytes memory _adapterParams = abi.encodePacked(uint16(1), uint(3000000));
 
-        endpoint.send{value: msg.value}(
-            destinationChain,
+        ILayerZeroEndpoint(_storage.configLayerzero.endpoint).send{value: msg.value}(
+            _storage.configLayerzero.destinationChain,
             remoteAndLocalAddresses,
             payload,
             payable(msg.sender),
@@ -136,11 +131,11 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         bytes memory funcPayload = abi.encode(_contractAddress, _favour, _message, _replyTo, _rating);
         bytes memory payload = abi.encode("taskAuditDecision", funcPayload);
 
-        bytes memory remoteAndLocalAddresses = abi.encodePacked(address(destinationAddress), address(this));
+        bytes memory remoteAndLocalAddresses = abi.encodePacked(address(_storage.configLayerzero.destinationAddress), address(this));
         bytes memory _adapterParams = abi.encodePacked(uint16(1), uint(3000000));
 
-        endpoint.send{value: msg.value}(
-            destinationChain,
+        ILayerZeroEndpoint(_storage.configLayerzero.endpoint).send{value: msg.value}(
+            _storage.configLayerzero.destinationChain,
             remoteAndLocalAddresses,
             payload,
             payable(msg.sender),
@@ -157,11 +152,11 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         bytes memory funcPayload = abi.encode(_contractAddress, _message, _replyTo);
         bytes memory payload = abi.encode("sendMessage", funcPayload);
 
-        bytes memory remoteAndLocalAddresses = abi.encodePacked(address(destinationAddress), address(this));
+        bytes memory remoteAndLocalAddresses = abi.encodePacked(address(_storage.configLayerzero.destinationAddress), address(this));
         bytes memory _adapterParams = abi.encodePacked(uint16(1), uint(3000000));
 
-        endpoint.send{value: msg.value}(
-            destinationChain,
+        ILayerZeroEndpoint(_storage.configLayerzero.endpoint).send{value: msg.value}(
+            _storage.configLayerzero.destinationChain,
             remoteAndLocalAddresses,
             payload,
             payable(msg.sender),
@@ -215,7 +210,7 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         uint64 _nonce,
         bytes memory _payload
     ) external override {
-        require(msg.sender == address(endpoint));
+        require(msg.sender == address(_storage.configLayerzero.endpoint));
         address from;
         assembly {
             from := mload(add(_from, 20))
@@ -224,7 +219,7 @@ contract LayerzeroFacet is ILayerZeroReceiver {
             keccak256(abi.encodePacked((_payload))) ==
             keccak256(abi.encodePacked((bytes10("ff"))))
         ) {
-            endpoint.receivePayload(
+            ILayerZeroEndpoint(_storage.configLayerzero.endpoint).receivePayload(
                 1,
                 bytes(""),
                 address(0x0),
@@ -239,7 +234,7 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         if(keccak256(bytes(functionName)) == keccak256("createTaskContract")){
             (string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount) = abi.decode(funcPayload, (string, string, string, string, string, uint256));
             emit TaskContractCreating(_nanoId, _taskType, _title, _description, _symbol, _amount);
-            TasksFacet(destinationDiamond).createTaskContract(_nanoId, _taskType, _title, _description, _symbol, _amount);
+            TasksFacet(_storage.configLayerzero.destinationDiamond).createTaskContract(_nanoId, _taskType, _title, _description, _symbol, _amount);
         }
 
         else if(keccak256(bytes(functionName)) == keccak256("taskParticipate")){
@@ -291,7 +286,7 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         bytes calldata _adapterParams
     ) external view returns (uint256 nativeFee, uint256 zroFee) {
         return
-            endpoint.estimateFees(
+            ILayerZeroEndpoint(_storage.configLayerzero.endpoint).estimateFees(
                 _dstChainId,
                 _userApplication,
                 _payload,

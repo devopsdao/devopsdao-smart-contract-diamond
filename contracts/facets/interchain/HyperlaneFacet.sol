@@ -2,23 +2,13 @@
 pragma solidity 0.8.17;
 
 // import "@hyperlane-xyz/core/interfaces/IMailbox.sol";
-import '../external/hyperlane/interfaces/IInbox.sol';
-import '../external/hyperlane/interfaces/IOutbox.sol';
-import "../facets/TasksFacet.sol";
+import '../../external/hyperlane/interfaces/IInbox.sol';
+import '../../external/hyperlane/interfaces/IOutbox.sol';
+import "../../libraries/LibInterchain.sol";
+import "../TasksFacet.sol";
 
 contract HyperlaneFacet {
-
-    uint32 destinationDomain;
-    address destinationAddress;
-    address ethereumOutbox;
-    address destinationDiamond;
-
-    constructor(uint32 destinationDomain_, address ethereumOutbox_, address destinationAddress_, address destinationDiamond_) {
-        destinationDomain = destinationDomain_;
-        ethereumOutbox = ethereumOutbox_;
-        destinationAddress = destinationAddress_;
-        destinationDiamond = destinationDiamond_;
-    }
+    InterchainStorage internal _storage;
 
     event SentMessage(uint32 destinationDomain, address destinationAddress, bytes payload);
 
@@ -28,12 +18,12 @@ contract HyperlaneFacet {
     {
         bytes memory funcPayload = abi.encode(_nanoId, _taskType, _title, _description, _symbol, _amount);
         bytes memory payload = abi.encode("createTaskContract", funcPayload);
-        IOutbox(ethereumOutbox).dispatch(
-            destinationDomain,
-            addressToBytes32(destinationAddress),
+        IOutbox(_storage.configHyperlane.ethereumOutbox).dispatch(
+            _storage.configHyperlane.destinationDomain,
+            addressToBytes32(_storage.configHyperlane.destinationAddress),
             payload
         );
-        emit SentMessage(destinationDomain, destinationAddress, payload);
+        emit SentMessage(_storage.configHyperlane.destinationDomain, _storage.configHyperlane.destinationAddress, payload);
     }
 
     function taskParticipate(address _contractAddress, string memory _message, uint256 _replyTo)
@@ -42,12 +32,12 @@ contract HyperlaneFacet {
     {
         bytes memory funcPayload = abi.encode(_contractAddress, _message, _replyTo);
         bytes memory payload = abi.encode("taskParticipate", funcPayload);
-        IOutbox(ethereumOutbox).dispatch(
-            destinationDomain,
-            addressToBytes32(destinationAddress),
+        IOutbox(_storage.configHyperlane.ethereumOutbox).dispatch(
+            _storage.configHyperlane.destinationDomain,
+            addressToBytes32(_storage.configHyperlane.destinationAddress),
             payload
         );
-        emit SentMessage(destinationDomain, destinationAddress, payload);
+        emit SentMessage(_storage.configHyperlane.destinationDomain, _storage.configHyperlane.destinationAddress, payload);
     }
 
     function taskAuditParticipate(address _contractAddress, string memory _message, uint256 _replyTo)
@@ -56,12 +46,12 @@ contract HyperlaneFacet {
     {
         bytes memory funcPayload = abi.encode(_contractAddress, _message, _replyTo);
         bytes memory payload = abi.encode("taskAuditParticipate", funcPayload);
-        IOutbox(ethereumOutbox).dispatch(
-            destinationDomain,
-            addressToBytes32(destinationAddress),
+        IOutbox(_storage.configHyperlane.ethereumOutbox).dispatch(
+            _storage.configHyperlane.destinationDomain,
+            addressToBytes32(_storage.configHyperlane.destinationAddress),
             payload
         );
-        emit SentMessage(destinationDomain, destinationAddress, payload);
+        emit SentMessage(_storage.configHyperlane.destinationDomain, _storage.configHyperlane.destinationAddress, payload);
     }
 
     function taskStateChange(
@@ -78,12 +68,12 @@ contract HyperlaneFacet {
 
         bytes memory funcPayload = abi.encode(_contractAddress, _participant, _state, _message, _replyTo, _rating);
         bytes memory payload = abi.encode("taskStateChange", funcPayload);
-        IOutbox(ethereumOutbox).dispatch(
-            destinationDomain,
-            addressToBytes32(destinationAddress),
+        IOutbox(_storage.configHyperlane.ethereumOutbox).dispatch(
+            _storage.configHyperlane.destinationDomain,
+            addressToBytes32(_storage.configHyperlane.destinationAddress),
             payload
         );
-        emit SentMessage(destinationDomain, destinationAddress, payload);
+        emit SentMessage(_storage.configHyperlane.destinationDomain, _storage.configHyperlane.destinationAddress, payload);
     }
 
     function taskAuditDecision(
@@ -99,12 +89,12 @@ contract HyperlaneFacet {
 
         bytes memory funcPayload = abi.encode(_contractAddress, _favour, _message, _replyTo, _rating);
         bytes memory payload = abi.encode("taskAuditDecision", funcPayload);
-        IOutbox(ethereumOutbox).dispatch(
-            destinationDomain,
-            addressToBytes32(destinationAddress),
+        IOutbox(_storage.configHyperlane.ethereumOutbox).dispatch(
+            _storage.configHyperlane.destinationDomain,
+            addressToBytes32(_storage.configHyperlane.destinationAddress),
             payload
         );
-        emit SentMessage(destinationDomain, destinationAddress, payload);
+        emit SentMessage(_storage.configHyperlane.destinationDomain, _storage.configHyperlane.destinationAddress, payload);
     }
 
     function sendMessage(address _contractAddress, string memory _message, uint256 _replyTo)
@@ -114,12 +104,12 @@ contract HyperlaneFacet {
 
         bytes memory funcPayload = abi.encode(_contractAddress, _message, _replyTo);
         bytes memory payload = abi.encode("sendMessage", funcPayload);
-        IOutbox(ethereumOutbox).dispatch(
-            destinationDomain,
-            addressToBytes32(destinationAddress),
+        IOutbox(_storage.configHyperlane.ethereumOutbox).dispatch(
+            _storage.configHyperlane.destinationDomain,
+            addressToBytes32(_storage.configHyperlane.destinationAddress),
             payload
         );
-        emit SentMessage(destinationDomain, destinationAddress, payload);
+        emit SentMessage(_storage.configHyperlane.destinationDomain, _storage.configHyperlane.destinationAddress, payload);
     }
 
 
@@ -177,7 +167,7 @@ contract HyperlaneFacet {
         if(keccak256(bytes(functionName)) == keccak256("createTaskContract")){
             (string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount) = abi.decode(funcPayload, (string, string, string, string, string, uint256));
             emit TaskContractCreating(_nanoId, _taskType, _title, _description, _symbol, _amount);
-            TasksFacet(destinationDiamond).createTaskContract(_nanoId, _taskType, _title, _description, _symbol, _amount);
+            TasksFacet(_storage.configHyperlane.destinationDiamond).createTaskContract(_nanoId, _taskType, _title, _description, _symbol, _amount);
         }
 
         else if(keccak256(bytes(functionName)) == keccak256("taskParticipate")){
