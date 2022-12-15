@@ -1,0 +1,4 @@
+Host other.github.com 
+HostName github.com
+PreferredAuthentications publickey
+IdentityFile ~/.ssh/id_ed25519_devopsdao_github

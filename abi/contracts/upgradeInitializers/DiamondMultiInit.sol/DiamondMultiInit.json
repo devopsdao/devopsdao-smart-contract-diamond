@@ -1,0 +1,68 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_addressesLength",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_calldataLength",
+        "type": "uint256"
+      }
+    ],
+    "name": "AddressAndCalldataLengthDoNotMatch",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_initializationContractAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_calldata",
+        "type": "bytes"
+      }
+    ],
+    "name": "InitializationFunctionReverted",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_contractAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_message",
+        "type": "string"
+      }
+    ],
+    "name": "NoBytecodeAtAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_addresses",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bytes[]",
+        "name": "_calldata",
+        "type": "bytes[]"
+      }
+    ],
+    "name": "multiInit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "destinationChain",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "destinationAddress",
+        "type": "string"
+      },
+      {
+        "internalType": "address[]",
+        "name": "destinationAddresses",
+        "type": "address[]"
+      },
+      {
+        "internalType": "string",
+        "name": "symbol",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "sendToMany",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  }
+]
