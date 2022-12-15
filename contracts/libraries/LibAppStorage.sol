@@ -320,8 +320,7 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
     }
 
 
-    function sendMessage(string memory _message,
-        uint256 _replyTo) external{
+    function sendMessage(string memory _message, uint256 _replyTo) external{
             TasksStorage storage _storage = diamondStorage();
             require((_storage.tasks[address(this)].participants.length == 0 && keccak256(bytes(_storage.tasks[address(this)].taskState)) == keccak256(bytes(TASK_STATE_NEW))) 
             || (msg.sender == _storage.tasks[address(this)].contractOwner || msg.sender == _storage.tasks[address(this)].participant  || msg.sender == _storage.tasks[address(this)].auditor), "only task owner, participant or auditor can send a message when a participant is selected");
