@@ -19,6 +19,7 @@ struct ConfigAxelar {
     string destinationChain;
     address gateway;
     address gasReceiver;
+    address sourceAddress;
     string destinationAddress;
     address destinationDiamond;
 }
@@ -26,6 +27,7 @@ struct ConfigAxelar {
 struct ConfigHyperlane {
     uint32 destinationDomain;
     address ethereumOutbox;
+    address sourceAddress;
     address destinationAddress;
     address destinationDiamond;
 }
@@ -33,6 +35,7 @@ struct ConfigHyperlane {
 struct ConfigLayerzero {
     uint16 destinationChain;
     address endpoint;
+    address sourceAddress;
     address destinationAddress;
     address destinationDiamond;
 }
@@ -41,6 +44,7 @@ struct ConfigWormhole {
     uint16 chainId;
     uint16 destChainId;
     address bridgeAddress;
+    address sourceAddress;
     address destinationAddress;
     address destinationDiamond;
 }
@@ -84,6 +88,7 @@ library LibInterchain {
         string memory destinationChain,
         address gateway,
         address gasReceiver,
+        address sourceAddress,
         string memory destinationAddress,
         address destinationDiamond
     ) external {
@@ -91,6 +96,7 @@ library LibInterchain {
         InterchainStorage storage _storage = diamondStorage();
         _storage.configAxelar.gateway = gateway;
         _storage.configAxelar.gasReceiver = gasReceiver;
+        _storage.configAxelar.sourceAddress = sourceAddress;
         _storage.configAxelar.destinationChain = destinationChain;
         _storage.configAxelar.destinationAddress = destinationAddress;
         _storage.configAxelar.destinationDiamond = destinationDiamond;
@@ -99,6 +105,7 @@ library LibInterchain {
     function addConfigHyperlane(
         uint32 destinationDomain,
         address ethereumOutbox,
+        address sourceAddress,
         address destinationAddress,
         address destinationDiamond
     ) external {
@@ -106,6 +113,7 @@ library LibInterchain {
         InterchainStorage storage _storage = diamondStorage();
         _storage.configHyperlane.destinationDomain = destinationDomain;
         _storage.configHyperlane.ethereumOutbox = ethereumOutbox;
+        _storage.configHyperlane.sourceAddress = sourceAddress;
         _storage.configHyperlane.destinationAddress = destinationAddress;
         _storage.configHyperlane.destinationDiamond = destinationDiamond;
     }
@@ -113,6 +121,7 @@ library LibInterchain {
     function addConfigLayerzero(
         uint16 destinationChain,
         address endpoint,
+        address sourceAddress,
         address destinationAddress,
         address destinationDiamond
     ) external {
@@ -120,6 +129,7 @@ library LibInterchain {
         InterchainStorage storage _storage = diamondStorage();
         _storage.configLayerzero.destinationChain = destinationChain;
         _storage.configLayerzero.endpoint = endpoint;
+        _storage.configLayerzero.sourceAddress = sourceAddress;
         _storage.configLayerzero.destinationAddress = destinationAddress;
         _storage.configLayerzero.destinationDiamond = destinationDiamond;
     }
@@ -128,6 +138,7 @@ library LibInterchain {
         uint16 chainId,
         uint16 destChainId,
         address bridgeAddress,
+        address sourceAddress,
         address destinationAddress,
         address destinationDiamond
     ) external {
@@ -136,6 +147,7 @@ library LibInterchain {
         _storage.configWormhole.chainId = chainId;
         _storage.configWormhole.destChainId = destChainId;
         _storage.configWormhole.bridgeAddress = bridgeAddress;
+        _storage.configWormhole.sourceAddress = sourceAddress;
         _storage.configWormhole.destinationAddress = destinationAddress;
         _storage.configWormhole.destinationDiamond = destinationDiamond;
     }

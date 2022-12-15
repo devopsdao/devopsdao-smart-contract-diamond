@@ -3,14 +3,11 @@ import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interf
 
 import "../libraries/LibAppStorage.sol";
 import "../libraries/LibUtils.sol";
-
 import {LibDiamond} from '../libraries/LibDiamond.sol';
-
+import "../libraries/LibInterchain.sol";
 
 import "../facets/TokenFacet.sol";
-
 import "../facets/DiamondLoupeFacet.sol";
-
 
 import "hardhat/console.sol";
 
@@ -18,8 +15,8 @@ error RevertReason (string message);
 
 
 contract TaskContract  {
-    // IDistributionExecutable public immutable distributor;
     TasksStorage internal _storage;
+    InterchainStorage internal _storageInterchain;
 
     IAxelarGateway public immutable gateway;
 
@@ -52,30 +49,8 @@ contract TaskContract  {
         address gateway_ = 0x5769D84DD62a6fD969856c75c7D321b84d455929;
         gateway = IAxelarGateway(gateway_);
 
-        // string memory uri = 'https://';
         emit TaskUpdated(address(this), 'TaskContract', block.timestamp);
-        // console.log(
-        // "createTaskContract %s to %s %stokens",
-        //     msg.sender,
-        //     _nanoId,
-        //     _title
-        // );
     }
-
-    // event OneEventForAll2(address contractAdr);
-
-    // function createJob(string memory _content, uint256 _index) public {
-    //     jobStructDataArray.push();
-
-    //     jobStructData(
-    //         _content,
-    //         true,
-    //         address(this),
-    //         msg.sender,
-    //         block.timestamp
-    //     );
-    //     emit jobCreated(_content, _index);
-    // }
 
     function getTaskInfo() external view returns (Task memory task)
     {
@@ -87,38 +62,6 @@ contract TaskContract  {
         uint256 balance = address(this).balance;
         return balance;
     }
-
-    // function transferToaddress(address payable _addressToSend) public payable {
-    //     address contractOwner = _storage.tasks[address(this)].contractOwner;
-    //     uint256 balance = address(this).balance;
-    //     string memory taskState = _storage.tasks[address(this)].taskState;
-    //     if (keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_CANCELED))) {
-    //         if (_addressToSend == contractOwner) {
-    //             _addressToSend.transfer(balance);
-    //         }
-    //     } else if (
-    //         keccak256(bytes(taskState)) == keccak256(bytes("completed"))
-    //     ) {
-    //         address payable participant = _storage.tasks[address(this)].participant;
-    //         participant.transfer(balance);
-    //     }
-    // }
-
-    // function testTransfer() external payable{
-    //     bytes4 functionSelector = bytes4(keccak256("myFunction(uint256)"));
-    //     // get facet address of function
-    //     address facet = _storage.selectorToFacet[functionSelector];
-    //     bytes memory myFunctionCall = abi.encodeWithSelector(functionSelector, 4);
-    //     (bool success, uint result) = address(facet).delegatecall(myFunctionCall);
-    //     require(success, "myFunction failed");
-
-    // }
-
-    // function transferToaddressLib() external payable{
-    //     delegatecall();
-    // }
-
-
 
 
     function transferToaddress(address payable _addressToSend, string memory _chain) external payable {
@@ -195,248 +138,107 @@ contract TaskContract  {
         emit TaskUpdated(address(this), 'transferToaddress', block.timestamp);
     }
 
-    function taskParticipate(string memory _message, uint256 _replyTo) external {
-        LibAppStorage.taskParticipate(_message, _replyTo);
+    function taskParticipate(address _sender, string memory _message, uint256 _replyTo) external {
+        address sender;
+        if(msg.sender == _storageInterchain.configAxelar.sourceAddress 
+            || msg.sender == _storageInterchain.configHyperlane.sourceAddress 
+            || msg.sender == _storageInterchain.configLayerzero.sourceAddress
+            || msg.sender == _storageInterchain.configWormhole.sourceAddress
+        ){
+            sender = _sender;
+        }
+        else{
+            sender = msg.sender;
+        }
+        LibAppStorage.taskParticipate(sender, _message, _replyTo);
         emit TaskUpdated(address(this), 'taskParticipate', block.timestamp);
     }
 
 
-    // function jobParticipate() external {
-    //     require(keccak256(bytes(_storage.tasks[address(this)].taskState)) == keccak256(bytes(TASK_STATE_NEW)), "task is not in the new state");
-    //     bool existed = false;
-    //     if (_storage.tasks[address(this)].participants.length == 0) {
-    //         _storage.tasks[address(this)].participants.push(msg.sender);
-    //     } else {
-    //         for (uint256 i = 0; i < _storage.tasks[address(this)].participants.length; i++) {
-    //             if (_storage.tasks[address(this)].participants[i] == msg.sender) {
-    //                 existed = true;
-    //             }
-    //         }
-    //         if (!existed) {
-    //             _storage.tasks[address(this)].participants.push(msg.sender);
-    //             _storage.participantTasks[msg.sender].push(address(this));
-    //         }
-    //     }
-    // }
-    function taskAuditParticipate(string memory _message, uint256 _replyTo) external {
-        // NFTFacet nftFacet = new NFTFacet();
-        // nftFacet.mintAuditorNFT(_storage.tasks[address(this)].participant, 5);
-        // nftFacet.mintAuditorNFT(_storage.tasks[address(this)].participant, 5);
-        // // nftFacet.initialize('https://{id}');
-        // uint256 auditorNFTbalance = TokenFacet(address(this)).balanceOf(_storage.tasks[address(this)].participant, 5);
-        // console.log(auditorNFTbalance);
-
-        // LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
-        // bytes4 functionSelector = bytes4(keccak256("getTaskContracts()"));
-        // get facet address of function
-        // address facet = ds.facetAddressAndSelectorPosition[functionSelector].facetAddress;
-        // address facet2 = DiamondLoupeFacet(address(this)).facetAddress(functionSelector);
-        // bytes memory myFunctionCall = abi.encodeWithSelector(functionSelector, 4);
-        // // bytes memory myFunctionCall = abi.encodeWithSignature("mint()");
-        // (bool success, bytes memory result) = address(_storage.tasks[address(this)].contractParent).delegatecall(myFunctionCall);
-        // console.log('facet addr');
-        // console.log(msg.sender);
-
-        // TokenFacet(_storage.tasks[address(this)].contractParent).mint(msg.sender);
-
+    function taskAuditParticipate(address _sender, string memory _message, uint256 _replyTo) external {
         uint256 balance = TokenFacet(_storage.tasks[address(this)].contractParent).balanceOf(msg.sender, 1);
         console.log(balance);
         require(balance>0, 'must hold Auditor NFT to audit');
         
-
+        address sender;
+        if(msg.sender == _storageInterchain.configAxelar.sourceAddress 
+            || msg.sender == _storageInterchain.configHyperlane.sourceAddress 
+            || msg.sender == _storageInterchain.configLayerzero.sourceAddress
+            || msg.sender == _storageInterchain.configWormhole.sourceAddress
+        ){
+            sender = _sender;
+        }
+        else{
+            sender = msg.sender;
+        }
         // require(auditorNFTbalance > 0, 'no auditor priviledge');
-        LibAppStorage.taskAuditParticipate(_message, _replyTo);
+        LibAppStorage.taskAuditParticipate(sender, _message, _replyTo);
         emit TaskUpdated(address(this), 'taskAuditParticipate', block.timestamp);
     }
 
-    // function jobAuditParticipate() external {
-    //     require(keccak256(bytes(_storage.tasks[address(this)].taskState)) == keccak256(bytes(TASK_STATE_AUDIT)), "task is not in the audit state");
-    //     // TODO: add NFT based auditor priviledge check
-    //     bool existed = false;
-    //     if (_storage.tasks[address(this)].auditors.length == 0) {
-    //         _storage.tasks[address(this)].auditors.push(msg.sender);
-    //     } else {
-    //         for (uint256 i = 0; i < _storage.tasks[address(this)].auditors.length; i++) {
-    //             if (_storage.tasks[address(this)].auditors[i] == msg.sender) {
-    //                 existed = true;
-    //                 break;
-    //             }
-    //         }
-    //         if (!existed) {
-    //             _storage.tasks[address(this)].auditors.push(msg.sender);
-    //             _storage.auditParticipantTasks[msg.sender].push(address(this));
-    //         }
-    //     }
-    // }
     function taskStateChange(
+            address _sender,
             address payable _participant,
             string memory _state,
             string memory _message,
             uint256 _replyTo,
             uint256 _score
         ) external {
-            LibAppStorage.taskStateChange(_participant, _state, _message, _replyTo, _score);
+        address sender;
+        if(msg.sender == _storageInterchain.configAxelar.sourceAddress 
+            || msg.sender == _storageInterchain.configHyperlane.sourceAddress 
+            || msg.sender == _storageInterchain.configLayerzero.sourceAddress
+            || msg.sender == _storageInterchain.configWormhole.sourceAddress
+        ){
+            sender = _sender;
+        }
+        else{
+            sender = msg.sender;
+        }
+            LibAppStorage.taskStateChange(sender, _participant, _state, _message, _replyTo, _score);
             emit TaskUpdated(address(this), 'taskStateChange', block.timestamp);
         }
-    // //todo: only allow calling child contract functions from the parent contract!!!
-    // function taskStateChange(
-    //     address payable _participant,
-    //     string memory _state,
-    //     uint _score,
-    //     string memory _message,
-    //     string memory _replyTo
-    // ) external {
-    //     address contractOwner = _storage.tasks[address(this)].contractOwner;
-    //     string memory taskState = _storage.tasks[address(this)].taskState;
-    //     string memory auditState = _storage.tasks[address(this)].auditState;
-    //     address[] memory participants = _storage.tasks[address(this)].participants;
-    //     address[] memory auditors = _storage.tasks[address(this)].auditors;
-    //     Message memory message;
-    //     message.text = _message;
-    //     message.timestamp = block.timestamp;
-    //     message.sender = msg.sender;
-    //     message.taskState = _state;
-    //     message.replyTo = _replyTo;
-    //     if (msg.sender == contractOwner && msg.sender != _participant && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_NEW)) && 
-    //     keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_AGREED))) {
-    //         for (uint256 i = 0; i < participants.length; i++) {
-    //             if (participants[i] == _participant) {
-    //                 _storage.tasks[address(this)].taskState = _state;
-    //                 _storage.tasks[address(this)].participant = _participant;
-    //                 _storage.tasks[address(this)].messages.push(message);
-    //             }
-    //             else{
-    //                 revert('participant has not applied');
-    //             }
-    //         }
-    //     } else if (msg.sender == _storage.tasks[address(this)].participant &&
-    //         keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AGREED)) && keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_PROGRESS))) {
-    //         _storage.tasks[address(this)].taskState = TASK_STATE_PROGRESS;
-    //         _storage.tasks[address(this)].messages.push(message);
-    //     } else if (msg.sender == _storage.tasks[address(this)].participant && 
-    //         keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_PROGRESS)) && keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_REVIEW))) {
-    //         _storage.tasks[address(this)].taskState = TASK_STATE_REVIEW;
-    //         _storage.tasks[address(this)].messages.push(message);
-    //     } else if (msg.sender == contractOwner &&  msg.sender != _storage.tasks[address(this)].participant &&
-    //         keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_REVIEW)) && keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_COMPLETED)) &&
-    //         _score != 0 && _score <= 5) {
-    //         _storage.tasks[address(this)].taskState = TASK_STATE_COMPLETED;
-    //         _storage.tasks[address(this)].rating = _score;
-    //         _storage.tasks[address(this)].messages.push(message);
-    //     } else if (keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_NEW)) && msg.sender == contractOwner && keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_CANCELED))) {
-    //         _storage.tasks[address(this)].taskState = TASK_STATE_CANCELED;
-    //         _storage.tasks[address(this)].messages.push(message);
-    //     } else if (keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_AUDIT))){
-    //         if(msg.sender == contractOwner &&  msg.sender != _storage.tasks[address(this)].participant &&
-    //             (keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AGREED)) || keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_PROGRESS)) || keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_REVIEW)))){
-    //             _storage.tasks[address(this)].taskState = TASK_STATE_AUDIT;
-    //             _storage.tasks[address(this)].auditInitiator = msg.sender;
-    //             _storage.tasks[address(this)].auditState = TASK_AUDIT_STATE_REQUESTED;
-    //             _storage.tasks[address(this)].messages.push(message);
-    //         }
-    //         else if(msg.sender == _storage.tasks[address(this)].participant &&
-    //             (keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_REVIEW))))
-
-    //         {
-    //             _storage.tasks[address(this)].taskState = TASK_STATE_AUDIT;
-    //             _storage.tasks[address(this)].auditInitiator = msg.sender;
-    //             _storage.tasks[address(this)].auditState = TASK_AUDIT_STATE_REQUESTED;
-    //             _storage.tasks[address(this)].messages.push(message);
-    //             //TODO: audit history need to add 
-    //         }
-    //         else if(msg.sender == contractOwner &&
-    //             keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT)) && 
-    //             keccak256(bytes(auditState)) == keccak256(bytes(TASK_AUDIT_STATE_REQUESTED)) &&
-    //             auditors.length != 0){
-    //             for (uint256 i = 0; i < auditors.length; i++) {
-    //                 if (auditors[i] == _participant) {
-    //                     _storage.tasks[address(this)].auditState = TASK_AUDIT_STATE_PERFORMING;
-    //                     _storage.tasks[address(this)].messages.push(message);
-    //                     _storage.tasks[address(this)].auditor = _participant;
-    //                     break;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     else{
-    //         revert('conditions are not met');
-    //     }
-    // }
 
     function taskAuditDecision(
+    address _sender,
     string memory _favour,
     string memory _message,
     uint256 _replyTo,
     uint256 rating
     ) external {
-        LibAppStorage.taskAuditDecision(_favour, _message, _replyTo, rating);
+        address sender;
+        if(msg.sender == _storageInterchain.configAxelar.sourceAddress 
+            || msg.sender == _storageInterchain.configHyperlane.sourceAddress 
+            || msg.sender == _storageInterchain.configLayerzero.sourceAddress
+            || msg.sender == _storageInterchain.configWormhole.sourceAddress
+        ){
+            sender = _sender;
+        }
+        else{
+            sender = msg.sender;
+        }
+        LibAppStorage.taskAuditDecision(sender, _favour, _message, _replyTo, rating);
         emit TaskUpdated(address(this), 'taskAuditDecision', block.timestamp);
     }
 
     function sendMessage(
+    address _sender,
     string memory _message,
     uint256 _replyTo
     ) external {
-        LibAppStorage.sendMessage(_message, _replyTo);
+        address sender;
+        if(msg.sender == _storageInterchain.configAxelar.sourceAddress 
+            || msg.sender == _storageInterchain.configHyperlane.sourceAddress 
+            || msg.sender == _storageInterchain.configLayerzero.sourceAddress
+            || msg.sender == _storageInterchain.configWormhole.sourceAddress
+        ){
+            sender = _sender;
+        }
+        else{
+            sender = msg.sender;
+        }
+        LibAppStorage.sendMessage(sender, _message, _replyTo);
         emit TaskUpdated(address(this), 'sendMessage', block.timestamp);
     }
-
-
-    // function getNFTBalance(address account, uint256 id) public view{
-    //     //NFTFacet(address(this)).balanceOf(account, id);
-    // }
-
-    // function getNFTBalance2() public view{
-    //     IDiamondLoupe.facetAddress();
-    // }
-
-
-    // function getNFTBalance() public view returns (uint256 balance){
-    //     // LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
-    //     bytes4 functionSelector = bytes4(keccak256("myFunction(uint256)"));
-    //     // get facet address of function
-
-    //     LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
-    //     address facetAddress_ = ds.facetAddressAndSelectorPosition[functionSelector].facetAddress;
-
-    //     bytes memory myFunctionCall = abi.encodeWithSelector(functionSelector, 4);
-    //     (bool success, bytes memory result) = address(facetAddress_).delegatecall(myFunctionCall);
-    //     require(success, "myFunction failed");
-    //     balance = abi.decode(result, (uint256));
-    // }
-    // function jobAuditDecision(
-    //     string memory _favour,
-    //     string memory _message,
-    //     string memory _replyTo
-    // ) external {
-    //     address auditor = _storage.tasks[address(this)].auditor;
-    //     string memory taskState = _storage.tasks[address(this)].taskState;
-    //     string memory auditState = _storage.tasks[address(this)].auditState;
-    //     // TODO: add NFT based auditor priviledge check
-    //     Message memory message;
-    //     message.text = _message;
-    //     message.timestamp = block.timestamp;
-    //     message.sender = msg.sender;
-    //     message.replyTo = _replyTo;
-    //     if (msg.sender == auditor && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT))
-    //     && keccak256(bytes(auditState)) == keccak256(bytes(TASK_AUDIT_STATE_PERFORMING))
-    //     && keccak256(bytes(_favour)) == keccak256(bytes("customer"))) {
-    //         _storage.tasks[address(this)].auditState = TASK_AUDIT_STATE_FINISHED;
-    //         _storage.tasks[address(this)].taskState = TASK_STATE_CANCELED;
-    //         message.taskState = TASK_STATE_CANCELED;
-    //         _storage.tasks[address(this)].messages.push(message);
-    //     }
-    //     else if (msg.sender == auditor && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT))
-    //     && keccak256(bytes(auditState)) == keccak256(bytes(TASK_AUDIT_STATE_PERFORMING))
-    //     && keccak256(bytes(_favour)) == keccak256(bytes("perfomer"))) {
-    //         _storage.tasks[address(this)].auditState = TASK_AUDIT_STATE_FINISHED;
-    //         _storage.tasks[address(this)].taskState = TASK_STATE_COMPLETED;
-    //         message.taskState = TASK_STATE_COMPLETED;
-    //         _storage.tasks[address(this)].messages.push(message);
-    //     }
-    //     else revert('conditions are not met');
-    // }
-
-    receive() external payable {}
 
 }

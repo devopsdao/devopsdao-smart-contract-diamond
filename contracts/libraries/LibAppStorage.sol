@@ -86,39 +86,39 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
         }
      }
 
-    function taskParticipate(string memory _message, uint256 _replyTo) external {
+    function taskParticipate(address _sender, string memory _message, uint256 _replyTo) external {
       TasksStorage storage _storage = diamondStorage();
-      require(msg.sender != _storage.tasks[address(this)].contractOwner, "contract owner cannot participate");
+      require(_sender != _storage.tasks[address(this)].contractOwner, "contract owner cannot participate");
       require(keccak256(bytes(_storage.tasks[address(this)].taskState)) == keccak256(bytes(TASK_STATE_NEW)), "task is not in the new state");
     //   _storage.tasks[address(this)].countMessages++;
       Message memory message;
       message.id = _storage.tasks[address(this)].messages.length + 1;
       message.text = _message;
       message.timestamp = block.timestamp;
-      message.sender = msg.sender;
+      message.sender = _sender;
       message.taskState = TASK_STATE_NEW;
       message.replyTo = _replyTo;
       bool existed = false;
       if (_storage.tasks[address(this)].participants.length == 0) {
-          _storage.tasks[address(this)].participants.push(msg.sender);
+          _storage.tasks[address(this)].participants.push(_sender);
           _storage.tasks[address(this)].messages.push(message);
       } else {
           for (uint256 i = 0; i < _storage.tasks[address(this)].participants.length; i++) {
-              if (_storage.tasks[address(this)].participants[i] == msg.sender) {
+              if (_storage.tasks[address(this)].participants[i] == _sender) {
                   existed = true;
               }
           }
           if (!existed) {
-              _storage.tasks[address(this)].participants.push(msg.sender);
-              _storage.participantTasks[msg.sender].push(address(this));
+              _storage.tasks[address(this)].participants.push(_sender);
+              _storage.participantTasks[_sender].push(address(this));
               _storage.tasks[address(this)].messages.push(message);
           }
       }
     }
 
-    function taskAuditParticipate(string memory _message, uint256 _replyTo) external {
+    function taskAuditParticipate(address _sender, string memory _message, uint256 _replyTo) external {
       TasksStorage storage _storage = diamondStorage();
-      require(msg.sender != _storage.tasks[address(this)].contractOwner && msg.sender != _storage.tasks[address(this)].participant, "contract owner or participant cannot audit");
+      require(_sender != _storage.tasks[address(this)].contractOwner && _sender != _storage.tasks[address(this)].participant, "contract owner or participant cannot audit");
       require(keccak256(bytes(_storage.tasks[address(this)].taskState)) == keccak256(bytes(TASK_STATE_AUDIT)), "task is not in the audit state");
       // TODO: add NFT based auditor priviledge check
       //_storage.tasks[address(this)].countMessages++;
@@ -126,23 +126,23 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
       message.id = _storage.tasks[address(this)].messages.length + 1;
       message.text = _message;
       message.timestamp = block.timestamp;
-      message.sender = msg.sender;
+      message.sender = _sender;
       message.taskState = TASK_STATE_AUDIT;
       message.replyTo = _replyTo;
       bool existed = false;
       if (_storage.tasks[address(this)].auditors.length == 0) {
-          _storage.tasks[address(this)].auditors.push(msg.sender);
+          _storage.tasks[address(this)].auditors.push(_sender);
           _storage.tasks[address(this)].messages.push(message);
       } else {
           for (uint256 i = 0; i < _storage.tasks[address(this)].auditors.length; i++) {
-              if (_storage.tasks[address(this)].auditors[i] == msg.sender) {
+              if (_storage.tasks[address(this)].auditors[i] == _sender) {
                   existed = true;
                   break;
               }
           }
           if (!existed) {
-              _storage.tasks[address(this)].auditors.push(msg.sender);
-              _storage.auditParticipantTasks[msg.sender].push(address(this));
+              _storage.tasks[address(this)].auditors.push(_sender);
+              _storage.auditParticipantTasks[_sender].push(address(this));
               _storage.tasks[address(this)].messages.push(message);
           }
       }
@@ -150,6 +150,7 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
 
     //todo: only allow calling child contract functions from the parent contract!!!
     function taskStateChange(
+        address _sender,
         address payable _participant,
         string memory _state,
         string memory _message,
@@ -169,10 +170,10 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
       message.id = _storage.tasks[address(this)].messages.length + 1;
       message.text = _message;
       message.timestamp = block.timestamp;
-      message.sender = msg.sender;
+      message.sender = _sender;
       message.taskState = _state;
       message.replyTo = _replyTo;
-      if (msg.sender == contractOwner && msg.sender != _participant && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_NEW))
+      if (_sender == contractOwner && _sender != _participant && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_NEW))
       && keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_AGREED)) 
       && (keccak256(bytes(taskType)) == keccak256(bytes(TASK_TYPE_PRIVATE)) || keccak256(bytes(taskType)) == keccak256(bytes(TASK_TYPE_PUBLIC)))) {
         bool participantApplied = false;
@@ -191,7 +192,7 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
             revert('participant has not applied');
         }
       }
-      else if (msg.sender == contractOwner && msg.sender != _participant && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_NEW))
+      else if (_sender == contractOwner && _sender != _participant && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_NEW))
       && keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_AGREED)) 
       && keccak256(bytes(taskType)) == keccak256(bytes(TASK_TYPE_HACKATON))) {
         if (participants.length > 0) {
@@ -202,46 +203,46 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
             revert('participants have not applied');
         }
       }
-      else if (msg.sender == _storage.tasks[address(this)].participant &&
+      else if (_sender == _storage.tasks[address(this)].participant &&
           keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AGREED)) && keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_PROGRESS))) {
           _storage.tasks[address(this)].taskState = TASK_STATE_PROGRESS;
           _storage.tasks[address(this)].messages.push(message);
       } 
-      else if (msg.sender == _storage.tasks[address(this)].participant && 
+      else if (_sender == _storage.tasks[address(this)].participant && 
           keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_PROGRESS)) && keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_REVIEW))) {
           _storage.tasks[address(this)].taskState = TASK_STATE_REVIEW;
           _storage.tasks[address(this)].messages.push(message);
       } 
-      else if (msg.sender == contractOwner &&  msg.sender != _storage.tasks[address(this)].participant &&
+      else if (_sender == contractOwner &&  _sender != _storage.tasks[address(this)].participant &&
           keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_REVIEW)) && keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_COMPLETED)) &&
           _rating != 0 && _rating <= 5) {
           _storage.tasks[address(this)].taskState = TASK_STATE_COMPLETED;
           _storage.tasks[address(this)].rating = _rating;
           _storage.tasks[address(this)].messages.push(message);
       } 
-      else if (keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_NEW)) && msg.sender == contractOwner && keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_CANCELED))) {
+      else if (keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _sender == contractOwner && keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_CANCELED))) {
           _storage.tasks[address(this)].taskState = TASK_STATE_CANCELED;
           _storage.tasks[address(this)].messages.push(message);
       } 
       else if (keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_AUDIT))){
-          if(msg.sender == contractOwner &&  msg.sender != _storage.tasks[address(this)].participant &&
+          if(_sender == contractOwner &&  _sender != _storage.tasks[address(this)].participant &&
               (keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AGREED)) || keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_PROGRESS)) || keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_REVIEW)))){
               _storage.tasks[address(this)].taskState = TASK_STATE_AUDIT;
-              _storage.tasks[address(this)].auditInitiator = msg.sender;
+              _storage.tasks[address(this)].auditInitiator = _sender;
               _storage.tasks[address(this)].auditState = TASK_AUDIT_STATE_REQUESTED;
               _storage.tasks[address(this)].messages.push(message);
           }
-          else if(msg.sender == _storage.tasks[address(this)].participant &&
+          else if(_sender == _storage.tasks[address(this)].participant &&
               (keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_REVIEW))))
 
           {
               _storage.tasks[address(this)].taskState = TASK_STATE_AUDIT;
-              _storage.tasks[address(this)].auditInitiator = msg.sender;
+              _storage.tasks[address(this)].auditInitiator = _sender;
               _storage.tasks[address(this)].auditState = TASK_AUDIT_STATE_REQUESTED;
               _storage.tasks[address(this)].messages.push(message);
               //TODO: audit history need to add 
           }
-          else if(msg.sender == contractOwner &&
+          else if(_sender == contractOwner &&
             keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT)) && 
             keccak256(bytes(auditState)) == keccak256(bytes(TASK_AUDIT_STATE_REQUESTED)) &&
             auditors.length != 0){
@@ -268,6 +269,7 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
     }
 
     function taskAuditDecision(
+        address _sender,
         string memory _favour,
         string memory _message,
         uint256 _replyTo,
@@ -285,9 +287,9 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
       message.id = _storage.tasks[address(this)].messages.length + 1;
       message.text = _message;
       message.timestamp = block.timestamp;
-      message.sender = msg.sender;
+      message.sender = _sender;
       message.replyTo = _replyTo;
-      if (msg.sender == auditor && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT))
+      if (_sender == auditor && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT))
       && keccak256(bytes(taskType)) == keccak256(bytes(TASK_TYPE_PRIVATE))
       && keccak256(bytes(auditState)) == keccak256(bytes(TASK_AUDIT_STATE_PERFORMING))
       && keccak256(bytes(_favour)) == keccak256(bytes("customer")) && _rating != 0 && _rating <= 5) {
@@ -297,7 +299,7 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
           message.taskState = TASK_STATE_CANCELED;
           _storage.tasks[address(this)].messages.push(message);
       }
-      else if (msg.sender == auditor && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT))
+      else if (_sender == auditor && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT))
       && keccak256(bytes(taskType)) == keccak256(bytes(TASK_TYPE_PUBLIC))
       && keccak256(bytes(auditState)) == keccak256(bytes(TASK_AUDIT_STATE_PERFORMING))
       && keccak256(bytes(_favour)) == keccak256(bytes("customer")) && _rating != 0 && _rating <= 5) {
@@ -307,7 +309,7 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
           message.taskState = TASK_STATE_NEW;
           _storage.tasks[address(this)].messages.push(message);
       }
-      else if (msg.sender == auditor && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT))
+      else if (_sender == auditor && keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT))
       && keccak256(bytes(auditState)) == keccak256(bytes(TASK_AUDIT_STATE_PERFORMING))
       && keccak256(bytes(_favour)) == keccak256(bytes("performer")) && _rating != 0 && _rating <= 5) {
           _storage.tasks[address(this)].auditState = TASK_AUDIT_STATE_FINISHED;
@@ -320,15 +322,15 @@ string constant TASK_AUDIT_STATE_FINISHED = "finished";
     }
 
 
-    function sendMessage(string memory _message, uint256 _replyTo) external{
+    function sendMessage(address _sender, string memory _message, uint256 _replyTo) external{
             TasksStorage storage _storage = diamondStorage();
             require((_storage.tasks[address(this)].participants.length == 0 && keccak256(bytes(_storage.tasks[address(this)].taskState)) == keccak256(bytes(TASK_STATE_NEW))) 
-            || (msg.sender == _storage.tasks[address(this)].contractOwner || msg.sender == _storage.tasks[address(this)].participant  || msg.sender == _storage.tasks[address(this)].auditor), "only task owner, participant or auditor can send a message when a participant is selected");
+            || (_sender == _storage.tasks[address(this)].contractOwner || _sender == _storage.tasks[address(this)].participant  || _sender == _storage.tasks[address(this)].auditor), "only task owner, participant or auditor can send a message when a participant is selected");
             Message memory message;
             message.id = _storage.tasks[address(this)].messages.length + 1;
             message.text = _message;
             message.timestamp = block.timestamp;
-            message.sender = msg.sender;
+            message.sender = _sender;
             message.replyTo = _replyTo;
             message.taskState = _storage.tasks[address(this)].taskState;
             _storage.tasks[address(this)].messages.push(message);

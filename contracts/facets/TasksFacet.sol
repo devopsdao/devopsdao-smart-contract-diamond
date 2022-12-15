@@ -10,9 +10,11 @@ import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interf
 
 
 import "../libraries/LibAppStorage.sol";
+import "../libraries/LibInterchain.sol";
 import "../libraries/LibUtils.sol";
 
 import "../contracts/TaskContract.sol";
+import "../facets/TokenFacet.sol";
 
 import "hardhat/console.sol";
 
@@ -20,6 +22,7 @@ import "hardhat/console.sol";
 
 contract TasksFacet {
     TasksStorage internal _storage;
+    InterchainStorage internal _storageInterchain;
     IAxelarGateway public immutable gateway;
 
     event TaskCreated(address contractAdr, string message, uint timestamp);
@@ -43,16 +46,23 @@ contract TasksFacet {
 
     // initial: new, contractor chosen: agreed, work in progress: progress, completed: completed, canceled
 
-    function createTaskContract(string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount)
+    function createTaskContract(address _sender, string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount)
     external
     payable
     returns (address)
     {
 
         address sender;
-        // if(msg.sender == ''){
-            
-        // }
+        if(msg.sender == _storageInterchain.configAxelar.sourceAddress 
+            || msg.sender == _storageInterchain.configHyperlane.sourceAddress 
+            || msg.sender == _storageInterchain.configLayerzero.sourceAddress
+            || msg.sender == _storageInterchain.configWormhole.sourceAddress
+        ){
+            sender = _sender;
+        }
+        else{
+            sender = msg.sender;
+        }
 
         TaskContract taskContract = new TaskContract{value: msg.value}(
             _nanoId,
@@ -71,7 +81,7 @@ contract TasksFacet {
         }
         // IERC20(tokenAddress).approve(address(gateway), _amount);
         _storage.taskContracts.push(address(taskContract));
-        _storage.ownerTasks[msg.sender].push(address(taskContract));
+        _storage.ownerTasks[sender].push(address(taskContract));
         emit TaskCreated(address(taskContract), 'createTaskContract', block.timestamp);
 
         return address(taskContract);
@@ -80,11 +90,15 @@ contract TasksFacet {
     function addTaskToBlacklist(address taskAddress)
     external
     {
+        uint256 balance = TokenFacet(_storage.tasks[address(this)].contractParent).balanceOf(msg.sender, 1);
+        require(balance>0, 'must hold Auditor NFT to add to blacklist');
         _storage.taskContractsBlacklist.push(taskAddress);
         _storage.taskContractsBlacklistMapping[taskAddress] = true;
     }
 
     function removeTaskFromBlacklist(address taskAddress) external{
+        uint256 balance = TokenFacet(_storage.tasks[address(this)].contractParent).balanceOf(msg.sender, 1);
+        require(balance>0, 'must hold Auditor NFT to add to blacklist');
         for (uint256 index = 0; index < _storage.taskContractsBlacklist.length; index++) {
             if(_storage.taskContractsBlacklist[index] == taskAddress){
                 _storage.taskContractsBlacklistMapping[taskAddress] = false;
