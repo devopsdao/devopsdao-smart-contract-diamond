@@ -5,13 +5,8 @@ import {LibDiamond} from '../libraries/LibDiamond.sol';
 
 import '../interfaces/IDiamondLoupe.sol';
 
-// import { IDistributionExecutable } from '../interfaces/IDistributionExecutable.sol';
-
-
-// import { AxelarExecutable } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/executables/AxelarExecutable.sol';
 import { IAxelarGateway } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol';
 import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol';
-// import { IAxelarGasService } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol';
 
 
 import "../libraries/LibAppStorage.sol";
@@ -19,12 +14,7 @@ import "../libraries/LibUtils.sol";
 
 import "../contracts/TaskContract.sol";
 
-// import "./TokenFacet.sol";
-
-
 import "hardhat/console.sol";
-// import "../libraries/LibTransfer.sol";
-// import "../interfaces/ITaskContract.sol";
 
 
 
@@ -32,9 +22,6 @@ contract TasksFacet {
     TasksStorage internal _storage;
     IAxelarGateway public immutable gateway;
 
-    // TaskContract[] public jobArray;
-
-    // event OneEventForAll(address contractAdr, string message);
     event TaskCreated(address contractAdr, string message, uint timestamp);
 
 
@@ -54,19 +41,13 @@ contract TasksFacet {
         gateway = IAxelarGateway(gateway_);
     }
 
-    // initial: new, contractor choosed: agreed, work in progress: progress, completed: completed, canceled
-
-    // function indexCalculation(string memory _state) public returns (uint256) {}
+    // initial: new, contractor chosen: agreed, work in progress: progress, completed: completed, canceled
 
     function createTaskContract(string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount)
     external
     payable
     returns (address)
     {
-        // console.log("createTaskContract %s to %s %s tokens", msg.sender, _nanoId, _title);
-
-
-        // TasksStorage storage _storage = LibAppStorage.diamondStorage();
         TaskContract taskContract = new TaskContract{value: msg.value}(
             _nanoId,
             _taskType,
@@ -87,27 +68,7 @@ contract TasksFacet {
         _storage.ownerTasks[msg.sender].push(address(taskContract));
         emit TaskCreated(address(taskContract), 'createTaskContract', block.timestamp);
 
-        // LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
-        // bytes4 functionSelector = bytes4(keccak256("mint()"));
-        // // get facet address of function
-        // address facet = ds.facetAddressAndSelectorPosition[functionSelector].facetAddress;
-        // // address facet2 = DiamondLoupeFacet(address(this)).facetAddress(functionSelector);
-        // bytes memory myFunctionCall = abi.encodeWithSelector(functionSelector, 4);
-        // (bool success, bytes memory result) = address(facet).delegatecall(myFunctionCall);
-        // console.log('facet addr');
-        // console.log(facet);
-
-        // TokenFacet(address(this)).mint();
-
         return address(taskContract);
-
-
-        // _storage.tasks[address(taskContract)] = taskContract.getJobInfo();
-        // _storage.countNew++;
-        // jobArray.push(job);
-        // countNew++;
-        // emit JobContractCreated(_nanoId, address(taskContract), msg.sender, _title, _description, _symbol, _amount);
-        // emit OneEventForAll(address(taskContract), 'createJobContract success');
     }
 
     function addTaskToBlacklist(address taskAddress)
@@ -179,17 +140,4 @@ contract TasksFacet {
         return _storage.participantTasks[participant];
     }
 }
-
-// string constant TASK_STATE_NEW = "new";
-// string constant TASK_STATE_AGREED = "agreed";
-// string constant TASK_STATE_PROGRESS = "progress";
-// string constant TASK_STATE_REVIEW = "review";
-// string constant TASK_STATE_AUDIT = "audit";
-// string constant TASK_STATE_COMPLETED = "completed";
-// string constant TASK_STATE_CANCELED = "cancelled";
-
-// string constant TASK_AUDIT_STATE_REQUESTED = "requested";
-// string constant TASK_AUDIT_STATE_PERFORMING = "performing";
-// string constant TASK_AUDIT_STATE_FINISHED = "finished";
-
 

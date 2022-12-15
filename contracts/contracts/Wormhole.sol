@@ -5,9 +5,10 @@ import "../external/wormhole/interfaces/IWormhole.sol";
 import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol';
 import "../facets/TasksFacet.sol";
 import "../contracts/TaskContract.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 
-contract Wormhole {
+contract Wormhole is Ownable {
     mapping(address => string) public lastMessage;
 
     IWormhole immutable core_bridge;
@@ -55,19 +56,9 @@ contract Wormhole {
         return sequence;
     }
 
-    // TODO: A production app would add onlyOwner security, but this is for testing.
-    function addTrustedAddress(bytes32 sender, uint16 _chainId) external {
+    function addTrustedAddress(bytes32 sender, uint16 _chainId) onlyOwner external {
         myTrustedContracts[sender][_chainId] = true;
     }
-
-
-    // constructor(address gateway_, address gasReceiver_, string memory destinationChain_, string memory destinationAddress_, address destinationDiamond_) AxelarExecutable(gateway_) {
-    //     gasReceiver = IAxelarGasService(gasReceiver_);
-    //     destinationChain = destinationChain_;
-    //     destinationAddress = destinationAddress_;
-    //     destinationDiamond = destinationDiamond_;
-        
-    // }
 
     function createTaskContract(string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount)
     external
