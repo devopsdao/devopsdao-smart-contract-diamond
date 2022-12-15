@@ -15,26 +15,17 @@ contract Wormhole {
     mapping(bytes32 => mapping(uint16 => bool)) public myTrustedContracts;
     mapping(bytes32 => bool) public processedMessages;
     uint16 immutable chainId;
-    string destinationAddress;
+    uint16 immutable destChainId;
+    address destAddress;
     address destinationDiamond;
     uint16 nonce = 0;
 
-    constructor(uint16 _chainId, address wormhole_core_bridge_address, string memory destinationAddress_, address destinationDiamond_) {
+    constructor(uint16 _chainId, uint16 destChainId_, address wormhole_core_bridge_address, address destinationAddress_, address destinationDiamond_) {
         chainId = _chainId;
         core_bridge = IWormhole(wormhole_core_bridge_address);
-        destinationAddress = destinationAddress_;
+        destAddress = destinationAddress_;
         destinationDiamond = destinationDiamond_;
-    }
-
-        // Public facing function to send a message across chains
-    function sendMessage(
-        string memory message,
-        address destAddress,
-        uint16 destChainId
-    ) external payable {
-        // Wormhole recommends that message-publishing functions should return their sequence value
-        _sendMessageToRecipient(destAddress, destChainId, message, nonce);
-        nonce++;
+        destChainId = destChainId_;
     }
 
     // This function defines a super simple Wormhole 'module'.
@@ -43,14 +34,14 @@ contract Wormhole {
     function _sendMessageToRecipient(
         address recipient,
         uint16 _chainId,
-        string memory message,
+        bytes memory _payload,
         uint32 _nonce
     ) private returns (uint64) {
         bytes memory payload = abi.encode(
             recipient,
             _chainId,
             msg.sender,
-            message
+            _payload
         );
 
         // Nonce is passed though to the core bridge.
@@ -86,16 +77,8 @@ contract Wormhole {
         bytes memory funcPayload = abi.encode(_nanoId, _taskType, _title, _description, _symbol, _amount);
         bytes memory payload = abi.encode("createTaskContract", funcPayload);
 
-        if (msg.value > 0) {
-            gasReceiver.payNativeGasForContractCall{ value: msg.value }(
-                address(this),
-                destinationChain,
-                destinationAddress,
-                payload,
-                msg.sender
-            );
-        }
-        gateway.callContract(destinationChain, destinationAddress, payload);
+        _sendMessageToRecipient(destAddress, destChainId, payload, nonce);
+        nonce++;
     }
 
 
@@ -107,16 +90,8 @@ contract Wormhole {
         bytes memory funcPayload = abi.encode(_contractAddress, _message, _replyTo);
         bytes memory payload = abi.encode("taskParticipate", funcPayload);
 
-        if (msg.value > 0) {
-            gasReceiver.payNativeGasForContractCall{ value: msg.value }(
-                address(this),
-                destinationChain,
-                destinationAddress,
-                payload,
-                msg.sender
-            );
-        }
-        gateway.callContract(destinationChain, destinationAddress, payload);
+        _sendMessageToRecipient(destAddress, destChainId, payload, nonce);
+        nonce++;
     }
 
     function taskAuditParticipate(address _contractAddress, string memory _message, uint256 _replyTo)
@@ -127,16 +102,8 @@ contract Wormhole {
         bytes memory funcPayload = abi.encode(_contractAddress, _message, _replyTo);
         bytes memory payload = abi.encode("taskAuditParticipate", funcPayload);
 
-        if (msg.value > 0) {
-            gasReceiver.payNativeGasForContractCall{ value: msg.value }(
-                address(this),
-                destinationChain,
-                destinationAddress,
-                payload,
-                msg.sender
-            );
-        }
-        gateway.callContract(destinationChain, destinationAddress, payload);
+        _sendMessageToRecipient(destAddress, destChainId, payload, nonce);
+        nonce++;
     }
 
     function taskStateChange(
@@ -154,16 +121,8 @@ contract Wormhole {
         bytes memory funcPayload = abi.encode(_contractAddress, _participant, _state, _message, _replyTo, _rating);
         bytes memory payload = abi.encode("taskStateChange", funcPayload);
 
-        if (msg.value > 0) {
-            gasReceiver.payNativeGasForContractCall{ value: msg.value }(
-                address(this),
-                destinationChain,
-                destinationAddress,
-                payload,
-                msg.sender
-            );
-        }
-        gateway.callContract(destinationChain, destinationAddress, payload);
+        _sendMessageToRecipient(destAddress, destChainId, payload, nonce);
+        nonce++;
     }
 
     function taskAuditDecision(
@@ -180,16 +139,8 @@ contract Wormhole {
         bytes memory funcPayload = abi.encode(_contractAddress, _favour, _message, _replyTo, _rating);
         bytes memory payload = abi.encode("taskAuditDecision", funcPayload);
 
-        if (msg.value > 0) {
-            gasReceiver.payNativeGasForContractCall{ value: msg.value }(
-                address(this),
-                destinationChain,
-                destinationAddress,
-                payload,
-                msg.sender
-            );
-        }
-        gateway.callContract(destinationChain, destinationAddress, payload);
+        _sendMessageToRecipient(destAddress, destChainId, payload, nonce);
+        nonce++;
     }
 
     function sendMessage(address _contractAddress, string memory _message, uint256 _replyTo)
@@ -200,16 +151,8 @@ contract Wormhole {
         bytes memory funcPayload = abi.encode(_contractAddress, _message, _replyTo);
         bytes memory payload = abi.encode("sendMessage", funcPayload);
 
-        if (msg.value > 0) {
-            gasReceiver.payNativeGasForContractCall{ value: msg.value }(
-                address(this),
-                destinationChain,
-                destinationAddress,
-                payload,
-                msg.sender
-            );
-        }
-        gateway.callContract(destinationChain, destinationAddress, payload);
+        _sendMessageToRecipient(destAddress, destChainId, payload, nonce);
+        nonce++;
     }
 
     event Logs(string logname, string sourceChain, string sourceAddress, bytes payload);
@@ -253,15 +196,52 @@ contract Wormhole {
         uint256 _replyTo
     );
     
-    // Handles calls created by setAndSend. Updates this contract's value
-    function _execute(
-        string calldata _sourceChain,
-        string calldata _sourceAddress,
-        bytes calldata _payload
-    ) internal override {
-        emit Logs('axelarExecute', _sourceChain, _sourceAddress, _payload);
 
-        (string memory functionName, bytes memory funcPayload) = abi.decode(_payload, (string, bytes));
+    function processMyMessage(bytes memory VAA) public {
+        // This call accepts single VAAs and headless VAAs
+        (IWormhole.VM memory vm, bool valid, string memory reason) = core_bridge
+            .parseAndVerifyVM(VAA);
+
+        // Ensure core contract verifies the VAA
+        require(valid, reason);
+
+        // Ensure the emitterAddress of this VAA is a trusted address
+        require(
+            myTrustedContracts[vm.emitterAddress][vm.emitterChainId],
+            "Invalid emitter address!"
+        );
+
+        // Check that the VAA hasn't already been processed (replay protection)
+        require(!processedMessages[vm.hash], "Message already processed");
+
+        // Parse intended data
+        // You could attempt to parse the sender from the bytes32, but that's hard, hence why address was included in the payload
+        (
+            address intendedRecipient,
+            uint16 _chainId,
+            address sender,
+            bytes memory payload
+        ) = abi.decode(vm.payload, (address, uint16, address, bytes));
+
+        // Check that the contract which is processing this VAA is the intendedRecipient
+        // If the two aren't equal, this VAA may have bypassed its intended entrypoint.
+        // This exploit is referred to as 'scooping'.
+        require(
+            intendedRecipient == address(this),
+            "Not the intended receipient!"
+        );
+
+        // Check that the contract that is processing this VAA is the intended chain.
+        // By default, a message is accessible by all chains, so we have to define a destination chain & check for it.
+        require(_chainId == chainId, "Not the intended chain!");
+
+        // Add the VAA to processed messages so it can't be replayed
+        processedMessages[vm.hash] = true;
+
+        // The message content can now be trusted, slap into messages
+        // lastMessage[sender] = message;
+
+        (string memory functionName, bytes memory funcPayload) = abi.decode(payload, (string, bytes));
 
         if(keccak256(bytes(functionName)) == keccak256("createTaskContract")){
             (string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount) = abi.decode(funcPayload, (string, string, string, string, string, uint256));
