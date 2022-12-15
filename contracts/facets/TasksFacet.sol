@@ -48,6 +48,12 @@ contract TasksFacet {
     payable
     returns (address)
     {
+
+        address sender;
+        if(msg.sender == ''){
+            
+        }
+
         TaskContract taskContract = new TaskContract{value: msg.value}(
             _nanoId,
             _taskType,
