@@ -32,7 +32,7 @@ Use deploy.js with --upgrade argument
 
 ## Deploying
 
-Please first deploy to Moonbeam, and then to Mumbai network, in order for interchain smart contracts to work out of the box.
+Please first deploy to Moonbase-alpha, and then to Mumbai network, in order for interchain smart contracts to work out of the box.
 
 The `scripts/deploy.js` file shows how to deploy a diamond.
 
