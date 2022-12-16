@@ -34,7 +34,11 @@ Use deploy.js with --upgrade argument
 
 Please first deploy to Moonbase-alpha, and then to Mumbai network, in order for interchain smart contracts to work out of the box.
 
+This repository contains both standalone interchain contracts in ./contracts/contracts and Diamond interchain facets in ./facets/interchain.
+
 The `scripts/deploy.js` file shows how to deploy a diamond.
+
+Standalone interchain:
 
 `scripts/deploy-axelar.js`to deploy Axelar integration.
 

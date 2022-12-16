@@ -60,6 +60,7 @@ contract AxelarFacet is IAxelarExecutable {
     // }
 
     function createTaskContract(
+        address _sender,
         string memory _nanoId,
         string memory _taskType,
         string memory _title,
@@ -68,6 +69,7 @@ contract AxelarFacet is IAxelarExecutable {
         uint256 _amount
     ) external payable {
         bytes memory funcPayload = abi.encode(
+            _sender,
             _nanoId,
             _taskType,
             _title,
@@ -95,11 +97,13 @@ contract AxelarFacet is IAxelarExecutable {
     }
 
     function taskParticipate(
+        address _sender,
         address _contractAddress,
         string memory _message,
         uint256 _replyTo
     ) external payable {
         bytes memory funcPayload = abi.encode(
+            _sender,
             _contractAddress,
             _message,
             _replyTo
@@ -124,11 +128,13 @@ contract AxelarFacet is IAxelarExecutable {
     }
 
     function taskAuditParticipate(
+        address _sender,
         address _contractAddress,
         string memory _message,
         uint256 _replyTo
     ) external payable {
         bytes memory funcPayload = abi.encode(
+            _sender,
             _contractAddress,
             _message,
             _replyTo
@@ -153,6 +159,7 @@ contract AxelarFacet is IAxelarExecutable {
     }
 
     function taskStateChange(
+        address _sender,
         address _contractAddress,
         address payable _participant,
         string memory _state,
@@ -161,6 +168,7 @@ contract AxelarFacet is IAxelarExecutable {
         uint256 _rating
     ) external payable {
         bytes memory funcPayload = abi.encode(
+            _sender,
             _contractAddress,
             _participant,
             _state,
@@ -188,6 +196,7 @@ contract AxelarFacet is IAxelarExecutable {
     }
 
     function taskAuditDecision(
+        address _sender,
         address _contractAddress,
         string memory _favour,
         string memory _message,
@@ -195,6 +204,7 @@ contract AxelarFacet is IAxelarExecutable {
         uint256 _rating
     ) external payable {
         bytes memory funcPayload = abi.encode(
+            _sender,
             _contractAddress,
             _favour,
             _message,
@@ -221,11 +231,13 @@ contract AxelarFacet is IAxelarExecutable {
     }
 
     function sendMessage(
+        address _sender,
         address _contractAddress,
         string memory _message,
         uint256 _replyTo
     ) external payable {
         bytes memory funcPayload = abi.encode(
+            _sender,
             _contractAddress,
             _message,
             _replyTo
@@ -310,6 +322,7 @@ contract AxelarFacet is IAxelarExecutable {
 
         if (keccak256(bytes(functionName)) == keccak256("createTaskContract")) {
             (
+                address _sender,
                 string memory _nanoId,
                 string memory _taskType,
                 string memory _title,
@@ -318,7 +331,7 @@ contract AxelarFacet is IAxelarExecutable {
                 uint256 _amount
             ) = abi.decode(
                     funcPayload,
-                    (string, string, string, string, string, uint256)
+                    (address, string, string, string, string, string, uint256)
                 );
             emit TaskContractCreating(
                 _nanoId,
@@ -330,6 +343,7 @@ contract AxelarFacet is IAxelarExecutable {
             );
             TasksFacet(_storage.configAxelar.destinationDiamond)
                 .createTaskContract(
+                    _sender,
                     _nanoId,
                     _taskType,
                     _title,
@@ -341,22 +355,25 @@ contract AxelarFacet is IAxelarExecutable {
             keccak256(bytes(functionName)) == keccak256("taskParticipate")
         ) {
             (
+                address _sender,
                 address payable _contractAddress,
                 string memory _message,
                 uint256 _replyTo
-            ) = abi.decode(funcPayload, (address, string, uint256));
+            ) = abi.decode(funcPayload, (address, address, string, uint256));
             emit TaskParticipating(_contractAddress, _message, _replyTo);
-            TaskContract(_contractAddress).taskParticipate(_message, _replyTo);
+            TaskContract(_contractAddress).taskParticipate(_sender, _message, _replyTo);
         } else if (
             keccak256(bytes(functionName)) == keccak256("taskAuditParticipate")
         ) {
             (
+                address _sender,
                 address payable _contractAddress,
                 string memory _message,
                 uint256 _replyTo
-            ) = abi.decode(funcPayload, (address, string, uint256));
+            ) = abi.decode(funcPayload, (address, address, string, uint256));
             emit TaskParticipating(_contractAddress, _message, _replyTo);
             TaskContract(_contractAddress).taskAuditParticipate(
+                _sender,
                 _message,
                 _replyTo
             );
@@ -364,6 +381,7 @@ contract AxelarFacet is IAxelarExecutable {
             keccak256(bytes(functionName)) == keccak256("taskStateChange")
         ) {
             (
+                address _sender,
                 address payable _contractAddress,
                 address payable _participant,
                 string memory _state,
@@ -372,7 +390,7 @@ contract AxelarFacet is IAxelarExecutable {
                 uint256 _rating
             ) = abi.decode(
                     funcPayload,
-                    (address, address, string, string, uint256, uint256)
+                    (address, address, address, string, string, uint256, uint256)
                 );
             emit TaskStateChanging(
                 _contractAddress,
@@ -383,6 +401,7 @@ contract AxelarFacet is IAxelarExecutable {
                 _rating
             );
             TaskContract(_contractAddress).taskStateChange(
+                _sender,
                 _participant,
                 _state,
                 _message,
@@ -393,6 +412,7 @@ contract AxelarFacet is IAxelarExecutable {
             keccak256(bytes(functionName)) == keccak256("taskAuditDecision")
         ) {
             (
+                address _sender,
                 address payable _contractAddress,
                 string memory _favour,
                 string memory _message,
@@ -400,7 +420,7 @@ contract AxelarFacet is IAxelarExecutable {
                 uint256 _rating
             ) = abi.decode(
                     funcPayload,
-                    (address, string, string, uint256, uint256)
+                    (address, address, string, string, uint256, uint256)
                 );
             emit taskAuditDecisioning(
                 _contractAddress,
@@ -410,6 +430,7 @@ contract AxelarFacet is IAxelarExecutable {
                 _rating
             );
             TaskContract(_contractAddress).taskAuditDecision(
+                _sender,
                 _favour,
                 _message,
                 _replyTo,
@@ -417,12 +438,13 @@ contract AxelarFacet is IAxelarExecutable {
             );
         } else if (keccak256(bytes(functionName)) == keccak256("sendMessage")) {
             (
+                address _sender,
                 address payable _contractAddress,
                 string memory _message,
                 uint256 _replyTo
-            ) = abi.decode(funcPayload, (address, string, uint256));
+            ) = abi.decode(funcPayload, (address, address, string, uint256));
             emit TaskSendMessaging(_contractAddress, _message, _replyTo);
-            TaskContract(_contractAddress).sendMessage(_message, _replyTo);
+            TaskContract(_contractAddress).sendMessage(_sender, _message, _replyTo);
         }
     }
 
