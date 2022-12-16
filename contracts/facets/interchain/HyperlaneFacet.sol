@@ -12,7 +12,7 @@ contract HyperlaneFacet {
 
     event SentMessage(uint32 destinationDomain, address destinationAddress, bytes payload);
 
-    function createTaskContract(
+    function createTaskContractHyperlane(
         address _sender,
         string memory _nanoId,
         string memory _taskType,
@@ -39,12 +39,12 @@ contract HyperlaneFacet {
         emit SentMessage(_storage.configHyperlane.destinationDomain, _storage.configHyperlane.destinationAddress, payload);
     }
 
-    function taskParticipate(
+    function taskParticipateHyperlane(
         address _sender,
         address _contractAddress,
         string memory _message,
         uint256 _replyTo
-    ) external payable {
+    ) external {
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -60,12 +60,12 @@ contract HyperlaneFacet {
         emit SentMessage(_storage.configHyperlane.destinationDomain, _storage.configHyperlane.destinationAddress, payload);
     }
 
-    function taskAuditParticipate(
+    function taskAuditParticipateHyperlane(
         address _sender,
         address _contractAddress,
         string memory _message,
         uint256 _replyTo
-    ) external payable {
+    ) external {
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -81,7 +81,7 @@ contract HyperlaneFacet {
         emit SentMessage(_storage.configHyperlane.destinationDomain, _storage.configHyperlane.destinationAddress, payload);
     }
 
-    function taskStateChange(
+    function taskStateChangeHyperlane(
         address _sender,
         address _contractAddress,
         address payable _participant,
@@ -89,7 +89,7 @@ contract HyperlaneFacet {
         string memory _message,
         uint256 _replyTo,
         uint256 _rating
-    ) external payable {
+    ) external {
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -108,14 +108,14 @@ contract HyperlaneFacet {
         emit SentMessage(_storage.configHyperlane.destinationDomain, _storage.configHyperlane.destinationAddress, payload);
     }
 
-    function taskAuditDecision(
+    function taskAuditDecisionHyperlane(
         address _sender,
         address _contractAddress,
         string memory _favour,
         string memory _message,
         uint256 _replyTo,
         uint256 _rating
-    ) external payable {
+    ) external {
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -133,12 +133,12 @@ contract HyperlaneFacet {
         emit SentMessage(_storage.configHyperlane.destinationDomain, _storage.configHyperlane.destinationAddress, payload);
     }
 
-    function sendMessage(
+    function sendMessageHyperlane(
         address _sender,
         address _contractAddress,
         string memory _message,
         uint256 _replyTo
-    ) external payable {
+    ) external {
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -356,9 +356,5 @@ contract HyperlaneFacet {
 
 }
 
-pragma solidity ^0.8.9;
-
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
 
 

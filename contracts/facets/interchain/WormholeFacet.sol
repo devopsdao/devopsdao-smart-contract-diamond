@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
 import "../../external/wormhole/interfaces/IWormhole.sol";
@@ -45,7 +45,7 @@ contract WormholeFacet {
         _storage.dataWormhole.myTrustedContracts[sender][_chainId] = true;
     }
 
-    function createTaskContract(
+    function createTaskContractWormhole(
         address _sender,
         string memory _nanoId,
         string memory _taskType,
@@ -53,7 +53,7 @@ contract WormholeFacet {
         string memory _description,
         string memory _symbol,
         uint256 _amount
-    ) external payable {
+    ) external {
         bytes memory funcPayload = abi.encode(
             _sender,
             _nanoId,
@@ -69,12 +69,12 @@ contract WormholeFacet {
         _storage.dataWormhole.nonce++;
     }
 
-    function taskParticipate(
+    function taskParticipateWormhole(
         address _sender,
         address _contractAddress,
         string memory _message,
         uint256 _replyTo
-    ) external payable {
+    ) external {
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -87,12 +87,12 @@ contract WormholeFacet {
         _storage.dataWormhole.nonce++;
     }
 
-    function taskAuditParticipate(
+    function taskAuditParticipateWormhole(
         address _sender,
         address _contractAddress,
         string memory _message,
         uint256 _replyTo
-    ) external payable {
+    ) external {
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -105,7 +105,7 @@ contract WormholeFacet {
         _storage.dataWormhole.nonce++;
     }
 
-    function taskStateChange(
+    function taskStateChangeWormhole(
         address _sender,
         address _contractAddress,
         address payable _participant,
@@ -113,7 +113,7 @@ contract WormholeFacet {
         string memory _message,
         uint256 _replyTo,
         uint256 _rating
-    ) external payable {
+    ) external {
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -129,14 +129,14 @@ contract WormholeFacet {
         _storage.dataWormhole.nonce++;
     }
 
-    function taskAuditDecision(
+    function taskAuditDecisionWormhole(
         address _sender,
         address _contractAddress,
         string memory _favour,
         string memory _message,
         uint256 _replyTo,
         uint256 _rating
-    ) external payable {
+    ) external {
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -151,12 +151,12 @@ contract WormholeFacet {
         _storage.dataWormhole.nonce++;
     }
 
-    function sendMessage(
+    function sendMessageWormhole(
         address _sender,
         address _contractAddress,
         string memory _message,
         uint256 _replyTo
-    ) external payable {
+    ) external {
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,

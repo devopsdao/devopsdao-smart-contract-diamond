@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity 0.8.17;
 pragma abicoder v2;
 
 import "../../external/layerzero/interfaces/ILayerZeroEndpoint.sol";
@@ -19,7 +19,7 @@ contract LayerzeroFacet is ILayerZeroReceiver {
     
     event Logs(string logname, uint16 sourceChain, bytes sourceAddress, uint _nonce, bytes payload);
 
-    function createTaskContract(
+    function createTaskContractLayerzero(
         address _sender,
         string memory _nanoId,
         string memory _taskType,
@@ -52,12 +52,12 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         );
     }
 
-    function taskParticipate(
+    function taskParticipateLayerzero(
         address _sender,
         address _contractAddress,
         string memory _message,
         uint256 _replyTo
-    ) external payable {
+    ) external payable{
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -79,12 +79,12 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         );
     }
 
-    function taskAuditParticipate(
+    function taskAuditParticipateLayerzero(
         address _sender,
         address _contractAddress,
         string memory _message,
         uint256 _replyTo
-    ) external payable {
+    ) external payable{
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -106,7 +106,7 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         );
     }
 
-    function taskStateChange(
+    function taskStateChangeLayerzero(
         address _sender,
         address _contractAddress,
         address payable _participant,
@@ -114,7 +114,7 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         string memory _message,
         uint256 _replyTo,
         uint256 _rating
-    ) external payable {
+    ) external payable{
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -139,14 +139,14 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         );
     }
 
-    function taskAuditDecision(
+    function taskAuditDecisionLayerzero(
         address _sender,
         address _contractAddress,
         string memory _favour,
         string memory _message,
         uint256 _replyTo,
         uint256 _rating
-    ) external payable {
+    ) external payable{
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -170,12 +170,12 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         );
     }
 
-    function sendMessage(
+    function sendMessageLayerzero(
         address _sender,
         address _contractAddress,
         string memory _message,
         uint256 _replyTo
-    ) external payable {
+    ) external payable{
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,

@@ -53,7 +53,7 @@ contract AxelarFacet is IAxelarExecutable {
         // _executeWithToken(sourceChain, sourceAddress, payload, tokenSymbol, amount);
     }
 
-    function createTaskContract(
+    function createTaskContractAxelar(
         address _sender,
         string memory _nanoId,
         string memory _taskType,
@@ -90,12 +90,12 @@ contract AxelarFacet is IAxelarExecutable {
         );
     }
 
-    function taskParticipate(
+    function taskParticipateAxelar(
         address _sender,
         address _contractAddress,
         string memory _message,
         uint256 _replyTo
-    ) external payable {
+    ) external payable{
         bytes memory funcPayload = abi.encode(
             _sender,
             _contractAddress,
@@ -121,7 +121,7 @@ contract AxelarFacet is IAxelarExecutable {
         );
     }
 
-    function taskAuditParticipate(
+    function taskAuditParticipateAxelar(
         address _sender,
         address _contractAddress,
         string memory _message,
@@ -152,7 +152,7 @@ contract AxelarFacet is IAxelarExecutable {
         );
     }
 
-    function taskStateChange(
+    function taskStateChangeAxelar(
         address _sender,
         address _contractAddress,
         address payable _participant,
@@ -189,7 +189,7 @@ contract AxelarFacet is IAxelarExecutable {
         );
     }
 
-    function taskAuditDecision(
+    function taskAuditDecisionAxelar(
         address _sender,
         address _contractAddress,
         string memory _favour,
@@ -224,7 +224,7 @@ contract AxelarFacet is IAxelarExecutable {
         );
     }
 
-    function sendMessage(
+    function sendMessageAxelar(
         address _sender,
         address _contractAddress,
         string memory _message,
