@@ -58,7 +58,7 @@ async function deployDiamond () {
   console.log('DiamondInit deployed:', diamondInit.address)
 
 
-  const LibNames = ['LibAppStorage', 'LibUtils'];
+  const LibNames = ['LibAppStorage', 'LibInterchain', 'LibUtils'];
   let libAddresses = {};
 
   for (const LibName of LibNames) {
@@ -86,12 +86,34 @@ async function deployDiamond () {
       name: 'TasksFacet',
       libraries: {
         'LibAppStorage': libAddresses.LibAppStorage,
+        'LibAppStorage': libAddresses.LibAppStorage,
         'LibUtils': libAddresses.LibUtils,
       }
     },
     {
-      name: 'TokenFacet',
-    }
+      name: 'AxelarFacet',
+      libraries: {
+        'LibInterchain': libAddresses.LibAppStorage,
+      }
+    },
+    {
+      name: 'HyperlaneFacet',
+      libraries: {
+        'LibInterchain': libAddresses.LibAppStorage,
+      }
+    },
+    {
+      name: 'LayerzeroFacet',
+      libraries: {
+        'LibInterchain': libAddresses.LibAppStorage,
+      }
+    },
+    {
+      name: 'WormholeFacet',
+      libraries: {
+        'LibInterchain': libAddresses.LibAppStorage,
+      }
+    },
   ]
 
   // The `facetCuts` variable is the FacetCut[] that contains the functions to add during diamond deployment

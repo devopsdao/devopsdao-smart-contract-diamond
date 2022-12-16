@@ -53,12 +53,6 @@ contract AxelarFacet is IAxelarExecutable {
         // _executeWithToken(sourceChain, sourceAddress, payload, tokenSymbol, amount);
     }
 
-    // constructor(address gateway_, address gasReceiver_, string memory destinationChain_, string memory destinationAddress_, address destinationDiamond_) AxelarExecutable(gateway_) {
-    //     gateway = IAxelarGateway(_storage.configAxelar.gateway);
-    //     gasReceiver = IAxelarGasService(_storage.configAxelar.gasReceiver);
-
-    // }
-
     function createTaskContract(
         address _sender,
         string memory _nanoId,
@@ -270,6 +264,7 @@ contract AxelarFacet is IAxelarExecutable {
     event LogSimple(string logname);
 
     event TaskContractCreating(
+        address _sender,
         string _nanoId,
         string _taskType,
         string _title,
@@ -279,12 +274,14 @@ contract AxelarFacet is IAxelarExecutable {
     );
 
     event TaskParticipating(
+        address _sender,
         address _contractAddress,
         string _message,
         uint256 _replyTo
     );
 
     event TaskStateChanging(
+        address _sender,
         address _contractAddress,
         address _participant,
         string _state,
@@ -294,6 +291,7 @@ contract AxelarFacet is IAxelarExecutable {
     );
 
     event taskAuditDecisioning(
+        address _sender,
         address _contractAddress,
         string _favour,
         string _message,
@@ -302,6 +300,7 @@ contract AxelarFacet is IAxelarExecutable {
     );
 
     event TaskSendMessaging(
+        address _sender,
         address _contractAddress,
         string _message,
         uint256 _replyTo
@@ -334,6 +333,7 @@ contract AxelarFacet is IAxelarExecutable {
                     (address, string, string, string, string, string, uint256)
                 );
             emit TaskContractCreating(
+                _sender,
                 _nanoId,
                 _taskType,
                 _title,
@@ -360,7 +360,7 @@ contract AxelarFacet is IAxelarExecutable {
                 string memory _message,
                 uint256 _replyTo
             ) = abi.decode(funcPayload, (address, address, string, uint256));
-            emit TaskParticipating(_contractAddress, _message, _replyTo);
+            emit TaskParticipating(_sender, _contractAddress, _message, _replyTo);
             TaskContract(_contractAddress).taskParticipate(_sender, _message, _replyTo);
         } else if (
             keccak256(bytes(functionName)) == keccak256("taskAuditParticipate")
@@ -371,7 +371,7 @@ contract AxelarFacet is IAxelarExecutable {
                 string memory _message,
                 uint256 _replyTo
             ) = abi.decode(funcPayload, (address, address, string, uint256));
-            emit TaskParticipating(_contractAddress, _message, _replyTo);
+            emit TaskParticipating(_sender, _contractAddress, _message, _replyTo);
             TaskContract(_contractAddress).taskAuditParticipate(
                 _sender,
                 _message,
@@ -393,6 +393,7 @@ contract AxelarFacet is IAxelarExecutable {
                     (address, address, address, string, string, uint256, uint256)
                 );
             emit TaskStateChanging(
+                _sender,
                 _contractAddress,
                 _participant,
                 _state,
@@ -423,6 +424,7 @@ contract AxelarFacet is IAxelarExecutable {
                     (address, address, string, string, uint256, uint256)
                 );
             emit taskAuditDecisioning(
+                _sender,
                 _contractAddress,
                 _favour,
                 _message,
@@ -443,7 +445,7 @@ contract AxelarFacet is IAxelarExecutable {
                 string memory _message,
                 uint256 _replyTo
             ) = abi.decode(funcPayload, (address, address, string, uint256));
-            emit TaskSendMessaging(_contractAddress, _message, _replyTo);
+            emit TaskSendMessaging(_sender, _contractAddress, _message, _replyTo);
             TaskContract(_contractAddress).sendMessage(_sender, _message, _replyTo);
         }
     }

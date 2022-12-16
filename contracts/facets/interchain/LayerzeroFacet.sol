@@ -16,11 +16,6 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         uint16 _count,
         bytes _payload
     );
-
-
-    // constructor(address _endpoint, uint16 destinationChain_, address destinationAddress_, address destinationDiamond_) {
-    //     endpoint = ILayerZeroEndpoint(_storage.configLayerzero.endpoint);
-    // }
     
     event Logs(string logname, uint16 sourceChain, bytes sourceAddress, uint _nonce, bytes payload);
 
