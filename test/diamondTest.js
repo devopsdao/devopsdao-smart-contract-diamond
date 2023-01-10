@@ -297,52 +297,7 @@ describe('DiamondTest', async function () {
     assert.equal(getTaskInfoAudit.messages[5].sender, signers[0].address)
     assert.equal(getTaskInfoAudit.messages[5].taskState, taskStateAudit)
     assert.equal(getTaskInfoAudit.messages[5].replyTo, messageReplyTo)
-    await tokenFacet.on("URI", (URI, type, event) => {
-      console.log('received EVENTTTTTTTTTTTTTTTTTTTTTTT')
-      console.log(URI, type);
-    });
 
-
-
-    const createAuditorNFT = await tokenFacet.connect(signers[0]).create('https://example.com', 'auditor', true)
-    const createAuditorNFTReceipt = await createAuditorNFT.wait()
-
-    const createAuditorNFTEvent = createAuditorNFTReceipt.events[1];
-    const { value:auditorNFTuri, id:auditorNFTid } = createAuditorNFTEvent.args;
-    console.log(auditorNFTuri)
-    console.log(auditorNFTid)
-    // console.log(createAuditorNFTReceipt)
-    // console.log(createAuditorNFTReceipt.events[0].args)
-
-    // expectEvent(createAuditorNFTReceipt, 'URI', {
-    //   from: signers[0],
-    //   to: signers[0],
-    //   value: this.value,
-    // });
-
-  
-
-    const mintAuditorNFT = await tokenFacet.connect(signers[0]).mintNonFungible(auditorNFTid, [signers[2].address], )
-
-    const mintAuditorNFT2 = await tokenFacet.connect(signers[0]).mintNonFungible(auditorNFTid, [signers[2].address], )
-
-
-    const mintAuditorNFTReceipt = await mintAuditorNFT.wait()
-
-    const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0];
-    const { value:auditorNFTuri1, id:auditorNFTid1 } = mintAuditorNFTEvent.args;
-    console.log('minted NFT js:')
-    console.log(auditorNFTuri1)
-    console.log(auditorNFTid1)
-
-    const auditorNFTBalance1 = await tokenFacet.connect(signers[2]).balanceOf(signers[2].address, auditorNFTid1)
-    console.log('balance js:')
-    console.log(auditorNFTBalance1)
-
-
-    const auditorNFTBalance = await tokenFacet.connect(signers[2]).balanceOfName(signers[2].address, 'auditor')
-    console.log('balance of name js:')
-    console.log(auditorNFTBalance)
 
     const messageTextAuditParticipate = 'I am honorable auditor'
     taskAuditParticipate = await taskContract.connect(signers[2]).taskAuditParticipate(signers[2].address, messageTextAuditParticipate, messageReplyTo)
