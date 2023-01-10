@@ -4,8 +4,7 @@ pragma abicoder v2;
 
 import "../../external/layerzero/interfaces/ILayerZeroEndpoint.sol";
 import "../../external/layerzero/interfaces/ILayerZeroReceiver.sol";
-import "../../libraries/LibInterchain.sol";
-import "../TasksFacet.sol";
+import "../TaskCreateFacet.sol";
 
 contract LayerzeroFacet is ILayerZeroReceiver {
     InterchainStorage internal _storage;
@@ -21,21 +20,11 @@ contract LayerzeroFacet is ILayerZeroReceiver {
 
     function createTaskContractLayerzero(
         address _sender,
-        string memory _nanoId,
-        string memory _taskType,
-        string memory _title,
-        string memory _description,
-        string memory _symbol,
-        uint256 _amount
+        TaskData memory _taskData
     ) external payable {
         bytes memory funcPayload = abi.encode(
             _sender,
-            _nanoId,
-            _taskType,
-            _title,
-            _description,
-            _symbol,
-            _amount
+            _taskData
         );
         bytes memory payload = abi.encode("createTaskContract", funcPayload);
 
@@ -203,8 +192,9 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         string _taskType,
         string _title,
         string _description,
-        string _symbol,
-        uint256 _amount
+        string[] _tags,
+        string[] _symbol,
+        uint256[] _amount
     );
 
     event TaskParticipating(
@@ -271,34 +261,25 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         if (keccak256(bytes(functionName)) == keccak256("createTaskContract")) {
             (
                 address _sender,
-                string memory _nanoId,
-                string memory _taskType,
-                string memory _title,
-                string memory _description,
-                string memory _symbol,
-                uint256 _amount
+                TaskData memory _taskData
             ) = abi.decode(
                     funcPayload,
-                    (address, string, string, string, string, string, uint256)
+                    (address, TaskData)
                 );
             emit TaskContractCreating(
                 _sender,
-                _nanoId,
-                _taskType,
-                _title,
-                _description,
-                _symbol,
-                _amount
+                _taskData.nanoId,
+                _taskData.taskType,
+                _taskData.title,
+                _taskData.description,
+                _taskData.tags,
+                _taskData.symbols,
+                _taskData.amounts
             );
-            TasksFacet(_storage.configLayerzero.destinationDiamond)
+            TaskCreateFacet(_storage.configLayerzero.destinationDiamond)
                 .createTaskContract(
-                    _sender,
-                    _nanoId,
-                    _taskType,
-                    _title,
-                    _description,
-                    _symbol,
-                    _amount
+                    payable(_sender),
+                    _taskData
                 );
         } else if (
             keccak256(bytes(functionName)) == keccak256("taskParticipate")

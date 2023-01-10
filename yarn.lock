@@ -902,7 +902,7 @@
     "debug" "^4.1.1"
     "proper-lockfile" "^4.1.1"
 
-"@openzeppelin/test-helpers@^0.5.15":
+"@openzeppelin/test-helpers@^0.5.15", "@openzeppelin/test-helpers@^0.5.16":
   "integrity" "sha512-T1EvspSfH1qQO/sgGlskLfYVBbqzJR23SZzYl/6B2JnT4EhThcI85UpvDk0BkLWKaDScQTabGHt4GzHW+3SfZg=="
   "resolved" "https://registry.npmjs.org/@openzeppelin/test-helpers/-/test-helpers-0.5.16.tgz"
   "version" "0.5.16"

@@ -7,7 +7,7 @@ import "../../libraries/structs/ERC1155FacetStorage.sol";
 contract ERC1155StorageFacet {
 
   function erc1155Storage() internal pure returns (ERC1155FacetStorage storage ds) {
-      bytes32 position =  keccak256("diamond.erc1155.diamond.storage");
+      bytes32 position =  keccak256("diamond.erc1155.storage");
       assembly {
           ds.slot := position
       }

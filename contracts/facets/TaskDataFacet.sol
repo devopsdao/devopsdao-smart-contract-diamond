@@ -1,91 +1,43 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import {LibDiamond} from '../libraries/LibDiamond.sol';
+// import {LibDiamond} from '../libraries/LibDiamond.sol';
 
-import '../interfaces/IDiamondLoupe.sol';
-
-import { IAxelarGateway } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol';
-import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol';
+// import '../interfaces/IDiamondLoupe.sol';
 
 
-import "../libraries/LibAppStorage.sol";
-import "../libraries/LibInterchain.sol";
+import "../libraries/LibTasks.sol";
+// import "../libraries/LibInterchain.sol";
 import "../libraries/LibUtils.sol";
 
-import "../contracts/TaskContract.sol";
+// import "../contracts/TaskContract.sol";
+// import "../facets/tokenstorage/ERC1155StorageFacet.sol";
 import "../facets/TokenFacet.sol";
 
 import "hardhat/console.sol";
 
 
 
-contract TasksFacet {
-    TasksStorage internal _storage;
-    InterchainStorage internal _storageInterchain;
-    IAxelarGateway public immutable gateway;
+contract TaskDataFacet  {
+    TaskStorage internal _storage;
+    // InterchainStorage internal _storageInterchain;
 
     event TaskCreated(address contractAdr, string message, uint timestamp);
 
+    // struct TaskContractData{
+    //     address sender;
+    //     string nanoId;
+    //     string taskType;
+    //     string title;
+    //     string description;
+    //     string[] tags;
+    //     string[] symbols;
+    //     uint256[] amounts;
+    // }
 
-    event JobContractCreated(
-        string nanoId,
-        address taskAddress,
-        address taskOwner,
-        string title,
-        string description,
-        string symbol,
-        uint256 amount
-    );
 
-
-    constructor() {
-        address gateway_ = 0x5769D84DD62a6fD969856c75c7D321b84d455929;
-        gateway = IAxelarGateway(gateway_);
-    }
 
     // initial: new, contractor chosen: agreed, work in progress: progress, completed: completed, canceled
-
-    function createTaskContract(address _sender, string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount)
-    external
-    payable
-    returns (address)
-    {
-
-        address sender;
-        if(msg.sender == _storageInterchain.configAxelar.sourceAddress 
-            || msg.sender == _storageInterchain.configHyperlane.sourceAddress 
-            || msg.sender == _storageInterchain.configLayerzero.sourceAddress
-            || msg.sender == _storageInterchain.configWormhole.sourceAddress
-        ){
-            sender = _sender;
-        }
-        else{
-            sender = msg.sender;
-        }
-
-        TaskContract taskContract = new TaskContract{value: msg.value}(
-            _nanoId,
-            _taskType,
-            _title,
-            _description,
-            _symbol,
-            payable(msg.sender)
-        );
-
-
-        if (keccak256(bytes(_symbol)) != keccak256(bytes("ETH"))) {
-            address tokenAddress = gateway.tokenAddresses(_symbol);
-            // amount = IERC20(tokenAddress).balanceOf(contractAddress);
-            IERC20(tokenAddress).transferFrom(msg.sender, address(taskContract), _amount);
-        }
-        // IERC20(tokenAddress).approve(address(gateway), _amount);
-        _storage.taskContracts.push(address(taskContract));
-        _storage.ownerTasks[sender].push(address(taskContract));
-        emit TaskCreated(address(taskContract), 'createTaskContract', block.timestamp);
-
-        return address(taskContract);
-    }
 
     function addTaskToBlacklist(address taskAddress)
     external
@@ -115,6 +67,7 @@ contract TasksFacet {
     view
     returns (address[] memory)
     {
+        // TaskStorage storage _storage = LibTasks.taskStorage();
         // console.log(
         // "msg.sender %s",
         //     msg.sender
@@ -159,5 +112,6 @@ contract TasksFacet {
     {
         return _storage.participantTasks[participant];
     }
+
 }
 

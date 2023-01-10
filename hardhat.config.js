@@ -8,6 +8,7 @@ require('solidity-coverage');
 // require("hardhat-gas-reporter");
 require("hardhat-tracer");
 require('hardhat-abi-exporter');
+require("@openzeppelin/test-helpers");
 // const { ethers } = require("ethers");
 
 
@@ -86,6 +87,7 @@ module.exports = {
     }
   },
   settings: {
+    viaIR: true,
     optimizer: {
       enabled: true,
       runs: 1000,

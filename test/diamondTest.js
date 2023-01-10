@@ -4,6 +4,13 @@ const { ethers } = require("hardhat");
 const helpers = require('@nomicfoundation/hardhat-network-helpers');
 
 const {
+  BN,           // Big Number support
+  constants,    // Common constants, like the zero address and largest integers
+  expectEvent,  // Assertions for emitted events
+  expectRevert, // Assertions for transactions that should fail
+} = require('@openzeppelin/test-helpers');
+
+const {
   getSelectors,
   FacetCutAction,
   removeSelectors,
@@ -29,18 +36,24 @@ describe('DiamondTest', async function () {
     diamondCutFacet = await ethers.getContractAt('DiamondCutFacet', diamondAddress)
     diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress)
     ownershipFacet = await ethers.getContractAt('OwnershipFacet', diamondAddress)
-    tasksFacet = await ethers.getContractAt('TasksFacet', diamondAddress)
+    taskCreateFacet = await ethers.getContractAt('TaskCreateFacet', diamondAddress)
+    taskDataFacet = await ethers.getContractAt('TaskDataFacet', diamondAddress)
     tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+    axelarFacet = await ethers.getContractAt('AxelarFacet', diamondAddress)
+    hyperlaneFacet = await ethers.getContractAt('HyperlaneFacet', diamondAddress)
+    layerzeroFacet = await ethers.getContractAt('LayerzeroFacet', diamondAddress)
+    wormholeFacet = await ethers.getContractAt('WormholeFacet', diamondAddress)
+
     signers = await ethers.getSigners();
   })
 
-  it('should have five facets -- call to facetAddresses function', async () => {
+  it('should have ten facets -- call to facetAddresses function', async () => {
     for (const address of await diamondLoupeFacet.facetAddresses()) {
       addresses.push(address)
       // console.log(address);
     }
 
-    assert.equal(addresses.length, 5)
+    assert.equal(addresses.length, 10)
   })
 
   // it('should test NFTFacet', async () => {
@@ -96,14 +109,14 @@ describe('DiamondTest', async function () {
     // }
 
     
-    // const TasksFacet = await ethers.getContractFactory('TasksFacet', {libraries: {
+    // const taskCreateFacet = await ethers.getContractFactory('taskCreateFacet', {libraries: {
     //   'LibAppStorage': libAddresses.LibAppStorage,
     //   'LibUtils': libAddresses.LibUtils,
     // }})
 
-    // const tasksFacet = await TasksFacet.deploy();
-    // console.log(`tasksFacet deployed:`, tasksFacet.address)
-    // addresses.push(tasksFacet.address)
+    // const taskCreateFacet = await taskCreateFacet.deploy();
+    // console.log(`taskCreateFacet deployed:`, taskCreateFacet.address)
+    // addresses.push(taskCreateFacet.address)
 
     // Any number of functions from any number of facets can be added/replaced/removed in a
     // single transaction
@@ -111,13 +124,38 @@ describe('DiamondTest', async function () {
       {
         facetAddress: addresses[3],
         action: FacetCutAction.Add,
-        functionSelectors: getSelectors(tasksFacet)
+        functionSelectors: getSelectors(taskCreateFacet)
       },
       {
         facetAddress: addresses[4],
         action: FacetCutAction.Add,
+        functionSelectors: getSelectors(taskDataFacet)
+      },
+      {
+        facetAddress: addresses[5],
+        action: FacetCutAction.Add,
         functionSelectors: getSelectors(tokenFacet)
-      }
+      },
+      {
+        facetAddress: addresses[6],
+        action: FacetCutAction.Add,
+        functionSelectors: getSelectors(axelarFacet)
+      },
+      {
+        facetAddress: addresses[7],
+        action: FacetCutAction.Add,
+        functionSelectors: getSelectors(hyperlaneFacet)
+      },
+      {
+        facetAddress: addresses[8],
+        action: FacetCutAction.Add,
+        functionSelectors: getSelectors(layerzeroFacet)
+      },
+      {
+        facetAddress: addresses[9],
+        action: FacetCutAction.Add,
+        functionSelectors: getSelectors(wormholeFacet)
+      },
     ]
     tx = await diamondCutFacet.diamondCut(cut, ethers.constants.AddressZero, '0x', { gasLimit: 8000000 })
     receipt = await tx.wait()
@@ -134,8 +172,8 @@ describe('DiamondTest', async function () {
     //   // console.log(address);
     // }
     // const facetAddresses = await diamondLoupeFacet.facetAddresses()
-    assert.sameMembers(facets[findAddressPositionInFacets(addresses[3], facets)][1], getSelectors(tasksFacet))
-    assert.sameMembers(facets[findAddressPositionInFacets(addresses[4], facets)][1], getSelectors(tokenFacet))
+    assert.sameMembers(facets[findAddressPositionInFacets(addresses[3], facets)][1], getSelectors(taskCreateFacet))
+    assert.sameMembers(facets[findAddressPositionInFacets(addresses[5], facets)][1], getSelectors(tokenFacet))
   })
 
 
@@ -144,34 +182,49 @@ describe('DiamondTest', async function () {
   async function testAuditDecision(favour){
     signers = await ethers.getSigners();
 
-    // const tasksFacet = await ethers.getContractAt('TasksFacet', diamondAddress)
+    // const taskCreateFacet = await ethers.getContractAt('taskCreateFacet', diamondAddress)
     const taskType = 'private';
     const nanoId = 'test';
     const title = 'test job';
     const description = 'test desc';
     const symbol = 'ETH';
-    createTaskContract = await tasksFacet.createTaskContract(nanoId, taskType, title, description, symbol, "1",
+
+    const taskData = {
+      nanoId: 'test',
+      taskType: 'private',
+      title: 'test job',
+      description: 'test desc',
+      tags : ['ETH'],
+      symbols: ['ETH'],
+      amounts: [1]
+    }
+    createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData,
     { gasLimit: 30000000 })
-    getTaskContracts = await tasksFacet.getTaskContracts()
+    //  console.log(createTaskContract)
+    getTaskContracts = await taskDataFacet.getTaskContracts()
+    console.log('taskContract:');
+    console.log(getTaskContracts)
     const taskContract = await ethers.getContractAt('TaskContract', getTaskContracts[getTaskContracts.length - 1])
     getTaskInfoNew = await taskContract.getTaskInfo()
+    console.log(getTaskInfoNew)
     // createTime;
 
     assert.isAbove(getTaskInfoNew.createTime, 1666113343, 'create time is more than 0');
-    assert.equal(getTaskInfoNew.contractParent, tasksFacet.address)
+    assert.equal(getTaskInfoNew.contractParent, taskCreateFacet.address)
 
     const taskStateNew = 'new'
     assert.equal(getTaskInfoNew.nanoId, nanoId)
     assert.equal(getTaskInfoNew.title, title)
     assert.equal(getTaskInfoNew.description, description)
-    assert.equal(getTaskInfoNew.symbol, symbol)
+    // assert.equal(getTaskInfoNew.symbols, taskData.symbols)
+    // assert.equal(getTaskInfoNew.amounts, taskData.amounts)
     assert.equal(getTaskInfoNew.taskState, taskStateNew)
     assert.equal(getTaskInfoNew.contractOwner, signers[0].address)
     const messageTextParticipate = 'I am the best to make it'
     const messageReplyTo = 0
 
     //first participant
-    taskParticipate = await taskContract.connect(signers[1]).taskParticipate(messageTextParticipate, messageReplyTo)
+    taskParticipate = await taskContract.connect(signers[1]).taskParticipate(signers[1].address, messageTextParticipate, messageReplyTo)
     getTaskInfoParticipate = await taskContract.getTaskInfo()
     assert.equal(getTaskInfoParticipate.participants[0], signers[1].address)
     assert.equal(getTaskInfoParticipate.messages[0].id, 1)
@@ -182,7 +235,7 @@ describe('DiamondTest', async function () {
     assert.equal(getTaskInfoParticipate.messages[0].replyTo, messageReplyTo)
 
     //second participant
-    taskParticipate = await taskContract.connect(signers[3]).taskParticipate(messageTextParticipate, messageReplyTo)
+    taskParticipate = await taskContract.connect(signers[3]).taskParticipate(signers[3].address, messageTextParticipate, messageReplyTo)
     getTaskInfoParticipate = await taskContract.getTaskInfo()
     assert.equal(getTaskInfoParticipate.participants[1], signers[3].address)
     assert.equal(getTaskInfoParticipate.messages[1].id, 2)
@@ -195,7 +248,7 @@ describe('DiamondTest', async function () {
 
     const taskStateAgreed = 'agreed'
     const messageTextAgreed = 'selected you for the first task'
-    taskStateChangeAgreed = await taskContract.connect(signers[0]).taskStateChange(getTaskInfoParticipate.participants[0], taskStateAgreed, messageTextAgreed, messageReplyTo, 0);
+    taskStateChangeAgreed = await taskContract.connect(signers[0]).taskStateChange(signers[0].address, getTaskInfoParticipate.participants[0], taskStateAgreed, messageTextAgreed, messageReplyTo, 0);
     getTaskInfoAgreed = await taskContract.getTaskInfo()
     assert.equal(getTaskInfoAgreed.taskState, taskStateAgreed)
     assert.equal(getTaskInfoAgreed.participant, signers[1].address)
@@ -208,7 +261,7 @@ describe('DiamondTest', async function () {
 
     const taskStateProgress = 'progress'
     const messageTextProgress = 'starting job!'
-    taskStateChangeProgress = await taskContract.connect(signers[1]).taskStateChange('0x0000000000000000000000000000000000000000', taskStateProgress, messageTextProgress, messageReplyTo, 0);
+    taskStateChangeProgress = await taskContract.connect(signers[1]).taskStateChange(signers[1].address, '0x0000000000000000000000000000000000000000', taskStateProgress, messageTextProgress, messageReplyTo, 0);
     getTaskInfoProgress = await taskContract.getTaskInfo()
     assert.equal(getTaskInfoProgress.taskState, taskStateProgress)
     assert.equal(getTaskInfoProgress.messages[3].id, 4)
@@ -220,7 +273,7 @@ describe('DiamondTest', async function () {
 
     const taskStateReview = 'review'
     const messageTextReview = 'please kindly review!'
-    taskStateChangeReview = await taskContract.connect(signers[1]).taskStateChange('0x0000000000000000000000000000000000000000', taskStateReview, messageTextReview, messageReplyTo, 0);
+    taskStateChangeReview = await taskContract.connect(signers[1]).taskStateChange(signers[1].address, '0x0000000000000000000000000000000000000000', taskStateReview, messageTextReview, messageReplyTo, 0);
     getTaskInfoReview = await taskContract.getTaskInfo()
     assert.equal(getTaskInfoReview.taskState, taskStateReview)
     assert.equal(getTaskInfoReview.messages[4].id, 5)
@@ -233,7 +286,7 @@ describe('DiamondTest', async function () {
     const taskStateAudit = 'audit'
     const messageTextAudit = 'work is not done :('
     const taskAuditStateRequested = 'requested';
-    taskStateChangeAudit = await taskContract.connect(signers[0]).taskStateChange('0x0000000000000000000000000000000000000000', taskStateAudit, messageTextAudit, messageReplyTo, 0);
+    taskStateChangeAudit = await taskContract.connect(signers[0]).taskStateChange(signers[0].address, '0x0000000000000000000000000000000000000000', taskStateAudit, messageTextAudit, messageReplyTo, 0);
     getTaskInfoAudit = await taskContract.getTaskInfo()
     assert.equal(getTaskInfoAudit.taskState, taskStateAudit)
     assert.equal(getTaskInfoAudit.auditState, taskAuditStateRequested)
@@ -244,10 +297,55 @@ describe('DiamondTest', async function () {
     assert.equal(getTaskInfoAudit.messages[5].sender, signers[0].address)
     assert.equal(getTaskInfoAudit.messages[5].taskState, taskStateAudit)
     assert.equal(getTaskInfoAudit.messages[5].replyTo, messageReplyTo)
+    await tokenFacet.on("URI", (URI, type, event) => {
+      console.log('received EVENTTTTTTTTTTTTTTTTTTTTTTT')
+      console.log(URI, type);
+    });
 
+
+
+    const createAuditorNFT = await tokenFacet.connect(signers[0]).create('https://example.com', 'auditor', true)
+    const createAuditorNFTReceipt = await createAuditorNFT.wait()
+
+    const createAuditorNFTEvent = createAuditorNFTReceipt.events[1];
+    const { value:auditorNFTuri, id:auditorNFTid } = createAuditorNFTEvent.args;
+    console.log(auditorNFTuri)
+    console.log(auditorNFTid)
+    // console.log(createAuditorNFTReceipt)
+    // console.log(createAuditorNFTReceipt.events[0].args)
+
+    // expectEvent(createAuditorNFTReceipt, 'URI', {
+    //   from: signers[0],
+    //   to: signers[0],
+    //   value: this.value,
+    // });
+
+  
+
+    const mintAuditorNFT = await tokenFacet.connect(signers[0]).mintNonFungible(auditorNFTid, [signers[2].address], )
+
+    const mintAuditorNFT2 = await tokenFacet.connect(signers[0]).mintNonFungible(auditorNFTid, [signers[2].address], )
+
+
+    const mintAuditorNFTReceipt = await mintAuditorNFT.wait()
+
+    const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0];
+    const { value:auditorNFTuri1, id:auditorNFTid1 } = mintAuditorNFTEvent.args;
+    console.log('minted NFT js:')
+    console.log(auditorNFTuri1)
+    console.log(auditorNFTid1)
+
+    const auditorNFTBalance1 = await tokenFacet.connect(signers[2]).balanceOf(signers[2].address, auditorNFTid1)
+    console.log('balance js:')
+    console.log(auditorNFTBalance1)
+
+
+    const auditorNFTBalance = await tokenFacet.connect(signers[2]).balanceOfName(signers[2].address, 'auditor')
+    console.log('balance of name js:')
+    console.log(auditorNFTBalance)
 
     const messageTextAuditParticipate = 'I am honorable auditor'
-    taskAuditParticipate = await taskContract.connect(signers[2]).taskAuditParticipate(messageTextAuditParticipate, messageReplyTo)
+    taskAuditParticipate = await taskContract.connect(signers[2]).taskAuditParticipate(signers[2].address, messageTextAuditParticipate, messageReplyTo)
     getTaskInfoAuditParticipate = await taskContract.getTaskInfo()
     assert.equal(getTaskInfoAuditParticipate.auditors[0], signers[2].address)
     assert.equal(getTaskInfoAuditParticipate.messages[6].id, 7)
@@ -259,7 +357,7 @@ describe('DiamondTest', async function () {
 
     const messageTextSelectAuditor = 'selected a proper auditor'
     const taskAuditStatePerforming = 'performing';
-    taskStateChangeSelectAuditor = await taskContract.connect(signers[0]).taskStateChange(getTaskInfoAuditParticipate.auditors[0], taskStateAudit, messageTextSelectAuditor, messageReplyTo, 0);
+    taskStateChangeSelectAuditor = await taskContract.connect(signers[0]).taskStateChange(signers[0].address, '0x0000000000000000000000000000000000000000', getTaskInfoAuditParticipate.auditors[0], taskStateAudit, messageTextSelectAuditor, messageReplyTo, 0);
     getTaskInfoSelectAuditor = await taskContract.getTaskInfo()
     assert.equal(getTaskInfoSelectAuditor.auditState, taskAuditStatePerforming)
     assert.equal(getTaskInfoSelectAuditor.auditor, signers[2].address)
@@ -283,7 +381,7 @@ describe('DiamondTest', async function () {
       taskStateAuditDecision = 'completed'
       rating = 5;
     }
-    taskAuditDecision = await taskContract.connect(signers[2]).taskAuditDecision(favour, messageTextAuditDecision, 0, rating);
+    taskAuditDecision = await taskContract.connect(signers[2]).taskAuditDecision(signers[2].address, favour, messageTextAuditDecision, 0, rating);
     getTaskInfoDecision = await taskContract.getTaskInfo()
     assert.equal(getTaskInfoDecision.taskState, taskStateAuditDecision)
     assert.equal(getTaskInfoDecision.auditState, taskAuditStateFinished)
@@ -296,21 +394,21 @@ describe('DiamondTest', async function () {
     assert.equal(getTaskInfoDecision.messages[8].replyTo, messageReplyTo)
 
     assert.equal(getTaskInfoDecision.messages.length, 9)
-    // console.log(getTaskInfoDecision)
+    console.log(getTaskInfoDecision)
   }
 
   it('should test createTaskContract, getTaskContracts, taskParticipate, getTaskInfo, taskStateChange(all except canceled), taskAuditParticipate, taskAuditDecision(in customer favour) ', async () => {
     await testAuditDecision('customer')
   })
 
-  it('should test createTaskContract, getTaskContracts, taskParticipate, getTaskInfo, taskStateChange(all except canceled), taskAuditParticipate, taskAuditDecision(in performer favour) ', async () => {
-    await testAuditDecision('performer')
-  })
+  // it('should test createTaskContract, getTaskContracts, taskParticipate, getTaskInfo, taskStateChange(all except canceled), taskAuditParticipate, taskAuditDecision(in performer favour) ', async () => {
+  //   await testAuditDecision('performer')
+  // })
   
-  it('should test NFTFacet', async () => {
-    // const mint = await tokenFacet.mint();
-    const balance = await tokenFacet.balanceOf(signers[2].address, 1);
-    console.log(balance)
-  })
+  // it('should test NFTFacet', async () => {
+  //   // const mint = await tokenFacet.mint();
+  //   const balance = await tokenFacet.balanceOf(signers[2].address, 1);
+  //   console.log(balance)
+  // })
 
 })

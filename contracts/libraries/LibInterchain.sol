@@ -59,7 +59,6 @@ import { LibDiamond } from "../libraries/LibDiamond.sol";
 
 
 library LibInterchain {
-    bytes32 constant DIAMOND_STORAGE_POSITION = keccak256("diamond.interchain.storage");
 
 
     // struct ChainAddresses {
@@ -67,8 +66,8 @@ library LibInterchain {
     // }
 
 
-    function diamondStorage() internal pure returns (InterchainStorage storage ds) {
-        bytes32 position = DIAMOND_STORAGE_POSITION;
+    function interchainStorage() internal pure returns (InterchainStorage storage ds) {
+        bytes32 position = keccak256("diamond.interchain.storage");
         assembly {
             ds.slot := position
         }
@@ -80,7 +79,7 @@ library LibInterchain {
         address contractAddress
     ) external {
         LibDiamond.enforceIsContractOwner();
-        InterchainStorage storage _storage = diamondStorage();
+        InterchainStorage storage _storage = interchainStorage();
         _storage.intechainAddresses[interchainName][chainName] = contractAddress;
     }
 
@@ -93,7 +92,7 @@ library LibInterchain {
         address destinationDiamond
     ) external {
         LibDiamond.enforceIsContractOwner();
-        InterchainStorage storage _storage = diamondStorage();
+        InterchainStorage storage _storage = interchainStorage();
         _storage.configAxelar.gateway = gateway;
         _storage.configAxelar.gasReceiver = gasReceiver;
         _storage.configAxelar.sourceAddress = sourceAddress;
@@ -110,7 +109,7 @@ library LibInterchain {
         address destinationDiamond
     ) external {
         LibDiamond.enforceIsContractOwner();
-        InterchainStorage storage _storage = diamondStorage();
+        InterchainStorage storage _storage = interchainStorage();
         _storage.configHyperlane.destinationDomain = destinationDomain;
         _storage.configHyperlane.ethereumOutbox = ethereumOutbox;
         _storage.configHyperlane.sourceAddress = sourceAddress;
@@ -126,7 +125,7 @@ library LibInterchain {
         address destinationDiamond
     ) external {
         LibDiamond.enforceIsContractOwner();
-        InterchainStorage storage _storage = diamondStorage();
+        InterchainStorage storage _storage = interchainStorage();
         _storage.configLayerzero.destinationChain = destinationChain;
         _storage.configLayerzero.endpoint = endpoint;
         _storage.configLayerzero.sourceAddress = sourceAddress;
@@ -143,7 +142,7 @@ library LibInterchain {
         address destinationDiamond
     ) external {
         LibDiamond.enforceIsContractOwner();
-        InterchainStorage storage _storage = diamondStorage();
+        InterchainStorage storage _storage = interchainStorage();
         _storage.configWormhole.chainId = chainId;
         _storage.configWormhole.destChainId = destChainId;
         _storage.configWormhole.bridgeAddress = bridgeAddress;

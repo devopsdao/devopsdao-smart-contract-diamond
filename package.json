@@ -12,6 +12,7 @@
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@openzeppelin/contracts": "^4.8.0",
     "@openzeppelin/hardhat-upgrades": "^1.21.0",
+    "@openzeppelin/test-helpers": "^0.5.16",
     "@solidstate/contracts": "^0.0.45",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",
     "chai": "^4.3.6",

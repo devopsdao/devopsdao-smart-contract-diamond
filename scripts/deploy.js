@@ -57,16 +57,61 @@ async function deployDiamond () {
   await diamondInit.deployed()
   console.log('DiamondInit deployed:', diamondInit.address)
 
-
-  const LibNames = ['LibAppStorage', 'LibInterchain', 'LibUtils'];
   let libAddresses = {};
 
-  for (const LibName of LibNames) {
-    const Lib = await ethers.getContractFactory(LibName);
+  const Libraries = [
+    {
+      name: 'LibUtils',
+    },
+    {
+      name: 'LibAddress',
+    },
+    {
+      name: 'LibTasks',
+    },
+    {
+      name: 'LibTasksAudit',
+    },
+    {
+      name: 'LibChat',
+    },
+    {
+      name: 'LibWithdraw',
+      libraries: [
+        'LibUtils'
+      ],
+    },
+    {
+      name: 'LibTokens',
+    },
+    {
+      name: 'LibInterchain',
+    },
+  ]
+
+  // const LibNames = ['LibTasks', 'LibTasksAudit', 'LibChat', 'LibWithdraw', 'LibTokens', 'LibInterchain', 'LibUtils'];
+
+  for (const Library of Libraries) {
+    let Lib;
+    if(typeof Library.name === 'undefined'){
+      continue;
+    }
+    else if(typeof Library.name !== 'undefined' && typeof Library.libraries === 'undefined'){
+      Lib = await ethers.getContractFactory(Library.name)
+    }
+    else if(typeof Library.name !== 'undefined' && typeof Library.libraries !== 'undefined'){
+
+      let Libs = {}
+      for(const LibName of Library.libraries){
+        Libs[LibName] = libAddresses[LibName];
+      }
+      console.log(`${Library.name} libraries: ${JSON.stringify(Libs)}`)
+      Lib = await ethers.getContractFactory(Library.name, {libraries: Libs})
+    }
     const lib = await Lib.deploy();
     await lib.deployed();
-    libAddresses[LibName] = lib.address;
-    console.log(`${LibName} deployed:`, lib.address)
+    libAddresses[Library.name] = lib.address;
+    console.log(`${Library.name} deployed:`, lib.address)
   }
 
   // Deploy facets and set the `facetCuts` variable
@@ -83,36 +128,34 @@ async function deployDiamond () {
       name: 'OwnershipFacet',
     },
     {
-      name: 'TasksFacet',
-      libraries: {
-        'LibAppStorage': libAddresses.LibAppStorage,
-        'LibAppStorage': libAddresses.LibAppStorage,
-        'LibUtils': libAddresses.LibUtils,
-      }
+      name: 'TaskCreateFacet',
+      libraries: [
+        'LibTasks',
+        'LibTasksAudit',
+        'LibChat',
+        'LibWithdraw'
+      ]
+    },
+    {
+      name: 'TaskDataFacet',
+    },
+    {
+      name: 'TokenFacet',
+      libraries: [
+        'LibTokens',
+      ]
     },
     {
       name: 'AxelarFacet',
-      libraries: {
-        'LibInterchain': libAddresses.LibAppStorage,
-      }
     },
     {
       name: 'HyperlaneFacet',
-      libraries: {
-        'LibInterchain': libAddresses.LibAppStorage,
-      }
     },
     {
       name: 'LayerzeroFacet',
-      libraries: {
-        'LibInterchain': libAddresses.LibAppStorage,
-      }
     },
     {
       name: 'WormholeFacet',
-      libraries: {
-        'LibInterchain': libAddresses.LibAppStorage,
-      }
     },
   ]
 
@@ -127,8 +170,12 @@ async function deployDiamond () {
       Facet = await ethers.getContractFactory(FacetInit.name)
     }
     else if(typeof FacetInit.name !== 'undefined' && typeof FacetInit.libraries !== 'undefined'){
-      console.log(`${FacetInit.name} libraries: ${JSON.stringify(FacetInit.libraries)}`)
-      Facet = await ethers.getContractFactory(FacetInit.name, {libraries: FacetInit.libraries})
+      let Libs = {}
+      for(const LibName of FacetInit.libraries){
+        Libs[LibName] = libAddresses[LibName];
+      }
+      console.log(`${FacetInit.name} libraries: ${JSON.stringify(Libs)}`)
+      Facet = await ethers.getContractFactory(FacetInit.name, {libraries: Libs})
     }
     const facet = await Facet.deploy()
     await facet.deployed()

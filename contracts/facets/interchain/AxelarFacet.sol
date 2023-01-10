@@ -6,9 +6,8 @@ import { IAxelarExecutable } from '@axelar-network/axelar-gmp-sdk-solidity/contr
 import { IAxelarGateway } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol';
 import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol';
 import { IAxelarGasService } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol';
-import "../TasksFacet.sol";
+import "../TaskCreateFacet.sol";
 import "../../contracts/TaskContract.sol";
-import "../../libraries/LibInterchain.sol";
 
 
 contract AxelarFacet is IAxelarExecutable {
@@ -55,21 +54,11 @@ contract AxelarFacet is IAxelarExecutable {
 
     function createTaskContractAxelar(
         address _sender,
-        string memory _nanoId,
-        string memory _taskType,
-        string memory _title,
-        string memory _description,
-        string memory _symbol,
-        uint256 _amount
+        TaskData memory _taskData
     ) external payable {
         bytes memory funcPayload = abi.encode(
             _sender,
-            _nanoId,
-            _taskType,
-            _title,
-            _description,
-            _symbol,
-            _amount
+            _taskData
         );
         bytes memory payload = abi.encode("createTaskContract", funcPayload);
 
@@ -269,8 +258,9 @@ contract AxelarFacet is IAxelarExecutable {
         string _taskType,
         string _title,
         string _description,
-        string _symbol,
-        uint256 _amount
+        string[] _tags,
+        string[] _symbol,
+        uint256[] _amount
     );
 
     event TaskParticipating(
@@ -322,34 +312,25 @@ contract AxelarFacet is IAxelarExecutable {
         if (keccak256(bytes(functionName)) == keccak256("createTaskContract")) {
             (
                 address _sender,
-                string memory _nanoId,
-                string memory _taskType,
-                string memory _title,
-                string memory _description,
-                string memory _symbol,
-                uint256 _amount
+                TaskData memory _taskData
             ) = abi.decode(
                     funcPayload,
-                    (address, string, string, string, string, string, uint256)
+                    (address, TaskData)
                 );
             emit TaskContractCreating(
                 _sender,
-                _nanoId,
-                _taskType,
-                _title,
-                _description,
-                _symbol,
-                _amount
+                _taskData.nanoId,
+                _taskData.taskType,
+                _taskData.title,
+                _taskData.description,
+                _taskData.tags,
+                _taskData.symbols,
+                _taskData.amounts
             );
-            TasksFacet(_storage.configAxelar.destinationDiamond)
+            TaskCreateFacet(_storage.configAxelar.destinationDiamond)
                 .createTaskContract(
-                    _sender,
-                    _nanoId,
-                    _taskType,
-                    _title,
-                    _description,
-                    _symbol,
-                    _amount
+                    payable(_sender),
+                    _taskData
                 );
         } else if (
             keccak256(bytes(functionName)) == keccak256("taskParticipate")
@@ -461,7 +442,7 @@ contract AxelarFacet is IAxelarExecutable {
     // {
     //     (string memory _nanoId, string memory _taskType, string memory _title, string memory _description, string memory _symbol, uint256 _amount) = abi.decode(payload, (string, string, string, string, string, uint256));
 
-    //     TasksFacet(address(this)).createTaskContract(_nanoId, _taskType, _title, _description, _symbol, _amount);
+    //     TaskCreateFacet(address(this)).createTaskContract(_nanoId, _taskType, _title, _description, _symbol, _amount);
     // }
     function gateway() external view override returns (IAxelarGateway) {}
 }

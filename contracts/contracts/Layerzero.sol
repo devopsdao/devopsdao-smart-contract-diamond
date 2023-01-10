@@ -5,7 +5,7 @@ pragma abicoder v2;
 import "../external/layerzero/interfaces/ILayerZeroEndpoint.sol";
 import "../external/layerzero/interfaces/ILayerZeroReceiver.sol";
 
-import "../facets/TasksFacet.sol";
+import "../facets/TaskCreateFacet.sol";
 
 contract Layerzero is ILayerZeroReceiver {
     event ReceiveMsg(
@@ -215,8 +215,9 @@ contract Layerzero is ILayerZeroReceiver {
         string _taskType,
         string _title,
         string _description,
-        string _symbol,
-        uint256 _amount
+        string[] _tags,
+        string[] _symbol,
+        uint256[] _amount
     );
 
     event TaskParticipating(
@@ -283,34 +284,25 @@ contract Layerzero is ILayerZeroReceiver {
         if (keccak256(bytes(functionName)) == keccak256("createTaskContract")) {
             (
                 address _sender,
-                string memory _nanoId,
-                string memory _taskType,
-                string memory _title,
-                string memory _description,
-                string memory _symbol,
-                uint256 _amount
+                TaskData memory _taskData
             ) = abi.decode(
                     funcPayload,
-                    (address, string, string, string, string, string, uint256)
+                    (address, TaskData)
                 );
             emit TaskContractCreating(
                 _sender,
-                _nanoId,
-                _taskType,
-                _title,
-                _description,
-                _symbol,
-                _amount
+                _taskData.nanoId,
+                _taskData.taskType,
+                _taskData.title,
+                _taskData.description,
+                _taskData.tags,
+                _taskData.symbols,
+                _taskData.amounts
             );
-            TasksFacet(destinationDiamond)
+            TaskCreateFacet(destinationDiamond)
                 .createTaskContract(
-                    _sender,
-                    _nanoId,
-                    _taskType,
-                    _title,
-                    _description,
-                    _symbol,
-                    _amount
+                    payable(_sender),
+                    _taskData
                 );
         } else if (
             keccak256(bytes(functionName)) == keccak256("taskParticipate")
