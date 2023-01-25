@@ -18,17 +18,6 @@ import "../facets/TokenFacet.sol";
 error RevertReason (string message);
 
 
-struct TaskContractData{
-    address sender;
-    string nanoId;
-    string taskType;
-    string title;
-    string description;
-    string[] tags;
-    string[] symbols;
-    uint256[] amounts;
-}
-
 struct TaskData{
     string nanoId;
     string taskType;
@@ -37,6 +26,8 @@ struct TaskData{
     string[] tags;
     string[] symbols;
     uint256[] amounts;
+    // mapping(string => string) ext;
+    // mapping(string => bool) extMapping;
 }
 
 struct TaskStorage {
@@ -66,6 +57,8 @@ struct Task {
     uint256[] tagsNFT;
     string[] symbols;
     uint256[] amounts;
+    // mapping(string => string) ext;
+    // mapping(string => bool) extMapping;
     string taskState;
     string auditState;
     uint256 rating;
@@ -153,9 +146,9 @@ library LibTasks {
             _sender != _storage.tasks[address(this)].contractOwner,
             "contract owner cannot participate"
         );
-        console.log('taskState');
-        console.log(address(this));
-        console.log(_storage.tasks[address(this)].taskState);
+        // console.log('taskState');
+        // console.log(address(this));
+        // console.log(_storage.tasks[address(this)].taskState);
         require(
             keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
                 keccak256(bytes(TASK_STATE_NEW)),

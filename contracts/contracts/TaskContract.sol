@@ -1,3 +1,4 @@
+pragma solidity ^0.8.17;
 
 // import {LibDiamond} from '../libraries/LibDiamond.sol';
 
@@ -15,7 +16,7 @@ import "hardhat/console.sol";
 
 
 contract TaskContract is ERC1155StorageFacet  {
-    TaskStorage internal _storage;
+    // TaskStorage internal _storage;
     InterchainStorage internal _storageInterchain;
 
     event Logs(address contractAdr, string message);
@@ -26,7 +27,7 @@ contract TaskContract is ERC1155StorageFacet  {
         address payable _sender,
         TaskData memory _taskData
     ) payable {
-        // TaskStorage storage _storage = LibTasks.taskStorage();
+        TaskStorage storage _storage = LibTasks.taskStorage();
         _storage.tasks[address(this)].nanoId = _taskData.nanoId;
         _storage.tasks[address(this)].taskType = _taskData.taskType;
         _storage.tasks[address(this)].title = _taskData.title;
@@ -44,6 +45,7 @@ contract TaskContract is ERC1155StorageFacet  {
 
     function getTaskInfo() external view returns (Task memory task)
     {
+        TaskStorage storage _storage = LibTasks.taskStorage();
         // uint256 balance = TokenFacet(_storage.tasks[address(this)].contractParent).balanceOf(msg.sender, 1);
         task = _storage.tasks[address(this)];
         for(uint i; i < task.tags.length; i++) {
@@ -83,6 +85,7 @@ contract TaskContract is ERC1155StorageFacet  {
 
 
     function taskAuditParticipate(address _sender, string memory _message, uint256 _replyTo) external {
+        TaskStorage storage _storage = LibTasks.taskStorage();
         // address[] memory to = new address[](1);
         // uint256[] memory amount = new uint256[](1);
         // to[0] = _sender;
@@ -111,6 +114,7 @@ contract TaskContract is ERC1155StorageFacet  {
         uint256 _replyTo,
         uint256 _score
     ) external {
+        TaskStorage storage _storage = LibTasks.taskStorage();
         if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
             && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
             && msg.sender != _storageInterchain.configLayerzero.sourceAddress
@@ -130,7 +134,8 @@ contract TaskContract is ERC1155StorageFacet  {
         uint256 _replyTo,
         uint256 rating
     ) external {
-        uint256 balance = TokenFacet(_storage.tasks[address(this)].contractParent).balanceOf(msg.sender, 1);
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        uint256 balance = TokenFacet(_storage.tasks[address(this)].contractParent).balanceOfName(msg.sender, 'auditor');
         // console.log(balance);
         require(balance>0, 'must hold Auditor NFT to audit');
 

@@ -1,7 +1,10 @@
 /* global ethers */
 /* eslint prefer-const: "off" */
-const { ethers } = require("hardhat");
+// const { ethers } = require("hardhat");
 const fs = require('fs').promises;
+const { arrayCompare } = require('arweave/node/lib/merkle.js');
+const path = require('node:path');
+
 // const { program } = require('commander');
 
 
@@ -38,6 +41,85 @@ const fs = require('fs').promises;
 
 // const { getSelectors, FacetCutAction } = require('./libraries/diamond.js')
 
+const libraries = [
+  {
+    name: 'LibUtils',
+  },
+  {
+    name: 'LibAddress',
+  },
+  {
+    name: 'LibTasks',
+  },
+  {
+    name: 'LibTasksAudit',
+  },
+  {
+    name: 'LibChat',
+  },
+  {
+    name: 'LibWithdraw',
+    libraries: [
+      'LibUtils'
+    ],
+  },
+  {
+    name: 'LibTokens',
+  },
+  {
+    name: 'LibTokenData',
+  },
+  {
+    name: 'LibInterchain',
+  },
+]
+
+const diamondFacets = [
+  {
+    name: 'DiamondCutFacet',
+  },
+  {
+    name: 'DiamondLoupeFacet',
+  },
+  {
+    name: 'OwnershipFacet',
+  },
+]
+
+const dodaoFacets = [
+  {
+    name: 'TaskCreateFacet',
+    libraries: [
+      'LibTasks',
+      'LibTasksAudit',
+      'LibChat',
+      'LibWithdraw'
+    ]
+  },
+  {
+    name: 'TaskDataFacet',
+  },
+  {
+    name: 'TokenFacet',
+    libraries: [
+      'LibTokens',
+      'LibTokenData'
+    ]
+  },
+  {
+    name: 'AxelarFacet',
+  },
+  {
+    name: 'HyperlaneFacet',
+  },
+  {
+    name: 'LayerzeroFacet',
+  },
+  {
+    name: 'WormholeFacet',
+  },
+]
+
 const {
   getSelectors,
   FacetCutAction,
@@ -57,150 +139,16 @@ async function deployDiamond () {
   await diamondInit.deployed()
   console.log('DiamondInit deployed:', diamondInit.address)
 
-  let libAddresses = {};
-
-  const Libraries = [
-    {
-      name: 'LibUtils',
-    },
-    {
-      name: 'LibAddress',
-    },
-    {
-      name: 'LibTasks',
-    },
-    {
-      name: 'LibTasksAudit',
-    },
-    {
-      name: 'LibChat',
-    },
-    {
-      name: 'LibWithdraw',
-      libraries: [
-        'LibUtils'
-      ],
-    },
-    {
-      name: 'LibTokens',
-    },
-    {
-      name: 'LibInterchain',
-    },
-  ]
-
-  // const LibNames = ['LibTasks', 'LibTasksAudit', 'LibChat', 'LibWithdraw', 'LibTokens', 'LibInterchain', 'LibUtils'];
-
-  for (const Library of Libraries) {
-    let Lib;
-    if(typeof Library.name === 'undefined'){
-      continue;
-    }
-    else if(typeof Library.name !== 'undefined' && typeof Library.libraries === 'undefined'){
-      Lib = await ethers.getContractFactory(Library.name)
-    }
-    else if(typeof Library.name !== 'undefined' && typeof Library.libraries !== 'undefined'){
-
-      let Libs = {}
-      for(const LibName of Library.libraries){
-        Libs[LibName] = libAddresses[LibName];
-      }
-      console.log(`${Library.name} libraries: ${JSON.stringify(Libs)}`)
-      Lib = await ethers.getContractFactory(Library.name, {libraries: Libs})
-    }
-    const lib = await Lib.deploy();
-    await lib.deployed();
-    libAddresses[Library.name] = lib.address;
-    console.log(`${Library.name} deployed:`, lib.address)
-  }
+  const libAddresses = await deployLibs(libraries)
 
   // Deploy facets and set the `facetCuts` variable
   console.log('')
   console.log('Deploying facets')
-  const FacetInits = [
-    {
-      name: 'DiamondCutFacet',
-    },
-    {
-      name: 'DiamondLoupeFacet',
-    },
-    {
-      name: 'OwnershipFacet',
-    },
-    {
-      name: 'TaskCreateFacet',
-      libraries: [
-        'LibTasks',
-        'LibTasksAudit',
-        'LibChat',
-        'LibWithdraw'
-      ]
-    },
-    {
-      name: 'TaskDataFacet',
-    },
-    {
-      name: 'TokenFacet',
-      libraries: [
-        'LibTokens',
-      ]
-    },
-    {
-      name: 'AxelarFacet',
-    },
-    {
-      name: 'HyperlaneFacet',
-    },
-    {
-      name: 'LayerzeroFacet',
-    },
-    {
-      name: 'WormholeFacet',
-    },
-  ]
+  
+  const facets = diamondFacets.concat(dodaoFacets)
 
   // The `facetCuts` variable is the FacetCut[] that contains the functions to add during diamond deployment
-  const facetCuts = []
-  for (const FacetInit of FacetInits) {
-    let Facet;
-    if(typeof FacetInit.name === 'undefined'){
-      continue;
-    }
-    else if(typeof FacetInit.name !== 'undefined' && typeof FacetInit.libraries === 'undefined'){
-      Facet = await ethers.getContractFactory(FacetInit.name)
-    }
-    else if(typeof FacetInit.name !== 'undefined' && typeof FacetInit.libraries !== 'undefined'){
-      let Libs = {}
-      for(const LibName of FacetInit.libraries){
-        Libs[LibName] = libAddresses[LibName];
-      }
-      console.log(`${FacetInit.name} libraries: ${JSON.stringify(Libs)}`)
-      Facet = await ethers.getContractFactory(FacetInit.name, {libraries: Libs})
-    }
-    const facet = await Facet.deploy()
-    await facet.deployed()
-    console.log(`${FacetInit.name} deployed: ${facet.address}`)
-    facetCuts.push({
-      facetAddress: facet.address,
-      action: FacetCutAction.Add,
-      functionSelectors: getSelectors(facet)
-    })
-  }
-
-  // goerliGateway = '0xe432150cce91c13a887f7D836923d5597adD8E31'
-  // goerliGasService = '0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6'
-  // moonbaseGateway = '0x5769D84DD62a6fD969856c75c7D321b84d455929'
-  // moonbaseGasService = '0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6'
-
-  // const AxelarGMP = await ethers.getContractFactory('AxelarGMP')
-  // const axelarGMP = await AxelarGMP.deploy(goerliGateway, goerliGasService)
-  // await axelarGMP.deployed()
-
-  // facetCuts.push({
-  //   facetAddress: axelarGMP.address,
-  //   action: FacetCutAction.Add,
-  //   functionSelectors: getSelectors(AxelarGMP)
-  // })
+  const {facetCuts, facetAddresses} = await deployFacets(facets, libAddresses)
 
   // Creating a function call
   // This call gets executed during deployment and can also be executed in upgrades
@@ -214,21 +162,14 @@ async function deployDiamond () {
     initCalldata: functionCall
   }
 
+  console.log(facetCuts)
+
   // deploy Diamond
   const Diamond = await ethers.getContractFactory('Diamond')
   const diamond = await Diamond.deploy(facetCuts, diamondArgs)
   await diamond.deployed()
-  console.log()
+  console.log('')
   console.log('Diamond deployed:', diamond.address)
-  // let contractAddresses = {
-  //   'contracts': {
-  //     31337:{
-  //     "Diamond": diamond.address
-  //     },
-  //   }
-  // }
-
-
 
   const existingAddresses = await fs.readFile(`${this.__hardhatContext.environment.config.abiExporter[0].path}/addresses.json`);
   if(typeof existingAddresses !== 'undefined'){
@@ -243,6 +184,7 @@ async function deployDiamond () {
   contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId] = {};
   contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'] = diamond.address;
 
+  await fs.writeFile(path.join(__dirname, `../abi/addresses.json`), JSON.stringify(contractAddresses));
 
   await fs.writeFile(`${this.__hardhatContext.environment.config.abiExporter[0].path}/addresses.json`, JSON.stringify(contractAddresses));
 
@@ -250,8 +192,8 @@ async function deployDiamond () {
   return diamond.address
 }
 
-async function upgradeDiamondTasksFacet () {
-  const existingAddresses = await fs.readFile(`${this.__hardhatContext.environment.config.abiExporter[0].path}/addresses.json`);
+async function upgradeDiamondFacets(facets, libraries) {
+  const existingAddresses = await fs.readFile(path.join(__dirname, `../abi/addresses.json`));
   let contractAddresses;
   if(typeof existingAddresses !== 'undefined'){
     contractAddresses = JSON.parse(existingAddresses);
@@ -265,58 +207,80 @@ async function upgradeDiamondTasksFacet () {
 
   const diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress)
   const diamondCutFacet = await ethers.getContractAt('DiamondCutFacet', diamondAddress)
-  const existingTasksFacet = await ethers.getContractAt('TasksFacet', diamondAddress)
-  const existingTasksFacetSelectors = getSelectors(existingTasksFacet)
 
-  // tx = await diamondCutFacet.diamondCut(
-  //   [{
-  //     facetAddress: ethers.constants.AddressZero,
-  //     action: FacetCutAction.Remove,
-  //     functionSelectors: existingTasksFacetSelectors
-  //   }],
-  //   ethers.constants.AddressZero, '0x', { gasLimit: 800000 })
-  // receipt = await tx.wait()
 
-  const LibNames = ['LibAppStorage', 'LibUtils'];
-  let libAddresses = {};
-
-  for (const LibName of LibNames) {
-    const Lib = await ethers.getContractFactory(LibName);
-    const lib = await Lib.deploy();
-    await lib.deployed();
-    libAddresses[LibName] = lib.address;
-    console.log(`${LibName} deployed:`, lib.address)
-  }  
-
-  
-  const TasksFacet = await ethers.getContractFactory('TasksFacet', {libraries: {
-    'LibAppStorage': libAddresses.LibAppStorage,
-    'LibUtils': libAddresses.LibUtils,
-  }})
-  const tasksFacet = await TasksFacet.deploy();
-  console.log(`tasksFacet deployed:`, tasksFacet.address)
-
-  // Any number of functions from any number of facets can be added/replaced/removed in a
-  // single transaction
-  const cut = [
-    {
-      facetAddress: tasksFacet.address,
-      action: FacetCutAction.Add,
-      functionSelectors: getSelectors(TasksFacet)
+  let existingFacets = {}
+  let existingFacetSelectors = {}
+  let libNames = []
+  for(const facet of facets){
+    existingFacets[facet.name] = await ethers.getContractAt(facet.name, diamondAddress)
+    existingFacetSelectors[facet.name] = getSelectors(existingFacets[facet.name])
+    if(typeof facet.libraries != 'undefined'){
+      libNames = libNames.concat(facet.libraries)
     }
-  ]
-  tx = await diamondCutFacet.diamondCut(cut, ethers.constants.AddressZero, '0x', { gasLimit: 8000000 })
+  }
+  //make uniq
+  libNames = [...new Set(libNames)]
+
+  console.log('deploying libraries')
+  let libs = [];
+  for(const libName of libNames){
+    const lib = libraries.find(library => library.name === libName)
+    libs.push(lib)
+  }
+
+  for(const lib of libs){
+    if(typeof lib.libraries != 'undefined'){
+      for (const libLibrary of lib.libraries){
+        const libDep = libraries.find(library => library.name === libLibrary)
+        libs.push(libDep)
+      }
+    }
+  }
+
+  //sort first libraries which have no dependencies
+  libs.sort(function(left, right) {
+    return left.hasOwnProperty("libraries") ? 1 : right.hasOwnProperty("libraries") ? -1 : 0
+  });
+
+  const libAddresses  = await deployLibs(libs);
+
+  console.log('removing existingFacetSelectors')
+  // for(const facet of facets){
+  //   tx = await diamondCutFacet.diamondCut(
+  //     [{
+  //       facetAddress: ethers.constants.AddressZero,
+  //       action: FacetCutAction.Remove,
+  //       functionSelectors: existingFacetSelectors[facet.name]
+  //     }],
+  //     ethers.constants.AddressZero, '0x', { gasLimit: 800000 })
+  //   receipt = await tx.wait()
+  //   console.log(`${facet.name} removed`)
+  // }
+
+
+  console.log('deploying new facets')
+  const {facetCuts, facetAddresses} = await deployFacets(facets, libAddresses)
+
+  console.log('upgrading diamond with a new facets')
+  // Any number of functions from any number of facets can be added/replaced/removed in a
+  tx = await diamondCutFacet.diamondCut(facetCuts, ethers.constants.AddressZero, '0x', { gasLimit: 8000000 })
   receipt = await tx.wait()
   if (!receipt.status) {
     throw Error(`Diamond upgrade failed: ${tx.hash}`)
   }
-  console.log(`Diamond cut:`, tx)
+  // console.log(`Diamond cut:`, tx)
+  console.log(`Diamond cut.`)
 
-  const facets = await diamondLoupeFacet.facets()
+  const facetsDeployed = await diamondLoupeFacet.facets()
+
+  // for(const id of facets.keys()){
+  //   console.log(facetsDeployed[findAddressPositionInFacets(facetAddresses[facets[id].name], facets)])
+  //   // console.log(getSelectors(TasksFacet))
+  //   // assert.sameMembers(facets[findAddressPositionInFacets(tasksFacet.address, facets)][1], getSelectors(TasksFacet))  
+  // }
+
   // const facetAddresses = await diamondLoupeFacet.facetAddresses()
-  console.log(facets[findAddressPositionInFacets(tasksFacet.address, facets)][1])
-  // console.log(getSelectors(TasksFacet))
-  // assert.sameMembers(facets[findAddressPositionInFacets(tasksFacet.address, facets)][1], getSelectors(TasksFacet))
 }
 
 async function upgradeDiamondAxelarFacet () {
@@ -391,6 +355,67 @@ async function upgradeDiamondAxelarFacet () {
   // assert.sameMembers(facets[findAddressPositionInFacets(tasksFacet.address, facets)][1], getSelectors(TasksFacet))
 }
 
+async function deployLibs(libraries){
+  let libAddresses = {};
+  for (const library of libraries) {
+    let Lib;
+    if(typeof library.name === 'undefined'){
+      continue;
+    }
+    else if(typeof library.name !== 'undefined' && typeof library.libraries === 'undefined'){
+      Lib = await ethers.getContractFactory(library.name)
+    }
+    else if(typeof library.name !== 'undefined' && typeof library.libraries !== 'undefined'){
+
+      let Libs = {}
+      for(const LibName of library.libraries){
+        Libs[LibName] = libAddresses[LibName];
+      }
+      console.log(`${library.name} libraries: ${JSON.stringify(Libs)}`)
+      Lib = await ethers.getContractFactory(library.name, {libraries: Libs})
+    }
+    const lib = await Lib.deploy();
+    await lib.deployed();
+    libAddresses[library.name] = lib.address;
+    console.log(`${library.name} deployed:`, lib.address)
+  }
+  return libAddresses
+}
+
+async function deployFacets(FacetInits, libAddresses){
+  const facetCuts = []
+  const facetAddresses = {}
+  for (const FacetInit of FacetInits) {
+    let Facet;
+    if(typeof FacetInit.name === 'undefined'){
+      continue
+    }
+    else if(typeof FacetInit.name !== 'undefined' && typeof FacetInit.libraries === 'undefined'){
+      Facet = await ethers.getContractFactory(FacetInit.name)
+    }
+    else if(typeof FacetInit.name !== 'undefined' && typeof FacetInit.libraries !== 'undefined'){
+      let Libs = {}
+      for(const LibName of FacetInit.libraries){
+        Libs[LibName] = libAddresses[LibName];
+      }
+      console.log(`${FacetInit.name} libraries: ${JSON.stringify(Libs)}`)
+      Facet = await ethers.getContractFactory(FacetInit.name, {libraries: Libs})
+    }
+    const facet = await Facet.deploy()
+    await facet.deployed()
+    console.log(`${FacetInit.name} deployed: ${facet.address}`)
+    facetCuts.push({
+      facetAddress: facet.address,
+      action: FacetCutAction.Add,
+      functionSelectors: getSelectors(facet)
+    })
+    facetAddresses[facet.name] = facet.address
+  }
+
+
+  return {facetCuts, facetAddresses}
+}
+
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
@@ -415,4 +440,69 @@ if (require.main === module) {
 }
 
 
+task(
+  "diamondDeploy",
+  "deploys Diamond'",
+  async function (taskArguments, hre, runSuper) {
+    console.log("deploying Diamond");
+    console.log('')
+    console.log('Deploying facets')
+    await deployDiamond()
+  }
+);
+
+task(
+  "diamondUpgrade",
+  "upgrades Diamond'")
+  .addParam("facets", "facets to add or upgrade")
+  .setAction(
+  async function (taskArguments, hre, runSuper) {
+    console.log(taskArguments)
+    console.log("upgrading Diamond");
+    console.log('')
+
+
+    let upgradeFacets = []
+    const facetNames = []
+
+
+
+    if(taskArguments.facets === 'all'){
+      upgradeFacets = dodaoFacets
+    }
+    else{
+      if(taskArguments.facets.indexOf(',') != -1){
+        facetNames = taskArguments.facets.split(',')
+      }
+      else{
+        facetNames.push(taskArguments.facets)
+      }
+  
+      for(const facetName of facetNames){
+        const facet = dodaoFacets.find(facet => facet.name === facetName)
+        if(typeof facet != 'undefined'){
+          upgradeFacets.push(facet)
+        }
+        else{
+          console.log(`facet contract "${facetName}" is not found`)
+        }
+      }
+    }
+  
+    if(taskArguments.facets === 'all' || upgradeFacets.length === facetNames.length){
+      console.log('going to deploy the following facets:')
+      console.log(upgradeFacets)
+      await upgradeDiamondFacets(upgradeFacets, libraries)
+    }
+    else{
+      console.log('please specify only existing facet contracts')
+    }
+
+  }
+);
+
+
+
 exports.deployDiamond = deployDiamond
+exports.upgradeDiamondFacets = upgradeDiamondFacets
+

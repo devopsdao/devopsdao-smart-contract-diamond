@@ -73,7 +73,7 @@ contract TaskCreateFacet is ERC1155StorageFacet {
         _storage.ownerTasks[_sender].push(taskContractAddress);
         emit TaskCreated(taskContractAddress, 'createTaskContract', block.timestamp);
 
-        console.log(taskContractAddress);
+        // console.log(taskContractAddress);
         return taskContractAddress;
     }
 

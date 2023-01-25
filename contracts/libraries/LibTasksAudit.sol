@@ -26,17 +26,6 @@ library LibTasksAudit {
     //     }
     // }
 
-    function taskStorage()
-        internal
-        pure
-        returns (TaskStorage storage ds)
-    {
-        bytes32 position = keccak256("diamond.tasks.storage");
-        assembly {
-            ds.slot := position
-        }
-    }
-
     function erc1155Storage()
         internal
         pure
@@ -54,12 +43,14 @@ library LibTasksAudit {
         string memory _message,
         uint256 _replyTo
     ) external {
-        TaskStorage storage _storage = taskStorage();
+        TaskStorage storage _storage = LibTasks.taskStorage();
         require(
             _sender != _storage.tasks[address(this)].contractOwner &&
                 _sender != _storage.tasks[address(this)].participant,
             "contract owner or participant cannot audit"
         );
+        // console.log(address(this));
+        // console.log(TASK_STATE_AUDIT);
         require(
             keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
                 keccak256(bytes(TASK_STATE_AUDIT)),
@@ -106,7 +97,7 @@ library LibTasksAudit {
         uint256 _replyTo,
         uint256 _rating
     ) external {
-        TaskStorage storage _storage = taskStorage();
+        TaskStorage storage _storage = LibTasks.taskStorage();
         require(
             _replyTo == 0 ||
                 _replyTo <= _storage.tasks[address(this)].messages.length + 1,

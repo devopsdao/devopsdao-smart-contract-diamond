@@ -2,6 +2,7 @@ node_modules
 
 yarn.lock
 package-lock.json
+keys.json
 
 #Hardhat files
 cache

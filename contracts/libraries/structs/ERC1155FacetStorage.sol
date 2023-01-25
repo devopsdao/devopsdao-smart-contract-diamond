@@ -9,8 +9,8 @@ struct ERC1155FacetStorage {
   string baseURI;
   mapping(uint256 => string) tokenURIs;
   // uint256 idx;
-  mapping (string => uint) tokenNames;
-  mapping (string => uint) nfType;
+  mapping (string => uint256) tokenNames;
+  mapping (string => uint256) nfType;
   mapping(uint256 => address) nfOwners;
   mapping (uint256 => address) creators;
   uint256 nonce; // A nonce to ensure we have a unique id each time we mint.
