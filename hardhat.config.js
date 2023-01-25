@@ -8,7 +8,14 @@ require('solidity-coverage');
 // require("hardhat-gas-reporter");
 require("hardhat-tracer");
 require('hardhat-abi-exporter');
+require("@openzeppelin/test-helpers");
 // const { ethers } = require("ethers");
+
+
+require('./scripts/deploy.js');
+require('./scripts/hardhat-tasks.js');
+
+const fs = require('fs');
 
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -21,16 +28,17 @@ task('accounts', 'Prints the list of accounts', async () => {
   }
 })
 
+
 // You need to export an object to set up your config
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
 
-const BLASTAPI_KEY = '';
-const ONFINALITY_API_KEY = '';
+let keys;
 
-const MNEMONIC = ``
-const MNEMONIC2 = ``
+const keysJSON = fs.readFileSync(`./keys.json`);
+keys =  JSON.parse(keysJSON)
+// console.log(keys)
 
 // let key = ethers.Wallet.fromMnemonic(MNEMONIC);
 // console.log(key);
@@ -48,18 +56,19 @@ module.exports = {
       // url: 'https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0',
       chainId: 1287,
       accounts: {
-        mnemonic: MNEMONIC
+        mnemonic: keys.mnemonic1
       }
       // mnemonic: MNEMONIC
     },
     goerli: {
       // url: `https://moonbase-alpha.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f`,
       // url: `https://moonbeam-alpha.api.onfinality.io/rpc?apikey=a574e9f5-b1db-4984-8362-89b749437b81`,
-      url: 'https://rpc.ankr.com/eth_goerli',
+      // url: 'https://rpc.ankr.com/eth_goerli',
+      url: 'https://eth-goerli.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f',
       // url: 'https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0',
       chainId: 5,
       accounts: {
-        mnemonic: MNEMONIC
+        mnemonic: keys.mnemonic1
       }
       // mnemonic: MNEMONIC
     },
@@ -70,7 +79,7 @@ module.exports = {
       // url: 'https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0',
       chainId: 80001,
       accounts: {
-        mnemonic: MNEMONIC
+        mnemonic: keys.mnemonic1
       }
       // mnemonic: MNEMONIC
     },
@@ -81,11 +90,12 @@ module.exports = {
       url: 'http://localhost:8500/0',
       chainId: 2500,
       accounts: {
-        mnemonic: MNEMONIC2
+        mnemonic: keys.mnemonic1
       }
     }
   },
   settings: {
+    viaIR: true,
     optimizer: {
       enabled: true,
       runs: 1000,
@@ -155,8 +165,8 @@ module.exports = {
     runOnCompile: true,
     // clear: true,
     // flat: true,
-    only: [':AxelarGMP$'],
-    rename: () => 'AxelarGMP.abi',
+    only: [':AxelarFacet$'],
+    rename: () => 'AxelarFacet.abi',
     spacing: 2,
     // pretty: true,
     format: "json",
@@ -167,8 +177,8 @@ module.exports = {
     runOnCompile: true,
     // clear: true,
     // flat: true,
-    only: [':Hyperlane$'],
-    rename: () => 'Hyperlane.abi',
+    only: [':HyperlaneFacet$'],
+    rename: () => 'HyperlaneFacet.abi',
     spacing: 2,
     // pretty: true,
     format: "json",
@@ -179,8 +189,8 @@ module.exports = {
     runOnCompile: true,
     // clear: true,
     // flat: true,
-    only: [':Layerzero$'],
-    rename: () => 'Layerzero.abi',
+    only: [':LayerzeroFacet$'],
+    rename: () => 'LayerzeroFacet.abi',
     spacing: 2,
     // pretty: true,
     format: "json",
@@ -191,8 +201,8 @@ module.exports = {
     runOnCompile: true,
     // clear: true,
     // flat: true,
-    only: [':Wormhole$'],
-    rename: () => 'Wormhole.abi',
+    only: [':WormholeFacet$'],
+    rename: () => 'WormholeFacet.abi',
     spacing: 2,
     // pretty: true,
     format: "json",

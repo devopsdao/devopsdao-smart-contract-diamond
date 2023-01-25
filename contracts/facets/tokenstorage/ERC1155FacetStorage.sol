@@ -8,5 +8,5 @@ struct ERC1155FacetStorage {
   mapping(string => uint256) _uriID;
   string _baseURI;
   mapping(uint256 => string) _tokenURIs;
-  uint256 _idx;
+  // uint256 _idx;
 }

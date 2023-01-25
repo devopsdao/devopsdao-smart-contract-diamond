@@ -5,11 +5,11 @@ pragma solidity ^0.8.0;
 * Author: Nick Mudge <nick@perfectabstractions.com>, Twitter/Github: @mudgen
 * EIP-2535 Diamonds
 /******************************************************************************/
-// import "../libraries/LibAppStorage.sol";
+// import "../libraries/LibTasks.sol";
 
 interface ITaskContract2 {
 
-    // struct TasksStorage {
+    // struct TaskStorage {
     //     mapping(address => ITaskContract) tasks;
     //     // address contractOwner;
     //     uint256 countNew;

@@ -33,7 +33,7 @@ async function deploy () {
     };
   }
 
-  let destinationAddress;
+  let destinationAddress = '0x0000000000000000000000000000000000000000';
 
   if (typeof contractAddresses.contracts[1287] != 'undefined') {
     destinationAddress = contractAddresses.contracts[1287]['Diamond'];
@@ -51,13 +51,15 @@ async function deploy () {
   destinationDiamond = '0xb437AB13C2613d36eA831c6F3E993AC6ea69Cd01'; //moonbeam
   
   const Wormhole = await ethers.getContractFactory('Wormhole')
-  const wormhole = await Wormhole.deploy(destinationChain, wormhole_core_bridge_address, destinationAddress, destinationDiamond)
+  const wormhole = await Wormhole.deploy(currentChain, destinationChain, wormhole_core_bridge_address, destinationAddress, destinationDiamond)
   await wormhole.deployed()
 
   console.log(`Wormhole deployed:`, wormhole.address)
 
   if (hre.network.name == 'moonbase') {
-    wormhole.addTrustedAddress(contractAddresses.contracts[80001], 5);
+    const trustedAddress = ethers.utils.formatBytes32String(parseInt(contractAddresses.contracts[80001]['Diamond'], 16));
+    // const trustedAddress = web3.utils.padLeft(web3.utils.hexToBytes(contractAddresses.contracts[80001]['Diamond']), 32);
+    wormhole.addTrustedAddress(trustedAddress, 5);
   }
 
   // const Wormhole = await ethers.getContractFactory('Wormhole')

@@ -1,213 +1,225 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import { LibDiamond } from "../libraries/LibDiamond.sol";
-import "../libraries/LibAppStorage.sol";
+import {LibDiamond} from "../libraries/LibDiamond.sol";
+// import "../libraries/LibTasks.sol";
+import "../libraries/LibTokens.sol";
+import "../libraries/LibTokenData.sol";
 import "../facets/tokenstorage/ERC1155StorageFacet.sol";
 import "../interfaces/IERC1155.sol";
 import "../interfaces/IERC1155Receiver.sol";
 
 import "hardhat/console.sol";
 
-
 contract TokenFacet is ERC1155StorageFacet, IERC1155 {
 
-  function mint(address to) public returns (bool){
-    console.log('mint');
-    console.log(to);
-    TasksStorage storage _storage = LibAppStorage.diamondStorage();
-    ERC1155FacetStorage storage _ds = erc1155Storage();
-    _ds._baseURI = "https://ipfs.io/ipfs/";
-    _mint(to, "Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu",1);
-    console.log('minted');
-    return true;
-  }
-
-
-  function uri(uint256 tokenID_) public view virtual returns (string memory) {
-    ERC1155FacetStorage storage _ds = erc1155Storage();
-
-    string memory _tokenURI = _ds._tokenURIs[tokenID_];
-    string memory _base = _ds._baseURI;
-
-    if (bytes(_base).length == 0) {
-        return _tokenURI;
-    } else if (bytes(_tokenURI).length > 0) {
-        return string(abi.encodePacked(_base, _tokenURI));
+    function name() public pure returns(string memory){
+        return "dodao.dev token";
     }
 
-    return "";
-  }
-
-  function totalSupply(uint256 id_) public view virtual returns (uint256) {
-    ERC1155FacetStorage storage _ds = erc1155Storage();
-    return _ds._totalSupply[id_];
-  }
-
-  function exists(uint256 id_) public view virtual returns (bool) {
-    return totalSupply(id_) > 0;
-  }
-
-  function balanceOf(address account_, uint256 id_) public view returns (uint256) {
-    _requireNonZero(account_);
-    ERC1155FacetStorage storage _ds = erc1155Storage();
-    return _ds._balances[id_][account_];
-  }
-
-  function balanceOfBatch(address[] calldata accounts_, uint256[] calldata ids_) external view returns (uint256[] memory) {
-    require(accounts_.length == ids_.length, "ERC1155: accounts and ids length mismatch");
-    ERC1155FacetStorage storage _ds = erc1155Storage();
-    uint256[] memory batchBalances = new uint256[](accounts_.length);
-
-    for (uint256 i = 0; i < accounts_.length; ++i) {
-        batchBalances[i] = balanceOf(accounts_[i], ids_[i]);
+    function symbol() public pure returns(string memory){
+        return "dodao";
     }
 
-    return batchBalances;
-  }
 
-  function setApprovalForAll(address operator_, bool approved_) external {
-    _setApprovalForAll(msg.sender, operator_, approved_);
-  }
-
-  function isApprovedForAll(address account_, address operator_) public view returns (bool) {
-    ERC1155FacetStorage storage _ds = erc1155Storage();
-    return _ds._operatorApprovals[account_][operator_];
-  }
-
-
-  function safeTransferFrom(address from_, address to_, uint256 id_, uint256 amount_, bytes calldata data_) external {
-    _requireAuth(from_);
-    _safeTransferFrom(from_, to_, id_, amount_, data_);
-  }
-
-  function safeBatchTransferFrom(address from_, address to_, uint256[] calldata ids_, uint256[] calldata amounts_, bytes calldata data_) external {
-    _requireAuth(from_);
-    _safeBatchTransferFrom(from_, to_, ids_, amounts_, data_);
-  }
-
-  function _setApprovalForAll(address owner_, address operator_, bool approved_) private {
-    require(owner_ != operator_, "ERC1155: Cannot set approval status for self");
-    ERC1155FacetStorage storage _ds = erc1155Storage();
-    _ds._operatorApprovals[owner_][operator_] = approved_;
-
-    emit ApprovalForAll(owner_, operator_, approved_);
-  }
-
-  function _safeTransferFrom(address from_, address to_, uint256 id_, uint256 amount_, bytes memory data_) private {
-    _transfer(from_, to_, id_, amount_);
-
-    emit TransferSingle(msg.sender, from_, to_, id_, amount_);
-    _requireReceiver(from_,to_,id_,amount_, data_);
-  }
-
-  function _safeBatchTransferFrom(address from_, address to_, uint256[] memory ids_, uint256[] memory amounts_, bytes memory data_) private {
-    require(amounts_.length == ids_.length, "ERC1155: accounts and ids length mismatch");
-
-    uint256[] memory batchBalances = new uint256[](amounts_.length);
-
-    for (uint256 _i = 0; _i < amounts_.length; ++_i) {
-        _transfer(from_,to_, ids_[_i], amounts_[_i]);
+    function create(
+        string calldata _uri,
+        string calldata _name,
+        bool _isNF
+    ) external returns (uint256 _type) {
+        return LibTokens.create(_uri, _name, _isNF);
+    }
+    function mintNonFungible(
+        uint256 _type,
+        address[] calldata _to
+    ) public {
+        LibTokens.mintNonFungible(_type, _to);
     }
 
-    emit TransferBatch(msg.sender, from_, to_, ids_, amounts_);
-    _requireBatchReceiver(from_,to_,ids_,amounts_, data_);
-  }
-
-
-  function _transfer(address from_, address to_, uint256 id_, uint256 amount_) private {
-    _requireNonZero(to_);
-    _requireBalance(from_,id_,amount_);
-    ERC1155FacetStorage storage _ds = erc1155Storage();
-    _ds._balances[id_][from_] -= amount_;
-    _ds._balances[id_][to_] += amount_;
-  }
-
-  function _mint(address to_, string memory uri_, uint256 amount_) internal virtual {
-    _mint(to_, uri_, amount_, "");
-  }
-
-  function _mint(address to_, string memory uri_, uint256 amount_, bytes memory data_) internal virtual {
-    _requireNonZero(to_);
-
-    ERC1155FacetStorage storage _ds = erc1155Storage();
-    uint256 _id = _ds._uriID[uri_];
-    if(_id == 0){
-      _ds._idx++;
-      _id = _ds._idx;
-      _ds._tokenURIs[_id] = uri_;
-      _ds._uriID[uri_] = _id;
+    function mintNonFungibleByName(
+        string calldata _name,
+        address[] calldata _to
+    ) public {
+        LibTokens.mintNonFungibleByName(_name, _to);
     }
 
-    _ds._totalSupply[_id] += amount_;
-    _ds._balances[_id][to_] += amount_;
-
-    emit TransferSingle(msg.sender, address(0), to_, _id, amount_);
-
-    _requireReceiver(address(0), to_, _id, amount_, data_);
-  }
-
-  function _requireAuth(address account_) private view {
-    require(account_ == msg.sender || isApprovedForAll(account_, msg.sender),"ERC1155: caller is not token owner or approved");
-  }
-
-  function _requireNonZero(address account_) private pure {
-    require(account_ != address(0), "ERC1155: address zero is not a valid owner");
-  }
-
-  function _requireBalance(address account_, uint256 id_, uint256 amount_) private view {
-    ERC1155FacetStorage storage _ds = erc1155Storage();
-    require(_ds._balances[id_][account_] >= amount_, "ERC1155: Insufficient balance");
-  }
-
-  function _requireReceiver(address from_, address to_, uint256 tokenID_, uint256 amount_, bytes memory data_) private {
-    require(_checkOnERC1155Received(from_, to_, tokenID_, amount_, data_), "ERC1155: transfer to non ERC1155Receiver implementer");
-  }
-
-  function _requireBatchReceiver(address from_, address to_, uint256[] memory tokenIDs_, uint256[] memory amounts_, bytes memory data_) private {
-    require(_checkOnERC1155BactchReceived(from_, to_, tokenIDs_, amounts_, data_), "ERC1155: transfer to non ERC1155Receiver implementer");
-  }
-
-  function _hasContract(address account_) private view returns (bool){
-    return account_.code.length > 0;
-  }
-
-  function _checkOnERC1155Received(address from_, address to_, uint256 tokenID_, uint256 amount_, bytes memory data_) private returns (bool) {
-    if (_hasContract(to_)) {
-        try IERC1155Receiver(to_).onERC1155Received(msg.sender, from_, tokenID_, amount_, data_) returns (bytes4 retval) {
-            return retval == IERC1155Receiver.onERC1155Received.selector;
-        } catch (bytes memory reason) {
-            if (reason.length == 0) {
-                revert("ERC1155: transfer to non ERC1155Receiver implementer");
-            } else {
-                /// @solidity memory-safe-assembly
-                assembly {
-                    revert(add(32, reason), mload(reason))
-                }
-            }
-        }
-    } else {
-        return true;
+    function mintFungible(
+        uint256 _id,
+        address[] calldata _to,
+        uint256[] calldata _quantities
+    ) public {
+        LibTokens.mintFungible(_id, _to, _quantities);
     }
-  }
 
-  function _checkOnERC1155BactchReceived(address from_, address to_, uint256[] memory tokenIDs_, uint256[] memory amounts_, bytes memory data_) private returns (bool) {
-    if (_hasContract(to_)) {
-        try IERC1155Receiver(to_).onERC1155BatchReceived(msg.sender, from_, tokenIDs_, amounts_, data_) returns (bytes4 retval) {
-            return retval == IERC1155Receiver.onERC1155Received.selector;
-        } catch (bytes memory reason) {
-            if (reason.length == 0) {
-                revert("ERC1155: transfer to non ERC1155Receiver implementer");
-            } else {
-                /// @solidity memory-safe-assembly
-                assembly {
-                    revert(add(32, reason), mload(reason))
-                }
-            }
-        }
-    } else {
-        return true;
+    function mintFungibleByName(
+        string calldata _name,
+        address[] calldata _to,
+        uint256[] calldata _quantities
+    ) public {
+        LibTokens.mintFungibleByName(_name, _to, _quantities);
     }
-  }
 
+    function setURI(
+        string calldata _uri,
+        uint256 _id
+    ) public {
+        LibTokens.setURI(_uri, _id);
+    }
+
+    function setURIOfName(
+        string calldata _uri,
+        string calldata _name
+    ) external {
+        LibTokens.setURIOfName(_uri, _name);
+    }
+
+    function uri(uint256 id_) public view virtual returns (string memory) {
+        return LibTokenData.uri(id_);
+    }
+
+    function uriOfBatch(uint256[] calldata ids_) public view virtual returns (string[] memory) {
+        return LibTokenData.uriOfBatch(ids_);
+    }
+
+    function uriOfBatchName(string[] calldata names_) public view virtual returns (string[] memory) {
+        return LibTokenData.uriOfBatchName(names_);
+    }
+
+    function totalSupply(uint256 id_) public view virtual returns (uint256) {
+        return LibTokenData.totalSupply(id_);
+    }
+
+    function totalSupplyOfNfType(uint256 id_) public view virtual returns (uint256) {
+        return LibTokenData.totalSupplyOfNfType(id_);
+    }
+
+    function totalSupplyOfName(
+        string calldata name_
+    ) public view virtual returns (uint256) {
+        return LibTokenData.totalSupplyOfName(name_);
+    }
+
+    function exists(uint256 id_) public view virtual returns (bool) {
+        return LibTokenData.exists(id_);
+    }
+
+    function existsNfType(uint256 id_) public view virtual returns (bool) {
+        return LibTokenData.existsNfType(id_);
+    }
+
+    function existsName(string calldata name_) public view virtual returns (bool) {
+        return LibTokenData.existsName(name_);
+    }
+
+    function getTokenId(
+        string calldata _name
+    ) public view virtual returns (uint256) {
+      return LibTokenData.getTokenId(_name);
+    }
+
+    function totalSupplyOfBatch(
+        uint256[] calldata _ids
+    ) public view virtual returns (uint256[] memory) {
+        return LibTokenData.totalSupplyOfBatch(_ids);
+    }
+
+    function totalSupplyOfBatchNfType(
+        uint256[] calldata _ids
+    ) public view virtual returns (uint256[] memory) {
+        return LibTokenData.totalSupplyOfBatchNfType(_ids);
+    }
+
+    function totalSupplyOfBatchName(
+        string[] calldata _names
+    ) public view virtual returns (uint256[] memory) {
+        return LibTokenData.totalSupplyOfBatchName(_names);
+    }
+
+    function balanceOf(
+        address account_,
+        uint256 id_
+    ) public view returns (uint256) {
+        return LibTokenData.balanceOf(account_, id_);
+    }
+    
+    function balanceOfNfType(
+        address account_,
+        uint256 id_
+    ) public view returns (uint256) {
+        return LibTokenData.balanceOfNfType(account_, id_);
+    }
+
+    function balanceOfName(
+        address account_,
+        string calldata name_
+    ) public view returns (uint256) {
+        return LibTokenData.balanceOfName(account_, name_);
+    }
+
+    function balanceOfBatch(
+        address[] calldata accounts_,
+        uint256[] calldata ids_
+    ) external view returns (uint256[] memory) {
+        return LibTokenData.balanceOfBatch(accounts_, ids_);
+    }
+
+    function balanceOfBatchNfType(
+        address[] calldata accounts_,
+        uint256[] calldata ids_
+    ) external view returns (uint256[] memory) {
+        return LibTokenData.balanceOfBatchNfType(accounts_, ids_);
+    }
+
+    function balanceOfBatchName(
+        address[] calldata accounts_,
+        string[] calldata names_
+    ) external view returns (uint256[] memory) {
+        return LibTokenData.balanceOfBatchName(accounts_, names_);
+    }
+
+    function setApprovalForAll(address operator_, bool approved_) external {
+        LibTokens.setApprovalForAll(operator_, approved_);
+    }
+
+    function isApprovedForAll(
+        address account_,
+        address operator_
+    ) public view returns (bool) {
+        return LibTokens.isApprovedForAll(account_, operator_);
+    }
+
+    function safeTransferFrom(
+        address from_,
+        address to_,
+        uint256 id_,
+        uint256 amount_,
+        bytes calldata data_
+    ) external {
+        LibTokens.safeTransferFrom(from_, to_, id_, amount_, data_);
+    }
+
+    function safeBatchTransferFrom(
+        address from_,
+        address to_,
+        uint256[] calldata ids_,
+        uint256[] calldata amounts_,
+        bytes calldata data_
+    ) external {
+        LibTokens.safeBatchTransferFrom(from_, to_, ids_, amounts_, data_);
+    }
+
+    function onERC1155Received(
+        address operator,
+        address from,
+        uint256 id,
+        uint256 value,
+        bytes calldata data
+    ) external returns (bytes4) {
+        return
+            bytes4(
+                keccak256(
+                    "onERC1155Received(address,address,uint256,uint256,bytes)"
+                )
+            );
+    }
 }
