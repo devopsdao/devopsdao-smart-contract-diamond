@@ -13,11 +13,11 @@ import "hardhat/console.sol";
 
 contract TokenFacet is ERC1155StorageFacet, IERC1155 {
 
-    function name() public pure returns(string memory){
+    function name() external pure returns(string memory){
         return "dodao.dev token";
     }
 
-    function symbol() public pure returns(string memory){
+    function symbol() external pure returns(string memory){
         return "dodao";
     }
 
@@ -29,17 +29,18 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
     ) external returns (uint256 _type) {
         return LibTokens.create(_uri, _name, _isNF);
     }
+
     function mintNonFungible(
         uint256 _type,
         address[] calldata _to
-    ) public {
+    ) external {
         LibTokens.mintNonFungible(_type, _to);
     }
 
     function mintNonFungibleByName(
         string calldata _name,
         address[] calldata _to
-    ) public {
+    ) external {
         LibTokens.mintNonFungibleByName(_name, _to);
     }
 
@@ -47,7 +48,7 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
         uint256 _id,
         address[] calldata _to,
         uint256[] calldata _quantities
-    ) public {
+    ) external {
         LibTokens.mintFungible(_id, _to, _quantities);
     }
 
@@ -55,14 +56,14 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
         string calldata _name,
         address[] calldata _to,
         uint256[] calldata _quantities
-    ) public {
-        LibTokens.mintFungibleByName(_name, _to, _quantities);
+    ) external {
+        LibTokens.mintFungibleByName2(_name, _to, _quantities);
     }
 
     function setURI(
         string calldata _uri,
         uint256 _id
-    ) public {
+    ) external {
         LibTokens.setURI(_uri, _id);
     }
 
@@ -73,88 +74,13 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
         LibTokens.setURIOfName(_uri, _name);
     }
 
-    function uri(uint256 id_) public view virtual returns (string memory) {
-        return LibTokenData.uri(id_);
-    }
-
-    function uriOfBatch(uint256[] calldata ids_) public view virtual returns (string[] memory) {
-        return LibTokenData.uriOfBatch(ids_);
-    }
-
-    function uriOfBatchName(string[] calldata names_) public view virtual returns (string[] memory) {
-        return LibTokenData.uriOfBatchName(names_);
-    }
-
-    function totalSupply(uint256 id_) public view virtual returns (uint256) {
-        return LibTokenData.totalSupply(id_);
-    }
-
-    function totalSupplyOfNfType(uint256 id_) public view virtual returns (uint256) {
-        return LibTokenData.totalSupplyOfNfType(id_);
-    }
-
-    function totalSupplyOfName(
-        string calldata name_
-    ) public view virtual returns (uint256) {
-        return LibTokenData.totalSupplyOfName(name_);
-    }
-
-    function exists(uint256 id_) public view virtual returns (bool) {
-        return LibTokenData.exists(id_);
-    }
-
-    function existsNfType(uint256 id_) public view virtual returns (bool) {
-        return LibTokenData.existsNfType(id_);
-    }
-
-    function existsName(string calldata name_) public view virtual returns (bool) {
-        return LibTokenData.existsName(name_);
-    }
-
-    function getTokenId(
-        string calldata _name
-    ) public view virtual returns (uint256) {
-      return LibTokenData.getTokenId(_name);
-    }
-
-    function totalSupplyOfBatch(
-        uint256[] calldata _ids
-    ) public view virtual returns (uint256[] memory) {
-        return LibTokenData.totalSupplyOfBatch(_ids);
-    }
-
-    function totalSupplyOfBatchNfType(
-        uint256[] calldata _ids
-    ) public view virtual returns (uint256[] memory) {
-        return LibTokenData.totalSupplyOfBatchNfType(_ids);
-    }
-
-    function totalSupplyOfBatchName(
-        string[] calldata _names
-    ) public view virtual returns (uint256[] memory) {
-        return LibTokenData.totalSupplyOfBatchName(_names);
-    }
-
     function balanceOf(
         address account_,
         uint256 id_
-    ) public view returns (uint256) {
+    ) external view returns (uint256) {
         return LibTokenData.balanceOf(account_, id_);
     }
-    
-    function balanceOfNfType(
-        address account_,
-        uint256 id_
-    ) public view returns (uint256) {
-        return LibTokenData.balanceOfNfType(account_, id_);
-    }
 
-    function balanceOfName(
-        address account_,
-        string calldata name_
-    ) public view returns (uint256) {
-        return LibTokenData.balanceOfName(account_, name_);
-    }
 
     function balanceOfBatch(
         address[] calldata accounts_,
@@ -163,19 +89,6 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
         return LibTokenData.balanceOfBatch(accounts_, ids_);
     }
 
-    function balanceOfBatchNfType(
-        address[] calldata accounts_,
-        uint256[] calldata ids_
-    ) external view returns (uint256[] memory) {
-        return LibTokenData.balanceOfBatchNfType(accounts_, ids_);
-    }
-
-    function balanceOfBatchName(
-        address[] calldata accounts_,
-        string[] calldata names_
-    ) external view returns (uint256[] memory) {
-        return LibTokenData.balanceOfBatchName(accounts_, names_);
-    }
 
     function setApprovalForAll(address operator_, bool approved_) external {
         LibTokens.setApprovalForAll(operator_, approved_);
@@ -184,7 +97,7 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
     function isApprovedForAll(
         address account_,
         address operator_
-    ) public view returns (bool) {
+    ) external view returns (bool) {
         return LibTokens.isApprovedForAll(account_, operator_);
     }
 

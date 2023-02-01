@@ -71,6 +71,12 @@ contract TaskCreateFacet is ERC1155StorageFacet {
         // IERC20(tokenAddress).approve(address(gateway), _amount);
         _storage.taskContracts.push(taskContractAddress);
         _storage.ownerTasks[_sender].push(taskContractAddress);
+
+
+        if(_storage.walletsMapping[_sender] != true){
+            _storage.wallets.push(_sender);
+            _storage.walletsMapping[_sender] = true;
+        }
         emit TaskCreated(taskContractAddress, 'createTaskContract', block.timestamp);
 
         // console.log(taskContractAddress);

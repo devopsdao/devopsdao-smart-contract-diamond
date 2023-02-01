@@ -359,6 +359,7 @@ library LibTokens {
         _tokenStorage.creators[_type] = msg.sender;
         _tokenStorage.tokenURIs[_type] = _uri;
         _tokenStorage.tokenNames[_name] = _type;
+        _tokenStorage.tokenTypeNames[_type] = _name;
 
         // console.log('created NFT:');
         // console.log(_type);
@@ -395,6 +396,7 @@ library LibTokens {
             // console.log(id);
 
             _tokenStorage.nfOwners[id] = dst;
+            _tokenStorage.ownerTokens[_to[i]].push(id);
             _tokenStorage.totalSupply[id] = 1;
             _tokenStorage.nfTypeSupply[_type] = _tokenStorage.nfTypeSupply[_type] + 1;
             // console.log(_tokenStorage.nfOwners[id]);
@@ -463,7 +465,7 @@ library LibTokens {
         }
     }
 
-    function mintFungibleByName(
+    function mintFungibleByName2(
         string calldata _name,
         address[] calldata _to,
         uint256[] calldata _quantities
@@ -515,6 +517,18 @@ library LibTokens {
             uint256 baseType = getNonFungibleBaseType(_id);
             _tokenStorage.balances[baseType][_from] = _tokenStorage.balances[baseType][_from] - _value;
             _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] - _value;
+
+            //maintain ownerTokens
+            for (uint256 index = 0; index < _tokenStorage.ownerTokens[_to].length; index++) {
+                if(_tokenStorage.ownerTokens[_from][index] == _id){
+                    // _storage.taskContractsBlacklistMapping[taskAddress] = false;
+                    for (uint i = index; i < _tokenStorage.ownerTokens[_from].length-1; i++){
+                        _tokenStorage.ownerTokens[_from][i] = _tokenStorage.ownerTokens[_from][i+1];
+                    }
+                    _tokenStorage.ownerTokens[_from].pop();
+                }
+                _tokenStorage.ownerTokens[_to].push(_id);
+            }
         } else {
             _tokenStorage.balances[_id][_from] =
                 _tokenStorage.balances[_id][_from] -
@@ -565,6 +579,24 @@ library LibTokens {
             if (isNonFungible(id)) {
                 require(_tokenStorage.nfOwners[id] == _from);
                 _tokenStorage.nfOwners[id] = _to;
+
+            // You could keep balance of NF type in base type id like so:
+                uint256 baseType = getNonFungibleBaseType(id);
+                _tokenStorage.balances[baseType][_from] = _tokenStorage.balances[baseType][_from] - value;
+                _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] - value;
+
+                //maintain ownerTokens
+                // for (uint256 index = 0; index < _tokenStorage.ownerTokens[_to].length; index++) {
+                //     if(_tokenStorage.ownerTokens[_from][index] == id){
+                //         // _storage.taskContractsBlacklistMapping[taskAddress] = false;
+                //         for (uint idx = index; idx < _tokenStorage.ownerTokens[_from].length-1; idx++){
+                //             _tokenStorage.ownerTokens[_from][idx] = _tokenStorage.ownerTokens[_from][idx+1];
+                //         }
+                //         _tokenStorage.ownerTokens[_from].pop();
+                //     }
+                //     _tokenStorage.ownerTokens[_to].push(id);
+                // }
+                
             } else {
                 _tokenStorage.balances[id][_from] = _tokenStorage
                 .balances[id][_from] - value;

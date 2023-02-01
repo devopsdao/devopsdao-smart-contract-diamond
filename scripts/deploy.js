@@ -107,6 +107,12 @@ const dodaoFacets = [
     ]
   },
   {
+    name: 'TokenDataFacet',
+    libraries: [
+      'LibTokenData',
+    ]
+  },
+  {
     name: 'AxelarFacet',
   },
   {

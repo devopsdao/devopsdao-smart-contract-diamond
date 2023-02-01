@@ -6,13 +6,15 @@ pragma solidity ^0.8.17;
 // import '../interfaces/IDiamondLoupe.sol';
 
 
-import "../libraries/LibTasks.sol";
+// import "../libraries/LibTasks.sol";
 // import "../libraries/LibInterchain.sol";
 import "../libraries/LibUtils.sol";
 
 import "../contracts/TaskContract.sol";
 // import "../facets/tokenstorage/ERC1155StorageFacet.sol";
-import "../facets/TokenFacet.sol";
+// import "../facets/TokenFacet.sol";
+// import "../facets/TokenDataFacet.sol";
+
 
 import "hardhat/console.sol";
 
@@ -43,15 +45,16 @@ contract TaskDataFacet  {
     external
     {
         TaskStorage storage _storage = LibTasks.taskStorage();
-        uint256 balance = TokenFacet(address(this)).balanceOfName(msg.sender, 'auditor');
-        require(balance > 0, 'must hold Auditor NFT to add to blacklist');
+        // uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'auditor');
+        // require(balance > 0, 'must hold Auditor NFT to add to blacklist');
+        require(_storage.taskContractsBlacklistMapping[taskAddress] != true, 'task is already blacklisted');
         _storage.taskContractsBlacklist.push(taskAddress);
         _storage.taskContractsBlacklistMapping[taskAddress] = true;
     }
 
     function removeTaskFromBlacklist(address taskAddress) external{
         TaskStorage storage _storage = LibTasks.taskStorage();
-        uint256 balance = TokenFacet(address(this)).balanceOfName(msg.sender, 'auditor');
+        uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'auditor');
         require(balance > 0, 'must hold Auditor NFT to add to blacklist');
         for (uint256 index = 0; index < _storage.taskContractsBlacklist.length; index++) {
             if(_storage.taskContractsBlacklist[index] == taskAddress){

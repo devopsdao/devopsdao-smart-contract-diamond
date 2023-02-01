@@ -49,7 +49,7 @@ async function mintNFTs(nfType, receivers){
     const metadataJSON = await fs.readFile(path.join(__dirname,`./metadata/${nfType}.json`), 'utf-8');
     let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
 
-    const baseType = await tokenFacet.getTokenId(nfType)
+    const baseType = await tokenFacet.getTokenBaseType(nfType)
 
     const mintNFT = await tokenFacet.mintNonFungible(baseType, receivers)
     const mintNFTReceipt = await mintNFT.wait()
@@ -70,7 +70,7 @@ async function setURIOfName(metadataURI, nfType){
   const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
   let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
   console.log(`setting URI for ${nfType} to ${metadataURI}`)
-  // const baseType = await tokenFacet.getTokenId(nfType)
+  // const baseType = await tokenFacet.getTokenBaseType(nfType)
   const tx = await tokenFacet.setURIOfName(metadataURI, nfType)
   const receipt = await tx.wait()
   const event = receipt.events[0]

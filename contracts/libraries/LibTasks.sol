@@ -35,6 +35,8 @@ struct TaskStorage {
     mapping(address => address[]) ownerTasks;
     mapping(address => address[]) participantTasks;
     mapping(address => address[]) auditParticipantTasks;
+    address[] wallets;
+    mapping(address => bool) walletsMapping;
     address[] taskContracts;
     uint256 countNew;
     uint256 countAgreed;
@@ -154,6 +156,13 @@ library LibTasks {
                 keccak256(bytes(TASK_STATE_NEW)),
             "task is not in the new state"
         );
+
+        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+        for (uint i = 0; i < _storage.tasks[address(this)].symbols.length; i++){
+            if(_tokenStorage.tokenNames[_storage.tasks[address(this)].symbols[i]] > 0){
+                TokenFacet(address(this)).safeTransferFrom(_sender, address(this), _tokenStorage.tokenNames[_storage.tasks[address(this)].symbols[i]], 1, bytes(''));
+            }
+        }
         //   _storage.tasks[address(this)].countMessages++;
         Message memory message;
         message.id = _storage.tasks[address(this)].messages.length + 1;

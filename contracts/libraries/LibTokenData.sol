@@ -17,6 +17,7 @@ library LibTokenData {
     }
 
     function uri(uint256 _id) external view returns (string memory){
+        // console.log(_id);
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
         uint256 id;
         if (isNonFungible(_id)) {
@@ -180,7 +181,7 @@ library LibTokenData {
     function balanceOfName(
         address _owner,
         string calldata _name
-    ) external view returns (uint256) {
+    ) public view returns (uint256) {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
         uint256 baseType = _tokenStorage.tokenNames[_name];
         if(isNonFungibleBaseType(baseType)){
@@ -237,6 +238,7 @@ library LibTokenData {
         return balances_;
     }
 
+    //for Non-fungible returns total balance of basetype
     function balanceOfBatchName(
         address[] calldata _owners,
         string[] calldata _names
@@ -272,17 +274,45 @@ library LibTokenData {
 
     function existsName(
         string calldata _name
-    ) external view returns (bool) {
+    ) public view returns (bool) {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
         uint256 baseType = _tokenStorage.tokenNames[_name];
         return _tokenStorage.nfTypeSupply[baseType] > 0;
     }
 
-    function getTokenId(
+    function getTokenBaseType(
         string calldata _name
     ) external view returns (uint256) {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
         return _tokenStorage.tokenNames[_name];
+    }
+
+    function getTokenName(
+        uint256 _id
+    ) external view returns (string memory) {
+        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+        uint256 baseType = getNonFungibleBaseType(_id);
+        return _tokenStorage.tokenTypeNames[baseType];
+    }
+
+    function getTokenIds(
+        address owner
+    ) external view returns (uint256[] memory) {
+        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+        return _tokenStorage.ownerTokens[owner];
+    }
+
+    function getTokenNames(
+        address owner
+    ) external view returns (string[] memory) {
+        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+        
+        string[] memory names = new string[](_tokenStorage.ownerTokens[owner].length);
+        for (uint256 i = 0; i < _tokenStorage.ownerTokens[owner].length; ++i) {
+            uint256 baseType = getNonFungibleBaseType(_tokenStorage.ownerTokens[owner][i]);
+            names[i] = _tokenStorage.tokenTypeNames[baseType];
+        }
+        return names;
     }
 
     // taken from Enjin 1155 implementation

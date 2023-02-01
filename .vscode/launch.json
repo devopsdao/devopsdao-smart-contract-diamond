@@ -49,9 +49,9 @@
         "request": "launch",
         "name": "hardhat test",
         "skipFiles": ["<node_internals>/**"],
-        "runtimeExecutable": "${workspaceFolder}/packages/hardhat/node_modules/.bin/hardhat",
+        "runtimeExecutable": "npx hardhat",
         "args": ["test", "--network", "localhost"],
-        "cwd": "${workspaceFolder}/packages/hardhat"
+        "cwd": "${workspaceFolder}"
     },  
     ]
 }

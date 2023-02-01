@@ -2,6 +2,9 @@
 const { ethers } = require("hardhat");
 // const crypto = require('crypto');
 const helpers = require('@nomicfoundation/hardhat-network-helpers');
+const path = require('node:path');
+const fs = require('fs');
+
 
 const {
   BN,           // Big Number support
@@ -39,6 +42,7 @@ describe('DiamondTest', async function () {
     taskCreateFacet = await ethers.getContractAt('TaskCreateFacet', diamondAddress)
     taskDataFacet = await ethers.getContractAt('TaskDataFacet', diamondAddress)
     tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+    tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress)
     axelarFacet = await ethers.getContractAt('AxelarFacet', diamondAddress)
     hyperlaneFacet = await ethers.getContractAt('HyperlaneFacet', diamondAddress)
     layerzeroFacet = await ethers.getContractAt('LayerzeroFacet', diamondAddress)
@@ -53,7 +57,7 @@ describe('DiamondTest', async function () {
       // console.log(address);
     }
 
-    assert.equal(addresses.length, 10)
+    assert.equal(addresses.length, 11)
   })
 
   // it('should test NFTFacet', async () => {
@@ -72,22 +76,26 @@ describe('DiamondTest', async function () {
   it('remove all functions and facets except \'diamondCut\' and \'facets\'', async () => {
     let selectors = []
     let facets = await diamondLoupeFacet.facets()
+    // console.log(facets)
     for (let i = 0; i < facets.length; i++) {
       selectors.push(...facets[i].functionSelectors)
     }
     selectors = removeSelectors(selectors, ['facets()', 'diamondCut(tuple(address,uint8,bytes4[])[],address,bytes)'])
+    // console.log(selectors)
     tx = await diamondCutFacet.diamondCut(
       [{
         facetAddress: ethers.constants.AddressZero,
         action: FacetCutAction.Remove,
         functionSelectors: selectors
       }],
-      ethers.constants.AddressZero, '0x', { gasLimit: 800000 })
+      ethers.constants.AddressZero, '0x', { gasLimit: 8000000 })
     receipt = await tx.wait()
     if (!receipt.status) {
       throw Error(`Diamond upgrade failed: ${tx.hash}`)
     }
     facets = await diamondLoupeFacet.facets()
+    // console.log('removed facets')
+    // console.log(facets)
     assert.equal(facets.length, 2)
     assert.equal(facets[0][0], addresses[0])
     assert.sameMembers(facets[0][1], ['0x1f931c1c'])
@@ -139,20 +147,25 @@ describe('DiamondTest', async function () {
       {
         facetAddress: addresses[6],
         action: FacetCutAction.Add,
-        functionSelectors: getSelectors(axelarFacet)
+        functionSelectors: getSelectors(tokenDataFacet)
       },
       {
         facetAddress: addresses[7],
         action: FacetCutAction.Add,
-        functionSelectors: getSelectors(hyperlaneFacet)
+        functionSelectors: getSelectors(axelarFacet)
       },
       {
         facetAddress: addresses[8],
         action: FacetCutAction.Add,
-        functionSelectors: getSelectors(layerzeroFacet)
+        functionSelectors: getSelectors(hyperlaneFacet)
       },
       {
         facetAddress: addresses[9],
+        action: FacetCutAction.Add,
+        functionSelectors: getSelectors(layerzeroFacet)
+      },
+      {
+        facetAddress: addresses[10],
         action: FacetCutAction.Add,
         functionSelectors: getSelectors(wormholeFacet)
       },
@@ -198,6 +211,22 @@ describe('DiamondTest', async function () {
       symbols: ['ETH'],
       amounts: [1]
     }
+
+    //debug abi call data
+    // const dir = path.resolve(
+    //   __dirname,
+    //   "../artifacts/contracts/facets/TaskCreateFacet.sol/TaskCreateFacet.json"
+    // )
+    // const file = fs.readFileSync(dir, "utf8")
+    // const json = JSON.parse(file)
+    // const abi = json.abi
+    // console.log(`abi`, abi)
+    // iface = new ethers.utils.Interface(abi);
+    // const encodedCall = iface.encodeFunctionData("createTaskContract", [signers[0].address, taskData])
+    // // const encodedCall = taskCreateFacet.encodeFunctionData(signers[0].address, taskData,
+    // //   { gasLimit: 30000000 });
+    // console.log(encodedCall)
+
     createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData,
     { gasLimit: 30000000 })
 
@@ -216,99 +245,108 @@ describe('DiamondTest', async function () {
     // console.log(getTaskContracts)
 
     const createAuditorNFTEvent = createAuditorNFTReceipt.events[1]
-    const { value:createdAuditorNFTuri, id:createdAuditorNFTid } = createAuditorNFTEvent.args
+    const { value:createdAuditorNFTuri, id:createdAuditorNftBaseType } = createAuditorNFTEvent.args
     assert.equal(createdAuditorNFTuri, "https://example.com/{id}")
 
 
-    const auditorNFTURI = await tokenFacet.connect(signers[2]).uri(createdAuditorNFTid)
+    const auditorNFTURI = await tokenDataFacet.connect(signers[2]).uri(createdAuditorNftBaseType)
     assert.equal(auditorNFTURI, 'https://example.com/{id}')
 
-    const auditorNFTURIOfBatch = await tokenFacet.connect(signers[2]).uriOfBatch([createdAuditorNFTid])
+    const auditorNFTURIOfBatch = await tokenDataFacet.connect(signers[2]).uriOfBatch([createdAuditorNftBaseType])
     assert.deepEqual(auditorNFTURIOfBatch, ['https://example.com/{id}'])
 
-    const auditorNFTURIOfBatchName = await tokenFacet.connect(signers[2]).uriOfBatchName(['auditor'])
+    const auditorNFTURIOfBatchName = await tokenDataFacet.connect(signers[2]).uriOfBatchName(['auditor'])
     assert.deepEqual(auditorNFTURIOfBatchName, ['https://example.com/{id}'])
 
 
-    const auditorSetNFTURI = await tokenFacet.connect(signers[0]).setURI('https://example2.com/{id}', createdAuditorNFTid)
-    const auditorNFTURI2 = await tokenFacet.connect(signers[2]).uri(createdAuditorNFTid)
+    const auditorSetNFTURI = await tokenFacet.connect(signers[0]).setURI('https://example2.com/{id}', createdAuditorNftBaseType)
+    const auditorNFTURI2 = await tokenDataFacet.connect(signers[2]).uri(createdAuditorNftBaseType)
     assert.equal(auditorNFTURI2, 'https://example2.com/{id}')
 
     const auditorSetNFTURIofName = await tokenFacet.connect(signers[0]).setURIOfName('https://example3.com/{id}', 'auditor')
-    const auditorNFTURI3 = await tokenFacet.connect(signers[2]).uri(createdAuditorNFTid)
+    const auditorNFTURI3 = await tokenDataFacet.connect(signers[2]).uri(createdAuditorNftBaseType)
     assert.equal(auditorNFTURI3, 'https://example3.com/{id}')
 
-    const auditorNFTTokenId = await tokenFacet.connect(signers[2]).getTokenId('auditor')
-    assert.deepEqual(auditorNFTTokenId, createdAuditorNFTid)
+    const auditorNFTTokenBaseType = await tokenDataFacet.connect(signers[2]).getTokenBaseType('auditor')
+    assert.deepEqual(auditorNFTTokenBaseType, createdAuditorNftBaseType)
 
     //openzeppelin test helpers, not compatible with ethers.js
     // await expectEvent(createAuditorNFTReceipt, 'URI', {
     //   value: this.value,
     // });
 
-    const mintAuditorNFT = await tokenFacet.connect(signers[0]).mintNonFungible(createdAuditorNFTid, [signers[2].address])
+    const mintAuditorNFT = await tokenFacet.connect(signers[0]).mintNonFungible(createdAuditorNftBaseType, [signers[2].address])
     const mintAuditorNFTReceipt = await mintAuditorNFT.wait()
 
     const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0];
     const { value:mintedAuditorNFTamount, id:mintedAuditorNFTid } = mintAuditorNFTEvent.args;
     assert.equal(mintedAuditorNFTamount, 1)
 
-    const mintedAuditorNFTURI = await tokenFacet.connect(signers[2]).uri(mintedAuditorNFTid)
+    const mintedAuditorNFTURI = await tokenDataFacet.connect(signers[2]).uri(mintedAuditorNFTid)
     assert.equal(mintedAuditorNFTURI, auditorNFTURI3)
 
-    const auditorNFTExists = await tokenFacet.connect(signers[2]).exists(mintedAuditorNFTid)
+    const auditorNFTExists = await tokenDataFacet.connect(signers[2]).exists(mintedAuditorNFTid)
     assert.equal(auditorNFTExists, true)
 
-    const auditorNFTExistsNfType = await tokenFacet.connect(signers[2]).existsNfType(mintedAuditorNFTid)
+    const auditorNFTExistsNfType = await tokenDataFacet.connect(signers[2]).existsNfType(mintedAuditorNFTid)
     assert.equal(auditorNFTExistsNfType, true)
 
-    const auditorNFTExistsName = await tokenFacet.connect(signers[2]).existsName('auditor')
+    const auditorNFTExistsName = await tokenDataFacet.connect(signers[2]).existsName('auditor')
     assert.equal(auditorNFTExistsName, true)
 
-    const auditorNFTTotalSupply = await tokenFacet.connect(signers[2]).totalSupply(mintedAuditorNFTid)
+    const auditorNFTTotalSupply = await tokenDataFacet.connect(signers[2]).totalSupply(mintedAuditorNFTid)
     assert.equal(auditorNFTTotalSupply, 1)
 
-    const auditorNFTTotalSupplyNfType = await tokenFacet.connect(signers[2]).totalSupplyOfNfType(mintedAuditorNFTid)
+    const auditorNFTTotalSupplyNfType = await tokenDataFacet.connect(signers[2]).totalSupplyOfNfType(mintedAuditorNFTid)
     assert.equal(auditorNFTTotalSupplyNfType, 1)
 
-    const auditorNFTTotalSupplyName = await tokenFacet.connect(signers[2]).totalSupplyOfName('auditor')
+    const auditorNFTTotalSupplyName = await tokenDataFacet.connect(signers[2]).totalSupplyOfName('auditor')
     assert.equal(auditorNFTTotalSupplyName, 1)
 
-    const auditorNFTTotalSupplyOfBatch = await tokenFacet.connect(signers[2]).totalSupplyOfBatch([mintedAuditorNFTid])
+    const auditorNFTTotalSupplyOfBatch = await tokenDataFacet.connect(signers[2]).totalSupplyOfBatch([mintedAuditorNFTid])
     assert.deepEqual(auditorNFTTotalSupplyOfBatch, [ethers.BigNumber.from(1)])
 
-    const auditorNFTTotalSupplyOfBatchNfType = await tokenFacet.connect(signers[2]).totalSupplyOfBatchNfType([mintedAuditorNFTid])
+    const auditorNFTTotalSupplyOfBatchNfType = await tokenDataFacet.connect(signers[2]).totalSupplyOfBatchNfType([mintedAuditorNFTid])
     assert.deepEqual(auditorNFTTotalSupplyOfBatchNfType, [ethers.BigNumber.from(1)])
 
-    const auditorNFTTotalSupplyOfBatchName = await tokenFacet.connect(signers[2]).totalSupplyOfBatchName(['auditor'])
+    const auditorNFTTotalSupplyOfBatchName = await tokenDataFacet.connect(signers[2]).totalSupplyOfBatchName(['auditor'])
     assert.deepEqual(auditorNFTTotalSupplyOfBatchName, [ethers.BigNumber.from(1)])
 
     const auditorNFTBalanceOf = await tokenFacet.connect(signers[2]).balanceOf(signers[2].address, mintedAuditorNFTid)
     assert.equal(auditorNFTBalanceOf, 1)
 
-    const auditorNFTBalanceOfNfType = await tokenFacet.connect(signers[2]).balanceOfNfType(signers[2].address, mintedAuditorNFTid)
+    const auditorNFTBalanceOfNfType = await tokenDataFacet.connect(signers[2]).balanceOfNfType(signers[2].address, mintedAuditorNFTid)
     assert.equal(auditorNFTBalanceOfNfType, 1)
 
-    const auditorNFTBalanceOfName = await tokenFacet.connect(signers[2]).balanceOfName(signers[2].address, 'auditor')
+    const auditorNFTBalanceOfName = await tokenDataFacet.connect(signers[2]).balanceOfName(signers[2].address, 'auditor')
     assert.equal(auditorNFTBalanceOfName, 1)
 
     const auditorNFTBalanceOfBatch = await tokenFacet.connect(signers[2]).balanceOfBatch([signers[2].address], [mintedAuditorNFTid])
     assert.deepEqual(auditorNFTBalanceOfBatch, [ethers.BigNumber.from(1)])
 
-    const auditorNFTBalanceOfBatchNfType = await tokenFacet.connect(signers[2]).balanceOfBatchNfType([signers[2].address], [mintedAuditorNFTid])
+    const auditorNFTBalanceOfBatchNfType = await tokenDataFacet.connect(signers[2]).balanceOfBatchNfType([signers[2].address], [mintedAuditorNFTid])
     assert.deepEqual(auditorNFTBalanceOfBatchNfType, [ethers.BigNumber.from(1)])
 
-    const auditorNFTBalanceOfBatchName = await tokenFacet.connect(signers[2]).balanceOfBatchName([signers[2].address], ['auditor'])
+    const auditorNFTBalanceOfBatchName = await tokenDataFacet.connect(signers[2]).balanceOfBatchName([signers[2].address], ['auditor'])
     assert.deepEqual(auditorNFTBalanceOfBatchName, [ethers.BigNumber.from(1)])
 
+    // const auditorNftBaseType = await tokenFacet.connect(signers[2]).getTokenBaseType(mintedAuditorNFTid)
+    // assert.equal(auditorNftBaseType, createdAuditorNftBaseType)
+
+    const auditorNftName = await tokenDataFacet.connect(signers[2]).getTokenName(mintedAuditorNFTid)
+    assert.equal(auditorNftName, 'auditor')
+
+    const ownedTokenIds = await tokenDataFacet.connect(signers[2]).getTokenIds(signers[2].address)
+    assert.deepEqual(ownedTokenIds, [mintedAuditorNFTid])
+    
+    const ownedTokenNames = await tokenDataFacet.connect(signers[2]).getTokenNames(signers[2].address)
+    assert.deepEqual(ownedTokenNames, ['auditor'])
 
     const getNewTaskContractsBeforeBlacklist = await taskDataFacet.connect(signers[0]).getTaskContractsByState("new")
     // expect(getNewTaskContractsBeforeBlacklist).to.have.members(getTaskContracts);
     assert.deepEqual(getNewTaskContractsBeforeBlacklist, getTaskContracts)
     
     const addContractToBlacklist = await taskDataFacet.connect(signers[2]).addTaskToBlacklist(getTaskContracts[getTaskContracts.length - 1])
-
-    // getTaskInfoNew = await taskContract.getTaskInfo()
 
     const getNewTaskContractsAfterBlacklist = await taskDataFacet.connect(signers[0]).getTaskContractsByState("new")
     assert.deepEqual(getNewTaskContractsAfterBlacklist, [])
