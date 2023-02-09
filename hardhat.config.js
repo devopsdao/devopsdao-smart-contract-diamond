@@ -2,6 +2,7 @@
 /* global ethers task */
 require('@nomiclabs/hardhat-waffle')
 require("@nomiclabs/hardhat-ethers");
+// require("@nomicfoundation/hardhat-chai-matchers")
 require('hardhat-contract-sizer');
 require("hardhat-interface-generator");
 require('solidity-coverage');
@@ -10,7 +11,8 @@ require("hardhat-tracer");
 require('hardhat-abi-exporter');
 require("@openzeppelin/test-helpers");
 // const { ethers } = require("ethers");
-
+// require("@nomiclabs/hardhat-web3");
+require("@nomiclabs/hardhat-truffle5");
 
 require('./scripts/deploy.js');
 require('./scripts/hardhat-tasks.js');

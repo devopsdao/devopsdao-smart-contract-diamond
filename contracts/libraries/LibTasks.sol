@@ -35,8 +35,8 @@ struct TaskStorage {
     mapping(address => address[]) ownerTasks;
     mapping(address => address[]) participantTasks;
     mapping(address => address[]) auditParticipantTasks;
-    address[] wallets;
-    mapping(address => bool) walletsMapping;
+    address[] accounts;
+    mapping(address => bool) accountsMapping;
     address[] taskContracts;
     uint256 countNew;
     uint256 countAgreed;
@@ -83,6 +83,17 @@ struct Message {
     address sender;
     string taskState;
     uint256 replyTo;
+}
+
+struct Account {
+    address accountOwner;
+    uint256 customerTaskCount;
+    uint256 performerTaskCount;
+
+}
+
+struct Accounts {
+    mapping(address => Account) accounts;
 }
 
 string constant TASK_TYPE_PRIVATE = "private";

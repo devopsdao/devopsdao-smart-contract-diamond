@@ -6,7 +6,7 @@ pragma solidity ^0.8.17;
 // import '../interfaces/IDiamondLoupe.sol';
 
 
-// import "../libraries/LibTasks.sol";
+import "../libraries/LibTasks.sol";
 // import "../libraries/LibInterchain.sol";
 import "../libraries/LibUtils.sol";
 
@@ -112,7 +112,7 @@ contract TaskDataFacet  {
 
 
     function getTaskContractsCustomer(address contractOwner)
-    external
+    public
     view
     returns (address[] memory)
     {
@@ -124,12 +124,54 @@ contract TaskDataFacet  {
     }
 
     function getTaskContractsPerformer(address participant)
-    external
+    public
     view
     returns (address[] memory)
     {
         TaskStorage storage _storage = LibTasks.taskStorage();
         return _storage.participantTasks[participant];
+    }
+
+    function getAccounts()
+    external
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        return _storage.accounts;
+    }
+
+    function getAccountData(address[] memory accountAddresses)
+    external
+    view
+    returns (Account[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        Account[] memory accounts = new Account[](accountAddresses.length);
+        for (uint256 i = 0; i < accountAddresses.length; i++) {
+            Account memory account;
+            address[] memory customerContracts = getTaskContractsCustomer(accountAddresses[i]);
+            uint256 symbolCount = 0;
+            for (uint256 idx = 0; idx < customerContracts.length; idx++) {
+                Task memory task = TaskContract(customerContracts[idx]).getTaskInfo();
+                symbolCount = symbolCount + task.symbols.length;
+            }
+            string[] memory spentSymbols = new string[](symbolCount);
+            uint256[] memory spentSymbolAmounts = new uint256[](symbolCount);
+            uint256 symbolIdx = 0;
+            for (uint256 idx = 0; idx < customerContracts.length; idx++) {
+                Task memory task = TaskContract(customerContracts[idx]).getTaskInfo();
+                for (uint256 index = 0; index < task.symbols.length; index++) {
+                    spentSymbols[symbolIdx] = task.symbols[symbolIdx];
+                    spentSymbolAmounts[symbolIdx] = task.amounts[symbolIdx];
+                    symbolIdx++;
+                }
+            }
+            address[] memory performerContracts = getTaskContractsPerformer(accountAddresses[i]);
+            account.performerTaskCount = performerContracts.length;
+            accounts[i] = account;
+        }
+        return accounts;
     }
 
 }

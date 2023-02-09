@@ -914,7 +914,7 @@ library LibTokens {
     //         try
     //             onERC1155Received(msg.sender, from_, tokenID_, amount_, data_)
     //         returns (bytes4 retval) {
-    //             return retval == IERC1155Receiver.onERC1155Received.selector;
+    //             return retval == IERC1155TokenReceiver.onERC1155Received.selector;
     //         } catch (bytes memory reason) {
     //             if (reason.length == 0) {
     //                 revert(
@@ -949,7 +949,7 @@ library LibTokens {
     //                 data_
     //             )
     //         returns (bytes4 retval) {
-    //             return retval == IERC1155Receiver.onERC1155Received.selector;
+    //             return retval == IERC1155TokenReceiver.onERC1155Received.selector;
     //         } catch (bytes memory reason) {
     //             if (reason.length == 0) {
     //                 revert(

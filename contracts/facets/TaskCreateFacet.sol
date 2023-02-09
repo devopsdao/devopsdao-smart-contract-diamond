@@ -73,9 +73,9 @@ contract TaskCreateFacet is ERC1155StorageFacet {
         _storage.ownerTasks[_sender].push(taskContractAddress);
 
 
-        if(_storage.walletsMapping[_sender] != true){
-            _storage.wallets.push(_sender);
-            _storage.walletsMapping[_sender] = true;
+        if(_storage.accountsMapping[_sender] != true){
+            _storage.accounts.push(_sender);
+            _storage.accountsMapping[_sender] = true;
         }
         emit TaskCreated(taskContractAddress, 'createTaskContract', block.timestamp);
 

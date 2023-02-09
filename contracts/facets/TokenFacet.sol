@@ -7,7 +7,7 @@ import "../libraries/LibTokens.sol";
 import "../libraries/LibTokenData.sol";
 import "../facets/tokenstorage/ERC1155StorageFacet.sol";
 import "../interfaces/IERC1155.sol";
-import "../interfaces/IERC1155Receiver.sol";
+import "../interfaces/IERC1155TokenReceiver.sol";
 
 import "hardhat/console.sol";
 
@@ -135,4 +135,11 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
                 )
             );
     }
+
+    // function supportsInterface(bytes4 _interfaceId)
+    //     public
+    //     pure
+    // returns (bool) {
+    //     return LibTokens.supportsInterface(_interfaceId);
+    // }
 }
