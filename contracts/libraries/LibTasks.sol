@@ -32,21 +32,22 @@ struct TaskData{
 
 struct TaskStorage {
     mapping(address => Task) tasks;
-    mapping(address => address[]) ownerTasks;
-    mapping(address => address[]) participantTasks;
-    mapping(address => address[]) auditParticipantTasks;
-    address[] accounts;
-    mapping(address => bool) accountsMapping;
     address[] taskContracts;
-    uint256 countNew;
-    uint256 countAgreed;
-    uint256 countProgress;
-    uint256 countReview;
-    uint256 countCompleted;
-    uint256 countCanceled;
-    string stateNew;
+    mapping(address => Account) accounts;
+    address[] accountsList;
+    mapping(address => bool) accountsMapping;
     address[] taskContractsBlacklist;
     mapping(address => bool) taskContractsBlacklistMapping;
+    // mapping(address => address[]) ownerTasks;
+    // mapping(address => address[]) participantTasks;
+    // mapping(address => address[]) auditParticipantTasks;
+    // uint256 countNew;
+    // uint256 countAgreed;
+    // uint256 countProgress;
+    // uint256 countReview;
+    // uint256 countCompleted;
+    // uint256 countCanceled;
+    // string stateNew;
 }
 
 struct Task {
@@ -76,6 +77,12 @@ struct Task {
     address contractParent;
 }
 
+struct TaskWithBalance {
+    Task task;
+    string[] tokenNames;
+    uint256[] tokenBalances;
+}
+
 struct Message {
     uint256 id;
     string text;
@@ -87,9 +94,13 @@ struct Message {
 
 struct Account {
     address accountOwner;
+    address[] ownerTasks;
+    address[] participantTasks;
+    address[] auditParticipantTasks;
+    uint256[] customerRatings;
+    uint256[] performerRatings;
     uint256 customerTaskCount;
     uint256 performerTaskCount;
-
 }
 
 struct Accounts {
@@ -198,7 +209,7 @@ library LibTasks {
             }
             if (!existed) {
                 _storage.tasks[address(this)].participants.push(_sender);
-                _storage.participantTasks[_sender].push(address(this));
+                _storage.accounts[_sender].participantTasks.push(address(this));
                 _storage.tasks[address(this)].messages.push(message);
             }
         }

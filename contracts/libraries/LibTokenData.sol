@@ -245,7 +245,7 @@ library LibTokenData {
     ) external view returns (uint256[] memory) {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
 
-        require(_owners.length == _names.length);
+        require(_owners.length == _names.length, 'owners and token names length must match');
 
         uint256[] memory balances_ = new uint256[](_owners.length);
         

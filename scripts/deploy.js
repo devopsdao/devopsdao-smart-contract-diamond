@@ -225,6 +225,7 @@ async function upgradeDiamondFacets(facets, libraries) {
       libNames = libNames.concat(facet.libraries)
     }
   }
+
   //make uniq
   libNames = [...new Set(libNames)]
 
@@ -252,17 +253,17 @@ async function upgradeDiamondFacets(facets, libraries) {
   const libAddresses  = await deployLibs(libs);
 
   console.log('removing existingFacetSelectors')
-  // for(const facet of facets){
-  //   tx = await diamondCutFacet.diamondCut(
-  //     [{
-  //       facetAddress: ethers.constants.AddressZero,
-  //       action: FacetCutAction.Remove,
-  //       functionSelectors: existingFacetSelectors[facet.name]
-  //     }],
-  //     ethers.constants.AddressZero, '0x', { gasLimit: 800000 })
-  //   receipt = await tx.wait()
-  //   console.log(`${facet.name} removed`)
-  // }
+  for(const facet of facets){
+    tx = await diamondCutFacet.diamondCut(
+      [{
+        facetAddress: ethers.constants.AddressZero,
+        action: FacetCutAction.Remove,
+        functionSelectors: existingFacetSelectors[facet.name]
+      }],
+      ethers.constants.AddressZero, '0x', { gasLimit: 800000 })
+    receipt = await tx.wait()
+    console.log(`${facet.name} removed`)
+  }
 
 
   console.log('deploying new facets')
@@ -407,7 +408,7 @@ async function deployFacets(FacetInits, libAddresses){
       console.log(`${FacetInit.name} libraries: ${JSON.stringify(Libs)}`)
       Facet = await ethers.getContractFactory(FacetInit.name, {libraries: Libs})
     }
-    const facet = await Facet.deploy()
+    const facet = await Facet.deploy({ gasLimit: 8000000 })
     await facet.deployed()
     console.log(`${FacetInit.name} deployed: ${facet.address}`)
     facetCuts.push({

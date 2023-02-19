@@ -45,7 +45,7 @@ contract TaskContract is ERC1155StorageFacet  {
         emit TaskUpdated(address(this), 'TaskContract', block.timestamp);
     }
 
-    function getTaskInfo() external view returns (Task memory task)
+    function getTaskData() external view returns (Task memory task)
     {
         TaskStorage storage _storage = LibTasks.taskStorage();
         // uint256 balance = TokenFacet(_storage.tasks[address(this)].contractParent).balanceOf(msg.sender, 1);

@@ -48,8 +48,9 @@ async function mintNFTs(nfType, receivers){
 
     const metadataJSON = await fs.readFile(path.join(__dirname,`./metadata/${nfType}.json`), 'utf-8');
     let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+    let tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress)
 
-    const baseType = await tokenFacet.getTokenBaseType(nfType)
+    const baseType = await tokenDataFacet.getTokenBaseType(nfType)
 
     const mintNFT = await tokenFacet.mintNonFungible(baseType, receivers)
     const mintNFTReceipt = await mintNFT.wait()
@@ -332,6 +333,9 @@ task(
   .addParam("amounts", "symbol amounts")
   .setAction(
   async function (taskArguments, hre, runSuper) {
+    signers = await ethers.getSigners();
+    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
+    taskCreateFacet = await ethers.getContractAt('TaskCreateFacet', diamondAddress)
 
     let tags = []
 
@@ -343,7 +347,6 @@ task(
     }
 
     let symbols = []
-    names
     if(taskArguments.symbols.indexOf(',') != -1){
       symbols = taskArguments.symbols.split(',')
     }
@@ -362,20 +365,21 @@ task(
 
     if(symbols.length === amounts.length){
       const taskData = {
-        nanoId: taskArguments.nanoId,
-        taskType: taskArguments.taskType,
+        nanoId: 'nanoId1',
+        taskType: taskArguments.type,
         title: taskArguments.title,
         description: taskArguments.description,
         tags : tags,
         symbols: symbols,
         amounts: amounts
       }
+      console.log(taskData)
+
       tx = await taskCreateFacet.createTaskContract(signers[0].address, taskData,
       { gasLimit: 30000000 })
       const receipt = await tx.wait()
       const event = receipt.events[0]
-      const { contractAdr, message, timestamp } = event.args
-      console.log(`created new task contract ${contractAdr}`)
+      console.log(`created new task contract ${event.address}`)
     }
     else{
       console.log('--symbols and --amounts argument count must match')

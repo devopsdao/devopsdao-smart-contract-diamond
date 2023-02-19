@@ -81,7 +81,7 @@ contract TaskDataFacet  {
         return _storage.taskContracts;
     }
 
-    function getTaskContractsByState(string memory _taskState)
+    function getTaskContractsByState(string calldata _taskState)
     external
     view
     returns (address[] memory)
@@ -89,7 +89,7 @@ contract TaskDataFacet  {
         TaskStorage storage _storage = LibTasks.taskStorage();
         uint256 taskCount = 0;
         for (uint256 i = 0; i < _storage.taskContracts.length; i++) {
-            Task memory task = TaskContract(address(_storage.taskContracts[i])).getTaskInfo();
+            Task memory task = TaskContract(address(_storage.taskContracts[i])).getTaskData();
             if(keccak256(bytes(task.taskState)) == keccak256(bytes(_taskState))
             && ((keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false) 
             || keccak256(bytes(task.taskState)) != keccak256(bytes(TASK_STATE_NEW)))
@@ -98,13 +98,15 @@ contract TaskDataFacet  {
             }
         }
         address[] memory taskContracts = new address[](taskCount);
+        uint256 foundTaskId = 0;
         for (uint256 i = 0; i < _storage.taskContracts.length; i++) {
-            Task memory task = TaskContract(address(_storage.taskContracts[i])).getTaskInfo();
+            Task memory task = TaskContract(address(_storage.taskContracts[i])).getTaskData();
             if(keccak256(bytes(task.taskState)) == keccak256(bytes(_taskState))
             && ((keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false) 
             || keccak256(bytes(task.taskState)) != keccak256(bytes(TASK_STATE_NEW)))
             ){
-                taskContracts[taskCount-1] = _storage.taskContracts[i];
+                taskContracts[foundTaskId] = _storage.taskContracts[i];
+                foundTaskId++;
             }
         }
         return taskContracts;
@@ -120,7 +122,7 @@ contract TaskDataFacet  {
         // if(ownerTasks[contractOwner].length > 0){
         //     return ownerTasks[contractOwner];
         // }
-        return _storage.ownerTasks[contractOwner];
+        return _storage.accounts[contractOwner].ownerTasks;
     }
 
     function getTaskContractsPerformer(address participant)
@@ -129,19 +131,61 @@ contract TaskDataFacet  {
     returns (address[] memory)
     {
         TaskStorage storage _storage = LibTasks.taskStorage();
-        return _storage.participantTasks[participant];
+        return _storage.accounts[participant].participantTasks;
     }
 
-    function getAccounts()
+    function getTasksData(address[] calldata taskContracts)
+    external
+    view
+    returns (TaskWithBalance[] memory)
+    {
+        TaskWithBalance[] memory tasks = new TaskWithBalance[](taskContracts.length);
+        
+        for (uint256 i = 0; i < taskContracts.length; i++) {
+            TaskWithBalance memory taskWithBalance;
+            // tasks[i] = TaskContract(address(_storage.taskContracts[i])).getTaskData();
+            taskWithBalance.task = TaskContract(taskContracts[i]).getTaskData();
+            taskWithBalance.tokenNames = new string[](taskWithBalance.task.symbols.length);
+            taskWithBalance.tokenBalances = new uint256[](taskWithBalance.task.symbols.length);
+
+            for (uint256 idx = 0; idx < taskWithBalance.task.symbols.length; idx++) {
+                taskWithBalance.tokenNames[idx] = taskWithBalance.task.symbols[idx];
+                if(keccak256(bytes(taskWithBalance.task.symbols[idx])) == keccak256(bytes('ETH'))){
+                    taskWithBalance.tokenBalances[idx] = TaskContract(taskContracts[i]).getBalance();
+                }
+                else{
+                    taskWithBalance.tokenBalances[idx] = TokenDataFacet(address(this)).balanceOfName(taskContracts[i], taskWithBalance.task.symbols[idx]);
+                }
+            }
+            tasks[i] = taskWithBalance;
+            // symbolCount = symbolCount + task.symbols.length;
+        }
+        return tasks;
+    }
+
+    function getAccountsList()
     external
     view
     returns (address[] memory)
     {
         TaskStorage storage _storage = LibTasks.taskStorage();
-        return _storage.accounts;
+        return _storage.accountsList;
     }
 
-    function getAccountData(address[] memory accountAddresses)
+    function getAccountsData(address[] memory accountAddresses)
+    external
+    view
+    returns (Account[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        Account[] memory accounts = new Account[](accountAddresses.length);
+        for (uint256 i = 0; i < accountAddresses.length; i++) {
+            accounts[i] = _storage.accounts[accountAddresses[i]];
+        }
+        return accounts;
+    }
+
+    function getAccountsDataDyn(address[] memory accountAddresses)
     external
     view
     returns (Account[] memory)
@@ -153,14 +197,14 @@ contract TaskDataFacet  {
             address[] memory customerContracts = getTaskContractsCustomer(accountAddresses[i]);
             uint256 symbolCount = 0;
             for (uint256 idx = 0; idx < customerContracts.length; idx++) {
-                Task memory task = TaskContract(customerContracts[idx]).getTaskInfo();
+                Task memory task = TaskContract(customerContracts[idx]).getTaskData();
                 symbolCount = symbolCount + task.symbols.length;
             }
             string[] memory spentSymbols = new string[](symbolCount);
             uint256[] memory spentSymbolAmounts = new uint256[](symbolCount);
             uint256 symbolIdx = 0;
             for (uint256 idx = 0; idx < customerContracts.length; idx++) {
-                Task memory task = TaskContract(customerContracts[idx]).getTaskInfo();
+                Task memory task = TaskContract(customerContracts[idx]).getTaskData();
                 for (uint256 index = 0; index < task.symbols.length; index++) {
                     spentSymbols[symbolIdx] = task.symbols[symbolIdx];
                     spentSymbolAmounts[symbolIdx] = task.amounts[symbolIdx];

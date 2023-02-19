@@ -82,7 +82,7 @@ library LibTasksAudit {
             }
             if (!existed) {
                 _storage.tasks[address(this)].auditors.push(_sender);
-                _storage.auditParticipantTasks[_sender].push(address(this));
+                _storage.accounts[_sender].auditParticipantTasks.push(address(this));
                 _storage.tasks[address(this)].messages.push(message);
             }
         }
