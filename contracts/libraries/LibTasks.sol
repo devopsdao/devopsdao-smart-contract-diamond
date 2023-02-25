@@ -99,8 +99,6 @@ struct Account {
     address[] auditParticipantTasks;
     uint256[] customerRatings;
     uint256[] performerRatings;
-    uint256 customerTaskCount;
-    uint256 performerTaskCount;
 }
 
 struct Accounts {

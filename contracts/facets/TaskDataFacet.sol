@@ -113,6 +113,57 @@ contract TaskDataFacet  {
     }
 
 
+    function getTaskContractsCustomers(address[] calldata contractOwners)
+    public
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        // if(ownerTasks[contractOwner].length > 0){
+        //     return ownerTasks[contractOwner];
+        // }
+        uint256 contractCount = 0;
+        for (uint256 i = 0; i < contractOwners.length; i++) {
+            // return _storage.accounts[contractOwner].ownerTasks;
+            contractCount = contractCount + _storage.accounts[contractOwners[i]].ownerTasks.length;
+        }
+
+        address[] memory ownerTasks = new address[](contractCount);
+        for (uint256 i = 0; i < contractOwners.length; i++) {
+            // return _storage.accounts[contractOwner].ownerTasks;
+            for(uint256 idx = 0; idx < _storage.accounts[contractOwners[i]].ownerTasks.length; idx++){
+                ownerTasks[i] = _storage.accounts[contractOwners[i]].ownerTasks[idx];
+            }
+        }
+        return ownerTasks;
+    }
+
+    function getTaskContractsPerformers(address[] calldata participants)
+    public
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        // if(ownerTasks[contractOwner].length > 0){
+        //     return ownerTasks[contractOwner];
+        // }
+        uint256 contractCount = 0;
+        for (uint256 i = 0; i < participants.length; i++) {
+            // return _storage.accounts[contractOwner].ownerTasks;
+            contractCount = contractCount + _storage.accounts[participants[i]].participantTasks.length;
+        }
+
+        address[] memory participantTasks = new address[](contractCount);
+        for (uint256 i = 0; i < participants.length; i++) {
+            // return _storage.accounts[contractOwner].ownerTasks;
+            for(uint256 idx = 0; idx < _storage.accounts[participants[i]].participantTasks.length; idx++){
+                participantTasks[i] = _storage.accounts[participants[i]].participantTasks[idx];
+            }
+        }
+        return participantTasks;
+    }
+
+
     function getTaskContractsCustomer(address contractOwner)
     public
     view
