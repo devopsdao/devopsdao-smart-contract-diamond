@@ -41,6 +41,7 @@ describe('DiamondTest', async function () {
     ownershipFacet = await ethers.getContractAt('OwnershipFacet', diamondAddress)
     taskCreateFacet = await ethers.getContractAt('TaskCreateFacet', diamondAddress)
     taskDataFacet = await ethers.getContractAt('TaskDataFacet', diamondAddress)
+    accountFacet = await ethers.getContractAt('AccountFacet', diamondAddress)
     tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
     tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress)
     axelarFacet = await ethers.getContractAt('AxelarFacet', diamondAddress)
@@ -57,7 +58,7 @@ describe('DiamondTest', async function () {
       // console.log(address);
     }
 
-    assert.equal(addresses.length, 11)
+    assert.equal(addresses.length, 13)
   })
 
   // it('should test NFTFacet', async () => {
@@ -142,30 +143,35 @@ describe('DiamondTest', async function () {
       {
         facetAddress: addresses[5],
         action: FacetCutAction.Add,
-        functionSelectors: getSelectors(tokenFacet)
+        functionSelectors: getSelectors(accountFacet)
       },
       {
         facetAddress: addresses[6],
         action: FacetCutAction.Add,
-        functionSelectors: getSelectors(tokenDataFacet)
+        functionSelectors: getSelectors(tokenFacet)
       },
       {
         facetAddress: addresses[7],
         action: FacetCutAction.Add,
-        functionSelectors: getSelectors(axelarFacet)
+        functionSelectors: getSelectors(tokenDataFacet)
       },
       {
         facetAddress: addresses[8],
         action: FacetCutAction.Add,
-        functionSelectors: getSelectors(hyperlaneFacet)
+        functionSelectors: getSelectors(axelarFacet)
       },
       {
         facetAddress: addresses[9],
         action: FacetCutAction.Add,
-        functionSelectors: getSelectors(layerzeroFacet)
+        functionSelectors: getSelectors(hyperlaneFacet)
       },
       {
         facetAddress: addresses[10],
+        action: FacetCutAction.Add,
+        functionSelectors: getSelectors(layerzeroFacet)
+      },
+      {
+        facetAddress: addresses[11],
         action: FacetCutAction.Add,
         functionSelectors: getSelectors(wormholeFacet)
       },
@@ -186,21 +192,21 @@ describe('DiamondTest', async function () {
     // }
     // const facetAddresses = await diamondLoupeFacet.facetAddresses()
     assert.sameMembers(facets[findAddressPositionInFacets(addresses[3], facets)][1], getSelectors(taskCreateFacet))
-    assert.sameMembers(facets[findAddressPositionInFacets(addresses[5], facets)][1], getSelectors(tokenFacet))
+    assert.sameMembers(facets[findAddressPositionInFacets(addresses[6], facets)][1], getSelectors(tokenFacet))
   })
 
+})
 
+describe('dodao test', async function () {
 
+  // async function testAuditDecision(favour){
 
-  async function testAuditDecision(favour){
-    signers = await ethers.getSigners();
+  for (const favour of ['customer', 'performer']) {
 
-    // const taskCreateFacet = await ethers.getContractAt('taskCreateFacet', diamondAddress)
-    const taskType = 'private';
-    const nanoId = 'test';
-    const title = 'test job';
-    const description = 'test desc';
-    const symbol = 'ETH';
+    before(async function () {
+      signers = await ethers.getSigners();
+    });
+    it('createTaskContract', async () => {
 
     const taskData = {
       nanoId: 'test',
@@ -227,50 +233,72 @@ describe('DiamondTest', async function () {
     // //   { gasLimit: 30000000 });
     // console.log(encodedCall)
 
-    createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData,
-    { gasLimit: 30000000 })
+      createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData,
+      { gasLimit: 30000000 })
 
 
-    //test event listener
-    // await tokenFacet.on("URI", (URI, type, event) => {
-    //   console.log('received event')
-    //   console.log(URI, type);
-    // });
+      // test event listener
+      await tokenFacet.on("URI", (URI, type, event) => {
+        console.log('received event')
+        console.log(URI, type);
+      });
+    })
+
+    let createdAuditorNftBaseType;
+    it('tokenFacet createAuditorNFT', async () => {
 
     const createAuditorNFT = await tokenFacet.connect(signers[0]).create('https://example.com/{id}', 'auditor', true)
     const createAuditorNFTReceipt = await createAuditorNFT.wait()
 
-    getTaskContracts = await taskDataFacet.getTaskContracts()
+
     // console.log('taskContracts:');
     // console.log(getTaskContracts)
 
     const createAuditorNFTEvent = createAuditorNFTReceipt.events[1]
-    const { value:createdAuditorNFTuri, id:createdAuditorNftBaseType } = createAuditorNFTEvent.args
+    let createdAuditorNFTuri;
+    ({ value:createdAuditorNFTuri, id:createdAuditorNftBaseType } = createAuditorNFTEvent.args)
     assert.equal(createdAuditorNFTuri, "https://example.com/{id}")
 
+  })
+
+  it('tokenDataFacet created NFT uri', async () => {
 
     const auditorNFTURI = await tokenDataFacet.connect(signers[2]).uri(createdAuditorNftBaseType)
     assert.equal(auditorNFTURI, 'https://example.com/{id}')
+  })
 
+  it('tokenDataFacet created NFT uriOfBatch', async () => {
     const auditorNFTURIOfBatch = await tokenDataFacet.connect(signers[2]).uriOfBatch([createdAuditorNftBaseType])
     assert.deepEqual(auditorNFTURIOfBatch, ['https://example.com/{id}'])
+  })
 
+  it('tokenDataFacet created NFT uriOfBatchName', async () => {
     const auditorNFTURIOfBatchName = await tokenDataFacet.connect(signers[2]).uriOfBatchName(['auditor'])
     assert.deepEqual(auditorNFTURIOfBatchName, ['https://example.com/{id}'])
 
+  })
 
+  it('tokenDataFacet created NFT setURI', async () => {
     const auditorSetNFTURI = await tokenFacet.connect(signers[0]).setURI('https://example2.com/{id}', createdAuditorNftBaseType)
     const auditorNFTURI2 = await tokenDataFacet.connect(signers[2]).uri(createdAuditorNftBaseType)
     assert.equal(auditorNFTURI2, 'https://example2.com/{id}')
+  })
 
+  it('tokenDataFacet created NFT setURIOfName', async () => {
     const auditorSetNFTURIofName = await tokenFacet.connect(signers[0]).setURIOfName('https://example3.com/{id}', 'auditor')
     const auditorNFTURI3 = await tokenDataFacet.connect(signers[2]).uri(createdAuditorNftBaseType)
     assert.equal(auditorNFTURI3, 'https://example3.com/{id}')
+  })
 
+  it('tokenDataFacet created NFT getTokenBaseType', async () => {
     const auditorNFTTokenBaseType = await tokenDataFacet.connect(signers[2]).getTokenBaseType('auditor')
     assert.deepEqual(auditorNFTTokenBaseType, createdAuditorNftBaseType)
+  })
 
-    //openzeppelin test helpers, not compatible with ethers.js
+
+  let mintedAuditorNFTid;
+  it('tokenDataFacet mintNonFungible', async () => {
+    // openzeppelin test helpers, not compatible with ethers.js
     // await expectEvent(createAuditorNFTReceipt, 'URI', {
     //   value: this.value,
     // });
@@ -278,217 +306,299 @@ describe('DiamondTest', async function () {
     const mintAuditorNFT = await tokenFacet.connect(signers[0]).mintNonFungible(createdAuditorNftBaseType, [signers[2].address])
     const mintAuditorNFTReceipt = await mintAuditorNFT.wait()
 
-    const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0];
-    const { value:mintedAuditorNFTamount, id:mintedAuditorNFTid } = mintAuditorNFTEvent.args;
+    const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0]
+    let mintedAuditorNFTamount
+    ({ value:mintedAuditorNFTamount, id:mintedAuditorNFTid } = mintAuditorNFTEvent.args)
     assert.equal(mintedAuditorNFTamount, 1)
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const mintedAuditorNFTURI = await tokenDataFacet.connect(signers[2]).uri(mintedAuditorNFTid)
     assert.equal(mintedAuditorNFTURI, auditorNFTURI3)
+  })
 
+  it('tokenDataFacet minted NFT exists', async () => {
     const auditorNFTExists = await tokenDataFacet.connect(signers[2]).exists(mintedAuditorNFTid)
     assert.equal(auditorNFTExists, true)
+  })
 
+  it('tokenDataFacet minted NFT existsNfType', async () => {
     const auditorNFTExistsNfType = await tokenDataFacet.connect(signers[2]).existsNfType(mintedAuditorNFTid)
     assert.equal(auditorNFTExistsNfType, true)
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNFTExistsName = await tokenDataFacet.connect(signers[2]).existsName('auditor')
     assert.equal(auditorNFTExistsName, true)
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNFTTotalSupply = await tokenDataFacet.connect(signers[2]).totalSupply(mintedAuditorNFTid)
     assert.equal(auditorNFTTotalSupply, 1)
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNFTTotalSupplyNfType = await tokenDataFacet.connect(signers[2]).totalSupplyOfNfType(mintedAuditorNFTid)
     assert.equal(auditorNFTTotalSupplyNfType, 1)
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNFTTotalSupplyName = await tokenDataFacet.connect(signers[2]).totalSupplyOfName('auditor')
     assert.equal(auditorNFTTotalSupplyName, 1)
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNFTTotalSupplyOfBatch = await tokenDataFacet.connect(signers[2]).totalSupplyOfBatch([mintedAuditorNFTid])
     assert.deepEqual(auditorNFTTotalSupplyOfBatch, [ethers.BigNumber.from(1)])
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNFTTotalSupplyOfBatchNfType = await tokenDataFacet.connect(signers[2]).totalSupplyOfBatchNfType([mintedAuditorNFTid])
     assert.deepEqual(auditorNFTTotalSupplyOfBatchNfType, [ethers.BigNumber.from(1)])
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNFTTotalSupplyOfBatchName = await tokenDataFacet.connect(signers[2]).totalSupplyOfBatchName(['auditor'])
     assert.deepEqual(auditorNFTTotalSupplyOfBatchName, [ethers.BigNumber.from(1)])
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNFTBalanceOf = await tokenFacet.connect(signers[2]).balanceOf(signers[2].address, mintedAuditorNFTid)
     assert.equal(auditorNFTBalanceOf, 1)
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNFTBalanceOfNfType = await tokenDataFacet.connect(signers[2]).balanceOfNfType(signers[2].address, mintedAuditorNFTid)
     assert.equal(auditorNFTBalanceOfNfType, 1)
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNFTBalanceOfName = await tokenDataFacet.connect(signers[2]).balanceOfName(signers[2].address, 'auditor')
     assert.equal(auditorNFTBalanceOfName, 1)
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNFTBalanceOfBatch = await tokenFacet.connect(signers[2]).balanceOfBatch([signers[2].address], [mintedAuditorNFTid])
     assert.deepEqual(auditorNFTBalanceOfBatch, [ethers.BigNumber.from(1)])
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNFTBalanceOfBatchNfType = await tokenDataFacet.connect(signers[2]).balanceOfBatchNfType([signers[2].address], [mintedAuditorNFTid])
     assert.deepEqual(auditorNFTBalanceOfBatchNfType, [ethers.BigNumber.from(1)])
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNFTBalanceOfBatchName = await tokenDataFacet.connect(signers[2]).balanceOfBatchName([signers[2].address], ['auditor'])
     assert.deepEqual(auditorNFTBalanceOfBatchName, [ethers.BigNumber.from(1)])
+  })
 
+  it('tokenDataFacet uri', async () => {
     // const auditorNftBaseType = await tokenFacet.connect(signers[2]).getTokenBaseType(mintedAuditorNFTid)
     // assert.equal(auditorNftBaseType, createdAuditorNftBaseType)
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const auditorNftName = await tokenDataFacet.connect(signers[2]).getTokenName(mintedAuditorNFTid)
     assert.equal(auditorNftName, 'auditor')
+  })
 
+  it('tokenDataFacet minted NFT uri', async () => {
     const ownedTokenIds = await tokenDataFacet.connect(signers[2]).getTokenIds(signers[2].address)
     assert.deepEqual(ownedTokenIds, [mintedAuditorNFTid])
-    
+  })
+
+  it('tokenDataFacet minted NFT uri', async () => {
     const ownedTokenNames = await tokenDataFacet.connect(signers[2]).getTokenNames(signers[2].address)
     assert.deepEqual(ownedTokenNames, ['auditor'])
+  })
+
+  it('tokenDataFacet uri', async () => {
+    getTaskContracts = await taskDataFacet.getTaskContracts()
 
     const getNewTaskContractsBeforeBlacklist = await taskDataFacet.connect(signers[0]).getTaskContractsByState("new")
     // expect(getNewTaskContractsBeforeBlacklist).to.have.members(getTaskContracts);
     assert.deepEqual(getNewTaskContractsBeforeBlacklist, getTaskContracts)
-    
+  })
+
+  it('tokenDataFacet uri', async () => {
     const addContractToBlacklist = await taskDataFacet.connect(signers[2]).addTaskToBlacklist(getTaskContracts[getTaskContracts.length - 1])
 
     const getNewTaskContractsAfterBlacklist = await taskDataFacet.connect(signers[0]).getTaskContractsByState("new")
     assert.deepEqual(getNewTaskContractsAfterBlacklist, [])
-    
+  })
+
+  it('tokenDataFacet uri', async () => {
     const removeContractFromBlacklist = await taskDataFacet.connect(signers[2]).removeTaskFromBlacklist(getTaskContracts[getTaskContracts.length - 1])
 
     const getNewTaskContractsAfterBlacklistRemoval = await taskDataFacet.connect(signers[0]).getTaskContractsByState("new")
     assert.deepEqual(getNewTaskContractsAfterBlacklistRemoval, getTaskContracts)
+  })
 
+  it('tokenDataFacet uri', async () => {
     //check if account0 has customer contracts, must be equal to all contracts(1)
     const getTaskContractsCustomer = await taskDataFacet.connect(signers[0]).getTaskContractsCustomer(signers[0].address)
     assert.deepEqual(getTaskContractsCustomer, getTaskContracts)
+  })
 
+  it('tokenDataFacet uri', async () => {
     //check if account1 has customer contracts, must be empty
     const getTaskContractsCustomer1 = await taskDataFacet.connect(signers[0]).getTaskContractsCustomer(signers[1].address)
     assert.deepEqual(getTaskContractsCustomer1, [])
+  })
 
-    //check if account0 has performer contracts, must be empty
+  it('tokenDataFacet uri', async () => {
+    // check if account0 has performer contracts, must be empty
     const getTaskContractsPerformer = await taskDataFacet.connect(signers[0]).getTaskContractsPerformer(signers[0].address)
     assert.deepEqual(getTaskContractsPerformer, [])
+  })
 
+  it('tokenDataFacet uri', async () => {
     const taskContract = await ethers.getContractAt('TaskContract', getTaskContracts[getTaskContracts.length - 1])
-    getTaskInfoNew = await taskContract.getTaskInfo()
-    // console.log(getTaskInfoNew)
+    getTaskDataNew = await taskContract.getTaskData()
+    // console.log(getTaskDataNew)
     // createTime;
 
-    assert.isAbove(getTaskInfoNew.createTime, 1666113343, 'create time is more than 0');
-    assert.equal(getTaskInfoNew.contractParent, taskCreateFacet.address)
+    assert.isAbove(getTaskDataNew.createTime, 1666113343, 'create time is more than 0');
+    assert.equal(getTaskDataNew.contractParent, taskCreateFacet.address)
 
     const taskStateNew = 'new'
-    assert.equal(getTaskInfoNew.nanoId, nanoId)
-    assert.equal(getTaskInfoNew.title, title)
-    assert.equal(getTaskInfoNew.description, description)
-    // assert.equal(getTaskInfoNew.symbols, taskData.symbols)
-    // assert.equal(getTaskInfoNew.amounts, taskData.amounts)
-    assert.equal(getTaskInfoNew.taskState, taskStateNew)
-    assert.equal(getTaskInfoNew.contractOwner, signers[0].address)
+    assert.equal(getTaskDataNew.nanoId, nanoId)
+    assert.equal(getTaskDataNew.title, title)
+    assert.equal(getTaskDataNew.description, description)
+    // assert.equal(getTaskDataNew.symbols, taskData.symbols)
+    // assert.equal(getTaskDataNew.amounts, taskData.amounts)
+    assert.equal(getTaskDataNew.taskState, taskStateNew)
+    assert.equal(getTaskDataNew.contractOwner, signers[0].address)
+  })
+
+  it('tokenDataFacet uri', async () => {
     const messageTextParticipate = 'I am the best to make it'
     const messageReplyTo = 0
 
     //first participant
     taskParticipate = await taskContract.connect(signers[1]).taskParticipate(signers[1].address, messageTextParticipate, messageReplyTo)
-    getTaskInfoParticipate = await taskContract.getTaskInfo()
-    assert.equal(getTaskInfoParticipate.participants[0], signers[1].address)
-    assert.equal(getTaskInfoParticipate.messages[0].id, 1)
-    assert.equal(getTaskInfoParticipate.messages[0].text, messageTextParticipate)
-    assert.isAbove(getTaskInfoParticipate.messages[0].timestamp, 1666113343, 'timestamp is more than 0');
-    assert.equal(getTaskInfoParticipate.messages[0].sender, signers[1].address)
-    assert.equal(getTaskInfoParticipate.messages[0].taskState, taskStateNew)
-    assert.equal(getTaskInfoParticipate.messages[0].replyTo, messageReplyTo)
+    getTaskDataParticipate = await taskContract.getTaskData()
+    assert.equal(getTaskDataParticipate.participants[0], signers[1].address)
+    assert.equal(getTaskDataParticipate.messages[0].id, 1)
+    assert.equal(getTaskDataParticipate.messages[0].text, messageTextParticipate)
+    assert.isAbove(getTaskDataParticipate.messages[0].timestamp, 1666113343, 'timestamp is more than 0');
+    assert.equal(getTaskDataParticipate.messages[0].sender, signers[1].address)
+    assert.equal(getTaskDataParticipate.messages[0].taskState, taskStateNew)
+    assert.equal(getTaskDataParticipate.messages[0].replyTo, messageReplyTo)
+  })
 
+  it('tokenDataFacet uri', async () => {
     //second participant
     taskParticipate = await taskContract.connect(signers[3]).taskParticipate(signers[3].address, messageTextParticipate, messageReplyTo)
-    getTaskInfoParticipate = await taskContract.getTaskInfo()
-    assert.equal(getTaskInfoParticipate.participants[1], signers[3].address)
-    assert.equal(getTaskInfoParticipate.messages[1].id, 2)
-    assert.equal(getTaskInfoParticipate.messages[1].text, messageTextParticipate)
-    assert.isAbove(getTaskInfoParticipate.messages[1].timestamp, 1666113343, 'timestamp is more than 0');
-    assert.equal(getTaskInfoParticipate.messages[1].sender, signers[3].address)
-    assert.equal(getTaskInfoParticipate.messages[1].taskState, taskStateNew)
-    assert.equal(getTaskInfoParticipate.messages[1].replyTo, messageReplyTo)
+    getTaskDataParticipate = await taskContract.getTaskData()
+    assert.equal(getTaskDataParticipate.participants[1], signers[3].address)
+    assert.equal(getTaskDataParticipate.messages[1].id, 2)
+    assert.equal(getTaskDataParticipate.messages[1].text, messageTextParticipate)
+    assert.isAbove(getTaskDataParticipate.messages[1].timestamp, 1666113343, 'timestamp is more than 0');
+    assert.equal(getTaskDataParticipate.messages[1].sender, signers[3].address)
+    assert.equal(getTaskDataParticipate.messages[1].taskState, taskStateNew)
+    assert.equal(getTaskDataParticipate.messages[1].replyTo, messageReplyTo)
 
+  })
 
+  it('tokenDataFacet uri', async () => {
     const taskStateAgreed = 'agreed'
     const messageTextAgreed = 'selected you for the first task'
-    taskStateChangeAgreed = await taskContract.connect(signers[0]).taskStateChange(signers[0].address, getTaskInfoParticipate.participants[0], taskStateAgreed, messageTextAgreed, messageReplyTo, 0);
-    getTaskInfoAgreed = await taskContract.getTaskInfo()
-    assert.equal(getTaskInfoAgreed.taskState, taskStateAgreed)
-    assert.equal(getTaskInfoAgreed.participant, signers[1].address)
-    assert.equal(getTaskInfoAgreed.messages[2].id, 3)
-    assert.equal(getTaskInfoAgreed.messages[2].text, messageTextAgreed)
-    assert.isAbove(getTaskInfoAgreed.messages[2].timestamp, 1666113343, 'timestamp is more than 0');
-    assert.equal(getTaskInfoAgreed.messages[2].sender, signers[0].address)
-    assert.equal(getTaskInfoAgreed.messages[2].taskState, taskStateAgreed)
-    assert.equal(getTaskInfoAgreed.messages[2].replyTo, messageReplyTo)
+    taskStateChangeAgreed = await taskContract.connect(signers[0]).taskStateChange(signers[0].address, getTaskDataParticipate.participants[0], taskStateAgreed, messageTextAgreed, messageReplyTo, 0);
+    getTaskDataAgreed = await taskContract.getTaskData()
+    assert.equal(getTaskDataAgreed.taskState, taskStateAgreed)
+    assert.equal(getTaskDataAgreed.participant, signers[1].address)
+    assert.equal(getTaskDataAgreed.messages[2].id, 3)
+    assert.equal(getTaskDataAgreed.messages[2].text, messageTextAgreed)
+    assert.isAbove(getTaskDataAgreed.messages[2].timestamp, 1666113343, 'timestamp is more than 0');
+    assert.equal(getTaskDataAgreed.messages[2].sender, signers[0].address)
+    assert.equal(getTaskDataAgreed.messages[2].taskState, taskStateAgreed)
+    assert.equal(getTaskDataAgreed.messages[2].replyTo, messageReplyTo)
 
+  })
+
+  it('tokenDataFacet uri', async () => {
     const taskStateProgress = 'progress'
     const messageTextProgress = 'starting job!'
     taskStateChangeProgress = await taskContract.connect(signers[1]).taskStateChange(signers[1].address, '0x0000000000000000000000000000000000000000', taskStateProgress, messageTextProgress, messageReplyTo, 0);
-    getTaskInfoProgress = await taskContract.getTaskInfo()
-    assert.equal(getTaskInfoProgress.taskState, taskStateProgress)
-    assert.equal(getTaskInfoProgress.messages[3].id, 4)
-    assert.equal(getTaskInfoProgress.messages[3].text, messageTextProgress)
-    assert.isAbove(getTaskInfoProgress.messages[3].timestamp, 1666113343, 'timestamp is more than 0');
-    assert.equal(getTaskInfoProgress.messages[3].sender, signers[1].address)
-    assert.equal(getTaskInfoProgress.messages[3].taskState, taskStateProgress)
-    assert.equal(getTaskInfoProgress.messages[3].replyTo, messageReplyTo)
+    getTaskDataProgress = await taskContract.getTaskData()
+    assert.equal(getTaskDataProgress.taskState, taskStateProgress)
+    assert.equal(getTaskDataProgress.messages[3].id, 4)
+    assert.equal(getTaskDataProgress.messages[3].text, messageTextProgress)
+    assert.isAbove(getTaskDataProgress.messages[3].timestamp, 1666113343, 'timestamp is more than 0');
+    assert.equal(getTaskDataProgress.messages[3].sender, signers[1].address)
+    assert.equal(getTaskDataProgress.messages[3].taskState, taskStateProgress)
+    assert.equal(getTaskDataProgress.messages[3].replyTo, messageReplyTo)
 
+  })
+
+  it('tokenDataFacet uri', async () => {
     const taskStateReview = 'review'
     const messageTextReview = 'please kindly review!'
     taskStateChangeReview = await taskContract.connect(signers[1]).taskStateChange(signers[1].address, '0x0000000000000000000000000000000000000000', taskStateReview, messageTextReview, messageReplyTo, 0);
-    getTaskInfoReview = await taskContract.getTaskInfo()
-    assert.equal(getTaskInfoReview.taskState, taskStateReview)
-    assert.equal(getTaskInfoReview.messages[4].id, 5)
-    assert.equal(getTaskInfoReview.messages[4].text, messageTextReview)
-    assert.isAbove(getTaskInfoReview.messages[4].timestamp, 1666113343, 'timestamp is more than 0');
-    assert.equal(getTaskInfoReview.messages[4].sender, signers[1].address)
-    assert.equal(getTaskInfoReview.messages[4].taskState, taskStateReview)
-    assert.equal(getTaskInfoReview.messages[4].replyTo, messageReplyTo)
+    getTaskDataReview = await taskContract.getTaskData()
+    assert.equal(getTaskDataReview.taskState, taskStateReview)
+    assert.equal(getTaskDataReview.messages[4].id, 5)
+    assert.equal(getTaskDataReview.messages[4].text, messageTextReview)
+    assert.isAbove(getTaskDataReview.messages[4].timestamp, 1666113343, 'timestamp is more than 0');
+    assert.equal(getTaskDataReview.messages[4].sender, signers[1].address)
+    assert.equal(getTaskDataReview.messages[4].taskState, taskStateReview)
+    assert.equal(getTaskDataReview.messages[4].replyTo, messageReplyTo)
 
+  })
+
+  it('tokenDataFacet uri', async () => {
     const taskStateAudit = 'audit'
     const messageTextAudit = 'work is not done :('
     const taskAuditStateRequested = 'requested';
     taskStateChangeAudit = await taskContract.connect(signers[0]).taskStateChange(signers[0].address, '0x0000000000000000000000000000000000000000', taskStateAudit, messageTextAudit, messageReplyTo, 0);
-    getTaskInfoAudit = await taskContract.getTaskInfo()
-    // console.log(getTaskInfoAudit)
-    assert.equal(getTaskInfoAudit.taskState, taskStateAudit)
-    assert.equal(getTaskInfoAudit.auditState, taskAuditStateRequested)
-    assert.equal(getTaskInfoAudit.auditInitiator, signers[0].address)
-    assert.equal(getTaskInfoAudit.messages[5].id, 6)
-    assert.equal(getTaskInfoAudit.messages[5].text, messageTextAudit)
-    assert.isAbove(getTaskInfoAudit.messages[5].timestamp, 1666113343, 'timestamp is more than 0');
-    assert.equal(getTaskInfoAudit.messages[5].sender, signers[0].address)
-    assert.equal(getTaskInfoAudit.messages[5].taskState, taskStateAudit)
-    assert.equal(getTaskInfoAudit.messages[5].replyTo, messageReplyTo)
-    
+    getTaskDataAudit = await taskContract.getTaskData()
+    // console.log(getTaskDataAudit)
+    assert.equal(getTaskDataAudit.taskState, taskStateAudit)
+    assert.equal(getTaskDataAudit.auditState, taskAuditStateRequested)
+    assert.equal(getTaskDataAudit.auditInitiator, signers[0].address)
+    assert.equal(getTaskDataAudit.messages[5].id, 6)
+    assert.equal(getTaskDataAudit.messages[5].text, messageTextAudit)
+    assert.isAbove(getTaskDataAudit.messages[5].timestamp, 1666113343, 'timestamp is more than 0');
+    assert.equal(getTaskDataAudit.messages[5].sender, signers[0].address)
+    assert.equal(getTaskDataAudit.messages[5].taskState, taskStateAudit)
+    assert.equal(getTaskDataAudit.messages[5].replyTo, messageReplyTo)
+  })
+
+  it('tokenDataFacet uri', async () => {
     
 
     const messageTextAuditParticipate = 'I am honorable auditor'
     taskAuditParticipate = await taskContract.connect(signers[2]).taskAuditParticipate(signers[2].address, messageTextAuditParticipate, messageReplyTo)
-    getTaskInfoAuditParticipate = await taskContract.getTaskInfo()
-    assert.equal(getTaskInfoAuditParticipate.auditors[0], signers[2].address)
-    assert.equal(getTaskInfoAuditParticipate.messages[6].id, 7)
-    assert.equal(getTaskInfoAuditParticipate.messages[6].text, messageTextAuditParticipate)
-    assert.isAbove(getTaskInfoAuditParticipate.messages[6].timestamp, 1666113343, 'timestamp is more than 0');
-    assert.equal(getTaskInfoAuditParticipate.messages[6].sender, signers[2].address)
-    assert.equal(getTaskInfoAuditParticipate.messages[6].taskState, taskStateAudit)
-    assert.equal(getTaskInfoAuditParticipate.messages[6].replyTo, messageReplyTo)
+    getTaskDataAuditParticipate = await taskContract.getTaskData()
+    assert.equal(getTaskDataAuditParticipate.auditors[0], signers[2].address)
+    assert.equal(getTaskDataAuditParticipate.messages[6].id, 7)
+    assert.equal(getTaskDataAuditParticipate.messages[6].text, messageTextAuditParticipate)
+    assert.isAbove(getTaskDataAuditParticipate.messages[6].timestamp, 1666113343, 'timestamp is more than 0');
+    assert.equal(getTaskDataAuditParticipate.messages[6].sender, signers[2].address)
+    assert.equal(getTaskDataAuditParticipate.messages[6].taskState, taskStateAudit)
+    assert.equal(getTaskDataAuditParticipate.messages[6].replyTo, messageReplyTo)
+
+  })
+
+  it('tokenDataFacet uri', async () => {
 
     const messageTextSelectAuditor = 'selected a proper auditor'
     const taskAuditStatePerforming = 'performing'
-    taskStateChangeSelectAuditor = await taskContract.connect(signers[0]).taskStateChange(signers[0].address, getTaskInfoAuditParticipate.auditors[0], taskStateAudit, messageTextSelectAuditor, messageReplyTo, 0);
-    getTaskInfoSelectAuditor = await taskContract.getTaskInfo()
-    assert.equal(getTaskInfoSelectAuditor.auditState, taskAuditStatePerforming)
-    assert.equal(getTaskInfoSelectAuditor.auditor, signers[2].address)
-    assert.equal(getTaskInfoSelectAuditor.messages[7].id, 8)
-    assert.equal(getTaskInfoSelectAuditor.messages[7].text, messageTextSelectAuditor)
-    assert.isAbove(getTaskInfoSelectAuditor.messages[7].timestamp, 1666113343, 'timestamp is more than 0');
-    assert.equal(getTaskInfoSelectAuditor.messages[7].sender, signers[0].address)
-    assert.equal(getTaskInfoSelectAuditor.messages[7].taskState, taskStateAudit)
-    assert.equal(getTaskInfoSelectAuditor.messages[7].replyTo, messageReplyTo)
+    taskStateChangeSelectAuditor = await taskContract.connect(signers[0]).taskStateChange(signers[0].address, getTaskDataAuditParticipate.auditors[0], taskStateAudit, messageTextSelectAuditor, messageReplyTo, 0);
+    getTaskDataSelectAuditor = await taskContract.getTaskData()
+    assert.equal(getTaskDataSelectAuditor.auditState, taskAuditStatePerforming)
+    assert.equal(getTaskDataSelectAuditor.auditor, signers[2].address)
+    assert.equal(getTaskDataSelectAuditor.messages[7].id, 8)
+    assert.equal(getTaskDataSelectAuditor.messages[7].text, messageTextSelectAuditor)
+    assert.isAbove(getTaskDataSelectAuditor.messages[7].timestamp, 1666113343, 'timestamp is more than 0');
+    assert.equal(getTaskDataSelectAuditor.messages[7].sender, signers[0].address)
+    assert.equal(getTaskDataSelectAuditor.messages[7].taskState, taskStateAudit)
+    assert.equal(getTaskDataSelectAuditor.messages[7].replyTo, messageReplyTo)
 
+  })
+
+  it('tokenDataFacet uri', async () => {
 
     const messageTextAuditDecision = `${favour} is right`
     const taskAuditStateFinished = 'finished'
@@ -503,26 +613,43 @@ describe('DiamondTest', async function () {
       rating = 5
     }
     taskAuditDecision = await taskContract.connect(signers[2]).taskAuditDecision(signers[2].address, favour, messageTextAuditDecision, 0, rating)
-    getTaskInfoDecision = await taskContract.getTaskInfo()
-    assert.equal(getTaskInfoDecision.taskState, taskStateAuditDecision)
-    assert.equal(getTaskInfoDecision.auditState, taskAuditStateFinished)
-    assert.equal(getTaskInfoDecision.rating, rating)
-    assert.equal(getTaskInfoDecision.messages[8].id, 9)
-    assert.equal(getTaskInfoDecision.messages[8].text, messageTextAuditDecision)
-    assert.isAbove(getTaskInfoDecision.messages[8].timestamp, 1666113343, 'timestamp is more than 0')
-    assert.equal(getTaskInfoDecision.messages[8].sender, signers[2].address)
-    assert.equal(getTaskInfoDecision.messages[8].taskState, taskStateAuditDecision)
-    assert.equal(getTaskInfoDecision.messages[8].replyTo, messageReplyTo)
+    getTaskDataDecision = await taskContract.getTaskData()
+    assert.equal(getTaskDataDecision.taskState, taskStateAuditDecision)
+    assert.equal(getTaskDataDecision.auditState, taskAuditStateFinished)
+    assert.equal(getTaskDataDecision.rating, rating)
+    assert.equal(getTaskDataDecision.messages[8].id, 9)
+    assert.equal(getTaskDataDecision.messages[8].text, messageTextAuditDecision)
+    assert.isAbove(getTaskDataDecision.messages[8].timestamp, 1666113343, 'timestamp is more than 0')
+    assert.equal(getTaskDataDecision.messages[8].sender, signers[2].address)
+    assert.equal(getTaskDataDecision.messages[8].taskState, taskStateAuditDecision)
+    assert.equal(getTaskDataDecision.messages[8].replyTo, messageReplyTo)
 
-    assert.equal(getTaskInfoDecision.messages.length, 9)
-    // console.log(getTaskInfoDecision)
-  }
+    assert.equal(getTaskDataDecision.messages.length, 9)
 
-  it('should test createTaskContract, getTaskContracts, taskParticipate, getTaskInfo, taskStateChange(all except canceled), taskAuditParticipate, taskAuditDecision(in customer favour) ', async () => {
-    await testAuditDecision('customer')
   })
 
-  // it('should test createTaskContract, getTaskContracts, taskParticipate, getTaskInfo, taskStateChange(all except canceled), taskAuditParticipate, taskAuditDecision(in performer favour) ', async () => {
+  it('tokenDataFacet uri', async () => {
+    
+    const getAccountsList = await accountFacet.connect(signers[0]).getAccountsList()
+    console.log(getAccountsList)
+
+  })
+
+  
+    // assert.equal([signers[0],signers[1]], getAccountsList)
+
+    // const getAccountsData = await accountFacet.connect(signers[0]).getAccountsData(getAccountsList)
+
+    // console.log(getTaskDataDecision)
+  }
+
+  // it('tasks test (in customer favour) ', async () => {
+  //   await testAuditDecision('customer')
+  //   console.log('fasdffffffffffffffffffffffffffffffffffffffff')
+
+  // })
+
+  // it('should test createTaskContract, getTaskContracts, taskParticipate, getTaskData, taskStateChange(all except canceled), taskAuditParticipate, taskAuditDecision(in performer favour) ', async () => {
   //   await testAuditDecision('performer')
   // })
   

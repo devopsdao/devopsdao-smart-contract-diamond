@@ -44,6 +44,16 @@ library LibChat {
         uint256 _replyTo
     ) external {
         TaskStorage storage _storage = taskStorage();
+
+        (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.tasks[address(this)].contractParent).getInterchainConfigs();
+        if(msg.sender != configAxelar.sourceAddress 
+            && msg.sender != configHyperlane.sourceAddress 
+            && msg.sender != configLayerzero.sourceAddress
+            && msg.sender != configWormhole.sourceAddress
+        ){
+            _sender = payable(msg.sender);
+        }
+
         require(
             (_storage.tasks[address(this)].participants.length == 0 &&
                 keccak256(bytes(_storage.tasks[address(this)].taskState)) ==

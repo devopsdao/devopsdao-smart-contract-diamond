@@ -30,7 +30,8 @@ async function createNFT(nfType){
   const metadataJSON = await fs.readFile(path.join(__dirname,`./metadata/${nfType}.json`), 'utf-8');
   let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
 
-  const metadataURI = await uploadMetadata(nfType)
+  // const metadataURI = await uploadMetadata(nfType)
+  const metadataURI = 'https://example.com'
   console.log(metadataURI)
 
   const createNFT = await tokenFacet.create(metadataURI, nfType.toString(), true)
@@ -391,13 +392,14 @@ task(
 task(
   "devTaskParticipate",
   "participate in a dodao task")
-  .addParam("taskContract", "task contract")
-  .addParam("messageText", "message text")
+  .addParam("taskcontract", "task contract")
+  .addParam("message", "message text")
   .setAction(
   async function (taskArguments, hre, runSuper) {
+    signers = await ethers.getSigners();
 
-    const taskContract = await ethers.getContractAt('TaskContract', taskArguments.taskContract)
-    tx = await taskContract.connect(signers[1]).taskParticipate(signers[1].address, taskArguments.messageText, 0)
+    const taskContract = await ethers.getContractAt('TaskContract', taskArguments.taskcontract)
+    tx = await taskContract.connect(signers[2]).taskParticipate(signers[1].address, taskArguments.message, 0)
     const receipt = await tx.wait()
     const event = receipt.events[0]
     const { contractAdr, message, timestamp } = event.args

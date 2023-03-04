@@ -52,6 +52,15 @@
         "runtimeExecutable": "npx hardhat",
         "args": ["test", "--network", "localhost"],
         "cwd": "${workspaceFolder}"
+    },
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "hardhat diamondUpgrade",
+        "skipFiles": ["<node_internals>/**"],
+        "runtimeExecutable": "${workspaceFolder}/npx hardhat",
+        "args": ["diamondUpgrade", "-facets AccountFacet", "--network", "localhost"],
+        "cwd": "${workspaceFolder}"
     },  
     ]
 }

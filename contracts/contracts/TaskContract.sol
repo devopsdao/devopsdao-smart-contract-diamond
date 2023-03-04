@@ -10,6 +10,7 @@ import "../libraries/LibInterchain.sol";
 
 import "../facets/TokenDataFacet.sol";
 
+
 // import "../facets/DiamondLoupeFacet.sol";
 
 import "hardhat/console.sol";
@@ -74,13 +75,6 @@ contract TaskContract is ERC1155StorageFacet  {
     }
 
     function taskParticipate(address _sender, string memory _message, uint256 _replyTo) external {
-        if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
-            && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
-            && msg.sender != _storageInterchain.configLayerzero.sourceAddress
-            && msg.sender != _storageInterchain.configWormhole.sourceAddress
-        ){
-            _sender = payable(msg.sender);
-        }
         LibTasks.taskParticipate(_sender, _message, _replyTo);
         emit TaskUpdated(address(this), 'taskParticipate', block.timestamp);
     }
@@ -97,13 +91,13 @@ contract TaskContract is ERC1155StorageFacet  {
         // // console.log(balance);
         // require(balance>0, 'must hold Auditor NFT to audit');
         
-        if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
-            && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
-            && msg.sender != _storageInterchain.configLayerzero.sourceAddress
-            && msg.sender != _storageInterchain.configWormhole.sourceAddress
-        ){
-            _sender = payable(msg.sender);
-        }
+        // if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
+        //     && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
+        //     && msg.sender != _storageInterchain.configLayerzero.sourceAddress
+        //     && msg.sender != _storageInterchain.configWormhole.sourceAddress
+        // ){
+        //     _sender = payable(msg.sender);
+        // }
         LibTasksAudit.taskAuditParticipate(_sender, _message, _replyTo);
         emit TaskUpdated(address(this), 'taskAuditParticipate', block.timestamp);
     }
@@ -116,14 +110,14 @@ contract TaskContract is ERC1155StorageFacet  {
         uint256 _replyTo,
         uint256 _score
     ) external {
-        TaskStorage storage _storage = LibTasks.taskStorage();
-        if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
-            && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
-            && msg.sender != _storageInterchain.configLayerzero.sourceAddress
-            && msg.sender != _storageInterchain.configWormhole.sourceAddress
-        ){
-            _sender = payable(msg.sender);
-        }
+        // TaskStorage storage _storage = LibTasks.taskStorage();
+        // if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
+        //     && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
+        //     && msg.sender != _storageInterchain.configLayerzero.sourceAddress
+        //     && msg.sender != _storageInterchain.configWormhole.sourceAddress
+        // ){
+        //     _sender = payable(msg.sender);
+        // }
 
         LibTasks.taskStateChange(_sender, _participant, _state, _message, _replyTo, _score);
         emit TaskUpdated(address(this), 'taskStateChange', block.timestamp);
@@ -141,13 +135,13 @@ contract TaskContract is ERC1155StorageFacet  {
         // // console.log(balance);
         // require(balance>0, 'must hold Auditor NFT to audit');
 
-        if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
-            && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
-            && msg.sender != _storageInterchain.configLayerzero.sourceAddress
-            && msg.sender != _storageInterchain.configWormhole.sourceAddress
-        ){
-            _sender = payable(msg.sender);
-        }
+        // if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
+        //     && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
+        //     && msg.sender != _storageInterchain.configLayerzero.sourceAddress
+        //     && msg.sender != _storageInterchain.configWormhole.sourceAddress
+        // ){
+        //     _sender = payable(msg.sender);
+        // }
         LibTasksAudit.taskAuditDecision(_sender, _favour, _message, _replyTo, rating);
         emit TaskUpdated(address(this), 'taskAuditDecision', block.timestamp);
     }
@@ -157,13 +151,13 @@ contract TaskContract is ERC1155StorageFacet  {
         string memory _message,
         uint256 _replyTo
     ) external {
-        if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
-            && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
-            && msg.sender != _storageInterchain.configLayerzero.sourceAddress
-            && msg.sender != _storageInterchain.configWormhole.sourceAddress
-        ){
-            _sender = payable(msg.sender);
-        }
+        // if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
+        //     && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
+        //     && msg.sender != _storageInterchain.configLayerzero.sourceAddress
+        //     && msg.sender != _storageInterchain.configWormhole.sourceAddress
+        // ){
+        //     _sender = payable(msg.sender);
+        // }
         LibChat.sendMessage(_sender, _message, _replyTo);
         emit TaskUpdated(address(this), 'sendMessage', block.timestamp);
     }

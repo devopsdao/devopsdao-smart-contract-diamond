@@ -4,6 +4,7 @@
 const fs = require('fs').promises;
 const { arrayCompare } = require('arweave/node/lib/merkle.js');
 const path = require('node:path');
+var _ = require('underscore');
 
 // const { program } = require('commander');
 
@@ -100,6 +101,9 @@ const dodaoFacets = [
     name: 'TaskDataFacet',
   },
   {
+    name: 'AccountFacet',
+  },
+  {
     name: 'TokenFacet',
     libraries: [
       'LibTokens',
@@ -111,6 +115,9 @@ const dodaoFacets = [
     libraries: [
       'LibTokenData',
     ]
+  },
+  {
+    name: 'InterchainFacet',
   },
   {
     name: 'AxelarFacet',
@@ -198,6 +205,7 @@ async function deployDiamond () {
   return diamond.address
 }
 
+
 async function upgradeDiamondFacets(facets, libraries) {
   const existingAddresses = await fs.readFile(path.join(__dirname, `../abi/addresses.json`));
   let contractAddresses;
@@ -214,15 +222,33 @@ async function upgradeDiamondFacets(facets, libraries) {
   const diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress)
   const diamondCutFacet = await ethers.getContractAt('DiamondCutFacet', diamondAddress)
 
-
+  console.log('getting existing facets and its libs from diamond')
   let existingFacets = {}
   let existingFacetSelectors = {}
   let libNames = []
+  const facetsDeployed = await diamondLoupeFacet.facets()
   for(const facet of facets){
-    existingFacets[facet.name] = await ethers.getContractAt(facet.name, diamondAddress)
-    existingFacetSelectors[facet.name] = getSelectors(existingFacets[facet.name])
-    if(typeof facet.libraries != 'undefined'){
-      libNames = libNames.concat(facet.libraries)
+    const existingFacet = await ethers.getContractAt(facet.name, diamondAddress)
+    if(typeof existingFacet != 'undefined'){
+      let equal;
+      for (facetDeployed of facetsDeployed){
+        // console.log(`checking ${facet.name}`)
+        equal = _.isEqual(facetDeployed.functionSelectors, getSelectors(existingFacet));
+        if(equal){
+          break;
+        }
+      }
+      if(equal){
+        console.log(`found ${facet.name}`)
+        existingFacets[facet.name] = existingFacet
+        existingFacetSelectors[facet.name] = getSelectors(existingFacet)
+      }
+      else{
+        console.log(`not found ${facet.name}`)
+      }
+      if(typeof facet.libraries != 'undefined'){
+        libNames = libNames.concat(facet.libraries)
+      }
     }
   }
 
@@ -253,16 +279,36 @@ async function upgradeDiamondFacets(facets, libraries) {
   const libAddresses  = await deployLibs(libs);
 
   console.log('removing existingFacetSelectors')
+  // console.log(existingFacets)
+  // console.log(facets)
+  // const facetsDeployed = await diamondLoupeFacet.facets()
+  // console.log(facetsDeployed)
+
+  // console.log('test')
+  // console.log(facetsDeployed)
+  // console.log(facetsDeployed[3].functionSelectors)
+  // console.log('test2')
+  // console.log(getSelectors(existingFacets['TaskCreateFacet']))
+
+  // assert.sameMembers(facetsDeployed[10].functionSelectors, getSelectors(existingFacets['TaskCreateFacet']))  
+
+  // assert.sameMembers(facetsDeployed[12].functionSelectors, getSelectors(existingFacets['TaskCreateFacet']))  
+
   for(const facet of facets){
-    tx = await diamondCutFacet.diamondCut(
-      [{
-        facetAddress: ethers.constants.AddressZero,
-        action: FacetCutAction.Remove,
-        functionSelectors: existingFacetSelectors[facet.name]
-      }],
-      ethers.constants.AddressZero, '0x', { gasLimit: 800000 })
-    receipt = await tx.wait()
-    console.log(`${facet.name} removed`)
+    if(typeof existingFacets[facet.name] != 'undefined'){
+      tx = await diamondCutFacet.diamondCut(
+        [{
+          facetAddress: ethers.constants.AddressZero,
+          action: FacetCutAction.Remove,
+          functionSelectors: existingFacetSelectors[facet.name]
+        }],
+        ethers.constants.AddressZero, '0x', { gasLimit: 800000 })
+      receipt = await tx.wait()
+      console.log(`${facet.name} removed`)
+    }
+    else{
+      console.log(`facet ${facet.name} was not present in diamond`)
+    }
   }
 
 
@@ -279,7 +325,7 @@ async function upgradeDiamondFacets(facets, libraries) {
   // console.log(`Diamond cut:`, tx)
   console.log(`Diamond cut.`)
 
-  const facetsDeployed = await diamondLoupeFacet.facets()
+  // const facetsDeployed = await diamondLoupeFacet.facets()
 
   // for(const id of facets.keys()){
   //   console.log(facetsDeployed[findAddressPositionInFacets(facetAddresses[facets[id].name], facets)])
@@ -470,7 +516,7 @@ task(
 
 
     let upgradeFacets = []
-    const facetNames = []
+    let facetNames = []
 
 
 
@@ -485,6 +531,7 @@ task(
         facetNames.push(taskArguments.facets)
       }
   
+      console.log(dodaoFacets)
       for(const facetName of facetNames){
         const facet = dodaoFacets.find(facet => facet.name === facetName)
         if(typeof facet != 'undefined'){
