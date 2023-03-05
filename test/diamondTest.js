@@ -404,9 +404,8 @@ describe("dodao facets test", async function () {
     assert.deepEqual(ownedTokenNames, ["auditor"]);
   });
 
-
   for (const favour of ["customer", "performer"]) {
-    it("createTaskContract", async () => {
+    it(`createTaskContract - audit resolved in ${favour} favour`, async () => {
       //debug abi call data
       // const dir = path.resolve(
       //   __dirname,
@@ -713,137 +712,103 @@ describe("dodao facets test", async function () {
       assert.equal(getTaskDataDecision.messages.length, 9);
     });
 
-    let getAccountsList
+    let getAccountsList;
     it("tokenDataFacet getAccountsList", async () => {
       getAccountsList = await accountFacet.connect(signers[0]).getAccountsList();
       assert.equal(getAccountsList.length, 4);
     });
 
-    const accountsData = [
-      {
+    it("tokenDataFacet getAccountsData customer", async () => {
+      const getAccountsData = await accountFacet.connect(signers[0]).getAccountsData(getAccountsList);
+
+      const accountData = {
         accountOwner: signers[0].address,
-        nickname: '',
-        about: '',
+        nickname: "",
+        about: "",
         ownerTasks: getTaskContracts,
         participantTasks: [],
         auditParticipantTasks: [],
         customerRatings: [],
-        performerRatings: []
-      },
-      {
-        accountOwner: signers[1].address,
-        nickname: '',
-        about: '',
-        ownerTasks: [],
-        participantTasks: getTaskContracts,
-        auditParticipantTasks: [],
-        customerRatings: [],
-        performerRatings: []
-      },
-      {
-        accountOwner: signers[3].address,
-        nickname: '',
-        about: '',
-        ownerTasks: [],
-        participantTasks: getTaskContracts,
-        auditParticipantTasks: [],
-        customerRatings: [],
-        performerRatings: []
-      },
-      {
-        accountOwner: signers[2].address,
-        nickname: '',
-        about: '',
-        ownerTasks: [],
-        participantTasks: getTaskContracts,
-        auditParticipantTasks: [],
-        customerRatings: [],
-        performerRatings: []
-      },
-   ]
-
-    it("tokenDataFacet getAccountsData customer", async () => {
-      const getAccountsData =  await accountFacet.connect(signers[0]).getAccountsData(getAccountsList);
-      
-      console.log(getAccountsData)
-      // console.log(accountsData)
-      // console.log(Object.entries(getAccountsData))
-
-      
-      // assert.deepEqual(getAccountsData, accountsData);
-    //  for([key, accountData] of Object.entries(getAccountsData)){
-      expect(accountData.accountOwner).to.equal(accountsData[key].accountOwner);
-      expect(accountData.nickname).to.equal(accountsData[key].nickname);
-      expect(accountData.about).to.equal(accountsData[key].about);
-      expect(accountData.ownerTasks).to.have.deep.members(accountsData[key].ownerTasks);
-      expect(accountData.participantTasks).to.have.deep.members(accountsData[key].participantTasks);
-      expect(accountData.auditParticipantTasks).to.have.deep.members(accountsData[key].auditParticipantTasks);
-      expect(accountData.customerRatings).to.have.deep.members(accountsData[key].customerRatings);
-      expect(accountData.performerRatings).to.have.deep.members(accountsData[key].performerRatings);
-
+        performerRatings: [],
+      };
+      //  for([key, accountData] of Object.entries(getAccountsData)){
+      expect(getAccountsData[0].accountOwner).to.equal(accountData.accountOwner);
+      expect(getAccountsData[0].nickname).to.equal(accountData.nickname);
+      expect(getAccountsData[0].about).to.equal(accountData.about);
+      expect(getAccountsData[0].ownerTasks).to.have.deep.members(accountData.ownerTasks);
+      expect(getAccountsData[0].participantTasks).to.have.deep.members(accountData.participantTasks);
+      expect(getAccountsData[0].auditParticipantTasks).to.have.deep.members(accountData.auditParticipantTasks);
+      expect(getAccountsData[0].customerRatings).to.have.deep.members(accountData.customerRatings);
+      expect(getAccountsData[0].performerRatings).to.have.deep.members(accountData.performerRatings);
     });
 
     it("tokenDataFacet getAccountsData participant", async () => {
-      const getAccountsData =  await accountFacet.connect(signers[0]).getAccountsData(getAccountsList);
-      
-      console.log(getAccountsData)
-      // console.log(accountsData)
-      // console.log(Object.entries(getAccountsData))
+      const getAccountsData = await accountFacet.connect(signers[0]).getAccountsData(getAccountsList);
 
-      
-      // assert.deepEqual(getAccountsData, accountsData);
-    //  for([key, accountData] of Object.entries(getAccountsData)){
-      expect(getAccountsData[0].accountOwner).to.equal(accountsData[0].accountOwner);
-      expect(getAccountsData[0].nickname).to.equal(accountsData[0].nickname);
-      expect(getAccountsData[0].about).to.equal(accountsData[0].about);
-      expect(getAccountsData[0].ownerTasks).to.have.deep.members(accountsData[0].ownerTasks);
-      expect(getAccountsData[0].participantTasks).to.have.deep.members(accountsData[0].participantTasks);
-      expect(getAccountsData[0].auditParticipantTasks).to.have.deep.members(accountsData[0].auditParticipantTasks);
-      expect(getAccountsData[0].customerRatings).to.have.deep.members(accountsData[0].customerRatings);
-      expect(getAccountsData[0].performerRatings).to.have.deep.members(accountsData[0].performerRatings);
-
+      const accountData = {
+        accountOwner: signers[1].address,
+        nickname: "",
+        about: "",
+        ownerTasks: [],
+        participantTasks: getTaskContracts,
+        auditParticipantTasks: [],
+        customerRatings: [],
+        performerRatings: [],
+      };
+      expect(getAccountsData[1].accountOwner).to.equal(accountData.accountOwner);
+      expect(getAccountsData[1].nickname).to.equal(accountData.nickname);
+      expect(getAccountsData[1].about).to.equal(accountData.about);
+      expect(getAccountsData[1].ownerTasks).to.have.deep.members(accountData.ownerTasks);
+      expect(getAccountsData[1].participantTasks).to.have.deep.members(accountData.participantTasks);
+      expect(getAccountsData[1].auditParticipantTasks).to.have.deep.members(accountData.auditParticipantTasks);
+      expect(getAccountsData[1].customerRatings).to.have.deep.members(accountData.customerRatings);
+      expect(getAccountsData[1].performerRatings).to.have.deep.members(accountData.performerRatings);
     });
 
     it("tokenDataFacet getAccountsData participant 2", async () => {
-      const getAccountsData =  await accountFacet.connect(signers[0]).getAccountsData(getAccountsList);
-      
-      console.log(getAccountsData)
-      // console.log(accountsData)
-      // console.log(Object.entries(getAccountsData))
+      const getAccountsData = await accountFacet.connect(signers[0]).getAccountsData(getAccountsList);
 
-      
-      // assert.deepEqual(getAccountsData, accountsData);
-    //  for([key, accountData] of Object.entries(getAccountsData)){
-      expect(getAccountsData[1].accountOwner).to.equal(accountsData[1].accountOwner);
-      expect(getAccountsData[1].nickname).to.equal(accountsData[1].nickname);
-      expect(getAccountsData[1].about).to.equal(accountsData[1].about);
-      expect(getAccountsData[1].ownerTasks).to.have.deep.members(accountsData[1].ownerTasks);
-      expect(getAccountsData[1].participantTasks).to.have.deep.members(accountsData[1].participantTasks);
-      expect(getAccountsData[1].auditParticipantTasks).to.have.deep.members(accountsData[1].auditParticipantTasks);
-      expect(getAccountsData[1].customerRatings).to.have.deep.members(accountsData[1].customerRatings);
-      expect(getAccountsData[1].performerRatings).to.have.deep.members(accountsData[1].performerRatings);
-
+      const accountData = {
+        accountOwner: signers[3].address,
+        nickname: "",
+        about: "",
+        ownerTasks: [],
+        participantTasks: getTaskContracts,
+        auditParticipantTasks: [],
+        customerRatings: [],
+        performerRatings: [],
+      };
+      expect(getAccountsData[2].accountOwner).to.equal(accountData.accountOwner);
+      expect(getAccountsData[2].nickname).to.equal(accountData.nickname);
+      expect(getAccountsData[2].about).to.equal(accountData.about);
+      expect(getAccountsData[2].ownerTasks).to.have.deep.members(accountData.ownerTasks);
+      expect(getAccountsData[2].participantTasks).to.have.deep.members(accountData.participantTasks);
+      expect(getAccountsData[2].auditParticipantTasks).to.have.deep.members(accountData.auditParticipantTasks);
+      expect(getAccountsData[2].customerRatings).to.have.deep.members(accountData.customerRatings);
+      expect(getAccountsData[2].performerRatings).to.have.deep.members(accountData.performerRatings);
     });
 
     it("tokenDataFacet getAccountsData auditor", async () => {
-      const getAccountsData =  await accountFacet.connect(signers[0]).getAccountsData(getAccountsList);
-      
-      console.log(getAccountsData)
-      // console.log(accountsData)
-      // console.log(Object.entries(getAccountsData))
+      const getAccountsData = await accountFacet.connect(signers[0]).getAccountsData(getAccountsList);
 
-      
-      // assert.deepEqual(getAccountsData, accountsData);
-    //  for([key, accountData] of Object.entries(getAccountsData)){
-      expect(getAccountsData[2].accountOwner).to.equal(accountsData[2].accountOwner);
-      expect(getAccountsData[2].nickname).to.equal(accountsData[2].nickname);
-      expect(getAccountsData[2].about).to.equal(accountsData[2].about);
-      expect(getAccountsData[2].ownerTasks).to.have.deep.members(accountsData[2].ownerTasks);
-      expect(getAccountsData[2].participantTasks).to.have.deep.members(accountsData[2].participantTasks);
-      expect(getAccountsData[2].auditParticipantTasks).to.have.deep.members(accountsData[2].auditParticipantTasks);
-      expect(getAccountsData[2].customerRatings).to.have.deep.members(accountsData[2].customerRatings);
-      expect(getAccountsData[2].performerRatings).to.have.deep.members(accountsData[2].performerRatings);
-
+      const accountData = {
+        accountOwner: signers[2].address,
+        nickname: "",
+        about: "",
+        ownerTasks: [],
+        participantTasks: [],
+        auditParticipantTasks: getTaskContracts,
+        customerRatings: [],
+        performerRatings: [],
+      };
+      expect(getAccountsData[3].accountOwner).to.equal(accountData.accountOwner);
+      expect(getAccountsData[3].nickname).to.equal(accountData.nickname);
+      expect(getAccountsData[3].about).to.equal(accountData.about);
+      expect(getAccountsData[3].ownerTasks).to.have.deep.members(accountData.ownerTasks);
+      expect(getAccountsData[3].participantTasks).to.have.deep.members(accountData.participantTasks);
+      expect(getAccountsData[3].auditParticipantTasks).to.have.deep.members(accountData.auditParticipantTasks);
+      expect(getAccountsData[3].customerRatings).to.have.deep.members(accountData.customerRatings);
+      expect(getAccountsData[3].performerRatings).to.have.deep.members(accountData.performerRatings);
     });
     // assert.equal([signers[0],signers[1]], getAccountsList)
 
