@@ -83,6 +83,7 @@ library LibTasksAudit {
         if (_storage.tasks[address(this)].auditors.length == 0) {
             _storage.tasks[address(this)].auditors.push(_sender);
             _storage.tasks[address(this)].messages.push(message);
+            IAccountFacet(_storage.tasks[address(this)].contractParent).addAuditParticipantTask(_sender, address(this));
         } else {
             for (
                 uint256 i = 0;
@@ -98,6 +99,7 @@ library LibTasksAudit {
                 _storage.tasks[address(this)].auditors.push(_sender);
                 _storage.accounts[_sender].auditParticipantTasks.push(address(this));
                 _storage.tasks[address(this)].messages.push(message);
+                IAccountFacet(_storage.tasks[address(this)].contractParent).addAuditParticipantTask(_sender, address(this));
             }
         }
     }
