@@ -143,6 +143,7 @@ const {
 async function deployDiamond () {
   const accounts = await ethers.getSigners()
   const contractOwner = accounts[0]
+  console.log(`using wallet: ${contractOwner.address}`)
 
   // Deploy DiamondInit
   // DiamondInit provides a function that is called when the diamond is upgraded or deployed to initialize state variables
@@ -499,7 +500,7 @@ task(
   async function (taskArguments, hre, runSuper) {
     console.log("deploying Diamond");
     console.log('')
-    console.log('Deploying facets')
+    // console.log('Deploying facets')
     await deployDiamond()
   }
 );

@@ -82,6 +82,15 @@ module.exports = {
       },
       // mnemonic: MNEMONIC
     },
+    fantomtest: {
+      url: "https://rpc.testnet.fantom.network",
+      // url: "https://fantom-testnet.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
+      chainId: 4002,
+      accounts: {
+        mnemonic: keys.mnemonic1,
+      },
+      // mnemonic: MNEMONIC
+    },
     localhost: {
       chainId: 31337,
     },
