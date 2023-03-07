@@ -453,6 +453,9 @@ library LibTasks {
                     revert("auditor has not applied");
                 }
             }
+            else {
+                revert("conditions are not met");
+            }
         } else {
             revert("conditions are not met");
         }

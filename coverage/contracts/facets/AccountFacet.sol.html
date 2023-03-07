@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for contracts/facets/AccountFacet.sol</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">contracts/facets/</a> AccountFacet.sol
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">43.48% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>20/46</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">30% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>12/40</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">44.44% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>4/9</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">43.86% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>25/57</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
+&nbsp;
+// import {LibDiamond} from '../libraries/LibDiamond.sol';
+&nbsp;
+// import '../interfaces/IDiamondLoupe.sol';
+&nbsp;
+&nbsp;
+import "../libraries/LibTasks.sol";
+import "../libraries/LibInterchain.sol";
+// import "../libraries/LibUtils.sol";
+&nbsp;
+// import "../contracts/TaskContract.sol";
+// import "../facets/tokenstorage/ERC1155StorageFacet.sol";
+// import "../facets/TokenFacet.sol";
+import "../facets/TokenDataFacet.sol";
+&nbsp;
+&nbsp;
+import "hardhat/console.sol";
+&nbsp;
+&nbsp;
+&nbsp;
+contract AccountFacet  {
+&nbsp;
+    event AccountCreated(address ownerAddr, string message, uint timestamp);
+&nbsp;
+&nbsp;
+<span class="fstat-no" title="function not covered" >    function addAccountToBlacklist(address taskAddress)</span>
+    external
+    {
+<span class="cstat-no" title="statement not covered" >        TaskStorage storage _storage = LibTasks.taskStorage();</span>
+<span class="cstat-no" title="statement not covered" >        uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'auditor');</span>
+<span class="cstat-no" title="statement not covered" >        require(balance &gt; 0, 'must hold Auditor NFT to add to blacklist')</span>;
+<span class="cstat-no" title="statement not covered" >        require(_storage.taskContractsMapping[taskAddress] == true, 'task does not exist')</span>;
+<span class="cstat-no" title="statement not covered" >        require(_storage.accountsBlacklistMapping[taskAddress] != true, 'task is already blacklisted')</span>;
+<span class="cstat-no" title="statement not covered" >        _storage.accountsBlacklist.push(taskAddress)</span>;
+        _storage.accountsBlacklistMapping[taskAddress] = true;
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    function removeAccountFromBlacklist(address taskAddress) external{</span>
+<span class="cstat-no" title="statement not covered" >        TaskStorage storage _storage = LibTasks.taskStorage();</span>
+<span class="cstat-no" title="statement not covered" >        uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'auditor');</span>
+<span class="cstat-no" title="statement not covered" >        require(balance &gt; 0, 'must hold Auditor NFT to add to blacklist')</span>;
+<span class="cstat-no" title="statement not covered" >        require(_storage.taskContractsMapping[taskAddress] == true, 'task does not exist')</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        for (uint256 index = 0; index &lt; _storage.accountsBlacklist.length; index++) {</span>
+<span class="cstat-no" title="statement not covered" >            if(_storage.accountsBlacklist[index] == taskAddress){</span>
+                _storage.accountsBlacklistMapping[taskAddress] = false;
+<span class="cstat-no" title="statement not covered" >                for (uint i = index; i&lt;_storage.accountsBlacklist.length-1; i++){</span>
+                    _storage.accountsBlacklist[i] = _storage.accountsBlacklist[i+1];
+                }
+<span class="cstat-no" title="statement not covered" >                _storage.accountsBlacklist.pop()</span>;
+            }
+        }
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    function addAccountData(address _sender, string calldata nickname, string calldata about) external{</span>
+<span class="cstat-no" title="statement not covered" >        InterchainStorage storage _storageInterchain = LibInterchain.interchainStorage();</span>
+<span class="cstat-no" title="statement not covered" >        if(msg.sender != _storageInterchain.configAxelar.sourceAddress </span>
+            &amp;&amp; msg.sender != _storageInterchain.configHyperlane.sourceAddress 
+            &amp;&amp; msg.sender != _storageInterchain.configLayerzero.sourceAddress
+            &amp;&amp; msg.sender != _storageInterchain.configWormhole.sourceAddress
+        ){
+            _sender = payable(msg.sender);
+        }
+<span class="cstat-no" title="statement not covered" >        require(msg.sender == _sender, 'sender must be account owner')</span>;
+<span class="cstat-no" title="statement not covered" >        TaskStorage storage _storage = LibTasks.taskStorage();</span>
+        _storage.accounts[_sender].nickname = nickname;
+        _storage.accounts[_sender].nickname = about;
+    }
+&nbsp;
+    function addParticipantTask(address _sender, address taskAddress) external{
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(msg.sender == taskAddress, 'sender must be task contract');
+&nbsp;
+        if(_storage.accountsMapping[_sender] != true){
+            _storage.accountsList.push(_sender);
+            _storage.accountsMapping[_sender] = true;
+        }
+        //set the account owner if it is not set
+        if(_storage.accounts[_sender].accountOwner == address(0x0)){
+            _storage.accounts[_sender].accountOwner = _sender;
+        }
+        _storage.accounts[_sender].participantTasks.push(taskAddress);
+    }
+&nbsp;
+    function addAuditParticipantTask(address _sender, address taskAddress) external{
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(msg.sender == taskAddress, 'sender must be task contract');
+&nbsp;
+        if(_storage.accountsMapping[_sender] != true){
+            _storage.accountsList.push(_sender);
+            _storage.accountsMapping[_sender] = true;
+        }
+        //set the account owner if it is not set
+        if(_storage.accounts[_sender].accountOwner == address(0x0)){
+            _storage.accounts[_sender].accountOwner = _sender;
+        }
+        _storage.accounts[_sender].auditParticipantTasks.push(taskAddress);
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    function addPerformerRating(address _sender, address taskAddress, uint256 rating) external{</span>
+<span class="cstat-no" title="statement not covered" >        TaskStorage storage _storage = LibTasks.taskStorage();</span>
+<span class="cstat-no" title="statement not covered" >        require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist')</span>;
+<span class="cstat-no" title="statement not covered" >        require(msg.sender == taskAddress, 'sender must be task contract')</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        _storage.accounts[_sender].performerRatings.push(rating)</span>;
+    }
+&nbsp;
+<span class="fstat-no" title="function not covered" >    function addCustomerRating(address _sender, address taskAddress, uint256 rating) external{</span>
+<span class="cstat-no" title="statement not covered" >        TaskStorage storage _storage = LibTasks.taskStorage();</span>
+<span class="cstat-no" title="statement not covered" >        require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist')</span>;
+<span class="cstat-no" title="statement not covered" >        require(msg.sender == taskAddress, 'sender must be task contract')</span>;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        _storage.accounts[_sender].customerRatings.push(rating)</span>;
+    }
+&nbsp;
+&nbsp;
+    function getAccountsList()
+    external
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        return _storage.accountsList;
+    }
+&nbsp;
+    function getAccountsData(address[] memory accountAddresses)
+    external
+    view
+    returns (Account[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        Account[] memory accounts = new Account[](accountAddresses.length);
+        for (uint256 i = 0; i &lt; accountAddresses.length; i++) {
+            accounts[i] = _storage.accounts[accountAddresses[i]];
+        }
+        return accounts;
+    }
+&nbsp;
+    // function getAccountsDataDyn(address[] memory accountAddresses)
+    // external
+    // view
+    // returns (Account[] memory)
+    // {
+    //     TaskStorage storage _storage = LibTasks.taskStorage();
+    //     Account[] memory accounts = new Account[](accountAddresses.length);
+    //     for (uint256 i = 0; i &lt; accountAddresses.length; i++) {
+    //         Account memory account;
+    //         address[] memory customerContracts = getTaskContractsCustomer(accountAddresses[i]);
+    //         uint256 symbolCount = 0;
+    //         for (uint256 idx = 0; idx &lt; customerContracts.length; idx++) {
+    //             Task memory task = TaskContract(customerContracts[idx]).getTaskData();
+    //             symbolCount = symbolCount + task.symbols.length;
+    //         }
+    //         string[] memory spentSymbols = new string[](symbolCount);
+    //         uint256[] memory spentSymbolAmounts = new uint256[](symbolCount);
+    //         uint256 symbolIdx = 0;
+    //         for (uint256 idx = 0; idx &lt; customerContracts.length; idx++) {
+    //             Task memory task = TaskContract(customerContracts[idx]).getTaskData();
+    //             for (uint256 index = 0; index &lt; task.symbols.length; index++) {
+    //                 spentSymbols[symbolIdx] = task.symbols[symbolIdx];
+    //                 spentSymbolAmounts[symbolIdx] = task.amounts[symbolIdx];
+    //                 symbolIdx++;
+    //             }
+    //         }
+    //         address[] memory performerContracts = getTaskContractsPerformer(accountAddresses[i]);
+    //         account.performerTaskCount = performerContracts.length;
+    //         accounts[i] = account;
+    //     }
+    //     return accounts;
+    // }
+&nbsp;
+}
+&nbsp;
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Mar 06 2023 13:19:48 GMT+0200 (Eastern European Standard Time)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

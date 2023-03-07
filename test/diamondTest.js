@@ -1,16 +1,15 @@
 /* global describe it before ethers */
 const { ethers } = require("hardhat");
 // const crypto = require('crypto');
-const helpers = require("@nomicfoundation/hardhat-network-helpers");
 const path = require("node:path");
 const fs = require("fs");
 
-const {
-  BN, // Big Number support
-  constants, // Common constants, like the zero address and largest integers
-  expectEvent, // Assertions for emitted events
-  expectRevert, // Assertions for transactions that should fail
-} = require("@openzeppelin/test-helpers");
+// const {
+//   BN, // Big Number support
+//   constants, // Common constants, like the zero address and largest integers
+//   expectEvent, // Assertions for emitted events
+//   expectRevert, // Assertions for transactions that should fail
+// } = require("@openzeppelin/test-helpers");
 
 const {
   getSelectors,
@@ -21,7 +20,7 @@ const {
 
 const { deployDiamond } = require("../scripts/deploy.js");
 
-const { assert } = require("chai");
+// const { assert } = require("chai");
 
 describe("DiamondTest", async function () {
   let diamondAddress;
@@ -404,7 +403,7 @@ describe("dodao facets test", async function () {
     assert.deepEqual(ownedTokenNames, ["auditor"]);
   });
 
-  for (const favour of ["customer", "performer"]) {
+  for (const favour of ["customer", "performer", "no_audit"]) {
     it(`createTaskContract - audit resolved in ${favour} favour`, async () => {
       //debug abi call data
       // const dir = path.resolve(
@@ -438,7 +437,10 @@ describe("dodao facets test", async function () {
       const getNewTaskContractsBeforeBlacklist = await taskDataFacet.connect(signers[0]).getTaskContractsByState("new");
       const getCompletedTaskContracts = await taskDataFacet.connect(signers[0]).getTaskContractsByState("completed");
       const getCanceledTaskContracts = await taskDataFacet.connect(signers[0]).getTaskContractsByState("canceled");
-      const allTasks = getCompletedTaskContracts.concat(getCanceledTaskContracts, getNewTaskContractsBeforeBlacklist);
+      const allTasks = getCanceledTaskContracts.concat(
+        getCompletedTaskContracts,
+        getNewTaskContractsBeforeBlacklist
+      );
       // expect(getNewTaskContractsBeforeBlacklist).to.have.members(getTaskContracts);
       assert.deepEqual(allTasks, getTaskContracts);
     });
@@ -462,8 +464,8 @@ describe("dodao facets test", async function () {
         .getTaskContractsByState("new");
       const getCompletedTaskContracts = await taskDataFacet.connect(signers[0]).getTaskContractsByState("completed");
       const getCanceledTaskContracts = await taskDataFacet.connect(signers[0]).getTaskContractsByState("canceled");
-      const allTasks = getCompletedTaskContracts.concat(
-        getCanceledTaskContracts,
+      const allTasks = getCanceledTaskContracts.concat(
+        getCompletedTaskContracts,
         getNewTaskContractsAfterBlacklistRemoval
       );
       assert.deepEqual(allTasks, getTaskContracts);
@@ -616,101 +618,181 @@ describe("dodao facets test", async function () {
       assert.equal(getTaskDataReview.messages[4].replyTo, messageReplyTo);
     });
 
-    const taskStateAudit = "audit";
+    if (favour === "no_audit") {
+      it("taskContract taskStateChange - completed", async () => {
+        const taskStateCompleted = "completed";
+        const messageTextCompleted = "work is accepted, signing review";
+        const messageReplyTo = 0;
 
-    it("tokenDataFacet taskStateChange - audit", async () => {
-      const messageTextAudit = "work is not done :(";
-      const taskAuditStateRequested = "requested";
-      taskStateChangeAudit = await taskContract
-        .connect(signers[0])
-        .taskStateChange(
-          signers[0].address,
-          "0x0000000000000000000000000000000000000000",
-          taskStateAudit,
-          messageTextAudit,
-          messageReplyTo,
-          0
-        );
-      getTaskDataAudit = await taskContract.getTaskData();
-      // console.log(getTaskDataAudit)
-      assert.equal(getTaskDataAudit.taskState, taskStateAudit);
-      assert.equal(getTaskDataAudit.auditState, taskAuditStateRequested);
-      assert.equal(getTaskDataAudit.auditInitiator, signers[0].address);
-      assert.equal(getTaskDataAudit.messages[5].id, 6);
-      assert.equal(getTaskDataAudit.messages[5].text, messageTextAudit);
-      assert.isAbove(getTaskDataAudit.messages[5].timestamp, 1666113343, "timestamp is more than 0");
-      assert.equal(getTaskDataAudit.messages[5].sender, signers[0].address);
-      assert.equal(getTaskDataAudit.messages[5].taskState, taskStateAudit);
-      assert.equal(getTaskDataAudit.messages[5].replyTo, messageReplyTo);
-    });
+        // taskContract = await ethers.getContractAt("TaskContract", getTaskContracts[getTaskContracts.length - 1]);
+        getTaskDataCompleted = await taskContract.getTaskData();
 
-    it("taskContract taskAuditParticipate", async () => {
-      const messageTextAuditParticipate = "I am honorable auditor";
-      taskAuditParticipate = await taskContract
-        .connect(signers[2])
-        .taskAuditParticipate(signers[2].address, messageTextAuditParticipate, messageReplyTo);
-      getTaskDataAuditParticipate = await taskContract.getTaskData();
-      assert.equal(getTaskDataAuditParticipate.auditors[0], signers[2].address);
-      assert.equal(getTaskDataAuditParticipate.messages[6].id, 7);
-      assert.equal(getTaskDataAuditParticipate.messages[6].text, messageTextAuditParticipate);
-      assert.isAbove(getTaskDataAuditParticipate.messages[6].timestamp, 1666113343, "timestamp is more than 0");
-      assert.equal(getTaskDataAuditParticipate.messages[6].sender, signers[2].address);
-      assert.equal(getTaskDataAuditParticipate.messages[6].taskState, taskStateAudit);
-      assert.equal(getTaskDataAuditParticipate.messages[6].replyTo, messageReplyTo);
-    });
+        const taskStateChangeCompleted = await taskContract
+          .connect(signers[0])
+          .taskStateChange(
+            signers[0].address,
+            getTaskDataParticipate.participants[0],
+            taskStateCompleted,
+            messageTextCompleted,
+            messageReplyTo,
+            5
+          );
+        getTaskDataCompleted = await taskContract.getTaskData();
+        assert.equal(getTaskDataCompleted.taskState, taskStateCompleted);
+        assert.equal(getTaskDataCompleted.participant, signers[1].address);
+        assert.equal(getTaskDataCompleted.messages[5].id, 6);
+        assert.equal(getTaskDataCompleted.messages[5].text, messageTextCompleted);
+        assert.isAbove(getTaskDataCompleted.messages[5].timestamp, 1666113343, "timestamp is more than 0");
+        assert.equal(getTaskDataCompleted.messages[5].sender, signers[0].address);
+        assert.equal(getTaskDataCompleted.messages[5].taskState, taskStateCompleted);
+        assert.equal(getTaskDataCompleted.messages[5].replyTo, messageReplyTo);
+      });
+    }
+    if (favour !== "no_audit") {
+      const taskStateAudit = "audit";
 
-    it("tokenDataFacet taskStateChange - performing audit (selected an auditor) ", async () => {
-      const messageTextSelectAuditor = "selected a proper auditor";
-      const taskAuditStatePerforming = "performing";
-      taskStateChangeSelectAuditor = await taskContract
-        .connect(signers[0])
-        .taskStateChange(
-          signers[0].address,
-          getTaskDataAuditParticipate.auditors[0],
-          taskStateAudit,
-          messageTextSelectAuditor,
-          messageReplyTo,
-          0
-        );
-      getTaskDataSelectAuditor = await taskContract.getTaskData();
-      assert.equal(getTaskDataSelectAuditor.auditState, taskAuditStatePerforming);
-      assert.equal(getTaskDataSelectAuditor.auditor, signers[2].address);
-      assert.equal(getTaskDataSelectAuditor.messages[7].id, 8);
-      assert.equal(getTaskDataSelectAuditor.messages[7].text, messageTextSelectAuditor);
-      assert.isAbove(getTaskDataSelectAuditor.messages[7].timestamp, 1666113343, "timestamp is more than 0");
-      assert.equal(getTaskDataSelectAuditor.messages[7].sender, signers[0].address);
-      assert.equal(getTaskDataSelectAuditor.messages[7].taskState, taskStateAudit);
-      assert.equal(getTaskDataSelectAuditor.messages[7].replyTo, messageReplyTo);
-    });
+      it("tokenDataFacet taskStateChange - audit", async () => {
+        const taskAuditStateRequested = "requested";
+        let messageTextAudit;
+        if (favour == "customer") {
+          messageTextAudit = "work is not done :(";
+          taskStateChangeAudit = await taskContract
+            .connect(signers[0])
+            .taskStateChange(
+              signers[0].address,
+              "0x0000000000000000000000000000000000000000",
+              taskStateAudit,
+              messageTextAudit,
+              messageReplyTo,
+              0
+            );
+        }
 
-    it("taskContract taskAuditDecision", async () => {
-      const messageTextAuditDecision = `${favour} is right`;
-      const taskAuditStateFinished = "finished";
-      let taskStateAuditDecision;
-      let rating;
-      if (favour == "customer") {
-        taskStateAuditDecision = "canceled";
-        rating = 1;
-      } else if (favour == "performer") {
-        taskStateAuditDecision = "completed";
-        rating = 5;
-      }
-      taskAuditDecision = await taskContract
-        .connect(signers[2])
-        .taskAuditDecision(signers[2].address, favour, messageTextAuditDecision, 0, rating);
-      getTaskDataDecision = await taskContract.getTaskData();
-      assert.equal(getTaskDataDecision.taskState, taskStateAuditDecision);
-      assert.equal(getTaskDataDecision.auditState, taskAuditStateFinished);
-      assert.equal(getTaskDataDecision.rating, rating);
-      assert.equal(getTaskDataDecision.messages[8].id, 9);
-      assert.equal(getTaskDataDecision.messages[8].text, messageTextAuditDecision);
-      assert.isAbove(getTaskDataDecision.messages[8].timestamp, 1666113343, "timestamp is more than 0");
-      assert.equal(getTaskDataDecision.messages[8].sender, signers[2].address);
-      assert.equal(getTaskDataDecision.messages[8].taskState, taskStateAuditDecision);
-      assert.equal(getTaskDataDecision.messages[8].replyTo, messageReplyTo);
+        if (favour == "performer") {
+          messageTextAudit = "work is indeed done, acceptance is too long";
+          taskStateChangeAudit = await taskContract
+            .connect(signers[1])
+            .taskStateChange(
+              signers[1].address,
+              "0x0000000000000000000000000000000000000000",
+              taskStateAudit,
+              messageTextAudit,
+              messageReplyTo,
+              0
+            );
+        }
 
-      assert.equal(getTaskDataDecision.messages.length, 9);
-    });
+        getTaskDataAudit = await taskContract.getTaskData();
+        // console.log(getTaskDataAudit)
+        assert.equal(getTaskDataAudit.taskState, taskStateAudit);
+        assert.equal(getTaskDataAudit.auditState, taskAuditStateRequested);
+        if (favour === "customer") {
+          assert.equal(getTaskDataAudit.auditInitiator, signers[0].address);
+        } else if (favour === "performer") {
+          assert.equal(getTaskDataAudit.auditInitiator, signers[1].address);
+        }
+        assert.equal(getTaskDataAudit.messages[5].id, 6);
+        assert.equal(getTaskDataAudit.messages[5].text, messageTextAudit);
+        assert.isAbove(getTaskDataAudit.messages[5].timestamp, 1666113343, "timestamp is more than 0");
+        if (favour === "customer") {
+          assert.equal(getTaskDataAudit.messages[5].sender, signers[0].address);
+        } else if (favour === "performer") {
+          assert.equal(getTaskDataAudit.messages[5].sender, signers[1].address);
+        }
+        assert.equal(getTaskDataAudit.messages[5].taskState, taskStateAudit);
+        assert.equal(getTaskDataAudit.messages[5].replyTo, messageReplyTo);
+      });
+
+      it("taskContract taskAuditParticipate", async () => {
+        const messageTextAuditParticipate = "I am honorable auditor";
+        taskAuditParticipate = await taskContract
+          .connect(signers[2])
+          .taskAuditParticipate(signers[2].address, messageTextAuditParticipate, messageReplyTo);
+        getTaskDataAuditParticipate = await taskContract.getTaskData();
+        assert.equal(getTaskDataAuditParticipate.auditors[0], signers[2].address);
+        assert.equal(getTaskDataAuditParticipate.messages[6].id, 7);
+        assert.equal(getTaskDataAuditParticipate.messages[6].text, messageTextAuditParticipate);
+        assert.isAbove(getTaskDataAuditParticipate.messages[6].timestamp, 1666113343, "timestamp is more than 0");
+        assert.equal(getTaskDataAuditParticipate.messages[6].sender, signers[2].address);
+        assert.equal(getTaskDataAuditParticipate.messages[6].taskState, taskStateAudit);
+        assert.equal(getTaskDataAuditParticipate.messages[6].replyTo, messageReplyTo);
+      });
+
+      it("tokenDataFacet taskStateChange - performing audit (this auditor not applied) ", async () => {
+        const taskStateAudit = "audit";
+        const messageTextSelectAuditor = "selected a proper auditor";
+        const taskAuditStatePerforming = "performing";
+        await expect(
+          taskStateChangeSelectAuditor = await taskContract
+          .connect(signers[0])
+          .taskStateChange(
+            signers[0].address,
+            "0x0000000000000000000000000000000000000000",
+            taskStateAudit,
+            messageTextSelectAuditor,
+            messageReplyTo,
+            0
+          )
+        ).to.be.reverted("auditor has not applied");
+  
+
+      });
+
+
+
+      it("tokenDataFacet taskStateChange - performing audit (selected an auditor) ", async () => {
+        const messageTextSelectAuditor = "selected a proper auditor";
+        const taskAuditStatePerforming = "performing";
+        taskStateChangeSelectAuditor = await taskContract
+          .connect(signers[0])
+          .taskStateChange(
+            signers[0].address,
+            getTaskDataAuditParticipate.auditors[0],
+            taskStateAudit,
+            messageTextSelectAuditor,
+            messageReplyTo,
+            0
+          );
+        getTaskDataSelectAuditor = await taskContract.getTaskData();
+        assert.equal(getTaskDataSelectAuditor.auditState, taskAuditStatePerforming);
+        assert.equal(getTaskDataSelectAuditor.auditor, signers[2].address);
+        assert.equal(getTaskDataSelectAuditor.messages[7].id, 8);
+        assert.equal(getTaskDataSelectAuditor.messages[7].text, messageTextSelectAuditor);
+        assert.isAbove(getTaskDataSelectAuditor.messages[7].timestamp, 1666113343, "timestamp is more than 0");
+        assert.equal(getTaskDataSelectAuditor.messages[7].sender, signers[0].address);
+        assert.equal(getTaskDataSelectAuditor.messages[7].taskState, taskStateAudit);
+        assert.equal(getTaskDataSelectAuditor.messages[7].replyTo, messageReplyTo);
+      });
+
+      it("taskContract taskAuditDecision", async () => {
+        const messageTextAuditDecision = `${favour} is right`;
+        const taskAuditStateFinished = "finished";
+        let taskStateAuditDecision;
+        let rating;
+        if (favour == "customer") {
+          taskStateAuditDecision = "canceled";
+          rating = 1;
+        } else if (favour == "performer") {
+          taskStateAuditDecision = "completed";
+          rating = 5;
+        }
+        taskAuditDecision = await taskContract
+          .connect(signers[2])
+          .taskAuditDecision(signers[2].address, favour, messageTextAuditDecision, 0, rating);
+        getTaskDataDecision = await taskContract.getTaskData();
+        assert.equal(getTaskDataDecision.taskState, taskStateAuditDecision);
+        assert.equal(getTaskDataDecision.auditState, taskAuditStateFinished);
+        assert.equal(getTaskDataDecision.rating, rating);
+        assert.equal(getTaskDataDecision.messages[8].id, 9);
+        assert.equal(getTaskDataDecision.messages[8].text, messageTextAuditDecision);
+        assert.isAbove(getTaskDataDecision.messages[8].timestamp, 1666113343, "timestamp is more than 0");
+        assert.equal(getTaskDataDecision.messages[8].sender, signers[2].address);
+        assert.equal(getTaskDataDecision.messages[8].taskState, taskStateAuditDecision);
+        assert.equal(getTaskDataDecision.messages[8].replyTo, messageReplyTo);
+
+        assert.equal(getTaskDataDecision.messages.length, 9);
+      });
+    }
 
     let getAccountsList;
     it("tokenDataFacet getAccountsList", async () => {
@@ -797,7 +879,7 @@ describe("dodao facets test", async function () {
         about: "",
         ownerTasks: [],
         participantTasks: [],
-        auditParticipantTasks: getTaskContracts,
+        auditParticipantTasks: getTaskContracts.slice(0, 2),
         customerRatings: [],
         performerRatings: [],
       };
@@ -816,6 +898,39 @@ describe("dodao facets test", async function () {
 
     // console.log(getTaskDataDecision)
   }
+
+  it("taskContract taskStateChange - canceled", async () => {
+    createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData, {
+      gasLimit: 30000000,
+    });
+    const getTaskContracts = await taskDataFacet.getTaskContracts();
+
+    const taskStateCanceled = "canceled";
+    const messageTextCanceled = "canceling task";
+    const messageReplyTo = 0;
+
+    taskContract = await ethers.getContractAt("TaskContract", getTaskContracts[getTaskContracts.length - 1]);
+
+    const taskStateChangeCanceled = await taskContract
+      .connect(signers[0])
+      .taskStateChange(
+        signers[0].address,
+        getTaskDataParticipate.participants[0],
+        taskStateCanceled,
+        messageTextCanceled,
+        messageReplyTo,
+        0
+      );
+    getTaskDataAgreed = await taskContract.getTaskData();
+    assert.equal(getTaskDataAgreed.taskState, taskStateCanceled);
+    assert.equal(getTaskDataAgreed.participant, "0x0000000000000000000000000000000000000000");
+    assert.equal(getTaskDataAgreed.messages[0].id, 1);
+    assert.equal(getTaskDataAgreed.messages[0].text, messageTextCanceled);
+    assert.isAbove(getTaskDataAgreed.messages[0].timestamp, 1666113343, "timestamp is more than 0");
+    assert.equal(getTaskDataAgreed.messages[0].sender, signers[0].address);
+    assert.equal(getTaskDataAgreed.messages[0].taskState, taskStateCanceled);
+    assert.equal(getTaskDataAgreed.messages[0].replyTo, messageReplyTo);
+  });
 
   // it('tasks test (in customer favour) ', async () => {
   //   await testAuditDecision('customer')
