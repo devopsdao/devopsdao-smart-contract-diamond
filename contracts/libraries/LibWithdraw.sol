@@ -51,7 +51,7 @@ library LibWithdraw {
     }
 
 
-    function withdraw(address payable _addressToSend, string memory _chain) external{
+    function withdraw(address payable _addressToSend, string memory _chain, string[] memory tokenNames, int256[] memory tokenValues) external{
         TaskStorage storage _storage = taskStorage();
         if(msg.sender != _storage.tasks[address(this)].participant && msg.sender != _storage.tasks[address(this)].contractOwner){
             revert('not a participant or contractOwner');
