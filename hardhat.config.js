@@ -2,6 +2,7 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ethers");
 require("@nomicfoundation/hardhat-chai-matchers");
+require("@nomiclabs/hardhat-etherscan");
 require("hardhat-contract-sizer");
 require("hardhat-interface-generator");
 require("solidity-coverage");
@@ -82,7 +83,7 @@ module.exports = {
       },
       // mnemonic: MNEMONIC
     },
-    fantomtest: {
+    ftmTestnet: {
       url: "https://rpc.testnet.fantom.network",
       // url: "https://fantom-testnet.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
       chainId: 4002,
@@ -101,6 +102,13 @@ module.exports = {
         mnemonic: keys.mnemonic1,
       },
     },
+  },
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://etherscan.io/
+    apiKey: {
+      ftmTestnet: "F1QIAXGVNYMBYVZVDPEJG95MMG8QN29JUF"
+    }
   },
   settings: {
     viaIR: true,

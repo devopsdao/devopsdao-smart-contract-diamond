@@ -1826,21 +1826,21 @@
   "resolved" "https://registry.npmjs.org/@nomiclabs/hardhat-ethers/-/hardhat-ethers-2.2.2.tgz"
   "version" "2.2.2"
 
-"@nomiclabs/hardhat-etherscan@^3.1.0":
-  "integrity" "sha512-a6+fJlHTiPjzUYnvwkcduJN0rAKWagQsQNoHJP/9mJ1CZjIkGysGtvVAjNpnrYWocj/Hbi36XmZ0H2aIKlol7A=="
-  "resolved" "https://registry.npmjs.org/@nomiclabs/hardhat-etherscan/-/hardhat-etherscan-3.1.1.tgz"
-  "version" "3.1.1"
+"@nomiclabs/hardhat-etherscan@^3.1.0", "@nomiclabs/hardhat-etherscan@^3.1.7":
+  "integrity" "sha512-tZ3TvSgpvsQ6B6OGmo1/Au6u8BrAkvs1mIC/eURA3xgIfznUZBhmpne8hv7BXUzw9xNL3fXdpOYgOQlVMTcoHQ=="
+  "resolved" "https://registry.npmjs.org/@nomiclabs/hardhat-etherscan/-/hardhat-etherscan-3.1.7.tgz"
+  "version" "3.1.7"
   dependencies:
     "@ethersproject/abi" "^5.1.2"
     "@ethersproject/address" "^5.0.2"
-    "cbor" "^5.0.2"
+    "cbor" "^8.1.0"
     "chalk" "^2.4.2"
     "debug" "^4.1.1"
     "fs-extra" "^7.0.1"
     "lodash" "^4.17.11"
     "semver" "^6.3.0"
     "table" "^6.8.0"
-    "undici" "^5.4.0"
+    "undici" "^5.14.0"
 
 "@nomiclabs/hardhat-truffle5@^2.0.7":
   "integrity" "sha512-Pw8451IUZp1bTp0QqCHCYfCHs66sCnyxPcaorapu9mfOV9xnZsVaFdtutnhNEiXdiZwbed7LFKpRsde4BjFwig=="
@@ -3712,6 +3712,13 @@
   dependencies:
     "node-gyp-build" "^4.3.0"
 
+"busboy@^1.6.0":
+  "integrity" "sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA=="
+  "resolved" "https://registry.npmjs.org/busboy/-/busboy-1.6.0.tgz"
+  "version" "1.6.0"
+  dependencies:
+    "streamsearch" "^1.1.0"
+
 "bytes@3.1.0":
   "version" "3.1.0"
 
@@ -3847,7 +3854,7 @@
   "resolved" "https://registry.npmjs.org/catering/-/catering-2.1.1.tgz"
   "version" "2.1.1"
 
-"cbor@^5.0.2", "cbor@^5.2.0":
+"cbor@^5.2.0":
   "integrity" "sha512-5IMhi9e1QU76ppa5/ajP1BmMWZ2FHkhAhjeVKQ/EFCgYSEaeVaoGtL7cxJskf9oCCk+XjzaIdc3IuU/dbA/o2A=="
   "resolved" "https://registry.npmjs.org/cbor/-/cbor-5.2.0.tgz"
   "version" "5.2.0"
@@ -3856,6 +3863,13 @@
     "nofilter" "^1.0.4"
 
 "cbor@^8.0.0":
+  "integrity" "sha512-DwGjNW9omn6EwP70aXsn7FQJx5kO12tX0bZkaTjzdVFM6/7nhA4t0EENocKGx6D2Bch9PE2KzCUf5SceBdeijg=="
+  "resolved" "https://registry.npmjs.org/cbor/-/cbor-8.1.0.tgz"
+  "version" "8.1.0"
+  dependencies:
+    "nofilter" "^3.1.0"
+
+"cbor@^8.1.0":
   "integrity" "sha512-DwGjNW9omn6EwP70aXsn7FQJx5kO12tX0bZkaTjzdVFM6/7nhA4t0EENocKGx6D2Bch9PE2KzCUf5SceBdeijg=="
   "resolved" "https://registry.npmjs.org/cbor/-/cbor-8.1.0.tgz"
   "version" "8.1.0"
@@ -10345,6 +10359,11 @@
     "looper" "^3.0.0"
     "pull-stream" "^3.2.3"
 
+"streamsearch@^1.1.0":
+  "integrity" "sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg=="
+  "resolved" "https://registry.npmjs.org/streamsearch/-/streamsearch-1.1.0.tgz"
+  "version" "1.1.0"
+
 "strict-uri-encode@^1.0.0":
   "integrity" "sha512-R3f198pcvnB+5IpnBlRkphuE9n46WyVl8I39W/ZUTZLz4nqSP/oLYUrcnJrw462Ds8he4YKMov2efsTIw1BDGQ=="
   "resolved" "https://registry.npmjs.org/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz"
@@ -10948,10 +10967,12 @@
 "underscore@1.9.1":
   "version" "1.9.1"
 
-"undici@^5.4.0":
-  "integrity" "sha512-c8HsD3IbwmjjbLvoZuRI26TZic+TSEe8FPMLLOkN1AfYRhdjnKBU6yL+IwcSCbdZiX4e5t0lfMDLDCqj4Sq70g=="
-  "resolved" "https://registry.npmjs.org/undici/-/undici-5.10.0.tgz"
-  "version" "5.10.0"
+"undici@^5.14.0", "undici@^5.4.0":
+  "integrity" "sha512-J3j60dYzuo6Eevbawwp1sdg16k5Tf768bxYK4TUJRH7cBM4kFCbf3mOnM/0E3vQYXvpxITbbWmBafaDbxLDz3g=="
+  "resolved" "https://registry.npmjs.org/undici/-/undici-5.20.0.tgz"
+  "version" "5.20.0"
+  dependencies:
+    "busboy" "^1.6.0"
 
 "unicode-canonical-property-names-ecmascript@^2.0.0":
   "integrity" "sha512-yY5PpDlfVIU5+y/BSCxAJRBIS1Zc2dDG3Ujq+sR0U+JjUevW2JhocOF+soROYDSaAezOzOKuyyixhD6mBknSmQ=="
