@@ -4,13 +4,23 @@ pragma solidity ^0.8.0;
 import {LibDiamond} from "../libraries/LibDiamond.sol";
 // import "../libraries/LibTasks.sol";
 import "../libraries/LibTokens.sol";
+import "../libraries/LibTokenData.sol";
 import "../facets/tokenstorage/ERC1155StorageFacet.sol";
 import "../interfaces/IERC1155.sol";
-import "../interfaces/IERC1155Receiver.sol";
+import "../interfaces/IERC1155TokenReceiver.sol";
 
 import "hardhat/console.sol";
 
 contract TokenFacet is ERC1155StorageFacet, IERC1155 {
+
+    function name() external pure returns(string memory){
+        return "dodao.dev token";
+    }
+
+    function symbol() external pure returns(string memory){
+        return "dodao";
+    }
+
 
     function create(
         string calldata _uri,
@@ -19,53 +29,66 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
     ) external returns (uint256 _type) {
         return LibTokens.create(_uri, _name, _isNF);
     }
+
     function mintNonFungible(
         uint256 _type,
         address[] calldata _to
-    ) public {
+    ) external {
         LibTokens.mintNonFungible(_type, _to);
+    }
+
+    function mintNonFungibleByName(
+        string calldata _name,
+        address[] calldata _to
+    ) external {
+        LibTokens.mintNonFungibleByName(_name, _to);
     }
 
     function mintFungible(
         uint256 _id,
         address[] calldata _to,
         uint256[] calldata _quantities
-    ) public {
+    ) external {
         LibTokens.mintFungible(_id, _to, _quantities);
     }
 
-    function uri(uint256 tokenID_) public view virtual returns (string memory) {
-        return LibTokens.uri(tokenID_);
+    function mintFungibleByName(
+        string calldata _name,
+        address[] calldata _to,
+        uint256[] calldata _quantities
+    ) external {
+        LibTokens.mintFungibleByName2(_name, _to, _quantities);
     }
 
-    function totalSupply(uint256 id_) public view virtual returns (uint256) {
-        return LibTokens.totalSupply(id_);
+    function setURI(
+        string calldata _uri,
+        uint256 _id
+    ) external {
+        LibTokens.setURI(_uri, _id);
     }
 
-    function exists(uint256 id_) public view virtual returns (bool) {
-        return LibTokens.exists(id_);
+    function setURIOfName(
+        string calldata _uri,
+        string calldata _name
+    ) external {
+        LibTokens.setURIOfName(_uri, _name);
     }
 
     function balanceOf(
         address account_,
         uint256 id_
-    ) public view returns (uint256) {
-        return LibTokens.balanceOf(account_, id_);
+    ) external view returns (uint256) {
+        return LibTokenData.balanceOf(account_, id_);
     }
+
 
     function balanceOfBatch(
         address[] calldata accounts_,
         uint256[] calldata ids_
     ) external view returns (uint256[] memory) {
-        return LibTokens.balanceOfBatch(accounts_, ids_);
+        return LibTokenData.balanceOfBatch(accounts_, ids_);
     }
 
-    function balanceOfName(
-        address account_,
-        string calldata name_
-    ) public view returns (uint256) {
-        return LibTokens.balanceOfName(account_, name_);
-    }
 
     function setApprovalForAll(address operator_, bool approved_) external {
         LibTokens.setApprovalForAll(operator_, approved_);
@@ -74,7 +97,7 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
     function isApprovedForAll(
         address account_,
         address operator_
-    ) public view returns (bool) {
+    ) external view returns (bool) {
         return LibTokens.isApprovedForAll(account_, operator_);
     }
 
@@ -112,4 +135,11 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
                 )
             );
     }
+
+    // function supportsInterface(bytes4 _interfaceId)
+    //     public
+    //     pure
+    // returns (bool) {
+    //     return LibTokens.supportsInterface(_interfaceId);
+    // }
 }

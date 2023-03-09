@@ -1,6 +1,6 @@
-# Devopsdao smart contract
+# Dodao.dev smart contract
 
-This is Devopsdao EIP-2535 based smart-contract, with Axelar, Hyperlane, Layerzero and Wormhole integrations.
+This is Dodao.dev EIP-2535 based smart-contract, with Axelar, Hyperlane, Layerzero and Wormhole integrations.
 
 ## Installation
 
@@ -55,4 +55,4 @@ The `test/diamondTest.js` file gives tests for the `diamondCut` function and the
 
 ## Author
 
-Devopsdao team
+Dodao.dev team

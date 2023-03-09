@@ -16,6 +16,10 @@ import "../libraries/LibTasks.sol";
 import "../facets/tokenstorage/ERC1155StorageFacet.sol";
 import "../facets/TokenFacet.sol";
 
+import "../libraries/LibInterchain.sol";
+
+import "../interfaces/IAccountFacet.sol";
+import "../interfaces/IInterchainFacet.sol";
 
 library LibTasksAudit {
     event Logs(address contractAdr, string message);
@@ -25,17 +29,6 @@ library LibTasksAudit {
     //         ds.slot := 0
     //     }
     // }
-
-    function taskStorage()
-        internal
-        pure
-        returns (TaskStorage storage ds)
-    {
-        bytes32 position = keccak256("diamond.tasks.storage");
-        assembly {
-            ds.slot := position
-        }
-    }
 
     function erc1155Storage()
         internal
@@ -54,12 +47,24 @@ library LibTasksAudit {
         string memory _message,
         uint256 _replyTo
     ) external {
-        TaskStorage storage _storage = taskStorage();
+        TaskStorage storage _storage = LibTasks.taskStorage();
+
+        // (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.tasks[address(this)].contractParent).getInterchainConfigs();
+        // if(msg.sender != configAxelar.sourceAddress 
+        //     && msg.sender != configHyperlane.sourceAddress 
+        //     && msg.sender != configLayerzero.sourceAddress
+        //     && msg.sender != configWormhole.sourceAddress
+        // ){
+        //     _sender = payable(msg.sender);
+        // }
+
         require(
             _sender != _storage.tasks[address(this)].contractOwner &&
                 _sender != _storage.tasks[address(this)].participant,
             "contract owner or participant cannot audit"
         );
+        // console.log(address(this));
+        // console.log(TASK_STATE_AUDIT);
         require(
             keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
                 keccak256(bytes(TASK_STATE_AUDIT)),
@@ -78,6 +83,7 @@ library LibTasksAudit {
         if (_storage.tasks[address(this)].auditors.length == 0) {
             _storage.tasks[address(this)].auditors.push(_sender);
             _storage.tasks[address(this)].messages.push(message);
+            IAccountFacet(_storage.tasks[address(this)].contractParent).addAuditParticipantTask(_sender, address(this));
         } else {
             for (
                 uint256 i = 0;
@@ -91,8 +97,9 @@ library LibTasksAudit {
             }
             if (!existed) {
                 _storage.tasks[address(this)].auditors.push(_sender);
-                _storage.auditParticipantTasks[_sender].push(address(this));
+                _storage.accounts[_sender].auditParticipantTasks.push(address(this));
                 _storage.tasks[address(this)].messages.push(message);
+                IAccountFacet(_storage.tasks[address(this)].contractParent).addAuditParticipantTask(_sender, address(this));
             }
         }
     }
@@ -106,7 +113,17 @@ library LibTasksAudit {
         uint256 _replyTo,
         uint256 _rating
     ) external {
-        TaskStorage storage _storage = taskStorage();
+        TaskStorage storage _storage = LibTasks.taskStorage();
+
+        // (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.tasks[address(this)].contractParent).getInterchainConfigs();
+        // if(msg.sender != configAxelar.sourceAddress 
+        //     && msg.sender != configHyperlane.sourceAddress 
+        //     && msg.sender != configLayerzero.sourceAddress
+        //     && msg.sender != configWormhole.sourceAddress
+        // ){
+        //     _sender = payable(msg.sender);
+        // }
+
         require(
             _replyTo == 0 ||
                 _replyTo <= _storage.tasks[address(this)].messages.length + 1,

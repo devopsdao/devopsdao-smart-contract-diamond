@@ -1,43 +1,50 @@
-
 /* global ethers task */
-require('@nomiclabs/hardhat-waffle')
+require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ethers");
-require('hardhat-contract-sizer');
+require("@nomicfoundation/hardhat-chai-matchers");
+require("@nomiclabs/hardhat-etherscan");
+require("hardhat-contract-sizer");
 require("hardhat-interface-generator");
-require('solidity-coverage');
+require("solidity-coverage");
 // require("hardhat-gas-reporter");
 require("hardhat-tracer");
-require('hardhat-abi-exporter');
+require("hardhat-abi-exporter");
 require("@openzeppelin/test-helpers");
 // const { ethers } = require("ethers");
+// require("@nomiclabs/hardhat-web3");
+require("@nomiclabs/hardhat-truffle5");
 
+require("./scripts/deploy.js");
+require("./scripts/hardhat-tasks.js");
+
+const fs = require("fs");
 
 // This is a sample Hardhat task. To learn how to create your own go to
 
-task('accounts', 'Prints the list of accounts', async () => {
-  const accounts = await ethers.getSigners()
+task("accounts", "Prints the list of accounts", async () => {
+  const accounts = await ethers.getSigners();
 
   for (const account of accounts) {
-    console.log(account.address)
+    console.log(account.address);
   }
-})
+});
 
 // You need to export an object to set up your config
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
 
-const BLASTAPI_KEY = '';
-const ONFINALITY_API_KEY = '';
+let keys;
 
-const MNEMONIC = ``
-const MNEMONIC2 = ``
+const keysJSON = fs.readFileSync(`./keys.json`);
+keys = JSON.parse(keysJSON);
+// console.log(keys)
 
 // let key = ethers.Wallet.fromMnemonic(MNEMONIC);
 // console.log(key);
 
 module.exports = {
-  solidity: '0.8.17',
+  solidity: "0.8.17",
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true,
@@ -45,45 +52,62 @@ module.exports = {
     moonbase: {
       // url: `https://moonbase-alpha.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f`,
       // url: `https://moonbeam-alpha.api.onfinality.io/rpc?apikey=a574e9f5-b1db-4984-8362-89b749437b81`,
-      url: 'https://rpc.api.moonbase.moonbeam.network',
+      url: "https://rpc.api.moonbase.moonbeam.network",
       // url: 'https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0',
       chainId: 1287,
       accounts: {
-        mnemonic: MNEMONIC
-      }
+        mnemonic: keys.mnemonic1,
+      },
       // mnemonic: MNEMONIC
     },
     goerli: {
       // url: `https://moonbase-alpha.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f`,
       // url: `https://moonbeam-alpha.api.onfinality.io/rpc?apikey=a574e9f5-b1db-4984-8362-89b749437b81`,
-      url: 'https://rpc.ankr.com/eth_goerli',
+      // url: 'https://rpc.ankr.com/eth_goerli',
+      url: "https://eth-goerli.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
       // url: 'https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0',
       chainId: 5,
       accounts: {
-        mnemonic: MNEMONIC
-      }
+        mnemonic: keys.mnemonic1,
+      },
       // mnemonic: MNEMONIC
     },
     mumbai: {
       // url: `https://moonbase-alpha.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f`,
       // url: `https://moonbeam-alpha.api.onfinality.io/rpc?apikey=a574e9f5-b1db-4984-8362-89b749437b81`,
-      url: 'https://rpc-mumbai.maticvigil.com',
+      url: "https://rpc-mumbai.maticvigil.com",
       // url: 'https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0',
       chainId: 80001,
       accounts: {
-        mnemonic: MNEMONIC
-      }
+        mnemonic: keys.mnemonic1,
+      },
       // mnemonic: MNEMONIC
     },
-    localhost:{
-      chainId: 31337
+    ftmTestnet: {
+      url: "https://rpc.testnet.fantom.network",
+      // url: "https://fantom-testnet.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
+      chainId: 4002,
+      accounts: {
+        mnemonic: keys.mnemonic1,
+      },
+      // mnemonic: MNEMONIC
     },
-    ganache:{
-      url: 'http://localhost:8500/0',
+    localhost: {
+      chainId: 31337,
+    },
+    ganache: {
+      url: "http://localhost:8500/0",
       chainId: 2500,
       accounts: {
-        mnemonic: MNEMONIC2
-      }
+        mnemonic: keys.mnemonic1,
+      },
+    },
+  },
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://etherscan.io/
+    apiKey: {
+      ftmTestnet: keys.ftmscan
     }
   },
   settings: {
@@ -91,125 +115,160 @@ module.exports = {
     optimizer: {
       enabled: true,
       runs: 1000,
-      details: { yul: false }
+      details: { yul: false },
     },
- 
+
     contractSizer: {
       alphaSort: true,
       disambiguatePaths: false,
       runOnCompile: true,
       strict: true,
       // only: [':ERC20$'],
-    }
+    },
   },
-  abiExporter: 
-  [
+  abiExporter: [
     {
-    // path: '../devopsdao/build/abi',
-    path: '../devopsdao/lib/blockchain/abi',
-    runOnCompile: true,
-    // clear: true,
-    flat: true,
-    // only: [':ERC20$'],
-    spacing: 2,
-    // pretty: true,
-    format: "json",
-  },
-  {
-    // path: '../devopsdao/build/abi',
-    path: '../devopsdao/lib/blockchain/abi',
-    runOnCompile: true,
-    // clear: true,
-    // flat: true,
-    only: [':TaskContract$'],
-    rename: () => 'TaskContract.abi',
-    spacing: 2,
-    // pretty: true,
-    format: "json",
-  },
-  {
-    // path: '../devopsdao/build/abi',
-    path: '../devopsdao/lib/blockchain/abi',
-    runOnCompile: true,
-    // clear: true,
-    // flat: true,
-    only: [':TasksFacet$'],
-    rename: () => 'TasksFacet.abi',
-    spacing: 2,
-    // pretty: true,
-    format: "json",
-  },
-  {
-    // path: '../devopsdao/build/abi',
-    path: '../devopsdao/lib/blockchain/abi',
-    runOnCompile: true,
-    // clear: true,
-    // flat: true,
-    only: [':TokenFacet$'],
-    rename: () => 'TokenFacet.abi',
-    spacing: 2,
-    // pretty: true,
-    format: "json",
-  },
-  {
-    // path: '../devopsdao/build/abi',
-    path: '../devopsdao/lib/blockchain/abi',
-    runOnCompile: true,
-    // clear: true,
-    // flat: true,
-    only: [':AxelarFacet$'],
-    rename: () => 'AxelarFacet.abi',
-    spacing: 2,
-    // pretty: true,
-    format: "json",
-  },
-  {
-    // path: '../devopsdao/build/abi',
-    path: '../devopsdao/lib/blockchain/abi',
-    runOnCompile: true,
-    // clear: true,
-    // flat: true,
-    only: [':HyperlaneFacet$'],
-    rename: () => 'HyperlaneFacet.abi',
-    spacing: 2,
-    // pretty: true,
-    format: "json",
-  },
-  {
-    // path: '../devopsdao/build/abi',
-    path: '../devopsdao/lib/blockchain/abi',
-    runOnCompile: true,
-    // clear: true,
-    // flat: true,
-    only: [':LayerzeroFacet$'],
-    rename: () => 'LayerzeroFacet.abi',
-    spacing: 2,
-    // pretty: true,
-    format: "json",
-  },
-  {
-    // path: '../devopsdao/build/abi',
-    path: '../devopsdao/lib/blockchain/abi',
-    runOnCompile: true,
-    // clear: true,
-    // flat: true,
-    only: [':WormholeFacet$'],
-    rename: () => 'WormholeFacet.abi',
-    spacing: 2,
-    // pretty: true,
-    format: "json",
-  },
-  {
-    // path: '../devopsdao/build/abi',
-    path: '../devopsdao/lib/blockchain/abi',
-    runOnCompile: true,
-    // clear: true,
-    // flat: true,
-    only: [':IERC20$'],
-    rename: () => 'IERC20.abi',
-    spacing: 2,
-    // pretty: true,
-    format: "json",
-  }
-],
-}
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      flat: true,
+      // only: [':ERC20$'],
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":TaskContract$"],
+      rename: () => "TaskContract.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":TaskCreateFacet$"],
+      rename: () => "TaskCreateFacet.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":TaskDataFacet$"],
+      rename: () => "TaskDataFacet.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":AccountFacet$"],
+      rename: () => "AccountFacet.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":TokenFacet$"],
+      rename: () => "TokenFacet.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":TokenDataFacet$"],
+      rename: () => "TokenDataFacet.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":AxelarFacet$"],
+      rename: () => "AxelarFacet.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":HyperlaneFacet$"],
+      rename: () => "HyperlaneFacet.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":LayerzeroFacet$"],
+      rename: () => "LayerzeroFacet.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":WormholeFacet$"],
+      rename: () => "WormholeFacet.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":IERC20$"],
+      rename: () => "IERC20.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+  ],
+};

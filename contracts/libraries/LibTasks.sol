@@ -15,19 +15,14 @@ import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interf
 import "../facets/tokenstorage/ERC1155StorageFacet.sol";
 import "../facets/TokenFacet.sol";
 
+import "../libraries/LibInterchain.sol";
+
+import "../interfaces/IAccountFacet.sol";
+import "../interfaces/IInterchainFacet.sol";
+
+
 error RevertReason (string message);
 
-
-struct TaskContractData{
-    address sender;
-    string nanoId;
-    string taskType;
-    string title;
-    string description;
-    string[] tags;
-    string[] symbols;
-    uint256[] amounts;
-}
 
 struct TaskData{
     string nanoId;
@@ -37,23 +32,31 @@ struct TaskData{
     string[] tags;
     string[] symbols;
     uint256[] amounts;
+    // mapping(string => string) ext;
+    // mapping(string => bool) extMapping;
 }
 
 struct TaskStorage {
     mapping(address => Task) tasks;
-    mapping(address => address[]) ownerTasks;
-    mapping(address => address[]) participantTasks;
-    mapping(address => address[]) auditParticipantTasks;
     address[] taskContracts;
-    uint256 countNew;
-    uint256 countAgreed;
-    uint256 countProgress;
-    uint256 countReview;
-    uint256 countCompleted;
-    uint256 countCanceled;
-    string stateNew;
+    mapping(address => bool) taskContractsMapping;
     address[] taskContractsBlacklist;
     mapping(address => bool) taskContractsBlacklistMapping;
+    mapping(address => Account) accounts;
+    address[] accountsList;
+    mapping(address => bool) accountsMapping;
+    address[] accountsBlacklist;
+    mapping(address => bool) accountsBlacklistMapping;
+    // mapping(address => address[]) ownerTasks;
+    // mapping(address => address[]) participantTasks;
+    // mapping(address => address[]) auditParticipantTasks;
+    // uint256 countNew;
+    // uint256 countAgreed;
+    // uint256 countProgress;
+    // uint256 countReview;
+    // uint256 countCompleted;
+    // uint256 countCanceled;
+    // string stateNew;
 }
 
 struct Task {
@@ -66,6 +69,8 @@ struct Task {
     uint256[] tagsNFT;
     string[] symbols;
     uint256[] amounts;
+    // mapping(string => string) ext;
+    // mapping(string => bool) extMapping;
     string taskState;
     string auditState;
     uint256 rating;
@@ -81,6 +86,12 @@ struct Task {
     address contractParent;
 }
 
+struct TaskWithBalance {
+    Task task;
+    string[] tokenNames;
+    uint256[] tokenBalances;
+}
+
 struct Message {
     uint256 id;
     string text;
@@ -88,6 +99,21 @@ struct Message {
     address sender;
     string taskState;
     uint256 replyTo;
+}
+
+struct Account {
+    address accountOwner;
+    string nickname;
+    string about;
+    address[] ownerTasks;
+    address[] participantTasks;
+    address[] auditParticipantTasks;
+    uint256[] customerRatings;
+    uint256[] performerRatings;
+}
+
+struct Accounts {
+    mapping(address => Account) accounts;
 }
 
 string constant TASK_TYPE_PRIVATE = "private";
@@ -115,22 +141,22 @@ library LibTasks {
     //     }
     // }
 
-    function taskStorage() internal pure returns (TaskStorage storage ds) {
-        assembly {
-            ds.slot := 0
-        }
-    }
-
-    // function taskStorage()
-    //     internal
-    //     pure
-    //     returns (TaskStorage storage ds)
-    // {
-    //     bytes32 position = keccak256("diamond.tasks.storage");
+    // function taskStorage() internal pure returns (TaskStorage storage ds) {
     //     assembly {
-    //         ds.slot := position
+    //         ds.slot := 0
     //     }
     // }
+
+    function taskStorage()
+        internal
+        pure
+        returns (TaskStorage storage ds)
+    {
+        bytes32 position = keccak256("diamond.tasks.storage");
+        assembly {
+            ds.slot := position
+        }
+    }
 
     function erc1155Storage()
         internal
@@ -149,18 +175,36 @@ library LibTasks {
         uint256 _replyTo
     ) external {
         TaskStorage storage _storage = taskStorage();
+
+        // (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.tasks[address(this)].contractParent).getInterchainConfigs();
+        // if(msg.sender != configAxelar.sourceAddress 
+        //     && msg.sender != configHyperlane.sourceAddress 
+        //     && msg.sender != configLayerzero.sourceAddress
+        //     && msg.sender != configWormhole.sourceAddress
+        // ){
+        //     _sender = payable(msg.sender);
+        // }
+
+        // (bool success, bytes memory result) = _storage.tasks[address(this)].contractParent.call(abi.encodeWithSignature("addParticipantTask(address,address)", _sender, address(this)));
         require(
             _sender != _storage.tasks[address(this)].contractOwner,
             "contract owner cannot participate"
         );
-        console.log('taskState');
-        console.log(address(this));
-        console.log(_storage.tasks[address(this)].taskState);
+        // console.log('taskState');
+        // console.log(address(this));
+        // console.log(_storage.tasks[address(this)].taskState);
         require(
             keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
                 keccak256(bytes(TASK_STATE_NEW)),
-            "task is not in the new state"
+            "task is not in new state"
         );
+
+        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+        for (uint i = 0; i < _storage.tasks[address(this)].symbols.length; i++){
+            if(_tokenStorage.tokenNames[_storage.tasks[address(this)].symbols[i]] > 0){
+                TokenFacet(address(this)).safeTransferFrom(_sender, address(this), _tokenStorage.tokenNames[_storage.tasks[address(this)].symbols[i]], 1, bytes(''));
+            }
+        }
         //   _storage.tasks[address(this)].countMessages++;
         Message memory message;
         message.id = _storage.tasks[address(this)].messages.length + 1;
@@ -170,9 +214,14 @@ library LibTasks {
         message.taskState = TASK_STATE_NEW;
         message.replyTo = _replyTo;
         bool existed = false;
+
+        //assess if "if clause" should be removed, just keeping the loop
         if (_storage.tasks[address(this)].participants.length == 0) {
             _storage.tasks[address(this)].participants.push(_sender);
             _storage.tasks[address(this)].messages.push(message);
+            IAccountFacet(_storage.tasks[address(this)].contractParent).addParticipantTask(_sender, address(this));
+            // (bool success, bytes memory result) = _storage.tasks[address(this)].contractParent.call{gas: 500000}(abi.encodeWithSignature("addParticipantTask(address,address)", _sender, address(this)));
+            // console.log(success);
         } else {
             for (
                 uint256 i = 0;
@@ -185,8 +234,18 @@ library LibTasks {
             }
             if (!existed) {
                 _storage.tasks[address(this)].participants.push(_sender);
-                _storage.participantTasks[_sender].push(address(this));
+                _storage.accounts[_sender].participantTasks.push(address(this));
                 _storage.tasks[address(this)].messages.push(message);
+
+                // bytes4 functionSelector = bytes4(keccak256("addParticipantTask(address,address)"));
+                // address test = address(_storage.tasks[address(this)].contractParent);
+                // bytes memory myFunctionCall = abi.encodeWithSelector(bytes4(keccak256("addParticipantTask(address,address)")), 4);
+                IAccountFacet(_storage.tasks[address(this)].contractParent).addParticipantTask(_sender, address(this));
+                // (bool success, bytes memory result) = _storage.tasks[address(this)].contractParent.call(abi.encodeWithSignature("addParticipantTask(address,address)", _sender, address(this)));
+                // console.log(success);
+                // console.log(result);
+                // _storage.tasks[address(this)].contractParent.addParticipantTask(_sender, address(this));
+
             }
         }
     }
@@ -201,6 +260,16 @@ library LibTasks {
         uint256 _rating
     ) external {
         TaskStorage storage _storage = taskStorage();
+        
+        // (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.tasks[address(this)].contractParent).getInterchainConfigs();
+        // if(msg.sender != configAxelar.sourceAddress 
+        //     && msg.sender != configHyperlane.sourceAddress 
+        //     && msg.sender != configLayerzero.sourceAddress
+        //     && msg.sender != configWormhole.sourceAddress
+        // ){
+        //     _sender = payable(msg.sender);
+        // }
+
         require(
             _replyTo == 0 ||
                 _replyTo <= _storage.tasks[address(this)].messages.length + 1,
@@ -383,6 +452,9 @@ library LibTasks {
                 } else {
                     revert("auditor has not applied");
                 }
+            }
+            else {
+                revert("conditions are not met");
             }
         } else {
             revert("conditions are not met");

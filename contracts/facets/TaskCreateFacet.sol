@@ -24,7 +24,7 @@ import "hardhat/console.sol";
 
 
 contract TaskCreateFacet is ERC1155StorageFacet {
-    TaskStorage internal _storage;
+    // TaskStorage internal _storage;
     InterchainStorage internal _storageInterchain;
 
     event TaskCreated(address contractAdr, string message, uint timestamp);
@@ -35,6 +35,7 @@ contract TaskCreateFacet is ERC1155StorageFacet {
     payable
     returns (address)
     {
+        TaskStorage storage _storage = LibTasks.taskStorage();
 
         // address sender;
         if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
@@ -70,10 +71,21 @@ contract TaskCreateFacet is ERC1155StorageFacet {
 
         // IERC20(tokenAddress).approve(address(gateway), _amount);
         _storage.taskContracts.push(taskContractAddress);
-        _storage.ownerTasks[_sender].push(taskContractAddress);
+        _storage.taskContractsMapping[taskContractAddress] = true;
+        _storage.accounts[_sender].ownerTasks.push(taskContractAddress);
+
+        if(_storage.accountsMapping[_sender] != true){
+            _storage.accountsList.push(_sender);
+            _storage.accountsMapping[_sender] = true;
+        }
+        //set the account owner if it is not set
+        if(_storage.accounts[_sender].accountOwner == address(0x0)){
+            _storage.accounts[_sender].accountOwner = _sender;
+        }
+
         emit TaskCreated(taskContractAddress, 'createTaskContract', block.timestamp);
 
-        console.log(taskContractAddress);
+        // console.log(taskContractAddress);
         return taskContractAddress;
     }
 

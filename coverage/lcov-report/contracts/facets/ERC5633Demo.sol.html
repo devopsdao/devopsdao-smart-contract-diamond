@@ -20,28 +20,28 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">33.33% </span>
+        <span class="strong">100% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>2/6</span>
+        <span class='fraction'>0/0</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">16.67% </span>
+        <span class="strong">100% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>1/6</span>
+        <span class='fraction'>0/0</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">42.86% </span>
+        <span class="strong">100% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>3/7</span>
+        <span class='fraction'>0/0</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">33.33% </span>
+        <span class="strong">100% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>2/6</span>
+        <span class='fraction'>0/0</span>
       </div>
     </div>
   </div>
-  <div class='status-line low'></div>
+  <div class='status-line high'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -126,21 +126,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -150,86 +135,101 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// SPDX-License-Identifier: CC0-1.0
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// // SPDX-License-Identifier: CC0-1.0
 &nbsp;
-pragma solidity ^0.8.0;
+// pragma solidity ^0.8.0;
 &nbsp;
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+// import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+// import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
+// import "@openzeppelin/contracts/access/Ownable.sol";
 &nbsp;
-import "../libraries/NFT/ERC5633.sol";
+// import "../libraries/NFT/ERC5633.sol";
 &nbsp;
-contract ERC5633Demo is ERC1155, ERC1155Burnable, Ownable, ERC5633 {
-    uint256 public constant GOLD = 0;
-    uint256 public constant SILVER = 1;
-    uint256 public constant THORS_HAMMER = 2;
-    uint256 public constant SWORD = 3;
-    uint256 public constant SHIELD = 4;
+// contract ERC5633Demo is ERC1155, ERC1155Burnable, Ownable, ERC5633 {
+//     uint256 public constant GOLD = 0;
+//     uint256 public constant SILVER = 1;
+//     uint256 public constant THORS_HAMMER = 2;
+//     uint256 public constant SWORD = 3;
+//     uint256 public constant SHIELD = 4;
     
-    constructor() ERC1155("") ERC5633() {}
+//     constructor() ERC1155("") ERC5633() {}
 &nbsp;
-    function mint(address account, uint256 id, uint256 amount, bytes memory data)
-        public
-        <span class="missing-if-branch" title="else path not taken" >E</span>onlyOwner
-    {
-        _mint(account, id, amount, data);
-    }
+//     function mint(address account, uint256 id, uint256 amount, bytes memory data)
+//         public
+//         onlyOwner
+//     {
+//         _mint(account, id, amount, data);
+//     }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)</span>
-        public
-        onlyOwner
-    {
-<span class="cstat-no" title="statement not covered" >        _mintBatch(to, ids, amounts, data)</span>;
-    }
+//     function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
+//         public
+//         onlyOwner
+//     {
+//         _mintBatch(to, ids, amounts, data);
+//     }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    function setSoulbound(uint256 id, bool soulbound) </span>
-        public
-        onlyOwner 
-    {
-<span class="cstat-no" title="statement not covered" >        _setSoulbound(id, soulbound)</span>;
-    }
+//     function setSoulbound(uint256 id, bool soulbound) 
+//         public
+//         onlyOwner 
+//     {
+//         _setSoulbound(id, soulbound);
+//     }
 &nbsp;
-    // The following functions are overrides required by Solidity.
-<span class="fstat-no" title="function not covered" >    function supportsInterface(bytes4 interfaceId)</span>
-        public
-        view
-        override(ERC1155, ERC5633)
-        returns (bool)
-    {
-<span class="cstat-no" title="statement not covered" >        return super.supportsInterface(interfaceId);</span>
-    }
+//     // The following functions are overrides required by Solidity.
+//     function supportsInterface(bytes4 interfaceId)
+//         public
+//         view
+//         override(ERC1155, ERC5633)
+//         returns (bool)
+//     {
+//         return super.supportsInterface(interfaceId);
+//     }
     
-    function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
-        internal
-        override(ERC1155, ERC5633)
-    {
-        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
-    }
+//     function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
+//         internal
+//         override(ERC1155, ERC5633)
+//     {
+//         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+//     }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    function getInterfaceId() public view returns (bytes4) {</span>
-<span class="cstat-no" title="statement not covered" >        return type(IERC5633).interfaceId;</span>
-    }
-}</pre></td></tr>
+//     function getInterfaceId() public pure returns (bytes4) {
+//         return type(IERC5633).interfaceId;
+//     }
+// }</pre></td></tr>
 </table></pre>
 <div class='push'></div><!-- for sticky footer -->
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Oct 20 2022 20:08:29 GMT+0300 (Eastern European Summer Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Mar 06 2023 13:19:48 GMT+0200 (Eastern European Standard Time)
 </div>
 </div>
 <script src="../../prettify.js"></script>

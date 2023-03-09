@@ -1,3 +1,5 @@
+pragma solidity ^0.8.17;
+
 import "hardhat/console.sol";
 import "./structs/ERC1155FacetStorage.sol";
 import "../interfaces/IERC1155TokenReceiver.sol";
@@ -100,24 +102,179 @@ library LibTokens {
     //     return "";
     // }
 
-    function uri(uint256 _id) external view returns (string memory){
-        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
-        if (bytes(_tokenStorage.tokenURIs[_id]).length > 0) {
-            return _tokenStorage.tokenURIs[_id];
-        }
-        else{
-            return "";
-        }
-    }
+    // function uri(uint256 _id) external view returns (string memory){
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+    //     if (bytes(_tokenStorage.tokenURIs[_id]).length > 0) {
+    //         return _tokenStorage.tokenURIs[_id];
+    //     }
+    //     else{
+    //         return "";
+    //     }
+    // }
 
-    function totalSupply(uint256 id_) public view returns (uint256) {
-        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
-        return _tokenStorage.totalSupply[id_];
-    }
+    // function uriOfName(string calldata _name) external view returns (string memory){
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+    //     uint256 baseType = _tokenStorage.tokenNames[_name];
+    //     if (bytes(_tokenStorage.tokenURIs[baseType]).length > 0) {
+    //         return _tokenStorage.tokenURIs[baseType];
+    //     }
+    //     else{
+    //         return "";
+    //     }
+    // }
 
-    function exists(uint256 id_) public view returns (bool) {
-        return totalSupply(id_) > 0;
-    }
+    // function uriOfBatch(uint256[] memory _ids) external view returns (string[] memory){
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+
+        
+    //     string[] memory tokenURIs = new string[](_ids.length);
+
+    //     for (uint256 i = 0; i < _ids.length; ++i) {
+    //         uint256 id = _ids[i];
+    //         if (bytes(_tokenStorage.tokenURIs[id]).length > 0) {
+    //             tokenURIs[i] = _tokenStorage.tokenURIs[id];
+    //         }
+    //         else{
+    //             tokenURIs[i] = "";
+    //         }
+    //     }
+        
+    //     return tokenURIs;
+    // }
+
+    // function uriOfBatchName(string[] memory _names) external view returns (string[] memory){
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+
+    //     string[] memory tokenURIs = new string[](_names.length);
+
+    //     for (uint256 i = 0; i < _names.length; ++i) {
+    //         uint256 baseType = _tokenStorage.tokenNames[_names[i]];
+    //         tokenURIs[i] = _tokenStorage.tokenURIs[baseType];
+    //     }
+    //     return tokenURIs;
+    // }
+
+    // function totalSupply(uint256 id_) public view returns (uint256) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+    //     return _tokenStorage.totalSupply[id_];
+    // }
+
+    // function totalSupplyOfNfType(uint256 id_) public view returns (uint256) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+    //     if (isNonFungible(id_)) {
+    //         uint256 baseType = getNonFungibleBaseType(id_);
+    //         return _tokenStorage.nfTypeSupply[baseType];
+    //     }
+    //     else{
+    //         return 0;
+    //     }
+    // }
+    
+    // function totalSupplyOfName(
+    //     string calldata _name
+    // ) external view returns (uint256) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+    //     uint256 baseType = _tokenStorage.tokenNames[_name];
+    //     return _tokenStorage.nfTypeSupply[baseType];
+    // }
+
+    // function totalSupplyOfBatch(
+    //     uint256[] calldata _ids
+    // ) external view returns (uint256[] memory) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+
+    //     uint256[] memory totalSupplies_ = new uint256[](_ids.length);
+
+    //     for (uint256 i = 0; i < _ids.length; ++i) {
+    //         uint256 id = _ids[i];
+    //         totalSupplies_[i] = _tokenStorage.totalSupply[id];
+    //     }
+        
+    //     return totalSupplies_;
+    // }
+
+    // function totalSupplyOfBatchNfType(
+    //     uint256[] calldata _ids
+    // ) external view returns (uint256[] memory) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+    //     uint256[] memory totalSupplies_ = new uint256[](_ids.length);
+
+    //     for (uint256 i = 0; i < _ids.length; ++i) {
+    //         if (isNonFungible(_ids[i])) {
+    //             uint256 baseType = getNonFungibleBaseType(_ids[i]);
+    //             totalSupplies_[i] = _tokenStorage.nfTypeSupply[baseType];
+    //         }
+    //         else{
+    //             totalSupplies_[i] = 0;
+    //         }
+    //     }
+        
+    //     return totalSupplies_;
+    // }
+
+    // function totalSupplyOfBatchName(
+    //     string[] calldata _names
+    // ) external view returns (uint256[] memory) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+    //     uint256[] memory totalSupplies_ = new uint256[](_names.length);
+
+    //     for (uint256 i = 0; i < _names.length; ++i) {
+    //         uint256 baseType = _tokenStorage.tokenNames[_names[i]];
+    //         if(isNonFungibleBaseType(baseType)){
+    //             totalSupplies_[i] = _tokenStorage.nfTypeSupply[baseType];
+    //         }
+    //         else{
+    //             totalSupplies_[i] = _tokenStorage.totalSupply[baseType];
+    //         }
+    //     }
+        
+    //     return totalSupplies_;
+    // }
+
+    // function exists(uint256 id_) public view returns (bool) {
+    //     return totalSupply(id_) > 0;
+    // }
+    
+    // function existsNfType(uint256 id_) public view returns (bool) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+    //     if (isNonFungible(id_)) {
+    //         uint256 baseType = getNonFungibleBaseType(id_);
+    //         return _tokenStorage.nfTypeSupply[baseType] > 0;
+    //     }
+    //     else{
+    //         return false;
+    //     }
+    // }
+
+    // function existsName(
+    //     string calldata _name
+    // ) external view returns (bool) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+    //     uint256 baseType = _tokenStorage.tokenNames[_name];
+    //     return _tokenStorage.nfTypeSupply[baseType] > 0;
+    // }
+
+    // function totalSupplyOfBatch(
+    //     address[] calldata _owners,
+    //     uint256[] calldata _ids
+    // ) external view returns (uint256[] memory) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+
+    //     require(_owners.length == _ids.length);
+
+    //     uint256[] memory balances_ = new uint256[](_owners.length);
+
+    //     for (uint256 i = 0; i < _owners.length; ++i) {
+    //         uint256 id = _ids[i];
+    //         if (isNonFungibleItem(id)) {
+    //             balances_[i] = _tokenStorage.nfOwners[id] == _owners[i] ? 1 : 0;
+    //         } else {
+    //             balances_[i] = _tokenStorage.balances[id][_owners[i]];
+    //         }
+    //     }
+    //     return balances_;
+    // }
+
 
     // taken from Enjin 1155 implementation
     // Use a split bit implementation.
@@ -166,9 +323,9 @@ library LibTokens {
 
     modifier creatorOnly(uint256 _id) {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
-        console.log('check creator:');
-        console.log(_tokenStorage.creators[_id]);
-        require(_tokenStorage.creators[_id] == msg.sender, 'can be minted only by creator');
+        // console.log('check creator:');
+        // console.log(_tokenStorage.creators[_id]);
+        require(_tokenStorage.creators[_id] == msg.sender, 'can be executed only by creator');
         _;
     }
 
@@ -191,6 +348,7 @@ library LibTokens {
         bool _isNF
     ) external returns (uint256 _type) {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+        require (_tokenStorage.tokenNames[_name] == 0, 'token name is already used');
         // Store the type in the upper 128 bits
         _type = (++_tokenStorage.nonce << 128);
 
@@ -201,13 +359,14 @@ library LibTokens {
         _tokenStorage.creators[_type] = msg.sender;
         _tokenStorage.tokenURIs[_type] = _uri;
         _tokenStorage.tokenNames[_name] = _type;
+        _tokenStorage.tokenTypeNames[_type] = _name;
 
-        console.log('created NFT:');
-        console.log(_type);
-        console.log('created NFT URI:');
-        console.log(_uri);
-        console.log('NFT creator:');
-        console.log(_tokenStorage.creators[_type]);
+        // console.log('created NFT:');
+        // console.log(_type);
+        // console.log('created NFT URI:');
+        // console.log(_uri);
+        // console.log('NFT creator:');
+        // console.log(_tokenStorage.creators[_type]);
 
         // emit a Transfer event with Create semantic to help with discovery.
         emit TransferSingle(msg.sender, address(0x0), address(0x0), _type, 0);
@@ -219,7 +378,7 @@ library LibTokens {
     function mintNonFungible(
         uint256 _type,
         address[] calldata _to
-    ) external creatorOnly(_type) {
+    ) public creatorOnly(_type) {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
         // No need to check this is a nf type rather than an id since
         // creatorOnly() will only let a type pass through.
@@ -230,16 +389,17 @@ library LibTokens {
         _tokenStorage.maxIndex[_type] = _to.length + _tokenStorage.maxIndex[_type];
 
         for (uint256 i = 0; i < _to.length; ++i) {
-            console.log('minted NFT');
+            // console.log('minted NFT');
             address dst = _to[i];
             _requireNonZero(dst);
             uint256 id = _type | (index + i);
-            console.log(id);
+            // console.log(id);
 
             _tokenStorage.nfOwners[id] = dst;
+            _tokenStorage.ownerTokens[_to[i]].push(id);
             _tokenStorage.totalSupply[id] = 1;
             _tokenStorage.nfTypeSupply[_type] = _tokenStorage.nfTypeSupply[_type] + 1;
-            console.log(_tokenStorage.nfOwners[id]);
+            // console.log(_tokenStorage.nfOwners[id]);
 
             // You could use base-type id to store NF type balances if you wish.
             _tokenStorage.balances[_type][dst] = _tokenStorage.balances[_type][dst] + 1;
@@ -259,13 +419,23 @@ library LibTokens {
         }
     }
 
+    function mintNonFungibleByName(
+        string calldata _name,
+        address[] calldata _to
+    ) external {
+        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+        uint256 baseType = _tokenStorage.tokenNames[_name];
+        mintNonFungible(baseType, _to);
+    }
+
+
     function mintFungible(
         uint256 _id,
         address[] calldata _to,
         uint256[] calldata _quantities
-    ) external creatorOnly(_id) {
+    ) public creatorOnly(_id) {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
-        console.log('minting fungible');
+        // console.log('minting fungible');
         require(isFungible(_id), 'id is not fungible');
 
         for (uint256 i = 0; i < _to.length; ++i) {
@@ -295,13 +465,32 @@ library LibTokens {
         }
     }
 
+    function mintFungibleByName2(
+        string calldata _name,
+        address[] calldata _to,
+        uint256[] calldata _quantities
+    ) external {
+        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+        uint256 baseType = _tokenStorage.tokenNames[_name];
+        mintFungible(baseType, _to, _quantities);
+    }
+
     function setURI(
         string calldata _uri,
         uint256 _id
-    ) external creatorOnly(_id) {
+    ) public creatorOnly(_id) {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
         _tokenStorage.tokenURIs[_id] = _uri;
         emit URI(_uri, _id);
+    }
+
+    function setURIOfName(
+        string calldata _uri,
+        string calldata _name
+    ) external {
+        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+        uint256 baseType = _tokenStorage.tokenNames[_name];
+        setURI(_uri, baseType);
     }
 
     // override
@@ -328,6 +517,18 @@ library LibTokens {
             uint256 baseType = getNonFungibleBaseType(_id);
             _tokenStorage.balances[baseType][_from] = _tokenStorage.balances[baseType][_from] - _value;
             _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] - _value;
+
+            //maintain ownerTokens
+            for (uint256 index = 0; index < _tokenStorage.ownerTokens[_to].length; index++) {
+                if(_tokenStorage.ownerTokens[_from][index] == _id){
+                    // _storage.taskContractsBlacklistMapping[taskAddress] = false;
+                    for (uint i = index; i < _tokenStorage.ownerTokens[_from].length-1; i++){
+                        _tokenStorage.ownerTokens[_from][i] = _tokenStorage.ownerTokens[_from][i+1];
+                    }
+                    _tokenStorage.ownerTokens[_from].pop();
+                }
+                _tokenStorage.ownerTokens[_to].push(_id);
+            }
         } else {
             _tokenStorage.balances[_id][_from] =
                 _tokenStorage.balances[_id][_from] -
@@ -378,6 +579,24 @@ library LibTokens {
             if (isNonFungible(id)) {
                 require(_tokenStorage.nfOwners[id] == _from);
                 _tokenStorage.nfOwners[id] = _to;
+
+            // You could keep balance of NF type in base type id like so:
+                uint256 baseType = getNonFungibleBaseType(id);
+                _tokenStorage.balances[baseType][_from] = _tokenStorage.balances[baseType][_from] - value;
+                _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] - value;
+
+                //maintain ownerTokens
+                // for (uint256 index = 0; index < _tokenStorage.ownerTokens[_to].length; index++) {
+                //     if(_tokenStorage.ownerTokens[_from][index] == id){
+                //         // _storage.taskContractsBlacklistMapping[taskAddress] = false;
+                //         for (uint idx = index; idx < _tokenStorage.ownerTokens[_from].length-1; idx++){
+                //             _tokenStorage.ownerTokens[_from][idx] = _tokenStorage.ownerTokens[_from][idx+1];
+                //         }
+                //         _tokenStorage.ownerTokens[_from].pop();
+                //     }
+                //     _tokenStorage.ownerTokens[_to].push(id);
+                // }
+                
             } else {
                 _tokenStorage.balances[id][_from] = _tokenStorage
                 .balances[id][_from] - value;
@@ -400,71 +619,111 @@ library LibTokens {
         }
     }
 
-    function balanceOf(
-        address _owner,
-        uint256 _id
-    ) public view returns (uint256) {
-        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
-                    console.log('NFT balance:');
+    // function balanceOf(
+    //     address _owner,
+    //     uint256 _id
+    // ) public view returns (uint256) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+    //                 console.log('NFT balance:');
 
-        if (isNonFungibleItem(_id)){
-            return _tokenStorage.nfOwners[_id] == _owner ? 1 : 0;
-        }
-        return _tokenStorage.balances[_id][_owner];
-    }
+    //     if (isNonFungibleItem(_id)){
+    //         return _tokenStorage.nfOwners[_id] == _owner ? 1 : 0;
+    //     }
+    //     return _tokenStorage.balances[_id][_owner];
+    // }
 
-    function balanceOfBatch(
-        address[] calldata _owners,
-        uint256[] calldata _ids
-    ) external view returns (uint256[] memory) {
-        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+    // function balanceOfNfType(
+    //     address _owner,
+    //     uint256 _id
+    // ) public view returns (uint256) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+    //     console.log('NFT balance:');
+    //     if (isNonFungible(_id)){
+    //         uint256 baseType = getNonFungibleBaseType(_id);
+    //         return _tokenStorage.balances[baseType][_owner];
+    //     }
+    //     else{
+    //         return 0;
+    //     }
+    // }
 
-        require(_owners.length == _ids.length);
+    // function balanceOfName(
+    //     address _owner,
+    //     string calldata _name
+    // ) external view returns (uint256) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+    //     uint256 baseType = _tokenStorage.tokenNames[_name];
+    //     if(isNonFungibleBaseType(baseType)){
+    //         return balanceOfNfType(_owner, baseType);
+    //     }
+    //     else{
+    //         return balanceOf(_owner, baseType);
+    //     }
+    // }
 
-        uint256[] memory balances_ = new uint256[](_owners.length);
+    // function balanceOfBatch(
+    //     address[] calldata _owners,
+    //     uint256[] calldata _ids
+    // ) external view returns (uint256[] memory) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
 
-        for (uint256 i = 0; i < _owners.length; ++i) {
-            uint256 id = _ids[i];
-            if (isNonFungibleItem(id)) {
-                balances_[i] = _tokenStorage.nfOwners[id] == _owners[i] ? 1 : 0;
-            } else {
-                balances_[i] = _tokenStorage.balances[id][_owners[i]];
-            }
-        }
+    //     require(_owners.length == _ids.length);
 
-        return balances_;
-    }
+    //     uint256[] memory balances_ = new uint256[](_owners.length);
 
-    function balanceOfNfType(
-        address _owner,
-        uint256 _id
-    ) public view returns (uint256) {
-        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
-                    console.log('NFT balance:');
-        if (isNonFungible(_id)){
-            uint256 baseType = getNonFungibleBaseType(_id);
-            return _tokenStorage.balances[baseType][_owner];
-        }
-        else{
-            return 0;
-        }
-    }
+    //     for (uint256 i = 0; i < _owners.length; ++i) {
+    //         uint256 id = _ids[i];
+    //         if (isNonFungibleItem(id)) {
+    //             balances_[i] = _tokenStorage.nfOwners[id] == _owners[i] ? 1 : 0;
+    //         } else {
+    //             balances_[i] = _tokenStorage.balances[id][_owners[i]];
+    //         }
+    //     }
 
+    //     return balances_;
+    // }
 
-    function balanceOfName(
-        address _owner,
-        string calldata _name
-    ) external view returns (uint256) {
-        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
-        console.log(_name);
-        uint256 baseType = _tokenStorage.tokenNames[_name];
-        if(isNonFungibleBaseType(baseType)){
-            return balanceOfNfType(_owner, baseType);
-        }
-        else{
-            return balanceOf(_owner, _tokenStorage.tokenNames[_name]);
-        }
-    }
+    // function balanceOfBatchNfType(
+    //     address[] calldata _owners,
+    //     uint256[] calldata _ids
+    // ) external view returns (uint256[] memory) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+
+    //     require(_owners.length == _ids.length);
+
+    //     uint256[] memory balances_ = new uint256[](_owners.length);
+
+    //     for (uint256 i = 0; i < _owners.length; ++i) {
+    //         uint256 id = _ids[i];
+    //         if (isNonFungible(id)){
+    //             uint256 baseType = getNonFungibleBaseType(id);
+    //             balances_[i] = _tokenStorage.balances[baseType][_owners[i]];
+    //         }
+    //         else{
+    //             balances_[i] = 0;
+    //         }
+    //     }
+
+    //     return balances_;
+    // }
+
+    // function balanceOfBatchName(
+    //     address[] calldata _owners,
+    //     string[] calldata _names
+    // ) external view returns (uint256[] memory) {
+    //     ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+
+    //     require(_owners.length == _names.length);
+
+    //     uint256[] memory balances_ = new uint256[](_owners.length);
+        
+    //     for (uint256 i = 0; i < _owners.length; ++i) {
+    //         uint256 baseType = _tokenStorage.tokenNames[_names[i]];
+    //         balances_[i] = _tokenStorage.balances[baseType][_owners[i]];
+    //     }
+
+    //     return balances_;
+    // }
 
     /**
         @notice Enable or disable approval for a third party ("operator") to manage all of the caller's tokens.
@@ -655,7 +914,7 @@ library LibTokens {
     //         try
     //             onERC1155Received(msg.sender, from_, tokenID_, amount_, data_)
     //         returns (bytes4 retval) {
-    //             return retval == IERC1155Receiver.onERC1155Received.selector;
+    //             return retval == IERC1155TokenReceiver.onERC1155Received.selector;
     //         } catch (bytes memory reason) {
     //             if (reason.length == 0) {
     //                 revert(
@@ -690,7 +949,7 @@ library LibTokens {
     //                 data_
     //             )
     //         returns (bytes4 retval) {
-    //             return retval == IERC1155Receiver.onERC1155Received.selector;
+    //             return retval == IERC1155TokenReceiver.onERC1155Received.selector;
     //         } catch (bytes memory reason) {
     //             if (reason.length == 0) {
     //                 revert(

@@ -1,0 +1,34 @@
+{
+	"name": "dodao.dev Governor NFT",
+	"description": "dodao.dev Governor NFT",
+	"image": "https:\/\/arweave.net\/SAMPLE_URL\/images\/{id}.png",
+	"properties": {
+		"rich_property": {
+			"name": "Name",
+			"value": "1",
+			"display_value": "Governor NFT #1",
+			"class": "role",
+			"css": {
+				"color": "#ffffff",
+				"font-weight": "bold",
+				"text-decoration": "underline"
+			}
+		},
+		"role_description": {
+			"name": "Role",
+			"value": "Governor",
+			"display_value": "Gives Governor privilege on dodao.dev",
+			"class": "role",
+			"css": {
+				"color": "#ffffff",
+				"font-weight": "bold",
+				"text-decoration": "underline"
+			}
+		},
+		"array_property": {
+			"name": "Name",
+			"value": [1,2,3,4],
+			"class": "emphasis"
+		}
+	}
+}

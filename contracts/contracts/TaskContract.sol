@@ -1,3 +1,4 @@
+pragma solidity ^0.8.17;
 
 // import {LibDiamond} from '../libraries/LibDiamond.sol';
 
@@ -7,6 +8,9 @@ import "../libraries/LibChat.sol";
 import "../libraries/LibWithdraw.sol";
 import "../libraries/LibInterchain.sol";
 
+import "../facets/TokenDataFacet.sol";
+
+
 // import "../facets/DiamondLoupeFacet.sol";
 
 import "hardhat/console.sol";
@@ -15,7 +19,7 @@ import "hardhat/console.sol";
 
 
 contract TaskContract is ERC1155StorageFacet  {
-    TaskStorage internal _storage;
+    // TaskStorage internal _storage;
     InterchainStorage internal _storageInterchain;
 
     event Logs(address contractAdr, string message);
@@ -26,7 +30,7 @@ contract TaskContract is ERC1155StorageFacet  {
         address payable _sender,
         TaskData memory _taskData
     ) payable {
-        // TaskStorage storage _storage = LibTasks.taskStorage();
+        TaskStorage storage _storage = LibTasks.taskStorage();
         _storage.tasks[address(this)].nanoId = _taskData.nanoId;
         _storage.tasks[address(this)].taskType = _taskData.taskType;
         _storage.tasks[address(this)].title = _taskData.title;
@@ -42,8 +46,9 @@ contract TaskContract is ERC1155StorageFacet  {
         emit TaskUpdated(address(this), 'TaskContract', block.timestamp);
     }
 
-    function getTaskInfo() external view returns (Task memory task)
+    function getTaskData() external view returns (Task memory task)
     {
+        TaskStorage storage _storage = LibTasks.taskStorage();
         // uint256 balance = TokenFacet(_storage.tasks[address(this)].contractParent).balanceOf(msg.sender, 1);
         task = _storage.tasks[address(this)];
         for(uint i; i < task.tags.length; i++) {
@@ -70,35 +75,29 @@ contract TaskContract is ERC1155StorageFacet  {
     }
 
     function taskParticipate(address _sender, string memory _message, uint256 _replyTo) external {
-        if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
-            && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
-            && msg.sender != _storageInterchain.configLayerzero.sourceAddress
-            && msg.sender != _storageInterchain.configWormhole.sourceAddress
-        ){
-            _sender = payable(msg.sender);
-        }
         LibTasks.taskParticipate(_sender, _message, _replyTo);
         emit TaskUpdated(address(this), 'taskParticipate', block.timestamp);
     }
 
 
     function taskAuditParticipate(address _sender, string memory _message, uint256 _replyTo) external {
+        TaskStorage storage _storage = LibTasks.taskStorage();
         // address[] memory to = new address[](1);
         // uint256[] memory amount = new uint256[](1);
         // to[0] = _sender;
         // amount[0] = uint256(1);
         // TokenFacet(_storage.tasks[address(this)].contractParent).mintFungible(1, to, amount);
-        uint256 balance = TokenFacet(_storage.tasks[address(this)].contractParent).balanceOfName(msg.sender, 'auditor');
-        // console.log(balance);
-        require(balance>0, 'must hold Auditor NFT to audit');
+        // uint256 balance = TokenDataFacet(_storage.tasks[address(this)].contractParent).balanceOfName(msg.sender, 'auditor');
+        // // console.log(balance);
+        // require(balance>0, 'must hold Auditor NFT to audit');
         
-        if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
-            && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
-            && msg.sender != _storageInterchain.configLayerzero.sourceAddress
-            && msg.sender != _storageInterchain.configWormhole.sourceAddress
-        ){
-            _sender = payable(msg.sender);
-        }
+        // if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
+        //     && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
+        //     && msg.sender != _storageInterchain.configLayerzero.sourceAddress
+        //     && msg.sender != _storageInterchain.configWormhole.sourceAddress
+        // ){
+        //     _sender = payable(msg.sender);
+        // }
         LibTasksAudit.taskAuditParticipate(_sender, _message, _replyTo);
         emit TaskUpdated(address(this), 'taskAuditParticipate', block.timestamp);
     }
@@ -111,13 +110,14 @@ contract TaskContract is ERC1155StorageFacet  {
         uint256 _replyTo,
         uint256 _score
     ) external {
-        if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
-            && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
-            && msg.sender != _storageInterchain.configLayerzero.sourceAddress
-            && msg.sender != _storageInterchain.configWormhole.sourceAddress
-        ){
-            _sender = payable(msg.sender);
-        }
+        // TaskStorage storage _storage = LibTasks.taskStorage();
+        // if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
+        //     && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
+        //     && msg.sender != _storageInterchain.configLayerzero.sourceAddress
+        //     && msg.sender != _storageInterchain.configWormhole.sourceAddress
+        // ){
+        //     _sender = payable(msg.sender);
+        // }
 
         LibTasks.taskStateChange(_sender, _participant, _state, _message, _replyTo, _score);
         emit TaskUpdated(address(this), 'taskStateChange', block.timestamp);
@@ -130,17 +130,18 @@ contract TaskContract is ERC1155StorageFacet  {
         uint256 _replyTo,
         uint256 rating
     ) external {
-        uint256 balance = TokenFacet(_storage.tasks[address(this)].contractParent).balanceOf(msg.sender, 1);
-        // console.log(balance);
-        require(balance>0, 'must hold Auditor NFT to audit');
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        // uint256 balance = TokenDataFacet(_storage.tasks[address(this)].contractParent).balanceOfName(msg.sender, 'auditor');
+        // // console.log(balance);
+        // require(balance>0, 'must hold Auditor NFT to audit');
 
-        if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
-            && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
-            && msg.sender != _storageInterchain.configLayerzero.sourceAddress
-            && msg.sender != _storageInterchain.configWormhole.sourceAddress
-        ){
-            _sender = payable(msg.sender);
-        }
+        // if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
+        //     && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
+        //     && msg.sender != _storageInterchain.configLayerzero.sourceAddress
+        //     && msg.sender != _storageInterchain.configWormhole.sourceAddress
+        // ){
+        //     _sender = payable(msg.sender);
+        // }
         LibTasksAudit.taskAuditDecision(_sender, _favour, _message, _replyTo, rating);
         emit TaskUpdated(address(this), 'taskAuditDecision', block.timestamp);
     }
@@ -150,13 +151,13 @@ contract TaskContract is ERC1155StorageFacet  {
         string memory _message,
         uint256 _replyTo
     ) external {
-        if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
-            && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
-            && msg.sender != _storageInterchain.configLayerzero.sourceAddress
-            && msg.sender != _storageInterchain.configWormhole.sourceAddress
-        ){
-            _sender = payable(msg.sender);
-        }
+        // if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
+        //     && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
+        //     && msg.sender != _storageInterchain.configLayerzero.sourceAddress
+        //     && msg.sender != _storageInterchain.configWormhole.sourceAddress
+        // ){
+        //     _sender = payable(msg.sender);
+        // }
         LibChat.sendMessage(_sender, _message, _replyTo);
         emit TaskUpdated(address(this), 'sendMessage', block.timestamp);
     }
