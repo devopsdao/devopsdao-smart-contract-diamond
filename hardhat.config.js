@@ -107,7 +107,7 @@ module.exports = {
     // Your API key for Etherscan
     // Obtain one at https://etherscan.io/
     apiKey: {
-      ftmTestnet: "F1QIAXGVNYMBYVZVDPEJG95MMG8QN29JUF"
+      ftmTestnet: keys.ftmscan
     }
   },
   settings: {

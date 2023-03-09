@@ -176,6 +176,8 @@ async function deployDiamond () {
     initCalldata: functionCall
   }
 
+  console.log(diamondArgs)
+
   console.log(facetCuts)
 
   // deploy Diamond
