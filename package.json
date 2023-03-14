@@ -38,6 +38,6 @@
   "dependencies": {
     "commander": "^9.4.1",
     "underscore": "^1.13.6",
-    "witnet-solidity-bridge": "^0.6.1"
+    "witnet-solidity-bridge": "github:witnet/witnet-solidity-bridge#feat/WitnetRequestFactory"
   }
 }
