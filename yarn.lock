@@ -1892,12 +1892,12 @@
     "find-up" "^4.1.0"
     "fs-extra" "^8.1.0"
 
-"@openzeppelin/contracts-upgradeable@^4.6.0":
+"@openzeppelin/contracts-upgradeable@^4.6.0", "@openzeppelin/contracts-upgradeable@4.8.0":
   "integrity" "sha512-5GeFgqMiDlqGT8EdORadp1ntGF0qzWZLmEY7Wbp/yVhN7/B3NNzCxujuI77ktlyG81N3CUZP8cZe3ZAQ/cW10w=="
   "resolved" "https://registry.npmjs.org/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.8.0.tgz"
   "version" "4.8.0"
 
-"@openzeppelin/contracts@^4.1.0", "@openzeppelin/contracts@^4.6.0", "@openzeppelin/contracts@^4.7.3", "@openzeppelin/contracts@^4.8.0":
+"@openzeppelin/contracts@^4.1.0", "@openzeppelin/contracts@^4.6.0", "@openzeppelin/contracts@^4.8.0", "@openzeppelin/contracts@4.8.0":
   "integrity" "sha512-AGuwhRRL+NaKx73WKRNzeCxOCOCxpaqF+kp8TJ89QzAipSwZy/NoflkWaL9bywXFRhIzXt8j38sfF7KBKCPWLw=="
   "resolved" "https://registry.npmjs.org/@openzeppelin/contracts/-/contracts-4.8.0.tgz"
   "version" "4.8.0"
@@ -7858,7 +7858,7 @@
   "resolved" "https://registry.npmjs.org/lodash.truncate/-/lodash.truncate-4.4.2.tgz"
   "version" "4.4.2"
 
-"lodash@^4.17.11", "lodash@^4.17.14", "lodash@^4.17.15", "lodash@^4.17.19", "lodash@^4.17.21":
+"lodash@^4.17.11", "lodash@^4.17.14", "lodash@^4.17.15", "lodash@^4.17.19", "lodash@^4.17.21", "lodash@4.17.21":
   "integrity" "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
   "resolved" "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   "version" "4.17.21"
@@ -11990,14 +11990,14 @@
     "request" "^2.88.2"
     "witnet-radon-js" "^0.8.4"
 
-"witnet-solidity-bridge@^0.6.1":
-  "integrity" "sha512-loyyKyRpvzUaYfzkjzlSelE1wt1ebt04A42JD9XdWi1+CMjQscEWdjcHGktT+Rv3zsUqYL8I/iuEaKm9qusZQQ=="
-  "resolved" "https://registry.npmjs.org/witnet-solidity-bridge/-/witnet-solidity-bridge-0.6.1.tgz"
-  "version" "0.6.1"
+"witnet-solidity-bridge@github:witnet/witnet-solidity-bridge#feat/WitnetRequestFactory":
+  "resolved" "git+ssh://git@github.com/witnet/witnet-solidity-bridge.git#34513dc6c4af68a5010bcf763bff7a737676e053"
+  "version" "0.6.5"
   dependencies:
-    "@openzeppelin/contracts" "^4.7.3"
+    "@openzeppelin/contracts" "4.8.0"
+    "@openzeppelin/contracts-upgradeable" "4.8.0"
     "ado-contracts" "1.0.0"
-    "lodash" "^4.17.21"
+    "lodash" "4.17.21"
 
 "word-wrap@~1.2.3":
   "integrity" "sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ=="
