@@ -21,7 +21,7 @@ import "hardhat/console.sol";
 
 
 
-contract TaskDataFacet  {
+contract WitnetFacet  {
     // TaskStorage internal _storage;
     // InterchainStorage internal _storageInterchain;
 
@@ -38,28 +38,28 @@ contract TaskDataFacet  {
         require(_storage.taskContractsBlacklistMapping[taskAddress] != true, 'task is already blacklisted');
 
 
-        WitnetRequestTemplate memory valuesArrayRequestTemplate;
+        // WitnetRequestTemplate memory valuesArrayRequestTemplate;
 
-        valuesArrayRequestTemplate = WittyPixelsLib.buildHttpRequestTemplates(_witnetRequestFactory);
+        // valuesArrayRequestTemplate = WittyPixelsLib.buildHttpRequestTemplates(_witnetRequestFactory);
 
 
-        string[][] memory _args = new string[][](1);
-        _args[0] = new string[](2);
-        _args[0][0] = _baseuri;
-        _args[0][1] = _tokenId.toString();
-        __wpx721().tokenWitnetRequests[_tokenId] = WittyPixels.ERC721TokenWitnetRequests({
-            imageDigest: imageDigestRequestTemplate.settleArgs(_args),
-            tokenStats: valuesArrayRequestTemplate.settleArgs(_args)
-        });
+        // string[][] memory _args = new string[][](1);
+        // _args[0] = new string[](2);
+        // _args[0][0] = _baseuri;
+        // _args[0][1] = _tokenId.toString();
+        // __wpx721().tokenWitnetRequests[_tokenId] = WittyPixels.ERC721TokenWitnetRequests({
+        //     imageDigest: imageDigestRequestTemplate.settleArgs(_args),
+        //     tokenStats: valuesArrayRequestTemplate.settleArgs(_args)
+        // });
 
-        {
-            uint _usedFunds;
-            // Ask Witnet to retrieve token's metadata stats from the token base uri provider:            
-            (__witnetQueries.tokenStatsId, _usedFunds) = _witnetPostRequest(
-                __witnetRequests.tokenStats.modifySLA(_witnetSLA)
-            );
-            _totalUsedFunds += _usedFunds;
-        }
+        // {
+        //     uint _usedFunds;
+        //     // Ask Witnet to retrieve token's metadata stats from the token base uri provider:            
+        //     (__witnetQueries.tokenStatsId, _usedFunds) = _witnetPostRequest(
+        //         __witnetRequests.tokenStats.modifySLA(_witnetSLA)
+        //     );
+        //     _totalUsedFunds += _usedFunds;
+        // }
 
 
     }
