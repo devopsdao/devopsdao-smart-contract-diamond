@@ -7,6 +7,9 @@ import "witnet-solidity-bridge/contracts/WitnetRequestBoard.sol";
 import "witnet-solidity-bridge/contracts/apps/WitnetRequestFactory.sol";
 import "witnet-solidity-bridge/contracts/libs/WitnetLib.sol";
 
+import "@openzeppelin/contracts/utils/math/Math.sol";
+
+
 /// @title  WittyPixelsLib - Deployable library containing helper methods.
 /// @author Otherplane Labs Ltd., 2023
 
@@ -128,12 +131,11 @@ library LibWitnetRequest {
         public
     {
         // WittyPixels.ERC721Token storage __token = self.items[tokenId];
-        WitnetQueries storage __witnetQueries = _witnetStorage.witnetQueries;
+        WitnetQueries storage __witnetQueries = _witnetStorage.witnetQueries[tokenId];
         // Revert if any of the witnet queries was not yet solved
         {
             if (
-                !witnet.checkResultAvailability(__witnetQueries.imageDigestId)
-                    || !witnet.checkResultAvailability(__witnetQueries.tokenStatsId)
+                !witnet.checkResultAvailability(__witnetQueries.githubRepoId)
             ) {
                 revert("awaiting response from Witnet");
             }
@@ -142,7 +144,7 @@ library LibWitnetRequest {
         // Try to read response to 'image-digest' query, 
         // while freeing some storage from the Witnet Request Board:
         {
-            _witnetResponse = witnet.fetchResponse(__witnetQueries.imageDigestId);
+            _witnetResponse = witnet.fetchResponse(__witnetQueries.githubRepoId);
             _witnetResult = WitnetLib.resultFromCborBytes(_witnetResponse.cborBytes);
             {
                 // Revert if the Witnet query failed:
@@ -151,19 +153,19 @@ library LibWitnetRequest {
                     "'image-digest' query failed"
                 );
                 // Revert if the Witnet response was previous to when minting started:
-                require(
-                    _witnetResponse.timestamp >= __token.birthTs,
-                    "anachronic 'image-digest' result"
-                );
+                // require(
+                //     _witnetResponse.timestamp >= __token.birthTs,
+                //     "anachronic 'image-digest' result"
+                // );
             }
             // Deserialize http/response to 'image-digest':
-            __token.imageDigest = _witnetResult.value.readString();
-            __token.imageDigestWitnetTxHash = _witnetResponse.drTxHash;
+            // __token.imageDigest = _witnetResult.value.readString();
+            // __token.imageDigestWitnetTxHash = _witnetResponse.drTxHash;
         }
         // Try to read response to 'token-stats' query, 
         // while freeing some storage from the Witnet Request Board:
         {
-            _witnetResponse = witnet.fetchResponse(__witnetQueries.tokenStatsId);
+            _witnetResponse = witnet.fetchResponse(__witnetQueries.githubRepoId);
             _witnetResult = WitnetLib.resultFromCborBytes(_witnetResponse.cborBytes);
             {
                 // Revert if the Witnet query failed:
@@ -172,12 +174,12 @@ library LibWitnetRequest {
                     "'token-stats' query failed"
                 );
                 // Revert if the Witnet response was previous to when minting started:
-                require(
-                    _witnetResponse.timestamp >= __token.birthTs, 
-                    "anachronic 'token-stats' result");
+                // require(
+                //     _witnetResponse.timestamp >= __token.birthTs, 
+                //     "anachronic 'token-stats' result");
             }
             // Try to deserialize Witnet response to 'token-stats':
-            __token.theStats = toERC721TokenStats(_witnetResult.value);
+            // __token.theStats = toERC721TokenStats(_witnetResult.value);
         }
     }
 
