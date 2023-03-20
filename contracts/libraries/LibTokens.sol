@@ -360,6 +360,7 @@ library LibTokens {
         _tokenStorage.tokenURIs[_type] = _uri;
         _tokenStorage.tokenNames[_name] = _type;
         _tokenStorage.tokenTypeNames[_type] = _name;
+        _tokenStorage.createdTokenNames.push(_name);
 
         // console.log('created NFT:');
         // console.log(_type);

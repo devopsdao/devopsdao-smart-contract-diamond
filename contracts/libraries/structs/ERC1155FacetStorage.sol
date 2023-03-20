@@ -19,5 +19,6 @@ struct ERC1155FacetStorage {
   mapping (uint256 => address) creators;
   uint256 nonce; // A nonce to ensure we have a unique id each time we mint.
   mapping (uint256 => uint256) maxIndex;
+  string[] createdTokenNames;
   bool shouldReject;
 }

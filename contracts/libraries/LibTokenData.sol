@@ -315,6 +315,13 @@ library LibTokenData {
         return names;
     }
 
+    function getCreatedTokenNames(
+    ) external view returns (string[] memory) {
+        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+        
+        return _tokenStorage.createdTokenNames;
+    }
+
     // taken from Enjin 1155 implementation
     // Use a split bit implementation.
     // Store the type in the upper 128 bits..

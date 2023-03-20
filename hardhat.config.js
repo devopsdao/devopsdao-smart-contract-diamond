@@ -53,6 +53,7 @@ module.exports = {
       // url: `https://moonbase-alpha.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f`,
       // url: `https://moonbeam-alpha.api.onfinality.io/rpc?apikey=a574e9f5-b1db-4984-8362-89b749437b81`,
       url: "https://rpc.api.moonbase.moonbeam.network",
+      url: "https://moonbase.unitedbloc.com:1000",
       // url: 'https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0',
       chainId: 1287,
       accounts: {
