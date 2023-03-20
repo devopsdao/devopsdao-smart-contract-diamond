@@ -290,6 +290,11 @@ describe("dodao facets test", async function () {
     assert.equal(mintedAuditorNFTURI, auditorNFTURI3);
   });
 
+  it("tokenDataFacet minted created NFT names", async () => {
+    const createdTokenNames = await tokenDataFacet.connect(signers[2]).getCreatedTokenNames();
+    assert.deepEqual(createdTokenNames, ['auditor']);
+  });
+
   it("tokenDataFacet minted NFT exists", async () => {
     const auditorNFTExists = await tokenDataFacet.connect(signers[2]).exists(mintedAuditorNFTid);
     assert.equal(auditorNFTExists, true);

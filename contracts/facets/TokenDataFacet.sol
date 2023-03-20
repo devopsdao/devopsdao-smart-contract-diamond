@@ -76,6 +76,11 @@ contract TokenDataFacet {
       return LibTokenData.getTokenNames(_owner);
     }
 
+    function getCreatedTokenNames(
+    ) external view returns (string[] memory) {
+        return LibTokenData.getCreatedTokenNames();
+    }
+
     function totalSupplyOfBatch(
         uint256[] calldata _ids
     ) external view virtual returns (uint256[] memory) {
