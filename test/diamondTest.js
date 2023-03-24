@@ -401,11 +401,13 @@ describe("dodao facets test", async function () {
   it("tokenDataFacet minted NFT getTokenIds", async () => {
     const ownedTokenIds = await tokenDataFacet.connect(signers[2]).getTokenIds(signers[2].address);
     assert.deepEqual(ownedTokenIds, [mintedAuditorNFTid]);
+    console.log(ownedTokenIds)
   });
 
   it("tokenDataFacet minted NFT getTokenNames", async () => {
     const ownedTokenNames = await tokenDataFacet.connect(signers[2]).getTokenNames(signers[2].address);
     assert.deepEqual(ownedTokenNames, ["auditor"]);
+    console.log(ownedTokenNames)
   });
 
   for (const favour of ["customer", "performer", "no_audit"]) {

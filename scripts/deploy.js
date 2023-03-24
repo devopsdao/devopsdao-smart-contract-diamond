@@ -88,9 +88,9 @@ const libraries = [
   {
     name: 'LibInterchain',
   },
-  {
-    name: 'LibWitnetRequest'
-  }
+  // {
+  //   name: 'LibWitnetRequest'
+  // }
 ]
 
 const diamondFacets = [
@@ -149,13 +149,13 @@ const dodaoFacets = [
   {
     name: 'WormholeFacet',
   },
-  {
-    name: 'WitnetFacet',
-    arguments: witnetAddresses.WitnetRequestBoard,
-    libraries: [
-      'LibWitnetRequest',
-    ]
-  },
+  // {
+  //   name: 'WitnetFacet',
+  //   arguments: witnetAddresses.WitnetRequestBoard,
+  //   // libraries: [
+  //   //   'LibWitnetRequest',
+  //   // ]
+  // },
 ]
 
 const {
