@@ -16,6 +16,7 @@ require("@nomiclabs/hardhat-truffle5");
 
 require("./scripts/deploy.js");
 require("./scripts/hardhat-tasks.js");
+require("./scripts/witnet.js");
 
 const fs = require("fs");
 
@@ -50,10 +51,10 @@ module.exports = {
       allowUnlimitedContractSize: true,
     },
     moonbase: {
-      // url: `https://moonbase-alpha.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f`,
+      url: `https://moonbase-alpha.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f`,
       // url: `https://moonbeam-alpha.api.onfinality.io/rpc?apikey=a574e9f5-b1db-4984-8362-89b749437b81`,
-      url: "https://rpc.api.moonbase.moonbeam.network",
-      url: "https://moonbase.unitedbloc.com:1000",
+      // url: "https://rpc.api.moonbase.moonbeam.network",
+      // url: "https://moonbase.unitedbloc.com:1000",
       // url: 'https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0',
       chainId: 1287,
       accounts: {
@@ -65,7 +66,8 @@ module.exports = {
       // url: `https://moonbase-alpha.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f`,
       // url: `https://moonbeam-alpha.api.onfinality.io/rpc?apikey=a574e9f5-b1db-4984-8362-89b749437b81`,
       // url: 'https://rpc.ankr.com/eth_goerli',
-      url: "https://eth-goerli.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
+      url: 'https://goerli.infura.io/v3/8fc30a844b8e42e794f1410dd02bc19e',
+      // url: "https://eth-goerli.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
       // url: 'https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0',
       chainId: 5,
       accounts: {
@@ -255,6 +257,18 @@ module.exports = {
       // flat: true,
       only: [":WormholeFacet$"],
       rename: () => "WormholeFacet.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":WitnetFacet$"],
+      rename: () => "WitnetFacet.abi",
       spacing: 2,
       // pretty: true,
       format: "json",

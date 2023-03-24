@@ -6,6 +6,21 @@ const { arrayCompare } = require('arweave/node/lib/merkle.js');
 const path = require('node:path');
 var _ = require('underscore');
 
+
+
+const ecosystem = "moonbeam"
+const network = "moonbeam.moonbase"
+
+const witnetAddresses = require("witnet-solidity-bridge/migrations/witnet.addresses")[ecosystem][network]
+console.log(witnetAddresses)
+let WitnetBytecodes = {}
+let WitnetRequestBoard = {}
+let WitnetRequestFactory = {}
+WitnetBytecodes.address = witnetAddresses.WitnetBytecodes
+WitnetRequestBoard.address = witnetAddresses.WitnetRequestBoard
+WitnetRequestFactory.address = witnetAddresses.WitnetRequestFactory
+
+
 // const { program } = require('commander');
 
 
@@ -73,6 +88,9 @@ const libraries = [
   {
     name: 'LibInterchain',
   },
+  {
+    name: 'LibWitnetRequest'
+  }
 ]
 
 const diamondFacets = [
@@ -130,6 +148,13 @@ const dodaoFacets = [
   },
   {
     name: 'WormholeFacet',
+  },
+  {
+    name: 'WitnetFacet',
+    arguments: witnetAddresses.WitnetRequestBoard,
+    libraries: [
+      'LibWitnetRequest',
+    ]
   },
 ]
 
