@@ -1795,33 +1795,33 @@
   dependencies:
     "ethereumjs-util" "^7.1.4"
 
-"@nomicfoundation/solidity-analyzer-linux-x64-gnu@0.0.3":
-  "integrity" "sha512-uRfVDlxtwT1vIy7MAExWAkRD4r9M79zMG7S09mCrWUn58DbLs7UFl+dZXBX0/8FTGYWHhOT/1Etw1ZpAf5DTrg=="
-  "resolved" "https://registry.npmjs.org/@nomicfoundation/solidity-analyzer-linux-x64-gnu/-/solidity-analyzer-linux-x64-gnu-0.0.3.tgz"
-  "version" "0.0.3"
+"@nomicfoundation/solidity-analyzer-linux-x64-gnu@0.1.1":
+  "integrity" "sha512-5WN7leSr5fkUBBjE4f3wKENUy9HQStu7HmWqbtknfXkkil+eNWiBV275IOlpXku7v3uLsXTOKpnnGHJYI2qsdA=="
+  "resolved" "https://registry.npmjs.org/@nomicfoundation/solidity-analyzer-linux-x64-gnu/-/solidity-analyzer-linux-x64-gnu-0.1.1.tgz"
+  "version" "0.1.1"
 
-"@nomicfoundation/solidity-analyzer-linux-x64-musl@0.0.3":
-  "integrity" "sha512-8HPwYdLbhcPpSwsE0yiU/aZkXV43vlXT2ycH+XlOjWOnLfH8C41z0njK8DHRtEFnp4OVN6E7E5lHBBKDZXCliA=="
-  "resolved" "https://registry.npmjs.org/@nomicfoundation/solidity-analyzer-linux-x64-musl/-/solidity-analyzer-linux-x64-musl-0.0.3.tgz"
-  "version" "0.0.3"
+"@nomicfoundation/solidity-analyzer-linux-x64-musl@0.1.1":
+  "integrity" "sha512-KdYMkJOq0SYPQMmErv/63CwGwMm5XHenEna9X9aB8mQmhDBrYrlAOSsIPgFCUSL0hjxE3xHP65/EPXR/InD2+w=="
+  "resolved" "https://registry.npmjs.org/@nomicfoundation/solidity-analyzer-linux-x64-musl/-/solidity-analyzer-linux-x64-musl-0.1.1.tgz"
+  "version" "0.1.1"
 
-"@nomicfoundation/solidity-analyzer@^0.0.3":
-  "integrity" "sha512-VFMiOQvsw7nx5bFmrmVp2Q9rhIjw2AFST4DYvWVVO9PMHPE23BY2+kyfrQ4J3xCMFC8fcBbGLt7l4q7m1SlTqg=="
-  "resolved" "https://registry.npmjs.org/@nomicfoundation/solidity-analyzer/-/solidity-analyzer-0.0.3.tgz"
-  "version" "0.0.3"
+"@nomicfoundation/solidity-analyzer@^0.1.0":
+  "integrity" "sha512-1LMtXj1puAxyFusBgUIy5pZk3073cNXYnXUpuNKFghHbIit/xZgbk0AokpUADbNm3gyD6bFWl3LRFh3dhVdREg=="
+  "resolved" "https://registry.npmjs.org/@nomicfoundation/solidity-analyzer/-/solidity-analyzer-0.1.1.tgz"
+  "version" "0.1.1"
   optionalDependencies:
-    "@nomicfoundation/solidity-analyzer-darwin-arm64" "0.0.3"
-    "@nomicfoundation/solidity-analyzer-darwin-x64" "0.0.3"
-    "@nomicfoundation/solidity-analyzer-freebsd-x64" "0.0.3"
-    "@nomicfoundation/solidity-analyzer-linux-arm64-gnu" "0.0.3"
-    "@nomicfoundation/solidity-analyzer-linux-arm64-musl" "0.0.3"
-    "@nomicfoundation/solidity-analyzer-linux-x64-gnu" "0.0.3"
-    "@nomicfoundation/solidity-analyzer-linux-x64-musl" "0.0.3"
-    "@nomicfoundation/solidity-analyzer-win32-arm64-msvc" "0.0.3"
-    "@nomicfoundation/solidity-analyzer-win32-ia32-msvc" "0.0.3"
-    "@nomicfoundation/solidity-analyzer-win32-x64-msvc" "0.0.3"
+    "@nomicfoundation/solidity-analyzer-darwin-arm64" "0.1.1"
+    "@nomicfoundation/solidity-analyzer-darwin-x64" "0.1.1"
+    "@nomicfoundation/solidity-analyzer-freebsd-x64" "0.1.1"
+    "@nomicfoundation/solidity-analyzer-linux-arm64-gnu" "0.1.1"
+    "@nomicfoundation/solidity-analyzer-linux-arm64-musl" "0.1.1"
+    "@nomicfoundation/solidity-analyzer-linux-x64-gnu" "0.1.1"
+    "@nomicfoundation/solidity-analyzer-linux-x64-musl" "0.1.1"
+    "@nomicfoundation/solidity-analyzer-win32-arm64-msvc" "0.1.1"
+    "@nomicfoundation/solidity-analyzer-win32-ia32-msvc" "0.1.1"
+    "@nomicfoundation/solidity-analyzer-win32-x64-msvc" "0.1.1"
 
-"@nomiclabs/hardhat-ethers@^2.0.0", "@nomiclabs/hardhat-ethers@^2.2.2":
+"@nomiclabs/hardhat-ethers@^2.0.0", "@nomiclabs/hardhat-ethers@^2.1.0", "@nomiclabs/hardhat-ethers@^2.2.2":
   "integrity" "sha512-NLDlDFL2us07C0jB/9wzvR0kuLivChJWCXTKcj3yqjZqMoYp7g7wwS157F70VHx/+9gHIBGzak5pKDwG8gEefA=="
   "resolved" "https://registry.npmjs.org/@nomiclabs/hardhat-ethers/-/hardhat-ethers-2.2.2.tgz"
   "version" "2.2.2"
@@ -1999,6 +1999,11 @@
   dependencies:
     "@noble/hashes" "~1.1.1"
     "@scure/base" "~1.1.0"
+
+"@sebasgoldberg/hardhat-wsprovider@^0.1.1":
+  "integrity" "sha512-a75cpUmCAknKItpDR0Pxd9h5szrSXiYam1o4/Z1jWpkPQ70ZmLEQBPF5YwmaTKH2lciQSKjpefObwUcuGtnltQ=="
+  "resolved" "https://registry.npmjs.org/@sebasgoldberg/hardhat-wsprovider/-/hardhat-wsprovider-0.1.1.tgz"
+  "version" "0.1.1"
 
 "@sentry/core@5.30.0":
   "integrity" "sha512-TmfrII8w1PQZSZgPpUESqjB+jC6MvZJZdLtE/0hZ+SrnKhW3x5WlYLvTXZpcWePYBku7rl2wn1RZu6uT0qCTeg=="
@@ -2243,7 +2248,7 @@
   dependencies:
     "bignumber.js" "*"
 
-"@types/bn.js@*", "@types/bn.js@^5.1.0":
+"@types/bn.js@*", "@types/bn.js@^5.1.0", "@types/bn.js@^5.1.1":
   "integrity" "sha512-qNrYbZqMx0uJAfKnKclPh+dTwK33KfLHYqtyODwd5HnXOjnkhc4qgn3BrK6RWyGZm5+sIFE7Q7Vz6QQtJB7w7g=="
   "resolved" "https://registry.npmjs.org/@types/bn.js/-/bn.js-5.1.1.tgz"
   "version" "5.1.1"
@@ -6612,10 +6617,10 @@
   dependencies:
     "ethers" "^5.6.1"
 
-"hardhat@^2.0.0", "hardhat@^2.0.2", "hardhat@^2.0.4", "hardhat@^2.11.0", "hardhat@^2.11.2", "hardhat@^2.6.4", "hardhat@^2.9.4", "hardhat@^2.9.5", "hardhat@2.x":
-  "integrity" "sha512-BdsXC1CFJQDJKmAgCwpmGhFuVU6dcqlgMgT0Kg/xmFAFVugkpYu6NRmh4AaJ3Fah0/BR9DOR4XgQGIbg4eon/Q=="
-  "resolved" "https://registry.npmjs.org/hardhat/-/hardhat-2.11.2.tgz"
-  "version" "2.11.2"
+"hardhat@^2.0.0", "hardhat@^2.0.2", "hardhat@^2.0.4", "hardhat@^2.11.0", "hardhat@^2.13.0", "hardhat@^2.6.4", "hardhat@^2.9.4", "hardhat@^2.9.5", "hardhat@2.x":
+  "integrity" "sha512-ZlzBOLML1QGlm6JWyVAG8lVTEAoOaVm1in/RU2zoGAnYEoD1Rp4T+ZMvrLNhHaaeS9hfjJ1gJUBfiDr4cx+htQ=="
+  "resolved" "https://registry.npmjs.org/hardhat/-/hardhat-2.13.0.tgz"
+  "version" "2.13.0"
   dependencies:
     "@ethersproject/abi" "^5.1.2"
     "@metamask/eth-sig-util" "^4.0.0"
@@ -6629,7 +6634,7 @@
     "@nomicfoundation/ethereumjs-tx" "^4.0.0"
     "@nomicfoundation/ethereumjs-util" "^8.0.0"
     "@nomicfoundation/ethereumjs-vm" "^6.0.0"
-    "@nomicfoundation/solidity-analyzer" "^0.0.3"
+    "@nomicfoundation/solidity-analyzer" "^0.1.0"
     "@sentry/node" "^5.18.1"
     "@types/bn.js" "^5.1.0"
     "@types/lru-cache" "^5.1.0"
@@ -6664,7 +6669,7 @@
     "source-map-support" "^0.5.13"
     "stacktrace-parser" "^0.1.10"
     "tsort" "0.0.1"
-    "undici" "^5.4.0"
+    "undici" "^5.14.0"
     "uuid" "^8.3.2"
     "ws" "^7.4.6"
 
@@ -10967,7 +10972,7 @@
 "underscore@1.9.1":
   "version" "1.9.1"
 
-"undici@^5.14.0", "undici@^5.4.0":
+"undici@^5.14.0":
   "integrity" "sha512-J3j60dYzuo6Eevbawwp1sdg16k5Tf768bxYK4TUJRH7cBM4kFCbf3mOnM/0E3vQYXvpxITbbWmBafaDbxLDz3g=="
   "resolved" "https://registry.npmjs.org/undici/-/undici-5.20.0.tgz"
   "version" "5.20.0"
@@ -11213,10 +11218,10 @@
     "got" "9.6.0"
     "swarm-js" "^0.1.40"
 
-"web3-bzz@1.8.2":
-  "integrity" "sha512-1EEnxjPnFnvNWw3XeeKuTR8PBxYd0+XWzvaLK7OJC/Go9O8llLGxrxICbKV+8cgIE0sDRBxiYx02X+6OhoAQ9w=="
-  "resolved" "https://registry.npmjs.org/web3-bzz/-/web3-bzz-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-bzz@1.9.0":
+  "integrity" "sha512-9Zli9dikX8GdHwBb5/WPzpSVuy3EWMKY3P4EokCQra31fD7DLizqAAaTUsFwnK7xYkw5ogpHgelw9uKHHzNajg=="
+  "resolved" "https://registry.npmjs.org/web3-bzz/-/web3-bzz-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "@types/node" "^12.12.6"
     "got" "12.1.0"
@@ -11237,13 +11242,13 @@
     "web3-eth-iban" "1.2.11"
     "web3-utils" "1.2.11"
 
-"web3-core-helpers@1.8.2":
-  "integrity" "sha512-6B1eLlq9JFrfealZBomd1fmlq1o4A09vrCVQSa51ANoib/jllT3atZrRDr0zt1rfI7TSZTZBXdN/aTdeN99DWw=="
-  "resolved" "https://registry.npmjs.org/web3-core-helpers/-/web3-core-helpers-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-core-helpers@1.9.0":
+  "integrity" "sha512-NeJzylAp9Yj9xAt2uTT+kyug3X0DLnfBdnAcGZuY6HhoNPDIfQRA9CkJjLngVRlGTLZGjNp9x9eR+RyZQgUlXg=="
+  "resolved" "https://registry.npmjs.org/web3-core-helpers/-/web3-core-helpers-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
-    "web3-eth-iban" "1.8.2"
-    "web3-utils" "1.8.2"
+    "web3-eth-iban" "1.9.0"
+    "web3-utils" "1.9.0"
 
 "web3-core-method@1.2.11":
   "version" "1.2.11"
@@ -11266,16 +11271,16 @@
     "web3-core-subscriptions" "1.7.4"
     "web3-utils" "1.7.4"
 
-"web3-core-method@1.8.2":
-  "integrity" "sha512-1qnr5mw5wVyULzLOrk4B+ryO3gfGjGd/fx8NR+J2xCGLf1e6OSjxT9vbfuQ3fErk/NjSTWWreieYWLMhaogcRA=="
-  "resolved" "https://registry.npmjs.org/web3-core-method/-/web3-core-method-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-core-method@1.9.0":
+  "integrity" "sha512-sswbNsY2xRBBhGeaLt9c/eDc+0yDDhi6keUBAkgIRa9ueSx/VKzUY9HMqiV6bXDcGT2fJyejq74FfEB4lc/+/w=="
+  "resolved" "https://registry.npmjs.org/web3-core-method/-/web3-core-method-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "@ethersproject/transactions" "^5.6.2"
-    "web3-core-helpers" "1.8.2"
-    "web3-core-promievent" "1.8.2"
-    "web3-core-subscriptions" "1.8.2"
-    "web3-utils" "1.8.2"
+    "web3-core-helpers" "1.9.0"
+    "web3-core-promievent" "1.9.0"
+    "web3-core-subscriptions" "1.9.0"
+    "web3-utils" "1.9.0"
 
 "web3-core-promievent@^1.2.1", "web3-core-promievent@1.7.4":
   "integrity" "sha512-o4uxwXKDldN7ER7VUvDfWsqTx9nQSP1aDssi1XYXeYC2xJbVo0n+z6ryKtmcoWoRdRj7uSpVzal3nEmlr480mA=="
@@ -11289,10 +11294,10 @@
   dependencies:
     "eventemitter3" "4.0.4"
 
-"web3-core-promievent@1.8.2":
-  "integrity" "sha512-nvkJWDVgoOSsolJldN33tKW6bKKRJX3MCPDYMwP5SUFOA/mCzDEoI88N0JFofDTXkh1k7gOqp1pvwi9heuaxGg=="
-  "resolved" "https://registry.npmjs.org/web3-core-promievent/-/web3-core-promievent-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-core-promievent@1.9.0":
+  "integrity" "sha512-PHG1Mn23IGwMZhnPDN8dETKypqsFbHfiyRqP+XsVMPmTHkVfzDQTCBU/c2r6hUktBDoGKut5xZQpGfhFk71KbQ=="
+  "resolved" "https://registry.npmjs.org/web3-core-promievent/-/web3-core-promievent-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "eventemitter3" "4.0.4"
 
@@ -11316,16 +11321,16 @@
     "web3-providers-ipc" "1.7.4"
     "web3-providers-ws" "1.7.4"
 
-"web3-core-requestmanager@1.8.2":
-  "integrity" "sha512-p1d090RYs5Mu7DK1yyc3GCBVZB/03rBtFhYFoS2EruGzOWs/5Q0grgtpwS/DScdRAm8wB8mYEBhY/RKJWF6B2g=="
-  "resolved" "https://registry.npmjs.org/web3-core-requestmanager/-/web3-core-requestmanager-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-core-requestmanager@1.9.0":
+  "integrity" "sha512-hcJ5PCtTIJpj+8qWxoseqlCovDo94JJjTX7dZOLXgwp8ah7E3WRYozhGyZocerx+KebKyg1mCQIhkDpMwjfo9Q=="
+  "resolved" "https://registry.npmjs.org/web3-core-requestmanager/-/web3-core-requestmanager-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "util" "^0.12.5"
-    "web3-core-helpers" "1.8.2"
-    "web3-providers-http" "1.8.2"
-    "web3-providers-ipc" "1.8.2"
-    "web3-providers-ws" "1.8.2"
+    "web3-core-helpers" "1.9.0"
+    "web3-providers-http" "1.9.0"
+    "web3-providers-ipc" "1.9.0"
+    "web3-providers-ws" "1.9.0"
 
 "web3-core-subscriptions@1.2.11":
   "version" "1.2.11"
@@ -11342,13 +11347,13 @@
     "eventemitter3" "4.0.4"
     "web3-core-helpers" "1.7.4"
 
-"web3-core-subscriptions@1.8.2":
-  "integrity" "sha512-vXQogHDmAIQcKpXvGiMddBUeP9lnKgYF64+yQJhPNE5PnWr1sAibXuIPV7mIPihpFr/n/DORRj6Wh1pUv9zaTw=="
-  "resolved" "https://registry.npmjs.org/web3-core-subscriptions/-/web3-core-subscriptions-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-core-subscriptions@1.9.0":
+  "integrity" "sha512-MaIo29yz7hTV8X8bioclPDbHFOVuHmnbMv+D3PDH12ceJFJAXGyW8GL5KU1DYyWIj4TD1HM4WknyVA/YWBiiLA=="
+  "resolved" "https://registry.npmjs.org/web3-core-subscriptions/-/web3-core-subscriptions-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "eventemitter3" "4.0.4"
-    "web3-core-helpers" "1.8.2"
+    "web3-core-helpers" "1.9.0"
 
 "web3-core@1.2.11":
   "version" "1.2.11"
@@ -11374,18 +11379,18 @@
     "web3-core-requestmanager" "1.7.4"
     "web3-utils" "1.7.4"
 
-"web3-core@1.8.2":
-  "integrity" "sha512-DJTVEAYcNqxkqruJE+Rxp3CIv0y5AZMwPHQmOkz/cz+MM75SIzMTc0AUdXzGyTS8xMF8h3YWMQGgGEy8SBf1PQ=="
-  "resolved" "https://registry.npmjs.org/web3-core/-/web3-core-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-core@1.9.0":
+  "integrity" "sha512-DZ+TPmq/ZLlx4LSVzFgrHCP/QFpKDbGWO4HoquZSdu24cjk5SZ+FEU1SZB2OaK3/bgBh+25mRbmv8y56ysUu1w=="
+  "resolved" "https://registry.npmjs.org/web3-core/-/web3-core-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
-    "@types/bn.js" "^5.1.0"
+    "@types/bn.js" "^5.1.1"
     "@types/node" "^12.12.6"
     "bignumber.js" "^9.0.0"
-    "web3-core-helpers" "1.8.2"
-    "web3-core-method" "1.8.2"
-    "web3-core-requestmanager" "1.8.2"
-    "web3-utils" "1.8.2"
+    "web3-core-helpers" "1.9.0"
+    "web3-core-method" "1.9.0"
+    "web3-core-requestmanager" "1.9.0"
+    "web3-utils" "1.9.0"
 
 "web3-eth-abi@^1.2.1", "web3-eth-abi@1.7.4":
   "integrity" "sha512-eMZr8zgTbqyL9MCTCAvb67RbVyN5ZX7DvA0jbLOqRWCiw+KlJKTGnymKO6jPE8n5yjk4w01e165Qb11hTDwHgg=="
@@ -11402,13 +11407,13 @@
     "underscore" "1.9.1"
     "web3-utils" "1.2.11"
 
-"web3-eth-abi@1.8.2":
-  "integrity" "sha512-Om9g3kaRNjqiNPAgKwGT16y+ZwtBzRe4ZJFGjLiSs6v5I7TPNF+rRMWuKnR6jq0azQZDj6rblvKFMA49/k48Og=="
-  "resolved" "https://registry.npmjs.org/web3-eth-abi/-/web3-eth-abi-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-eth-abi@1.9.0":
+  "integrity" "sha512-0BLQ3FKMrzJkA930jOX3fMaybAyubk06HChclLpiR0NWmgWXm1tmBrJdkyRy2ZTZpmfuZc9xTFRfl0yZID1voA=="
+  "resolved" "https://registry.npmjs.org/web3-eth-abi/-/web3-eth-abi-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "@ethersproject/abi" "^5.6.3"
-    "web3-utils" "1.8.2"
+    "web3-utils" "1.9.0"
 
 "web3-eth-accounts@1.2.11":
   "version" "1.2.11"
@@ -11442,10 +11447,10 @@
     "web3-core-method" "1.7.4"
     "web3-utils" "1.7.4"
 
-"web3-eth-accounts@1.8.2":
-  "integrity" "sha512-c367Ij63VCz9YdyjiHHWLFtN85l6QghgwMQH2B1eM/p9Y5lTlTX7t/Eg/8+f1yoIStXbk2w/PYM2lk+IkbqdLA=="
-  "resolved" "https://registry.npmjs.org/web3-eth-accounts/-/web3-eth-accounts-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-eth-accounts@1.9.0":
+  "integrity" "sha512-VeIZVevmnSll0AC1k5F/y398ZE89d1SRuYk8IewLUhL/tVAsFEsjl2SGgm0+aDcHmgPrkW+qsCJ+C7rWg/N4ZA=="
+  "resolved" "https://registry.npmjs.org/web3-eth-accounts/-/web3-eth-accounts-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "@ethereumjs/common" "2.5.0"
     "@ethereumjs/tx" "3.3.2"
@@ -11453,10 +11458,10 @@
     "ethereumjs-util" "^7.1.5"
     "scrypt-js" "^3.0.1"
     "uuid" "^9.0.0"
-    "web3-core" "1.8.2"
-    "web3-core-helpers" "1.8.2"
-    "web3-core-method" "1.8.2"
-    "web3-utils" "1.8.2"
+    "web3-core" "1.9.0"
+    "web3-core-helpers" "1.9.0"
+    "web3-core-method" "1.9.0"
+    "web3-utils" "1.9.0"
 
 "web3-eth-contract@1.2.11":
   "version" "1.2.11"
@@ -11485,19 +11490,19 @@
     "web3-eth-abi" "1.7.4"
     "web3-utils" "1.7.4"
 
-"web3-eth-contract@1.8.2":
-  "integrity" "sha512-ID5A25tHTSBNwOPjiXSVzxruz006ULRIDbzWTYIFTp7NJ7vXu/kynKK2ag/ObuTqBpMbobP8nXcA9b5EDkIdQA=="
-  "resolved" "https://registry.npmjs.org/web3-eth-contract/-/web3-eth-contract-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-eth-contract@1.9.0":
+  "integrity" "sha512-+j26hpSaEtAdUed0TN5rnc+YZOcjPxMjFX4ZBKatvFkImdbVv/tzTvcHlltubSpgb2ZLyZ89lSL6phKYwd2zNQ=="
+  "resolved" "https://registry.npmjs.org/web3-eth-contract/-/web3-eth-contract-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
-    "@types/bn.js" "^5.1.0"
-    "web3-core" "1.8.2"
-    "web3-core-helpers" "1.8.2"
-    "web3-core-method" "1.8.2"
-    "web3-core-promievent" "1.8.2"
-    "web3-core-subscriptions" "1.8.2"
-    "web3-eth-abi" "1.8.2"
-    "web3-utils" "1.8.2"
+    "@types/bn.js" "^5.1.1"
+    "web3-core" "1.9.0"
+    "web3-core-helpers" "1.9.0"
+    "web3-core-method" "1.9.0"
+    "web3-core-promievent" "1.9.0"
+    "web3-core-subscriptions" "1.9.0"
+    "web3-eth-abi" "1.9.0"
+    "web3-utils" "1.9.0"
 
 "web3-eth-ens@1.2.11":
   "version" "1.2.11"
@@ -11526,19 +11531,19 @@
     "web3-eth-contract" "1.7.4"
     "web3-utils" "1.7.4"
 
-"web3-eth-ens@1.8.2":
-  "integrity" "sha512-PWph7C/CnqdWuu1+SH4U4zdrK4t2HNt0I4XzPYFdv9ugE8EuojselioPQXsVGvjql+Nt3jDLvQvggPqlMbvwRw=="
-  "resolved" "https://registry.npmjs.org/web3-eth-ens/-/web3-eth-ens-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-eth-ens@1.9.0":
+  "integrity" "sha512-LOJZeN+AGe9arhuExnrPPFYQr4WSxXEkpvYIlst/joOEUNLDwfndHnJIK6PI5mXaYSROBtTx6erv+HupzGo7vA=="
+  "resolved" "https://registry.npmjs.org/web3-eth-ens/-/web3-eth-ens-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "content-hash" "^2.5.2"
     "eth-ens-namehash" "2.0.8"
-    "web3-core" "1.8.2"
-    "web3-core-helpers" "1.8.2"
-    "web3-core-promievent" "1.8.2"
-    "web3-eth-abi" "1.8.2"
-    "web3-eth-contract" "1.8.2"
-    "web3-utils" "1.8.2"
+    "web3-core" "1.9.0"
+    "web3-core-helpers" "1.9.0"
+    "web3-core-promievent" "1.9.0"
+    "web3-eth-abi" "1.9.0"
+    "web3-eth-contract" "1.9.0"
+    "web3-utils" "1.9.0"
 
 "web3-eth-iban@1.2.11":
   "version" "1.2.11"
@@ -11554,13 +11559,13 @@
     "bn.js" "^5.2.1"
     "web3-utils" "1.7.4"
 
-"web3-eth-iban@1.8.2":
-  "integrity" "sha512-h3vNblDWkWMuYx93Q27TAJz6lhzpP93EiC3+45D6xoz983p6si773vntoQ+H+5aZhwglBtoiBzdh7PSSOnP/xQ=="
-  "resolved" "https://registry.npmjs.org/web3-eth-iban/-/web3-eth-iban-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-eth-iban@1.9.0":
+  "integrity" "sha512-jPAm77PuEs1kE/UrrBFJdPD2PN42pwfXA0gFuuw35bZezhskYML9W4QCxcqnUtceyEA4FUn7K2qTMuCk+23fog=="
+  "resolved" "https://registry.npmjs.org/web3-eth-iban/-/web3-eth-iban-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "bn.js" "^5.2.1"
-    "web3-utils" "1.8.2"
+    "web3-utils" "1.9.0"
 
 "web3-eth-personal@1.2.11":
   "version" "1.2.11"
@@ -11584,17 +11589,17 @@
     "web3-net" "1.7.4"
     "web3-utils" "1.7.4"
 
-"web3-eth-personal@1.8.2":
-  "integrity" "sha512-Vg4HfwCr7doiUF/RC+Jz0wT4+cYaXcOWMAW2AHIjHX6Z7Xwa8nrURIeQgeEE62qcEHAzajyAdB1u6bJyTfuCXw=="
-  "resolved" "https://registry.npmjs.org/web3-eth-personal/-/web3-eth-personal-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-eth-personal@1.9.0":
+  "integrity" "sha512-r9Ldo/luBqJlv1vCUEQnUS+C3a3ZdbYxVHyfDkj6RWMyCqqo8JE41HWE+pfa0RmB1xnGL2g8TbYcHcqItck/qg=="
+  "resolved" "https://registry.npmjs.org/web3-eth-personal/-/web3-eth-personal-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "@types/node" "^12.12.6"
-    "web3-core" "1.8.2"
-    "web3-core-helpers" "1.8.2"
-    "web3-core-method" "1.8.2"
-    "web3-net" "1.8.2"
-    "web3-utils" "1.8.2"
+    "web3-core" "1.9.0"
+    "web3-core-helpers" "1.9.0"
+    "web3-core-method" "1.9.0"
+    "web3-net" "1.9.0"
+    "web3-utils" "1.9.0"
 
 "web3-eth@1.2.11":
   "version" "1.2.11"
@@ -11631,23 +11636,23 @@
     "web3-net" "1.7.4"
     "web3-utils" "1.7.4"
 
-"web3-eth@1.8.2":
-  "integrity" "sha512-JoTiWWc4F4TInpbvDUGb0WgDYJsFhuIjJlinc5ByjWD88Gvh+GKLsRjjFdbqe5YtwIGT4NymwoC5LQd1K6u/QQ=="
-  "resolved" "https://registry.npmjs.org/web3-eth/-/web3-eth-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-eth@1.9.0":
+  "integrity" "sha512-c5gSWk9bLNr6VPATHmZ1n7LTIefIZQnJMzfnvkoBcIFGKJbGmsuRhv6lEXsKdAO/FlqYnSbaw3fOq1fVFiIOFQ=="
+  "resolved" "https://registry.npmjs.org/web3-eth/-/web3-eth-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
-    "web3-core" "1.8.2"
-    "web3-core-helpers" "1.8.2"
-    "web3-core-method" "1.8.2"
-    "web3-core-subscriptions" "1.8.2"
-    "web3-eth-abi" "1.8.2"
-    "web3-eth-accounts" "1.8.2"
-    "web3-eth-contract" "1.8.2"
-    "web3-eth-ens" "1.8.2"
-    "web3-eth-iban" "1.8.2"
-    "web3-eth-personal" "1.8.2"
-    "web3-net" "1.8.2"
-    "web3-utils" "1.8.2"
+    "web3-core" "1.9.0"
+    "web3-core-helpers" "1.9.0"
+    "web3-core-method" "1.9.0"
+    "web3-core-subscriptions" "1.9.0"
+    "web3-eth-abi" "1.9.0"
+    "web3-eth-accounts" "1.9.0"
+    "web3-eth-contract" "1.9.0"
+    "web3-eth-ens" "1.9.0"
+    "web3-eth-iban" "1.9.0"
+    "web3-eth-personal" "1.9.0"
+    "web3-net" "1.9.0"
+    "web3-utils" "1.9.0"
 
 "web3-net@1.2.11":
   "version" "1.2.11"
@@ -11665,14 +11670,14 @@
     "web3-core-method" "1.7.4"
     "web3-utils" "1.7.4"
 
-"web3-net@1.8.2":
-  "integrity" "sha512-1itkDMGmbgb83Dg9nporFes9/fxsU7smJ3oRXlFkg4ZHn8YJyP1MSQFPJWWwSc+GrcCFt4O5IrUTvEkHqE3xag=="
-  "resolved" "https://registry.npmjs.org/web3-net/-/web3-net-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-net@1.9.0":
+  "integrity" "sha512-L+fDZFgrLM5Y15aonl2q6L+RvfaImAngmC0Jv45hV2FJ5IfRT0/2ob9etxZmvEBWvOpbqSvghfOhJIT3XZ37Pg=="
+  "resolved" "https://registry.npmjs.org/web3-net/-/web3-net-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
-    "web3-core" "1.8.2"
-    "web3-core-method" "1.8.2"
-    "web3-utils" "1.8.2"
+    "web3-core" "1.9.0"
+    "web3-core-method" "1.9.0"
+    "web3-utils" "1.9.0"
 
 "web3-provider-engine@14.2.1":
   "version" "14.2.1"
@@ -11712,15 +11717,15 @@
     "web3-core-helpers" "1.7.4"
     "xhr2-cookies" "1.1.0"
 
-"web3-providers-http@1.8.2":
-  "integrity" "sha512-2xY94IIEQd16+b+vIBF4IC1p7GVaz9q4EUFscvMUjtEq4ru4Atdzjs9GP+jmcoo49p70II0UV3bqQcz0TQfVyQ=="
-  "resolved" "https://registry.npmjs.org/web3-providers-http/-/web3-providers-http-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-providers-http@1.9.0":
+  "integrity" "sha512-5+dMNDAE0rRFz6SJpfnBqlVi2J5bB/Ivr2SanMt2YUrkxW5t8betZbzVwRkTbwtUvkqgj3xeUQzqpOttiv+IqQ=="
+  "resolved" "https://registry.npmjs.org/web3-providers-http/-/web3-providers-http-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "abortcontroller-polyfill" "^1.7.3"
     "cross-fetch" "^3.1.4"
     "es6-promise" "^4.2.8"
-    "web3-core-helpers" "1.8.2"
+    "web3-core-helpers" "1.9.0"
 
 "web3-providers-ipc@1.2.11":
   "version" "1.2.11"
@@ -11737,13 +11742,13 @@
     "oboe" "2.1.5"
     "web3-core-helpers" "1.7.4"
 
-"web3-providers-ipc@1.8.2":
-  "integrity" "sha512-p6fqKVGFg+WiXGHWnB1hu43PbvPkDHTz4RgoEzbXugv5rtv5zfYLqm8Ba6lrJOS5ks9kGKR21a0y3NzE3u7V4w=="
-  "resolved" "https://registry.npmjs.org/web3-providers-ipc/-/web3-providers-ipc-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-providers-ipc@1.9.0":
+  "integrity" "sha512-cPXU93Du40HCylvjaa5x62DbnGqH+86HpK/+kMcFIzF6sDUBhKpag2tSbYhGbj7GMpfkmDTUiiMLdWnFV6+uBA=="
+  "resolved" "https://registry.npmjs.org/web3-providers-ipc/-/web3-providers-ipc-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "oboe" "2.1.5"
-    "web3-core-helpers" "1.8.2"
+    "web3-core-helpers" "1.9.0"
 
 "web3-providers-ws@1.2.11":
   "version" "1.2.11"
@@ -11762,13 +11767,13 @@
     "web3-core-helpers" "1.7.4"
     "websocket" "^1.0.32"
 
-"web3-providers-ws@1.8.2":
-  "integrity" "sha512-3s/4K+wHgbiN+Zrp9YjMq2eqAF6QGABw7wFftPdx+m5hWImV27/MoIx57c6HffNRqZXmCHnfWWFCNHHsi7wXnA=="
-  "resolved" "https://registry.npmjs.org/web3-providers-ws/-/web3-providers-ws-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-providers-ws@1.9.0":
+  "integrity" "sha512-JRVsnQZ7j2k1a2yzBNHe39xqk1ijOv01dfIBFw52VeEkSRzvrOcsPIM/ttSyBuJqt70ntMxXY0ekCrqfleKH/w=="
+  "resolved" "https://registry.npmjs.org/web3-providers-ws/-/web3-providers-ws-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "eventemitter3" "4.0.4"
-    "web3-core-helpers" "1.8.2"
+    "web3-core-helpers" "1.9.0"
     "websocket" "^1.0.32"
 
 "web3-shh@1.2.11":
@@ -11789,20 +11794,20 @@
     "web3-core-subscriptions" "1.7.4"
     "web3-net" "1.7.4"
 
-"web3-shh@1.8.2":
-  "integrity" "sha512-uZ+3MAoNcaJsXXNCDnizKJ5viBNeHOFYsCbFhV755Uu52FswzTOw6DtE7yK9nYXMtIhiSgi7nwl1RYzP8pystw=="
-  "resolved" "https://registry.npmjs.org/web3-shh/-/web3-shh-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-shh@1.9.0":
+  "integrity" "sha512-bIBZlralgz4ICCrwkefB2nPPJWfx28NuHIpjB7d9ADKynElubQuqudYhKtSEkKXACuME/BJm0pIFJcJs/gDnMg=="
+  "resolved" "https://registry.npmjs.org/web3-shh/-/web3-shh-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
-    "web3-core" "1.8.2"
-    "web3-core-method" "1.8.2"
-    "web3-core-subscriptions" "1.8.2"
-    "web3-net" "1.8.2"
+    "web3-core" "1.9.0"
+    "web3-core-method" "1.9.0"
+    "web3-core-subscriptions" "1.9.0"
+    "web3-net" "1.9.0"
 
-"web3-utils@^1.0.0-beta.31", "web3-utils@^1.2.1", "web3-utils@^1.2.5", "web3-utils@^1.3.6", "web3-utils@1.8.2":
-  "integrity" "sha512-v7j6xhfLQfY7xQDrUP0BKbaNrmZ2/+egbqP9q3KYmOiPpnvAfol+32slgL0WX/5n8VPvKCK5EZ1HGrAVICSToA=="
-  "resolved" "https://registry.npmjs.org/web3-utils/-/web3-utils-1.8.2.tgz"
-  "version" "1.8.2"
+"web3-utils@^1.0.0-beta.31", "web3-utils@^1.2.1", "web3-utils@^1.2.5", "web3-utils@^1.3.6", "web3-utils@1.9.0":
+  "integrity" "sha512-p++69rCNNfu2jM9n5+VD/g26l+qkEOQ1m6cfRQCbH8ZRrtquTmrirJMgTmyOoax5a5XRYOuws14aypCOs51pdQ=="
+  "resolved" "https://registry.npmjs.org/web3-utils/-/web3-utils-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
     "bn.js" "^5.2.1"
     "ethereum-bloom-filters" "^1.0.6"
@@ -11837,18 +11842,18 @@
     "randombytes" "^2.1.0"
     "utf8" "3.0.0"
 
-"web3@^1.0.0-beta.34", "web3@^1.0.0-beta.36", "web3@^1.2.1", "web3@^1.2.5", "web3@^1.8.2":
-  "integrity" "sha512-92h0GdEHW9wqDICQQKyG4foZBYi0OQkyg4CRml2F7XBl/NG+fu9o6J19kzfFXzSBoA4DnJXbyRgj/RHZv5LRiw=="
-  "resolved" "https://registry.npmjs.org/web3/-/web3-1.8.2.tgz"
-  "version" "1.8.2"
+"web3@^1.0.0-beta.34", "web3@^1.0.0-beta.36", "web3@^1.2.1", "web3@^1.2.5", "web3@^1.9.0":
+  "integrity" "sha512-E9IvVy/d2ozfQQsCiV+zh/LmlZGv9fQxI0UedDVjm87yOKf4AYbBNEn1iWtHveiGzAk2CEMZMUzAZzaQNSSYog=="
+  "resolved" "https://registry.npmjs.org/web3/-/web3-1.9.0.tgz"
+  "version" "1.9.0"
   dependencies:
-    "web3-bzz" "1.8.2"
-    "web3-core" "1.8.2"
-    "web3-eth" "1.8.2"
-    "web3-eth-personal" "1.8.2"
-    "web3-net" "1.8.2"
-    "web3-shh" "1.8.2"
-    "web3-utils" "1.8.2"
+    "web3-bzz" "1.9.0"
+    "web3-core" "1.9.0"
+    "web3-eth" "1.9.0"
+    "web3-eth-personal" "1.9.0"
+    "web3-net" "1.9.0"
+    "web3-shh" "1.9.0"
+    "web3-utils" "1.9.0"
 
 "web3@1.2.11":
   "version" "1.2.11"
@@ -11990,7 +11995,7 @@
     "request" "^2.88.2"
     "witnet-radon-js" "^0.8.4"
 
-"witnet-solidity-bridge@github:witnet/witnet-solidity-bridge#feat/WitnetRequestFactory":
+"witnet-solidity-bridge@github:witnet/witnet-solidity-bridge#feat/bytecodes":
   "resolved" "git+ssh://git@github.com/witnet/witnet-solidity-bridge.git#34513dc6c4af68a5010bcf763bff7a737676e053"
   "version" "0.6.5"
   dependencies:

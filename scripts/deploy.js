@@ -6,19 +6,17 @@ const { arrayCompare } = require('arweave/node/lib/merkle.js');
 const path = require('node:path');
 var _ = require('underscore');
 
+// import { Deployer } from "@matterlabs/hardhat-zksync-deploy";
+
+// const ecosystem = "moonbeam"
+// const network = "moonbeam.moonbase"
 
 
-const ecosystem = "moonbeam"
-const network = "moonbeam.moonbase"
+const ecosystem = "polygon"
+const network = "polygon.goerli"
 
 const witnetAddresses = require("witnet-solidity-bridge/migrations/witnet.addresses")[ecosystem][network]
 console.log(witnetAddresses)
-let WitnetBytecodes = {}
-let WitnetRequestBoard = {}
-let WitnetRequestFactory = {}
-WitnetBytecodes.address = witnetAddresses.WitnetBytecodes
-WitnetRequestBoard.address = witnetAddresses.WitnetRequestBoard
-WitnetRequestFactory.address = witnetAddresses.WitnetRequestFactory
 
 
 // const { program } = require('commander');
@@ -88,9 +86,9 @@ const libraries = [
   {
     name: 'LibInterchain',
   },
-  // {
-  //   name: 'LibWitnetRequest'
-  // }
+  {
+    name: 'LibWitnetRequest'
+  }
 ]
 
 const diamondFacets = [
@@ -149,13 +147,13 @@ const dodaoFacets = [
   {
     name: 'WormholeFacet',
   },
-  // {
-  //   name: 'WitnetFacet',
-  //   arguments: witnetAddresses.WitnetRequestBoard,
-  //   // libraries: [
-  //   //   'LibWitnetRequest',
-  //   // ]
-  // },
+  {
+    name: 'WitnetFacet',
+    arguments: [witnetAddresses.WitnetRequestBoard, witnetAddresses.WitnetRequestFactory],
+    libraries: [
+      'LibUtils',
+    ]
+  },
 ]
 
 const {
@@ -482,7 +480,13 @@ async function deployFacets(FacetInits, libAddresses){
       console.log(`${FacetInit.name} libraries: ${JSON.stringify(Libs)}`)
       Facet = await ethers.getContractFactory(FacetInit.name, {libraries: Libs})
     }
-    const facet = await Facet.deploy({ gasLimit: 8000000 })
+    let facet;
+    if(typeof FacetInit.arguments != 'undefined'){
+      facet = await Facet.deploy(...FacetInit.arguments, { gasLimit: 8000000 })
+    }
+    else{
+      facet = await Facet.deploy({ gasLimit: 8000000 })
+    }
     await facet.deployed()
     console.log(`${FacetInit.name} deployed: ${facet.address}`)
     facetCuts.push({

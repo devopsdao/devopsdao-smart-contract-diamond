@@ -50,7 +50,17 @@ async function configureWitnet() {
     requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId] = {};
   }
 
-  const witnetBytecodes = await ethers.getContractAt("IWitnetBytecodes", witnetAddresses.WitnetBytecodes);
+
+  var Contract = require('web3-eth-contract');
+
+  const WitnetBytecodes = artifacts.require("IWitnetBytecodes")
+  var abi = JSON.parse(await fs.readFile('./artifacts/witnet-solidity-bridge/contracts/interfaces/V2/IWitnetBytecodes.sol/IWitnetBytecodes.json'));
+
+// console.log(abi)
+
+  var witnetBytecodes = contract({abi: abi.abi, address:witnetAddresses.WitnetBytecodes});
+  // console.log(witnetBytecodes)
+  // const witnetBytecodes = await ethers.getContractAt("IWitnetBytecodes", witnetAddresses.WitnetBytecodes);
   // const witnetV2 = await ethers.getContractAt('WitnetV2', diamondAddress)
 
   // WitnetV2.DataRequestMethods
@@ -58,7 +68,7 @@ async function configureWitnet() {
   // /* 1 */ HttpGet,
   // /* 2 */ Rng,
   // /* 3 */ HttpPost
-console.log(requestHashes)
+  console.log(requestHashes)
 
   if (
     typeof requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId] == "undefined" ||
@@ -67,10 +77,10 @@ console.log(requestHashes)
   ) {
     console.log(`verifying datasource`);
 
-    await witnetBytecodes.on("NewDataSourceHash", (NewDataSourceHash, event) => {
-      console.log("received event");
-      console.log(NewDataSourceHash, type);
-    });
+    // await witnetBytecodes.on("NewDataSourceHash", (NewDataSourceHash, event) => {
+    //   console.log("received event");
+    //   console.log(NewDataSourceHash, type);
+    // });
 
 
 
@@ -93,6 +103,12 @@ console.log(requestHashes)
     //   // further logic
     // })
 
+
+    let accounts = await hre.web3.eth.getAccounts()
+    console.log(accounts)
+
+    console.log(witnetBytecodes.currentProvider())
+
     const dataSource = await witnetBytecodes.verifyDataSource(
       1, // requestMethod
       /* requestSchema */ "",
@@ -102,8 +118,8 @@ console.log(requestHashes)
       /* requestBody */ "",
       [], // requestHeaders
       "0x8218771869" // requestRadonScript
-      , { gasLimit: 8000000 }
-    );
+    )({from:accounts[0]});
+
 
 
     // /* requestAuthority */ "\\0\\",         // => will be substituted w/ WittyPixelsLib.baseURI() on next mint
@@ -113,18 +129,10 @@ console.log(requestHashes)
     // /* requestHeader */    new string[2][](0),
     // /* requestScript */    hex"80"
 
-    const dataSourceReceipt = await dataSource.wait();
-    console.log(dataSourceReceipt)
+    // const dataSourceReceipt = await dataSource.wait();
+    console.log(dataSource.receipt)
 
-    const typesArray = [
-      {type: 'bytes32', name: 'hash'}
-    ];
-
-    const newDataSourceHash = ethers.utils.defaultAbiCoder.decode(typesArray, dataSourceReceipt.events[0].data);
-    
-    // let iface = new ethers.utils.defaultAbiCoder;
-
-    console.log(newDataSourceHash)
+    // console.log(dataSourceReceipt.events[0])
 
 
     // const parsedLogs = dataSourceReceipt.logs.map(log => {
@@ -171,8 +179,8 @@ console.log(requestHashes)
 
     // const NewDataSourceHashEvent = dataSourceReceipt.events[0];
     // console.log(dataSourceReceipt)
-    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash =
-    newDataSourceHash[0];
+    // requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash =
+    //   NewDataSourceHashEvent.data;
 
     // console.log(NewDataSourceHashEvent.data);
   }
@@ -194,18 +202,11 @@ console.log(requestHashes)
 
     const radonReducerReceipt = await radonReducer.wait();
 
-    // const NewRadonReducerHashEvent = radonReducerReceipt.events[0];
+    const NewRadonReducerHashEvent = radonReducerReceipt.events[0];
+    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash =
+      NewRadonReducerHashEvent.data;
 
-    const typesArray = [
-      {type: 'bytes32', name: 'hash'}
-    ];
-
-    const newRadonReducerHash = ethers.utils.defaultAbiCoder.decode(typesArray, radonReducerReceipt.events[0].data);
-
-
-    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash = newRadonReducerHash[0];
-
-    // console.log(NewRadonReducerHashEvent.data);
+    console.log(NewRadonReducerHashEvent.data);
   }
 
   // console.log(radonReducer) // radon reducer hash
@@ -238,16 +239,10 @@ console.log(requestHashes)
     );
 
     const radonSLAReceipt = await radonSLA.wait();
-    // const NewSlaHashEvent = radonSLAReceipt.events[0];
 
-    const typesArray = [
-      {type: 'bytes32', name: 'hash'}
-    ];
-
-    const newRadonReducerHash = ethers.utils.defaultAbiCoder.decode(typesArray, radonSLAReceipt.events[0].data);
-
+    const NewSlaHashEvent = radonSLAReceipt.events[0];
     requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewSlaHash =
-    newRadonReducerHash[0];
+    NewSlaHashEvent.data;
 
     // console.log(NewSlaHashEvent.data);
 
@@ -255,9 +250,6 @@ console.log(requestHashes)
 
     // console.log(radonSLA)
   }
-
-  console.log(requestHashes)
-
   await fs.writeFile(path.join(__dirname, `../abi/witnet-requesthashes.json`), JSON.stringify(requestHashes));
   // else{
   //   console.log("will use existing verified hashes")
@@ -271,12 +263,13 @@ console.log(requestHashes)
   let witnetFacet = await ethers.getContractAt("WitnetFacet", diamondAddress);
 
   console.log("building witnet request template");
-  // console.log(witnetAddresses.WitnetRequestFactory)
-  console.log(requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash)
-  console.log(requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash)
+  console.log(witnetAddresses.WitnetRequestFactory)
+  console.log(requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash.length)
+  console.log(requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash.length)
 
 
   const requestTemplate = await witnetFacet.buildRequestTemplate(
+    witnetAddresses.WitnetRequestFactory,
     requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash,
     requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash
   );

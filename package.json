@@ -1,5 +1,5 @@
 {
-  "name": "diamond-1-hardhat",
+  "name": "dodao-diamond-1-hardhat",
   "version": "1.0.0",
   "description": "Reference implementation for EIP2535 Diamonds",
   "author": "Nick Mudge",
@@ -23,7 +23,7 @@
     "chai": "^4.3.7",
     "erc1155diamondstorage": "^1.1.2",
     "ethers": "^5.7.2",
-    "hardhat": "^2.11.2",
+    "hardhat": "^2.13.0",
     "hardhat-abi-exporter": "^2.10.1",
     "hardhat-contract-sizer": "^2.6.1",
     "hardhat-deploy": "^0.11.18",
@@ -32,12 +32,13 @@
     "hardhat-tracer": "^1.1.0-rc.9",
     "mocha": "^10.2.0",
     "solidity-coverage": "^0.8.2",
-    "web3": "^1.8.2",
+    "web3": "^1.9.0",
     "witnet-requests": "^0.9.6"
   },
   "dependencies": {
+    "@sebasgoldberg/hardhat-wsprovider": "^0.1.1",
     "commander": "^9.4.1",
     "underscore": "^1.13.6",
-    "witnet-solidity-bridge": "github:witnet/witnet-solidity-bridge#feat/WitnetRequestFactory"
+    "witnet-solidity-bridge": "github:witnet/witnet-solidity-bridge#feat/bytecodes"
   }
 }

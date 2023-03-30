@@ -14,6 +14,8 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 /// @author Otherplane Labs Ltd., 2023
 
 struct WitnetRequestStorage{
+    WitnetRequestFactory factory;
+    address WitnetRequestFactoryAddress;
     mapping (uint256 => WitnetQueries) witnetQueries;
     // mapping(string => string) ext;
     // mapping(string => bool) extMapping;
