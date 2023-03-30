@@ -62,5 +62,14 @@
         "args": ["diamondUpgrade", "-facets AccountFacet", "--network", "localhost"],
         "cwd": "${workspaceFolder}"
     },  
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "hardhat witnetConfig",
+        "skipFiles": ["<node_internals>/**"],
+        "runtimeExecutable": "${workspaceFolder}/npx hardhat",
+        "args": ["witnetConfig", "--network", "mumbai"],
+        "cwd": "${workspaceFolder}"
+    },  
     ]
 }

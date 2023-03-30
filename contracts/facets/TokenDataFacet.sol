@@ -67,12 +67,14 @@ contract TokenDataFacet {
     function getTokenIds(
         address _owner
     ) external view virtual returns (uint256[] memory) {
+        console.log(_owner);
       return LibTokenData.getTokenIds(_owner);
     }
 
     function getTokenNames(
         address _owner
     ) external view virtual returns (string[] memory) {
+        console.log(_owner);
       return LibTokenData.getTokenNames(_owner);
     }
 
@@ -124,6 +126,7 @@ contract TokenDataFacet {
         address[] calldata accounts_,
         string[] calldata names_
     ) external view returns (uint256[] memory) {
+        console.log(accounts_[0]);
         return LibTokenData.balanceOfBatchName(accounts_, names_);
     }
 
