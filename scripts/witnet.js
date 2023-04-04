@@ -67,37 +67,17 @@ console.log(requestHashes)
   ) {
     console.log(`verifying datasource`);
 
-    await witnetBytecodes.on("NewDataSourceHash", (NewDataSourceHash, event) => {
-      console.log("received event");
-      console.log(NewDataSourceHash, type);
-    });
-
-
-
-    // let eventFilter = witnetBytecodes.filters.NewDataSourceHash()
-    // let events = await witnetBytecodes.queryFilter(eventFilter) //not working if I specify blocks
-    // console.log(events)
-
-    // web3.eth.subscribe("logs", logOptions ={}, (e, raw) => {
-    //     const iface = new ethers.utils.Interface(witnetBytecodes);
-    //     const parsed = iface.parseLog(raw);
-    //     console.log(parsed)
+    // await witnetBytecodes.on("NewDataSourceHash", (NewDataSourceHash, event) => {
+    //   console.log("received event");
+    //   console.log(NewDataSourceHash);
     // });
 
-    // const startBlockNumber = await provider.getBlockNumber();
-
-    // contract.on(filter, (...args) => {
-    //   const event = args[args.length - 1];
-    //   if(event.blockNumber <= startBlockNumber) return; // do not react to this event
-      
-    //   // further logic
-    // })
 
     const dataSource = await witnetBytecodes.verifyDataSource(
       1, // requestMethod
       /* requestSchema */ "",
       /* requestAuthority */ "https://api.github.com", // => will be substituted w/ WittyPixelsLib.baseURI() on next mint
-      /* requestPath */ "repos/\\0\\/pulls", // => will by substituted w/ tokenId on next mint
+      /* requestPath */ "repos/\\0\\/pulls8", // => will by substituted w/ tokenId on next mint
       /* requestQuery */ "state=all",
       /* requestBody */ "",
       [], // requestHeaders
@@ -114,70 +94,46 @@ console.log(requestHashes)
     // /* requestScript */    hex"80"
 
     const dataSourceReceipt = await dataSource.wait();
-    console.log(dataSourceReceipt)
 
-    const typesArray = [
-      {type: 'bytes32', name: 'hash'}
-    ];
-
-    const newDataSourceHash = ethers.utils.defaultAbiCoder.decode(typesArray, dataSourceReceipt.events[0].data);
-    
-    // let iface = new ethers.utils.defaultAbiCoder;
-
-    console.log(newDataSourceHash)
-
-
-    // const parsedLogs = dataSourceReceipt.logs.map(log => {
-    //   try {
-    //     // only ABIs from witnetBytecodes contract are used to decode the logs
-    //     return witnetBytecodes.interface.parseLog(log)
-    //   } catch(e) {
-    //     console.log(e)
-    //     return null
-    //   }
-    // })
-    // console.log(parsedLogs)
-    
-    // // or just find the log you are interested in
-    // const log = dataSourceReceipt.logs[0]
-    // witnetBytecodes.interface.parseLog(log)
-
-    // const parsedLogs = dataSourceReceipt.logs.map(log => witnetBytecodes.interface.parseLog(log))
-
-    // console.log(parsedLogs[0].args.prop)
-
-    // let iface = new ethers.utils.Interface(abi);
-    // let log = witnetBytecodes.interface.parseLog(dataSourceReceipt.logs[0]); //
-
-
-    // let abi = [ "event NewDataSourceHash(bytes32 hash)" ];
-    // let iface = new ethers.utils.Interface(abi);
-    // let log = iface.parseLog(dataSourceReceipt.events[0]); // her
-    
-
-    // const topic = witnetBytecodes.interface.getEventTopic('NewDataSourceHash');
-    // console.log(topic)
-
-    // // const log = dataSourceReceipt.logs.find(x => x.topics.indexOf(topic) >= 0);
-
-    // const logParsed = witnetBytecodes.interface.parseLog(dataSourceReceipt.logs[0]);
-    // console.log(logParsed)
-
-    // console.log('taskContracts:');
-    // console.log(getTaskContracts)
-
-    // let events = await witnetBytecodes.queryFilter('NewDataSourceHash', 0);
+    //other ways to parse events
+    // let eventFilter = witnetBytecodes.filters.NewDataSourceHash()
+    // let events = await witnetBytecodes.queryFilter(eventFilter) //not working if I specify blocks
     // console.log(events)
+    
+    // use start block and end block as receipt.blockNumber
+    // const dataSourceEvent = await witnetBytecodes.queryFilter('NewDataSourceHash(bytes32 hash)', dataSourceReceipt.blockNumber, dataSourceReceipt.blockNumber)
 
-    // const NewDataSourceHashEvent = dataSourceReceipt.events[0];
-    // console.log(dataSourceReceipt)
-    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash =
-    newDataSourceHash[0];
 
-    // console.log(NewDataSourceHashEvent.data);
+    
+    // const typesArray = [
+    //   {type: 'bytes32', name: 'hash'},
+    // ];
+    // const newDataSourceHash = ethers.utils.defaultAbiCoder.decode(typesArray, dataSourceReceipt.events[0].data);
+    
+
+    let NewDataSourceHash;
+    if(typeof dataSourceReceipt.events[0].args !=='undefined' && typeof dataSourceReceipt.events[0].args.hash !== 'undefined'){
+      console.log(`NewDataSourceHash`)
+      console.log(dataSourceReceipt.events[0].args.hash)
+      NewDataSourceHash = dataSourceReceipt.events[0].args.hash;
+    }
+
+    else{
+      NewDataSourceHash = await witnetBytecodes.callStatic.verifyDataSource(
+        1, // requestMethod
+        /* requestSchema */ "",
+        /* requestAuthority */ "https://api.github.com", // => will be substituted w/ WittyPixelsLib.baseURI() on next mint
+        /* requestPath */ "repos/\\0\\/pulls", // => will by substituted w/ tokenId on next mint
+        /* requestQuery */ "state=all",
+        /* requestBody */ "",
+        [], // requestHeaders
+        "0x8218771869" // requestRadonScript
+        , { gasLimit: 8000000 }
+      );
+    }
+    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash = NewDataSourceHash;
   }
 
-  // console.log(dataSource)
   if (
     typeof requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId] == "undefined" ||
     typeof requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash ==
@@ -194,22 +150,25 @@ console.log(requestHashes)
 
     const radonReducerReceipt = await radonReducer.wait();
 
-    // const NewRadonReducerHashEvent = radonReducerReceipt.events[0];
+    let NewRadonReducerHash;
+    if(typeof radonReducerReceipt.events[0].args !=='undefined' && typeof radonReducerReceipt.events[0].args.hash !== 'undefined'){
+      console.log(`NewRadonReducerHash`)
+      console.log(radonReducerReceipt.events[0].args.hash)
+      NewRadonReducerHash = radonReducerReceipt.events[0].args.hash;
+    }
 
-    const typesArray = [
-      {type: 'bytes32', name: 'hash'}
-    ];
+    else{
+      NewRadonReducerHash = await witnetBytecodes.callStatic.verifyRadonReducer([
+        11, // opcode: ConcatenateAndHash
+        [], // filters
+        "0x", // script
+      ]
+      , { gasLimit: 8000000 }
+      );
+    }
+    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash = NewRadonReducerHash;
 
-    const newRadonReducerHash = ethers.utils.defaultAbiCoder.decode(typesArray, radonReducerReceipt.events[0].data);
-
-
-    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash = newRadonReducerHash[0];
-
-    // console.log(NewRadonReducerHashEvent.data);
   }
-
-  // console.log(radonReducer) // radon reducer hash
-  // console.log(NewRadHash); // radon request hash
 
   const witnetSLA = {
     numWitnesses: 17,
@@ -238,42 +197,37 @@ console.log(requestHashes)
     );
 
     const radonSLAReceipt = await radonSLA.wait();
-    // const NewSlaHashEvent = radonSLAReceipt.events[0];
 
-    const typesArray = [
-      {type: 'bytes32', name: 'hash'}
-    ];
+    let NewSlaHash;
+    if(typeof radonSLAReceipt.events[0].args !=='undefined' && typeof radonSLAReceipt.events[0].args.hash !== 'undefined'){
+      console.log(`NewSlaHash`)
+      console.log(radonSLAReceipt.events[0].args.hash)
+      NewSlaHash = radonSLAReceipt.events[0].args.hash;
+    }
 
-    const newRadonReducerHash = ethers.utils.defaultAbiCoder.decode(typesArray, radonSLAReceipt.events[0].data);
+    else{
+      NewSlaHash = await witnetBytecodes.callStatic.verifyRadonSLA([
+        witnetSLA.numWitnesses,
+        witnetSLA.minConsensusPercentage,
+        witnetSLA.witnessReward,
+        witnetSLA.witnessCollateral,
+        witnetSLA.minerCommitFee,
+      ]
+      , { gasLimit: 8000000 }
+      );
+    }
+    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewSlaHash = NewSlaHash;
 
-    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewSlaHash =
-    newRadonReducerHash[0];
-
-    // console.log(NewSlaHashEvent.data);
-
-    // console.log(NewSlaHash) //SLA hash
-
-    // console.log(radonSLA)
   }
 
   console.log(requestHashes)
 
   await fs.writeFile(path.join(__dirname, `../abi/witnet-requesthashes.json`), JSON.stringify(requestHashes));
-  // else{
-  //   console.log("will use existing verified hashes")
-  //   console.log(requestHashes);
-  // }
+
 
 
   let IWitnetRequestFactory = await ethers.getContractAt("IWitnetRequestFactory", witnetAddresses.WitnetRequestFactory);
 
-  // const witnetRequestFactory = new IWitnetRequestFactory(witnetAddresses.WitnetRequestFactory)
-
-  console.log(`NewDataSourceHash`)
-  console.log(requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash)
-
-  console.log(`NewRadonReducerHash`)
-  console.log(requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash)
 
   const valuesArrayRequestTemplate = await IWitnetRequestFactory.buildRequestTemplate(
     /* retrieval templates */ [requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash],
