@@ -1,0 +1,48 @@
+{
+  "_format": "hh-zksolc-artifact-1",
+  "contractName": "IAccountFacet",
+  "sourceName": "contracts/interfaces/IAccountFacet.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_sender",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "taskAddress",
+          "type": "address"
+        }
+      ],
+      "name": "addAuditParticipantTask",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_sender",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "taskAddress",
+          "type": "address"
+        }
+      ],
+      "name": "addParticipantTask",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "factoryDeps": {}
+}

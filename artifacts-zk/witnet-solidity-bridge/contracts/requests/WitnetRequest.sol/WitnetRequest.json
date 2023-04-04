@@ -1,0 +1,268 @@
+{
+  "_format": "hh-zksolc-artifact-1",
+  "contractName": "WitnetRequest",
+  "sourceName": "witnet-solidity-bridge/contracts/requests/WitnetRequest.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "numWitnesses",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minConsensusPercentage",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "witnessReward",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "witnessCollateral",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minerCommitFee",
+              "type": "uint256"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct WitnetV2.RadonSLA",
+          "name": "sla",
+          "type": "tuple"
+        }
+      ],
+      "name": "WitnetRequestSettled",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "args",
+      "outputs": [
+        {
+          "internalType": "string[][]",
+          "name": "",
+          "type": "string[][]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "bytecode",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "class",
+      "outputs": [
+        {
+          "internalType": "bytes4",
+          "name": "",
+          "type": "bytes4"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "curator",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getRadonSLA",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "numWitnesses",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minConsensusPercentage",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "witnessReward",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "witnessCollateral",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minerCommitFee",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct WitnetV2.RadonSLA",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "hash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "initialized",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "numWitnesses",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minConsensusPercentage",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "witnessReward",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "witnessCollateral",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minerCommitFee",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct WitnetV2.RadonSLA",
+          "name": "sla",
+          "type": "tuple"
+        }
+      ],
+      "name": "modifySLA",
+      "outputs": [
+        {
+          "internalType": "contract IWitnetRequest",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "radHash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "slaHash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "template",
+      "outputs": [
+        {
+          "internalType": "contract WitnetRequestTemplate",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "version",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "factoryDeps": {}
+}

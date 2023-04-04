@@ -1,0 +1,4957 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/Diamond.sol": {
+      "lastModificationDate": 1665909418351,
+      "contentHash": "fff26ed77e7e0ac8cca27ec33ef4c5df",
+      "sourceName": "contracts/Diamond.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./libraries/LibDiamond.sol",
+        "./interfaces/IDiamondCut.sol",
+        "./interfaces/IDiamondLoupe.sol",
+        "./interfaces/IERC173.sol",
+        "./interfaces/IERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Diamond"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/interfaces/IDiamondCut.sol": {
+      "lastModificationDate": 1665909418355,
+      "contentHash": "0ef5eba35eb735838867065aba87c879",
+      "sourceName": "contracts/interfaces/IDiamondCut.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./IDiamond.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IDiamondCut"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/interfaces/IDiamondLoupe.sol": {
+      "lastModificationDate": 1665909418355,
+      "contentHash": "81a64201bb0971760c1b7f53553f02fb",
+      "sourceName": "contracts/interfaces/IDiamondLoupe.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IDiamondLoupe"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/interfaces/IERC173.sol": {
+      "lastModificationDate": 1666609860826,
+      "contentHash": "129b12d5f74c45885b13a526fc823d02",
+      "sourceName": "contracts/interfaces/IERC173.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC173"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/LibDiamond.sol": {
+      "lastModificationDate": 1665909418355,
+      "contentHash": "e8c5164992ccf3659d9e723128aef076",
+      "sourceName": "contracts/libraries/LibDiamond.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IDiamond.sol",
+        "../interfaces/IDiamondCut.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "LibDiamond"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/interfaces/IERC165.sol": {
+      "lastModificationDate": 1665909418355,
+      "contentHash": "cca2d5bc6f6399ed1aa372fad5a44e6d",
+      "sourceName": "contracts/interfaces/IERC165.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC165"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/interfaces/IDiamond.sol": {
+      "lastModificationDate": 1665909418355,
+      "contentHash": "770c5f434b2e8bd4293c8715b57c11fe",
+      "sourceName": "contracts/interfaces/IDiamond.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IDiamond"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/upgradeInitializers/DiamondInit.sol": {
+      "lastModificationDate": 1679335248825,
+      "contentHash": "b36b681f96aec07c4c8fe88e529acfde",
+      "sourceName": "contracts/upgradeInitializers/DiamondInit.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libraries/LibDiamond.sol",
+        "../interfaces/IDiamondLoupe.sol",
+        "../interfaces/IDiamondCut.sol",
+        "../interfaces/IERC173.sol",
+        "../interfaces/IERC165.sol",
+        "../interfaces/IERC1155.sol",
+        "../interfaces/IERC1155Metadata.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "DiamondInit"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/interfaces/IERC1155.sol": {
+      "lastModificationDate": 1675958518846,
+      "contentHash": "aba2e4830a8c8b16dd8d9afbd02c804e",
+      "sourceName": "contracts/interfaces/IERC1155.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC1155"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/interfaces/IERC1155Metadata.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "57a41428231b4dcebb8e51fe20d24910",
+      "sourceName": "contracts/interfaces/IERC1155Metadata.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC1155Metadata_URI"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/TokenFacet.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "d8f802dba7a05ec2ef5cc4c9c35da4f4",
+      "sourceName": "contracts/facets/TokenFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libraries/LibDiamond.sol",
+        "../libraries/LibTokens.sol",
+        "../libraries/LibTokenData.sol",
+        "../facets/tokenstorage/ERC1155StorageFacet.sol",
+        "../interfaces/IERC1155.sol",
+        "../interfaces/IERC1155TokenReceiver.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "TokenFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/LibTokens.sol": {
+      "lastModificationDate": 1679335272357,
+      "contentHash": "96db2e2bd65d8d0ee749146c5d10add2",
+      "sourceName": "contracts/libraries/LibTokens.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "hardhat/console.sol",
+        "./structs/ERC1155FacetStorage.sol",
+        "../interfaces/IERC1155TokenReceiver.sol",
+        "./LibAddress.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "LibTokens"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/LibTokenData.sol": {
+      "lastModificationDate": 1679666272722,
+      "contentHash": "792178dfd7242d663b5752529319ecfc",
+      "sourceName": "contracts/libraries/LibTokenData.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "hardhat/console.sol",
+        "./structs/ERC1155FacetStorage.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "LibTokenData"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/tokenstorage/ERC1155StorageFacet.sol": {
+      "lastModificationDate": 1674660377468,
+      "contentHash": "37a26f2be3d7373bf5f9a2e1e7edc422",
+      "sourceName": "contracts/facets/tokenstorage/ERC1155StorageFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../../libraries/LibDiamond.sol",
+        "../../libraries/structs/ERC1155FacetStorage.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC1155StorageFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/interfaces/IERC1155TokenReceiver.sol": {
+      "lastModificationDate": 1675957925103,
+      "contentHash": "913d8592047ed9b2db00b0ff3053f841",
+      "sourceName": "contracts/interfaces/IERC1155TokenReceiver.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC1155TokenReceiver"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/hardhat/console.sol": {
+      "lastModificationDate": 1680287628197,
+      "contentHash": "4ff3cd2f6272c9a6516e9ee4f2b967d3",
+      "sourceName": "hardhat/console.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">= 0.4.22 <0.9.0"
+      ],
+      "artifacts": [
+        "console"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/structs/ERC1155FacetStorage.sol": {
+      "lastModificationDate": 1679335272357,
+      "contentHash": "e80cb83e866737b273dbd76686beb4e3",
+      "sourceName": "contracts/libraries/structs/ERC1155FacetStorage.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": []
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/LibAddress.sol": {
+      "lastModificationDate": 1674660377468,
+      "contentHash": "269855a29362489a805a1e66963af8ce",
+      "sourceName": "contracts/libraries/LibAddress.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": [
+        "LibAddress"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/LibWithdraw.sol": {
+      "lastModificationDate": 1678317837601,
+      "contentHash": "5dc58408c92cd3bcc33a335d845a0b55",
+      "sourceName": "contracts/libraries/LibWithdraw.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol",
+        "../libraries/LibTasks.sol",
+        "../libraries/LibUtils.sol",
+        "../facets/tokenstorage/ERC1155StorageFacet.sol",
+        "../facets/TokenFacet.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "LibWithdraw"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/LibTasks.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "fb1c6bfd61e276e40a3afc4f7d548f58",
+      "sourceName": "contracts/libraries/LibTasks.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol",
+        "../facets/tokenstorage/ERC1155StorageFacet.sol",
+        "../facets/TokenFacet.sol",
+        "../libraries/LibInterchain.sol",
+        "../interfaces/IAccountFacet.sol",
+        "../interfaces/IInterchainFacet.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "LibTasks"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/LibUtils.sol": {
+      "lastModificationDate": 1674660377468,
+      "contentHash": "b985b1c83a02be3b073644342be95f91",
+      "sourceName": "contracts/libraries/LibUtils.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/StringAddressUtils.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "LibUtils"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol": {
+      "lastModificationDate": 1679869055203,
+      "contentHash": "c493ed470617f40baa752fe772d3490e",
+      "sourceName": "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAxelarGateway"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol": {
+      "lastModificationDate": 1679869055203,
+      "contentHash": "a0e1a9afa9d0b1cffeaf1d16c8a15287",
+      "sourceName": "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/LibInterchain.sol": {
+      "lastModificationDate": 1674660612220,
+      "contentHash": "ec8c8385ba2aca50a99ba0393ce0272d",
+      "sourceName": "contracts/libraries/LibInterchain.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libraries/LibDiamond.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "LibInterchain"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/interfaces/IAccountFacet.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "bb901473024e22da75d1bf84b8bb454d",
+      "sourceName": "contracts/interfaces/IAccountFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": [
+        "IAccountFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/interfaces/IInterchainFacet.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "82d8ca669dc716ddb187d1c3d38b325d",
+      "sourceName": "contracts/interfaces/IInterchainFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libraries/LibInterchain.sol"
+      ],
+      "versionPragmas": [],
+      "artifacts": [
+        "IInterchainFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@axelar-network/axelar-gmp-sdk-solidity/contracts/StringAddressUtils.sol": {
+      "lastModificationDate": 1679869055207,
+      "contentHash": "d9d952d25c5d91dc08a650ae79b28bc0",
+      "sourceName": "@axelar-network/axelar-gmp-sdk-solidity/contracts/StringAddressUtils.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AddressToString",
+        "StringToAddress"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/LibTasksAudit.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "6aae0def61703cddf362bcc243b3da3b",
+      "sourceName": "contracts/libraries/LibTasksAudit.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol",
+        "../libraries/LibTasks.sol",
+        "../facets/tokenstorage/ERC1155StorageFacet.sol",
+        "../facets/TokenFacet.sol",
+        "../libraries/LibInterchain.sol",
+        "../interfaces/IAccountFacet.sol",
+        "../interfaces/IInterchainFacet.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "LibTasksAudit"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarExecutable.sol": {
+      "lastModificationDate": 1679869055199,
+      "contentHash": "d32da731db236d4f1c96f51fcd6b6348",
+      "sourceName": "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarExecutable.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IAxelarGateway.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAxelarExecutable"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@axelar-network/axelar-gmp-sdk-solidity/contracts/executables/AxelarExecutable.sol": {
+      "lastModificationDate": 1679869055191,
+      "contentHash": "dd2e042ca387f1c6b73f1a43eb9b97c9",
+      "sourceName": "@axelar-network/axelar-gmp-sdk-solidity/contracts/executables/AxelarExecutable.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IAxelarGateway.sol",
+        "../interfaces/IAxelarExecutable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AxelarExecutable"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/interchain/AxelarFacet.sol": {
+      "lastModificationDate": 1674660612220,
+      "contentHash": "1c13d38e2fd594fc9f4063f4a790e7d3",
+      "sourceName": "contracts/facets/interchain/AxelarFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/executables/AxelarExecutable.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarExecutable.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol",
+        "../TaskCreateFacet.sol",
+        "../../contracts/TaskContract.sol"
+      ],
+      "versionPragmas": [
+        "0.8.17"
+      ],
+      "artifacts": [
+        "AxelarFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/TaskCreateFacet.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "dcfd687bf675523ab059a77e9fb8e65b",
+      "sourceName": "contracts/facets/TaskCreateFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol",
+        "../libraries/LibUtils.sol",
+        "../contracts/TaskContract.sol",
+        "../facets/tokenstorage/ERC1155StorageFacet.sol",
+        "../interfaces/ITokenFacet.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "TaskCreateFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/contracts/TaskContract.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "e68e846b2eae0f3de5609b36a5e229e5",
+      "sourceName": "contracts/contracts/TaskContract.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libraries/LibTasks.sol",
+        "../libraries/LibTasksAudit.sol",
+        "../libraries/LibChat.sol",
+        "../libraries/LibWithdraw.sol",
+        "../libraries/LibInterchain.sol",
+        "../facets/TokenDataFacet.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "TaskContract"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol": {
+      "lastModificationDate": 1679869055203,
+      "contentHash": "11c0bdaf20cc99f9f93160acd2c3a99c",
+      "sourceName": "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAxelarGasService"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/interfaces/ITokenFacet.sol": {
+      "lastModificationDate": 1674660377468,
+      "contentHash": "a0c4aa7d5b712c6d42cd0c08742f3956",
+      "sourceName": "contracts/interfaces/ITokenFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ITokenFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/LibChat.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "d46d8dcd8c27b14dfde9c5b529ddebfe",
+      "sourceName": "contracts/libraries/LibChat.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol",
+        "../libraries/LibTasks.sol",
+        "../facets/tokenstorage/ERC1155StorageFacet.sol",
+        "../facets/TokenFacet.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "LibChat"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/TokenDataFacet.sol": {
+      "lastModificationDate": 1679665990289,
+      "contentHash": "866a6b65039fc66cbf1d50c7e38c695b",
+      "sourceName": "contracts/facets/TokenDataFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libraries/LibTokens.sol",
+        "../libraries/LibTokenData.sol",
+        "../facets/tokenstorage/ERC1155StorageFacet.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "TokenDataFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/contracts/AxelarGMP.sol": {
+      "lastModificationDate": 1674660377464,
+      "contentHash": "5949e04861c7b1b449b3573839adb153",
+      "sourceName": "contracts/contracts/AxelarGMP.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/executables/AxelarExecutable.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol",
+        "../libraries/LibTasks.sol",
+        "../facets/TaskCreateFacet.sol",
+        "../contracts/TaskContract.sol"
+      ],
+      "versionPragmas": [
+        "0.8.17"
+      ],
+      "artifacts": [
+        "AxelarGMP"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/interchain/WormholeFacet.sol": {
+      "lastModificationDate": 1674660612220,
+      "contentHash": "3077e6fcce82801e3c3b4124dde3ef74",
+      "sourceName": "contracts/facets/interchain/WormholeFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../../external/wormhole/interfaces/IWormhole.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol",
+        "../../libraries/LibDiamond.sol",
+        "../TaskCreateFacet.sol",
+        "../../contracts/TaskContract.sol"
+      ],
+      "versionPragmas": [
+        "0.8.17"
+      ],
+      "artifacts": [
+        "WormholeFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/wormhole/interfaces/IWormhole.sol": {
+      "lastModificationDate": 1671049770085,
+      "contentHash": "c8155588222fba34df3d842958518054",
+      "sourceName": "contracts/external/wormhole/interfaces/IWormhole.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IWormhole"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/interchain/LayerzeroFacet.sol": {
+      "lastModificationDate": 1674660612220,
+      "contentHash": "77e7ccce157feac91ed8f992b378591d",
+      "sourceName": "contracts/facets/interchain/LayerzeroFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../../external/layerzero/interfaces/ILayerZeroEndpoint.sol",
+        "../../external/layerzero/interfaces/ILayerZeroReceiver.sol",
+        "../TaskCreateFacet.sol"
+      ],
+      "versionPragmas": [
+        "0.8.17"
+      ],
+      "artifacts": [
+        "LayerzeroFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/layerzero/interfaces/ILayerZeroEndpoint.sol": {
+      "lastModificationDate": 1670866465836,
+      "contentHash": "008cb6eedb0a3be0c12cdd2307d1d9b1",
+      "sourceName": "contracts/external/layerzero/interfaces/ILayerZeroEndpoint.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./ILayerZeroUserApplicationConfig.sol"
+      ],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "ILayerZeroEndpoint"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/layerzero/interfaces/ILayerZeroReceiver.sol": {
+      "lastModificationDate": 1670866465836,
+      "contentHash": "62703c3b19a452bfdaca90f5bc59cfef",
+      "sourceName": "contracts/external/layerzero/interfaces/ILayerZeroReceiver.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "ILayerZeroReceiver"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/layerzero/interfaces/ILayerZeroUserApplicationConfig.sol": {
+      "lastModificationDate": 1670866465836,
+      "contentHash": "ea8e436e41bc96a3d434edb386b63cda",
+      "sourceName": "contracts/external/layerzero/interfaces/ILayerZeroUserApplicationConfig.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "ILayerZeroUserApplicationConfig"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/contracts/Layerzero.sol": {
+      "lastModificationDate": 1674660377464,
+      "contentHash": "e9170298a1fc18a487824df6791ea4ca",
+      "sourceName": "contracts/contracts/Layerzero.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../external/layerzero/interfaces/ILayerZeroEndpoint.sol",
+        "../external/layerzero/interfaces/ILayerZeroReceiver.sol",
+        "../facets/TaskCreateFacet.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "Layerzero"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/interchain/HyperlaneFacet.sol": {
+      "lastModificationDate": 1674660612220,
+      "contentHash": "97b36a2d8b1870607eddaa187e2319d3",
+      "sourceName": "contracts/facets/interchain/HyperlaneFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../../external/hyperlane/interfaces/IInbox.sol",
+        "../../external/hyperlane/interfaces/IOutbox.sol",
+        "../TaskCreateFacet.sol"
+      ],
+      "versionPragmas": [
+        "0.8.17"
+      ],
+      "artifacts": [
+        "HyperlaneFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/hyperlane/interfaces/IInbox.sol": {
+      "lastModificationDate": 1670772463777,
+      "contentHash": "76edbab71e63f775ac7371605cdafad2",
+      "sourceName": "contracts/external/hyperlane/interfaces/IInbox.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./IMailbox.sol"
+      ],
+      "versionPragmas": [
+        ">=0.6.11"
+      ],
+      "artifacts": [
+        "IInbox"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/hyperlane/interfaces/IOutbox.sol": {
+      "lastModificationDate": 1670772463777,
+      "contentHash": "5faaedc15bbef3e5696297e201a06001",
+      "sourceName": "contracts/external/hyperlane/interfaces/IOutbox.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./IMailbox.sol"
+      ],
+      "versionPragmas": [
+        ">=0.6.11"
+      ],
+      "artifacts": [
+        "IOutbox"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/hyperlane/interfaces/IMailbox.sol": {
+      "lastModificationDate": 1670772463777,
+      "contentHash": "56d0ce9b3aab95c63daa50038f498507",
+      "sourceName": "contracts/external/hyperlane/interfaces/IMailbox.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.11"
+      ],
+      "artifacts": [
+        "IMailbox"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/contracts/Hyperlane.sol": {
+      "lastModificationDate": 1674660377464,
+      "contentHash": "08d26b337edf8399dafc9d3a496d6fa2",
+      "sourceName": "contracts/contracts/Hyperlane.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../external/hyperlane/interfaces/IInbox.sol",
+        "../external/hyperlane/interfaces/IOutbox.sol",
+        "../facets/TaskCreateFacet.sol"
+      ],
+      "versionPragmas": [
+        "0.8.17"
+      ],
+      "artifacts": [
+        "Hyperlane"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/hyperlane/interfaces/IAbacusConnectionManager.sol": {
+      "lastModificationDate": 1670772463777,
+      "contentHash": "2a0970346903500d99b6e1b4bcaf6665",
+      "sourceName": "contracts/external/hyperlane/interfaces/IAbacusConnectionManager.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./IOutbox.sol"
+      ],
+      "versionPragmas": [
+        ">=0.6.11"
+      ],
+      "artifacts": [
+        "IAbacusConnectionManager"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/upgradeInitializers/DiamondMultiInit.sol": {
+      "lastModificationDate": 1665909418355,
+      "contentHash": "5abf9a4a6619698205ca41656be08a07",
+      "sourceName": "contracts/upgradeInitializers/DiamondMultiInit.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libraries/LibDiamond.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "DiamondMultiInit"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/DiamondCutFacet.sol": {
+      "lastModificationDate": 1665909418351,
+      "contentHash": "136edb1458df7ffe17f4d0b51b5f3c53",
+      "sourceName": "contracts/facets/DiamondCutFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IDiamondCut.sol",
+        "../libraries/LibDiamond.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "DiamondCutFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/OwnershipFacet.sol": {
+      "lastModificationDate": 1666609860826,
+      "contentHash": "ad4810e9a8f93fe9726288f8daca677c",
+      "sourceName": "contracts/facets/OwnershipFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libraries/LibDiamond.sol",
+        "../interfaces/IERC173.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "OwnershipFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/DiamondLoupeFacet.sol": {
+      "lastModificationDate": 1669209237284,
+      "contentHash": "df38e55a008519c4b395e191b82ea8c7",
+      "sourceName": "contracts/facets/DiamondLoupeFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libraries/LibDiamond.sol",
+        "../interfaces/IDiamondLoupe.sol",
+        "../interfaces/IERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "DiamondLoupeFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/InterchainFacet.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "14dc223d92a2eb574eabd57508a3e970",
+      "sourceName": "contracts/facets/InterchainFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libraries/LibTasks.sol",
+        "../libraries/LibInterchain.sol",
+        "../facets/TokenDataFacet.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "InterchainFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/AccountFacet.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "7b366ce9d4990150d4e176661deacf88",
+      "sourceName": "contracts/facets/AccountFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libraries/LibTasks.sol",
+        "../libraries/LibInterchain.sol",
+        "../facets/TokenDataFacet.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "AccountFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/TaskDataFacet.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "62b679c20b158b8f9098506dd8aeb2dc",
+      "sourceName": "contracts/facets/TaskDataFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libraries/LibTasks.sol",
+        "../libraries/LibUtils.sol",
+        "../contracts/TaskContract.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "TaskDataFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/WitnetFacet.sol": {
+      "lastModificationDate": 1680443021739,
+      "contentHash": "689a7fe13a5e8bebdc0b16826e1a1426",
+      "sourceName": "contracts/facets/WitnetFacet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libraries/LibUtils.sol",
+        "witnet-solidity-bridge/contracts/UsingWitnet.sol",
+        "witnet-solidity-bridge/contracts/apps/WitnetRequestFactory.sol",
+        "../libraries/LibWitnetRequest.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "WitnetFacet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/LibWitnetRequest.sol": {
+      "lastModificationDate": 1680188951045,
+      "contentHash": "f9d64666646e06249f2fedffb5e96a19",
+      "sourceName": "contracts/libraries/LibWitnetRequest.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "witnet-solidity-bridge/contracts/WitnetRequestBoard.sol",
+        "witnet-solidity-bridge/contracts/apps/WitnetRequestFactory.sol",
+        "witnet-solidity-bridge/contracts/libs/WitnetLib.sol",
+        "@openzeppelin/contracts/utils/math/Math.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "LibWitnetRequest"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/UsingWitnet.sol": {
+      "lastModificationDate": 1680287625617,
+      "contentHash": "3fe563451206c920e8bf77f014eda99b",
+      "sourceName": "witnet-solidity-bridge/contracts/UsingWitnet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./WitnetRequestBoard.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "UsingWitnet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/apps/WitnetRequestFactory.sol": {
+      "lastModificationDate": 1680287625665,
+      "contentHash": "af7adf5710e7a30d1c92e00a8fa5fde6",
+      "sourceName": "witnet-solidity-bridge/contracts/apps/WitnetRequestFactory.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol",
+        "../data/WitnetRequestFactoryData.sol",
+        "../impls/WitnetUpgradableBase.sol",
+        "../patterns/Clonable.sol",
+        "../interfaces/V2/IWitnetRequestFactory.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "WitnetRequestFactory"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/WitnetRequestBoard.sol": {
+      "lastModificationDate": 1680287625629,
+      "contentHash": "e11ecd07194daf4d4f72c8ed0fedff27",
+      "sourceName": "witnet-solidity-bridge/contracts/WitnetRequestBoard.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./interfaces/IWitnetRequestBoardEvents.sol",
+        "./interfaces/IWitnetRequestBoardReporter.sol",
+        "./interfaces/IWitnetRequestBoardRequestor.sol",
+        "./interfaces/IWitnetRequestBoardView.sol",
+        "./interfaces/IWitnetRequestParser.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "WitnetRequestBoard"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/libs/WitnetLib.sol": {
+      "lastModificationDate": 1680287625789,
+      "contentHash": "6ce9444bf2aeab8cc358733202a8d09e",
+      "sourceName": "witnet-solidity-bridge/contracts/libs/WitnetLib.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./WitnetV2.sol"
+      ],
+      "versionPragmas": [
+        ">=0.8.0 <0.9.0"
+      ],
+      "artifacts": [
+        "WitnetLib"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@openzeppelin/contracts/utils/math/Math.sol": {
+      "lastModificationDate": 1679869055035,
+      "contentHash": "b9c58920ce74d6dc819161786112e7ee",
+      "sourceName": "@openzeppelin/contracts/utils/math/Math.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Math"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/interfaces/IWitnetRequestBoardEvents.sol": {
+      "lastModificationDate": 1680287625741,
+      "contentHash": "9f37d25c57e3f3fe0d9090aa2b8080f2",
+      "sourceName": "witnet-solidity-bridge/contracts/interfaces/IWitnetRequestBoardEvents.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "IWitnetRequestBoardEvents"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/interfaces/IWitnetRequestBoardView.sol": {
+      "lastModificationDate": 1680287625749,
+      "contentHash": "cd1e9feed2726a66a005509c646a5112",
+      "sourceName": "witnet-solidity-bridge/contracts/interfaces/IWitnetRequestBoardView.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libs/Witnet.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "IWitnetRequestBoardView"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/interfaces/IWitnetRequestBoardRequestor.sol": {
+      "lastModificationDate": 1680287625745,
+      "contentHash": "4027825486c65478889c6dbadfd3c3bd",
+      "sourceName": "witnet-solidity-bridge/contracts/interfaces/IWitnetRequestBoardRequestor.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libs/Witnet.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "IWitnetRequestBoardRequestor"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/interfaces/IWitnetRequestBoardReporter.sol": {
+      "lastModificationDate": 1680287625745,
+      "contentHash": "965b1a6b2779d4943d626435bd527397",
+      "sourceName": "witnet-solidity-bridge/contracts/interfaces/IWitnetRequestBoardReporter.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "IWitnetRequestBoardReporter"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/interfaces/IWitnetRequestParser.sol": {
+      "lastModificationDate": 1680287625753,
+      "contentHash": "a614981e17be5eadae252b2153713313",
+      "sourceName": "witnet-solidity-bridge/contracts/interfaces/IWitnetRequestParser.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../libs/Witnet.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "IWitnetRequestParser"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/libs/Witnet.sol": {
+      "lastModificationDate": 1680287625769,
+      "contentHash": "171d230badeefb39516db8e4320b5a5e",
+      "sourceName": "witnet-solidity-bridge/contracts/libs/Witnet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./WitnetCBOR.sol",
+        "../interfaces/IWitnetRequest.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "Witnet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/interfaces/IWitnetRequest.sol": {
+      "lastModificationDate": 1680287625733,
+      "contentHash": "83d4c6b25c4d7187b7f78887b27dd3dd",
+      "sourceName": "witnet-solidity-bridge/contracts/interfaces/IWitnetRequest.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "IWitnetRequest"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/libs/WitnetCBOR.sol": {
+      "lastModificationDate": 1680287625773,
+      "contentHash": "437a55d4903b56fd29e746c85b04233a",
+      "sourceName": "witnet-solidity-bridge/contracts/libs/WitnetCBOR.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./WitnetBuffer.sol"
+      ],
+      "versionPragmas": [
+        ">=0.8.0 <0.9.0"
+      ],
+      "artifacts": [
+        "WitnetCBOR"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/libs/WitnetBuffer.sol": {
+      "lastModificationDate": 1680287625769,
+      "contentHash": "bd16cecd92026339cb5deff233157c81",
+      "sourceName": "witnet-solidity-bridge/contracts/libs/WitnetBuffer.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.0 <0.9.0"
+      ],
+      "artifacts": [
+        "WitnetBuffer"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/data/WitnetRequestFactoryData.sol": {
+      "lastModificationDate": 1680287625689,
+      "contentHash": "16f705f56f18d411adf68d71c0944f83",
+      "sourceName": "witnet-solidity-bridge/contracts/data/WitnetRequestFactoryData.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../requests/WitnetRequestTemplate.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "WitnetRequestFactoryData"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/patterns/Clonable.sol": {
+      "lastModificationDate": 1680287625825,
+      "contentHash": "9034d421d9e0a4a7b7a4d54c0e2dada6",
+      "sourceName": "witnet-solidity-bridge/contracts/patterns/Clonable.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./Initializable.sol"
+      ],
+      "versionPragmas": [
+        ">=0.6.0 <0.9.0"
+      ],
+      "artifacts": [
+        "Clonable"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/interfaces/V2/IWitnetRequestFactory.sol": {
+      "lastModificationDate": 1680287625765,
+      "contentHash": "9c5810b7ac2473036ef380dd85fec4b4",
+      "sourceName": "witnet-solidity-bridge/contracts/interfaces/V2/IWitnetRequestFactory.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./IWitnetBytecodes.sol",
+        "../../requests/WitnetRequest.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "IWitnetRequestFactory"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/impls/WitnetUpgradableBase.sol": {
+      "lastModificationDate": 1680287625697,
+      "contentHash": "04a62e4ad5b35ec4ba36192ba370cb7d",
+      "sourceName": "witnet-solidity-bridge/contracts/impls/WitnetUpgradableBase.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../patterns/ERC165.sol",
+        "../patterns/Ownable2Step.sol",
+        "../patterns/ReentrancyGuard.sol",
+        "../patterns/Upgradeable.sol",
+        "./WitnetProxy.sol"
+      ],
+      "versionPragmas": [
+        ">=0.8.0 <0.9.0"
+      ],
+      "artifacts": [
+        "WitnetUpgradableBase"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@openzeppelin/contracts/utils/introspection/ERC165Checker.sol": {
+      "lastModificationDate": 1679869055031,
+      "contentHash": "9d0b884f85f45afc3ab03ba8256aa0f1",
+      "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./IERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC165Checker"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/requests/WitnetRequestTemplate.sol": {
+      "lastModificationDate": 1680287625869,
+      "contentHash": "d735bdc483fa890322c89d971467344e",
+      "sourceName": "witnet-solidity-bridge/contracts/requests/WitnetRequestTemplate.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./WitnetRequest.sol",
+        "../libs/WitnetV2.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "WitnetRequestTemplate"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/libs/WitnetV2.sol": {
+      "lastModificationDate": 1680287625797,
+      "contentHash": "c13c5be0ff58d0d29e812018141b3510",
+      "sourceName": "witnet-solidity-bridge/contracts/libs/WitnetV2.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./Witnet.sol"
+      ],
+      "versionPragmas": [
+        ">=0.8.0 <0.9.0"
+      ],
+      "artifacts": [
+        "WitnetV2"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/requests/WitnetRequest.sol": {
+      "lastModificationDate": 1680287625857,
+      "contentHash": "17d09a7a2d7646f6884ab23a4f300aa7",
+      "sourceName": "witnet-solidity-bridge/contracts/requests/WitnetRequest.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./WitnetRequestTemplate.sol",
+        "../libs/WitnetV2.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "WitnetRequest"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/patterns/Initializable.sol": {
+      "lastModificationDate": 1680287625829,
+      "contentHash": "c9938e967aefe48615a5c9be8c6fc612",
+      "sourceName": "witnet-solidity-bridge/contracts/patterns/Initializable.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        ">=0.8.0 <0.9.0"
+      ],
+      "artifacts": []
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol": {
+      "lastModificationDate": 1679869056131,
+      "contentHash": "e9b0b058deea0144d9399002b67229f2",
+      "sourceName": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../../utils/AddressUpgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.2"
+      ],
+      "artifacts": [
+        "Initializable"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol": {
+      "lastModificationDate": 1679869056119,
+      "contentHash": "228f256dbb21393bc9ad02648e222f74",
+      "sourceName": "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "AddressUpgradeable"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/interfaces/V2/IWitnetBytecodes.sol": {
+      "lastModificationDate": 1680287625761,
+      "contentHash": "29d4901bd05ec6c07c472b63d6fa2abf",
+      "sourceName": "witnet-solidity-bridge/contracts/interfaces/V2/IWitnetBytecodes.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../../libs/WitnetV2.sol"
+      ],
+      "versionPragmas": [
+        ">=0.8.0 <0.9.0"
+      ],
+      "artifacts": [
+        "IWitnetBytecodes"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/patterns/ERC165.sol": {
+      "lastModificationDate": 1680287625829,
+      "contentHash": "40882ff7f76ed3583a8ddbe33d5029b3",
+      "sourceName": "witnet-solidity-bridge/contracts/patterns/ERC165.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/introspection/ERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": []
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/patterns/Ownable2Step.sol": {
+      "lastModificationDate": 1680287625833,
+      "contentHash": "e165dcbe05557c512a7803ca93c36d63",
+      "sourceName": "witnet-solidity-bridge/contracts/patterns/Ownable2Step.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable2Step.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": []
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/patterns/ReentrancyGuard.sol": {
+      "lastModificationDate": 1680287625853,
+      "contentHash": "ab101914d95cf6b74ae2776735b08f8f",
+      "sourceName": "witnet-solidity-bridge/contracts/patterns/ReentrancyGuard.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/security/ReentrancyGuard.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": []
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/patterns/Upgradeable.sol": {
+      "lastModificationDate": 1680287625853,
+      "contentHash": "f7566e045211087556857d93720ee0a1",
+      "sourceName": "witnet-solidity-bridge/contracts/patterns/Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./Initializable.sol",
+        "./Proxiable.sol"
+      ],
+      "versionPragmas": [
+        ">=0.6.0 <0.9.0"
+      ],
+      "artifacts": [
+        "Upgradeable"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/impls/WitnetProxy.sol": {
+      "lastModificationDate": 1680287625693,
+      "contentHash": "7fbec8b53bc8cfcfcf467a527f3f7af2",
+      "sourceName": "witnet-solidity-bridge/contracts/impls/WitnetProxy.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../patterns/Upgradeable.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.0 <0.9.0"
+      ],
+      "artifacts": [
+        "WitnetProxy"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
+      "lastModificationDate": 1679869055031,
+      "contentHash": "0e7db055ce108f9da7bb6686a00287c0",
+      "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./IERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC165"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+      "lastModificationDate": 1679869055035,
+      "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
+      "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC165"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@openzeppelin/contracts/access/Ownable2Step.sol": {
+      "lastModificationDate": 1679869055015,
+      "contentHash": "9a66ec5f916493cff9d9ef23b16e28d7",
+      "sourceName": "@openzeppelin/contracts/access/Ownable2Step.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Ownable2Step"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
+      "lastModificationDate": 1679869055015,
+      "contentHash": "e436cea06129be2c73cda4b1acc848b5",
+      "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Ownable"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@openzeppelin/contracts/utils/Context.sol": {
+      "lastModificationDate": 1679869055027,
+      "contentHash": "5f2c5c4b6af2dd4551027144797bc8be",
+      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Context"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol": {
+      "lastModificationDate": 1679869055163,
+      "contentHash": "a8e2d1c30042f64ed89c9d4157eb6cb9",
+      "sourceName": "@openzeppelin/contracts/security/ReentrancyGuard.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ReentrancyGuard"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/node_modules/witnet-solidity-bridge/contracts/patterns/Proxiable.sol": {
+      "lastModificationDate": 1680287625841,
+      "contentHash": "999ba25f9027f03599b84cce3515921d",
+      "sourceName": "witnet-solidity-bridge/contracts/patterns/Proxiable.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.0 <0.9.0"
+      ],
+      "artifacts": [
+        "Proxiable"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/contracts/Wormhole.sol": {
+      "lastModificationDate": 1674660612216,
+      "contentHash": "6e0dfaf7bf6147fc8bfcb23f04cd8a37",
+      "sourceName": "contracts/contracts/Wormhole.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../external/wormhole/interfaces/IWormhole.sol",
+        "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol",
+        "../facets/TaskCreateFacet.sol",
+        "../contracts/TaskContract.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "0.8.17"
+      ],
+      "artifacts": [
+        "Wormhole"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/erc1155/ERC1155MockReceiver.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "9925583daf69738d0b870dc56ba91c2a",
+      "sourceName": "contracts/external/erc1155/ERC1155MockReceiver.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./Common.sol",
+        "../../interfaces/IERC1155TokenReceiver.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC1155MockReceiver"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/erc1155/Common.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "27eb7567499cfe8111480824534f9931",
+      "sourceName": "contracts/external/erc1155/Common.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "CommonConstants"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/erc1155/ERC1155MockNonReceiver.sol": {
+      "lastModificationDate": 1679335248821,
+      "contentHash": "550a31776930ddfa92241f75c7bc8672",
+      "sourceName": "contracts/external/erc1155/ERC1155MockNonReceiver.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./Common.sol",
+        "../../interfaces/IERC1155TokenReceiver.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC1155MockNonReceiver"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/hyperlane/interfaces/IInterchainGasPaymaster.sol": {
+      "lastModificationDate": 1670772463777,
+      "contentHash": "dd8ac4b84bebe86929df34f6710a45b0",
+      "sourceName": "contracts/external/hyperlane/interfaces/IInterchainGasPaymaster.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.11"
+      ],
+      "artifacts": [
+        "IInterchainGasPaymaster"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/hyperlane/interfaces/IMessageRecipient.sol": {
+      "lastModificationDate": 1670772463777,
+      "contentHash": "528e49377e9af17bc359f85250fe99c2",
+      "sourceName": "contracts/external/hyperlane/interfaces/IMessageRecipient.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.11"
+      ],
+      "artifacts": [
+        "IMessageRecipient"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/layerzero/interfaces/IStargateFactory.sol": {
+      "lastModificationDate": 1670866465836,
+      "contentHash": "8c77c05d36788c79196606eb7ae81ef9",
+      "sourceName": "contracts/external/layerzero/interfaces/IStargateFactory.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "./IStargatePool.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "IStargateFactory"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/layerzero/interfaces/IStargatePool.sol": {
+      "lastModificationDate": 1670866465836,
+      "contentHash": "a8f5cf9f90c0e9d0afdd34ec58052000",
+      "sourceName": "contracts/external/layerzero/interfaces/IStargatePool.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "IStargatePool"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/layerzero/interfaces/IStargateReceiver.sol": {
+      "lastModificationDate": 1670866465836,
+      "contentHash": "7c1ad8081761de7854553f758f884738",
+      "sourceName": "contracts/external/layerzero/interfaces/IStargateReceiver.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "IStargateReceiver"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/layerzero/interfaces/IStargateRouter.sol": {
+      "lastModificationDate": 1670866465836,
+      "contentHash": "fc1bdba81b32d306c67f46a6cbebfbeb",
+      "sourceName": "contracts/external/layerzero/interfaces/IStargateRouter.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "IStargateRouter"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/layerzero/interfaces/IStargateWidget.sol": {
+      "lastModificationDate": 1670866465836,
+      "contentHash": "97c4c97280af1c3dd99f5c83148a6cd3",
+      "sourceName": "contracts/external/layerzero/interfaces/IStargateWidget.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [
+        "../interfaces/IStargateRouter.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "IStargateWidget"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/external/layerzero/interfaces/IStargateRouterETH.sol": {
+      "lastModificationDate": 1670866465836,
+      "contentHash": "0b23fc88addf01def6084c82438f41c1",
+      "sourceName": "contracts/external/layerzero/interfaces/IStargateRouterETH.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "IStargateRouterETH"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/ERC5633Demo.sol": {
+      "lastModificationDate": 1666609950450,
+      "contentHash": "859281714f8d5be1b41d64b26d960ecc",
+      "sourceName": "contracts/facets/ERC5633Demo.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/Test1Facet.sol": {
+      "lastModificationDate": 1665911083630,
+      "contentHash": "6b8fdc47e14fe9e7075a484356ae0a9b",
+      "sourceName": "contracts/facets/Test1Facet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Test1Facet",
+        "TestLib"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/Test2Facet.sol": {
+      "lastModificationDate": 1665909418355,
+      "contentHash": "b70aba761300db2191a982cec78660ab",
+      "sourceName": "contracts/facets/Test2Facet.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Test2Facet"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/facets/tokenstorage/ERC1155FacetStorage.sol": {
+      "lastModificationDate": 1674660377468,
+      "contentHash": "88d9e26a5149a1aa09cba5c4dc48142a",
+      "sourceName": "contracts/facets/tokenstorage/ERC1155FacetStorage.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": []
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/interfaces/IDistributionExecutable.sol": {
+      "lastModificationDate": 1665910590318,
+      "contentHash": "2113077b3718a2b0a61a6b46706b8dd5",
+      "sourceName": "contracts/interfaces/IDistributionExecutable.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.12"
+      ],
+      "artifacts": [
+        "IDistributionExecutable"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/interfaces/ITaskContract.sol": {
+      "lastModificationDate": 1674660377468,
+      "contentHash": "5527bb27e0cdda4bac25f10f2632869b",
+      "sourceName": "contracts/interfaces/ITaskContract.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ITaskContract2"
+      ]
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/LibAppStorage.sol": {
+      "lastModificationDate": 1674660612220,
+      "contentHash": "cd687491b359e54c10c400922a6f42f5",
+      "sourceName": "contracts/libraries/LibAppStorage.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/interchain/LibAxelar.sol": {
+      "lastModificationDate": 1671121982303,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "contracts/libraries/interchain/LibAxelar.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/interchain/LibHyperlane.sol": {
+      "lastModificationDate": 1671121982303,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "contracts/libraries/interchain/LibHyperlane.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/interchain/LibLayerzero.sol": {
+      "lastModificationDate": 1671121982303,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "contracts/libraries/interchain/LibLayerzero.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
+    "/home/user/Documents/mainstream/dodao-diamond/contracts/libraries/interchain/LibWormhole.sol": {
+      "lastModificationDate": 1671121982303,
+      "contentHash": "d41d8cd98f00b204e9800998ecf8427e",
+      "sourceName": "contracts/libraries/interchain/LibWormhole.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": true
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        },
+        "zksolc": {
+          "version": "1.3.5",
+          "compilerSource": "binary",
+          "settings": {
+            "compilerPath": "",
+            "experimental": {}
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    }
+  }
+}

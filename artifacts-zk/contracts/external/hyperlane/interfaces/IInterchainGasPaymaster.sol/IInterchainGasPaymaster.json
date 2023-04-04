@@ -1,0 +1,30 @@
+{
+  "_format": "hh-zksolc-artifact-1",
+  "contractName": "IInterchainGasPaymaster",
+  "sourceName": "contracts/external/hyperlane/interfaces/IInterchainGasPaymaster.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_outbox",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_leafIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "payGasFor",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "factoryDeps": {}
+}

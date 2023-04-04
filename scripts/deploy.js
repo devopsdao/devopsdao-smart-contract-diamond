@@ -132,28 +132,28 @@ const dodaoFacets = [
       'LibTokenData',
     ]
   },
-  {
-    name: 'InterchainFacet',
-  },
-  {
-    name: 'AxelarFacet',
-  },
-  {
-    name: 'HyperlaneFacet',
-  },
-  {
-    name: 'LayerzeroFacet',
-  },
-  {
-    name: 'WormholeFacet',
-  },
-  {
-    name: 'WitnetFacet',
-    arguments: [witnetAddresses.WitnetRequestBoard, witnetAddresses.WitnetRequestFactory],
-    libraries: [
-      'LibUtils',
-    ]
-  },
+  // {
+  //   name: 'InterchainFacet',
+  // },
+  // {
+  //   name: 'AxelarFacet',
+  // },
+  // {
+  //   name: 'HyperlaneFacet',
+  // },
+  // {
+  //   name: 'LayerzeroFacet',
+  // },
+  // {
+  //   name: 'WormholeFacet',
+  // },
+  // {
+  //   name: 'WitnetFacet',
+  //   arguments: [witnetAddresses.WitnetRequestBoard, witnetAddresses.WitnetRequestFactory],
+  //   libraries: [
+  //     'LibUtils',
+  //   ]
+  // },
 ]
 
 const {
@@ -172,7 +172,7 @@ async function deployDiamond () {
   // DiamondInit provides a function that is called when the diamond is upgraded or deployed to initialize state variables
   // Read about how the diamondCut function works in the EIP2535 Diamonds standard
   const DiamondInit = await ethers.getContractFactory('DiamondInit')
-  const diamondInit = await DiamondInit.deploy()
+  const diamondInit = await DiamondInit.deploy({type: 2})
   await diamondInit.deployed()
   console.log('DiamondInit deployed:', diamondInit.address)
 
@@ -199,18 +199,18 @@ async function deployDiamond () {
     initCalldata: functionCall
   }
 
-  console.log(diamondArgs)
+  // console.log(diamondArgs)
 
-  console.log(facetCuts)
+  // console.log(facetCuts)
 
   // deploy Diamond
   const Diamond = await ethers.getContractFactory('Diamond')
-  const diamond = await Diamond.deploy(facetCuts, diamondArgs)
+  const diamond = await Diamond.deploy(facetCuts, diamondArgs, {type: 2})
   await diamond.deployed()
   console.log('')
   console.log('Diamond deployed:', diamond.address)
 
-  const existingAddresses = await fs.readFile(`${this.__hardhatContext.environment.config.abiExporter[0].path}/addresses.json`);
+  const existingAddresses = await fs.readFile(`${hre.config.abiExporter[0].path}/addresses.json`);
   if(typeof existingAddresses !== 'undefined'){
     contractAddresses = JSON.parse(existingAddresses);
   }
@@ -220,15 +220,16 @@ async function deployDiamond () {
     };
   }
 
-  contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId] = {};
-  contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'] = diamond.address;
+  contractAddresses.contracts[hre.network.config.chainId] = {};
+  contractAddresses.contracts[hre.network.config.chainId]['Diamond'] = diamond.address;
 
   await fs.writeFile(path.join(__dirname, `../abi/addresses.json`), JSON.stringify(contractAddresses));
 
-  await fs.writeFile(`${this.__hardhatContext.environment.config.abiExporter[0].path}/addresses.json`, JSON.stringify(contractAddresses));
+  await fs.writeFile(`${hre.config.abiExporter[0].path}/addresses.json`, JSON.stringify(contractAddresses));
 
   // returning the address of the diamond
-  return diamond.address
+  console.log('deploy complete')
+  return {diamondAddress: diamond.address, facetCount: facetCuts.length}
 }
 
 
@@ -241,7 +242,7 @@ async function upgradeDiamondFacets(facets, libraries) {
   else{
     return false;
   }
-  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
+  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
   console.log(`upgrading Diamond: ${diamondAddress}`)
 
 
@@ -328,7 +329,7 @@ async function upgradeDiamondFacets(facets, libraries) {
           action: FacetCutAction.Remove,
           functionSelectors: existingFacetSelectors[facet.name]
         }],
-        ethers.constants.AddressZero, '0x', { gasLimit: 800000 })
+        ethers.constants.AddressZero, '0x', { type: 2 })
       receipt = await tx.wait()
       console.log(`${facet.name} removed`)
     }
@@ -343,7 +344,7 @@ async function upgradeDiamondFacets(facets, libraries) {
 
   console.log('upgrading diamond with a new facets')
   // Any number of functions from any number of facets can be added/replaced/removed in a
-  tx = await diamondCutFacet.diamondCut(facetCuts, ethers.constants.AddressZero, '0x', { gasLimit: 8000000 })
+  tx = await diamondCutFacet.diamondCut(facetCuts, ethers.constants.AddressZero, '0x', { type: 2 })
   receipt = await tx.wait()
   if (!receipt.status) {
     throw Error(`Diamond upgrade failed: ${tx.hash}`)
@@ -363,7 +364,7 @@ async function upgradeDiamondFacets(facets, libraries) {
 }
 
 async function upgradeDiamondAxelarFacet () {
-  const existingAddresses = await fs.readFile(`${this.__hardhatContext.environment.config.abiExporter[0].path}/addresses.json`);
+  const existingAddresses = await fs.readFile(`${hre.config.abiExporter[0].path}/addresses.json`);
   let contractAddresses;
   if(typeof existingAddresses !== 'undefined'){
     contractAddresses = JSON.parse(existingAddresses);
@@ -371,7 +372,7 @@ async function upgradeDiamondAxelarFacet () {
   else{
     return false;
   }
-  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
+  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
   console.log(`upgrading Diamond: ${diamondAddress}`)
 
 
@@ -420,7 +421,7 @@ async function upgradeDiamondAxelarFacet () {
       functionSelectors: getSelectors(AxelarGMP)
     }
   ]
-  tx = await diamondCutFacet.diamondCut(cut, ethers.constants.AddressZero, '0x', { gasLimit: 8000000 })
+  tx = await diamondCutFacet.diamondCut(cut, ethers.constants.AddressZero, '0x', { type: 2 })
   receipt = await tx.wait()
   if (!receipt.status) {
     throw Error(`Diamond upgrade failed: ${tx.hash}`)
@@ -453,7 +454,7 @@ async function deployLibs(libraries){
       console.log(`${library.name} libraries: ${JSON.stringify(Libs)}`)
       Lib = await ethers.getContractFactory(library.name, {libraries: Libs})
     }
-    const lib = await Lib.deploy();
+    const lib = await Lib.deploy({type: 2});
     await lib.deployed();
     libAddresses[library.name] = lib.address;
     console.log(`${library.name} deployed:`, lib.address)
@@ -482,10 +483,10 @@ async function deployFacets(FacetInits, libAddresses){
     }
     let facet;
     if(typeof FacetInit.arguments != 'undefined'){
-      facet = await Facet.deploy(...FacetInit.arguments, { gasLimit: 8000000 })
+      facet = await Facet.deploy(...FacetInit.arguments, { type: 2 })
     }
     else{
-      facet = await Facet.deploy({ gasLimit: 8000000 })
+      facet = await Facet.deploy({ type: 2 })
     }
     await facet.deployed()
     console.log(`${FacetInit.name} deployed: ${facet.address}`)

@@ -1,0 +1,195 @@
+{
+  "_format": "hh-zksolc-artifact-1",
+  "contractName": "IStargateWidget",
+  "sourceName": "contracts/external/layerzero/interfaces/IStargateWidget.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes2",
+          "name": "partnerId",
+          "type": "bytes2"
+        }
+      ],
+      "name": "PartnerSwap",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes2",
+          "name": "partnerId",
+          "type": "bytes2"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "tenthBps",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "widgetFee",
+          "type": "uint256"
+        }
+      ],
+      "name": "WidgetSwapped",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes2",
+          "name": "_partnerId",
+          "type": "bytes2"
+        }
+      ],
+      "name": "partnerSwap",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint16",
+          "name": "_dstChainId",
+          "type": "uint16"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amountLD",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_minAmountLD",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_to",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes2",
+          "name": "_partnerId",
+          "type": "bytes2"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "tenthBps",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "feeCollector",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct IStargateWidget.FeeObj",
+          "name": "_feeObj",
+          "type": "tuple"
+        }
+      ],
+      "name": "swapETH",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint16",
+          "name": "_dstChainId",
+          "type": "uint16"
+        },
+        {
+          "internalType": "uint16",
+          "name": "_srcPoolId",
+          "type": "uint16"
+        },
+        {
+          "internalType": "uint16",
+          "name": "_dstPoolId",
+          "type": "uint16"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amountLD",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_minAmountLD",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "dstGasForCall",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "dstNativeAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "dstNativeAddr",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct IStargateRouter.lzTxObj",
+          "name": "_lzTxParams",
+          "type": "tuple"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_to",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes2",
+          "name": "_partnerId",
+          "type": "bytes2"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "tenthBps",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "feeCollector",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct IStargateWidget.FeeObj",
+          "name": "_feeObj",
+          "type": "tuple"
+        }
+      ],
+      "name": "swapTokens",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "factoryDeps": {}
+}

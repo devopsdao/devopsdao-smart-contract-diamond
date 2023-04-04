@@ -157,8 +157,8 @@ task(
   .addParam("names", "NFT names")
   .setAction(
   async function (taskArguments, hre, runSuper) {
-    signers = await ethers.getSigners();
-    console.log(signers)
+    // signers = await ethers.getSigners();
+    // console.log(signers)
     console.log(taskArguments)
     console.log("creating NFTs");
     console.log('')

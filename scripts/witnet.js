@@ -264,21 +264,41 @@ console.log(requestHashes)
   //   console.log(requestHashes);
   // }
 
-  const diamondAddress =
-    contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]["Diamond"];
-  console.log(`using Diamond: ${diamondAddress}`);
 
-  let witnetFacet = await ethers.getContractAt("WitnetFacet", diamondAddress);
+  let IWitnetRequestFactory = await ethers.getContractAt("IWitnetRequestFactory", witnetAddresses.WitnetRequestFactory);
 
-  console.log("building witnet request template");
-  // console.log(witnetAddresses.WitnetRequestFactory)
+  // const witnetRequestFactory = new IWitnetRequestFactory(witnetAddresses.WitnetRequestFactory)
+
+  console.log(`NewDataSourceHash`)
   console.log(requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash)
+
+  console.log(`NewRadonReducerHash`)
   console.log(requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash)
 
-
-  const requestTemplate = await witnetFacet.buildRequestTemplate(
-    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash,
-    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash
+  const valuesArrayRequestTemplate = await IWitnetRequestFactory.buildRequestTemplate(
+    /* retrieval templates */ [requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash],
+    /* aggregation reducer */ requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash,
+    /* witnessing reducer  */ requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash,
+    /* (reserved) */ 0
   );
+
+  console.log(valuesArrayRequestTemplate)
+
+  // const diamondAddress =
+  //   contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]["Diamond"];
+  // console.log(`using Diamond: ${diamondAddress}`);
+
+  // let witnetFacet = await ethers.getContractAt("WitnetFacet", diamondAddress);
+
+  // console.log("building witnet request template");
+  // // console.log(witnetAddresses.WitnetRequestFactory)
+  // console.log(requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash)
+  // console.log(requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash)
+
+
+  // const requestTemplate = await witnetFacet.buildRequestTemplate(
+  //   requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash,
+  //   requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash
+  // );
   // console.log(requestTemplate)
 }

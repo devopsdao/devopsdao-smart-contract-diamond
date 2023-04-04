@@ -24,6 +24,7 @@ const { deployDiamond } = require("../scripts/deploy.js");
 
 describe("DiamondTest", async function () {
   let diamondAddress;
+  let facetCount;
   let diamondCutFacet;
   let diamondLoupeFacet;
   let ownershipFacet;
@@ -33,7 +34,40 @@ describe("DiamondTest", async function () {
   let addresses = [];
 
   before(async function () {
-    diamondAddress = await deployDiamond();
+
+    // signers = await ethers.getSigners();
+    // console.log(signers)
+
+    // console.log(`${this.__hardhatContext.environment.config.abiExporter[0].path}/addresses.json`)
+
+    // console.log('HREEEEEEEEEEEEEEEEEEEEEEEEEEEE')
+    // console.log(`${hre.config.abiExporter[0].path}/addresses.json`)
+    // console.log(fandnadofndaonfdo)
+
+    const existingAddresses = fs.readFileSync(path.join(__dirname, `../abi/addresses.json`));
+    let contractAddresses;
+
+    console.log(hre.network.config.chainId)
+
+    testExistingDiamond = false
+
+    if(typeof existingAddresses !== 'undefined' && testExistingDiamond){
+      contractAddresses = JSON.parse(existingAddresses);
+    }
+    console.log(contractAddresses)
+
+    if(typeof contractAddresses !== 'undefined'){
+      console.log('using existing diamond')
+      diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
+      facetCount = 14;
+    }
+    else{
+      console.log('deploying diamond');
+      ({diamondAddress, facetCount} = await deployDiamond());
+      console.log('deploying diamond');
+    }
+    console.log(`testing Diamond: ${diamondAddress}`);
+
     diamondCutFacet = await ethers.getContractAt("DiamondCutFacet", diamondAddress);
     diamondLoupeFacet = await ethers.getContractAt("DiamondLoupeFacet", diamondAddress);
     ownershipFacet = await ethers.getContractAt("OwnershipFacet", diamondAddress);
@@ -51,12 +85,14 @@ describe("DiamondTest", async function () {
   });
 
   it("should have ten facets -- call to facetAddresses function", async () => {
+
+    console.log(diamondLoupeFacet)
     for (const address of await diamondLoupeFacet.facetAddresses()) {
       addresses.push(address);
       // console.log(address);
     }
 
-    assert.equal(addresses.length, 13);
+    assert.equal(addresses.length, facetCount);
   });
 
   // it('should test NFTFacet', async () => {
@@ -156,26 +192,26 @@ describe("DiamondTest", async function () {
         action: FacetCutAction.Add,
         functionSelectors: getSelectors(tokenDataFacet),
       },
-      {
-        facetAddress: addresses[8],
-        action: FacetCutAction.Add,
-        functionSelectors: getSelectors(axelarFacet),
-      },
-      {
-        facetAddress: addresses[9],
-        action: FacetCutAction.Add,
-        functionSelectors: getSelectors(hyperlaneFacet),
-      },
-      {
-        facetAddress: addresses[10],
-        action: FacetCutAction.Add,
-        functionSelectors: getSelectors(layerzeroFacet),
-      },
-      {
-        facetAddress: addresses[11],
-        action: FacetCutAction.Add,
-        functionSelectors: getSelectors(wormholeFacet),
-      },
+      // {
+      //   facetAddress: addresses[8],
+      //   action: FacetCutAction.Add,
+      //   functionSelectors: getSelectors(axelarFacet),
+      // },
+      // {
+      //   facetAddress: addresses[9],
+      //   action: FacetCutAction.Add,
+      //   functionSelectors: getSelectors(hyperlaneFacet),
+      // },
+      // {
+      //   facetAddress: addresses[10],
+      //   action: FacetCutAction.Add,
+      //   functionSelectors: getSelectors(layerzeroFacet),
+      // },
+      // {
+      //   facetAddress: addresses[11],
+      //   action: FacetCutAction.Add,
+      //   functionSelectors: getSelectors(wormholeFacet),
+      // },
     ];
     tx = await diamondCutFacet.diamondCut(cut, ethers.constants.AddressZero, "0x", { gasLimit: 8000000 });
     receipt = await tx.wait();
@@ -426,7 +462,8 @@ describe("dodao facets test", async function () {
       // console.log(encodedCall)
 
       createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData, {
-        gasLimit: 30000000,
+        // gasLimit: 30000000,
+        type: 2
       });
 
       // test event listener
@@ -436,6 +473,7 @@ describe("dodao facets test", async function () {
       });
     });
 
+    let getTaskContracts;
     it("tokenDataFacet getTaskContracts", async () => {
       getTaskContracts = await taskDataFacet.getTaskContracts();
 
@@ -448,12 +486,18 @@ describe("dodao facets test", async function () {
       );
       // expect(getNewTaskContractsBeforeBlacklist).to.have.members(getTaskContracts);
       assert.deepEqual(allTasks, getTaskContracts);
+      console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZAAAAAAAAAAAZZZZZZZZZZZZZZZZZ')
+      console.log(getTaskContracts)
     });
 
     it("tokenDataFacet addTaskToBlacklist", async () => {
+      console.log('pre addContractToBlacklist')
+      console.log(getTaskContracts)
+      console.log('pzzzrzze addContractToBlacklist')
       const addContractToBlacklist = await taskDataFacet
         .connect(signers[2])
         .addTaskToBlacklist(getTaskContracts[getTaskContracts.length - 1]);
+        console.log('post add addContractToBlacklist')
 
       const getNewTaskContractsAfterBlacklist = await taskDataFacet.connect(signers[0]).getTaskContractsByState("new");
       assert.deepEqual(getNewTaskContractsAfterBlacklist, []);
