@@ -1,0 +1,85 @@
+{
+  "_format": "hh-zksolc-artifact-1",
+  "contractName": "IWitnetRequestBoardRequestor",
+  "sourceName": "witnet-solidity-bridge/contracts/interfaces/IWitnetRequestBoardRequestor.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_queryId",
+          "type": "uint256"
+        }
+      ],
+      "name": "deleteQuery",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "reporter",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "drTxHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes",
+              "name": "cborBytes",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct Witnet.Response",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IWitnetRequest",
+          "name": "_addr",
+          "type": "address"
+        }
+      ],
+      "name": "postRequest",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "_queryId",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_queryId",
+          "type": "uint256"
+        }
+      ],
+      "name": "upgradeReward",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "factoryDeps": {}
+}

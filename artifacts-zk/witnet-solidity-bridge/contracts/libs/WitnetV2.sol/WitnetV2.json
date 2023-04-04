@@ -1,0 +1,353 @@
+{
+  "_format": "hh-zksolc-artifact-1",
+  "contractName": "WitnetV2",
+  "sourceName": "witnet-solidity-bridge/contracts/libs/WitnetV2.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "range",
+          "type": "uint256"
+        }
+      ],
+      "name": "IndexOutOfBounds",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "weiBalance",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "weiExpected",
+          "type": "uint256"
+        }
+      ],
+      "name": "InsufficientBalance",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "weiProvided",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "weiExpected",
+          "type": "uint256"
+        }
+      ],
+      "name": "InsufficientFee",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "opcode",
+          "type": "uint8"
+        }
+      ],
+      "name": "RadonFilterMissingArgs",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "expected",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "actual",
+          "type": "uint256"
+        }
+      ],
+      "name": "RadonRequestMissingArgs",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "RadonRequestNoSources",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint8",
+          "name": "read",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint8",
+          "name": "expected",
+          "type": "uint8"
+        }
+      ],
+      "name": "RadonRequestResultsMismatch",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "expected",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "actual",
+          "type": "uint256"
+        }
+      ],
+      "name": "RadonRequestSourcesArgsMismatch",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "bytecode",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "weight",
+          "type": "uint256"
+        }
+      ],
+      "name": "RadonRequestTooHeavy",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "percentage",
+          "type": "uint256"
+        }
+      ],
+      "name": "RadonSlaConsensusOutOfRange",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "witnessCollateral",
+          "type": "uint256"
+        }
+      ],
+      "name": "RadonSlaLowCollateral",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "RadonSlaNoReward",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "RadonSlaNoWitnesses",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "numWitnesses",
+          "type": "uint256"
+        }
+      ],
+      "name": "RadonSlaTooManyWitnesses",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "violator",
+          "type": "address"
+        }
+      ],
+      "name": "Unauthorized",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "method",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "schema",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "body",
+          "type": "string"
+        },
+        {
+          "internalType": "string[2][]",
+          "name": "headers",
+          "type": "string[2][]"
+        }
+      ],
+      "name": "UnsupportedDataRequestMethod",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "datatype",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxlength",
+          "type": "uint256"
+        }
+      ],
+      "name": "UnsupportedRadonDataType",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "opcode",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes",
+          "name": "args",
+          "type": "bytes"
+        }
+      ],
+      "name": "UnsupportedRadonFilterArgs",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "opcode",
+          "type": "uint8"
+        }
+      ],
+      "name": "UnsupportedRadonFilterOpcode",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "opcode",
+          "type": "uint8"
+        }
+      ],
+      "name": "UnsupportedRadonReducerOpcode",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "opcode",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes",
+          "name": "script",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "offset",
+          "type": "uint256"
+        }
+      ],
+      "name": "UnsupportedRadonReducerScript",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "script",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "offset",
+          "type": "uint256"
+        }
+      ],
+      "name": "UnsupportedRadonScript",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "script",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "cursor",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint8",
+          "name": "opcode",
+          "type": "uint8"
+        }
+      ],
+      "name": "UnsupportedRadonScriptOpcode",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "hash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "UnsupportedRadonTallyScript",
+      "type": "error"
+    }
+  ],
+  "bytecode": "0x00000001012001900000000b0000613d0000008001000039000000400010043f0000000001000416000000000110004c0000000b0000c13d0000002001000039000001000010044300000120000004430010000c0000040f0010000e0000040f0000000501000041000000110001042e000000000100001900000012000104300000001000000432000000110001042e0000001200010430000000000000000000000002000000000000000000000000000000400000010000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "deployedBytecode": "0x00000001012001900000000b0000613d0000008001000039000000400010043f0000000001000416000000000110004c0000000b0000c13d0000002001000039000001000010044300000120000004430010000c0000040f0010000e0000040f0000000501000041000000110001042e000000000100001900000012000104300000001000000432000000110001042e0000001200010430000000000000000000000002000000000000000000000000000000400000010000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "factoryDeps": {}
+}

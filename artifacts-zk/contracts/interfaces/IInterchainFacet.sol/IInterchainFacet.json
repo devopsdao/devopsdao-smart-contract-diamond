@@ -1,0 +1,158 @@
+{
+  "_format": "hh-zksolc-artifact-1",
+  "contractName": "IInterchainFacet",
+  "sourceName": "contracts/interfaces/IInterchainFacet.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "getInterchainConfigs",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "destinationChain",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "gateway",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "gasReceiver",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "sourceAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "destinationAddress",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "destinationDiamond",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct ConfigAxelar",
+          "name": "",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint32",
+              "name": "destinationDomain",
+              "type": "uint32"
+            },
+            {
+              "internalType": "address",
+              "name": "ethereumOutbox",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "sourceAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "destinationAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "destinationDiamond",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct ConfigHyperlane",
+          "name": "",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint16",
+              "name": "destinationChain",
+              "type": "uint16"
+            },
+            {
+              "internalType": "address",
+              "name": "endpoint",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "sourceAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "destinationAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "destinationDiamond",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct ConfigLayerzero",
+          "name": "",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint16",
+              "name": "chainId",
+              "type": "uint16"
+            },
+            {
+              "internalType": "uint16",
+              "name": "destChainId",
+              "type": "uint16"
+            },
+            {
+              "internalType": "address",
+              "name": "bridgeAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "sourceAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "destinationAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "destinationDiamond",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct ConfigWormhole",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "factoryDeps": {}
+}

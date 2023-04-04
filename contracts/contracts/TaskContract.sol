@@ -10,6 +10,8 @@ import "../libraries/LibInterchain.sol";
 
 import "../facets/TokenDataFacet.sol";
 
+import "../external/erc1155/Common.sol";
+import "../interfaces/IERC1155TokenReceiver.sol";
 
 // import "../facets/DiamondLoupeFacet.sol";
 
@@ -18,8 +20,9 @@ import "hardhat/console.sol";
 // error RevertReason (string message);
 
 
-contract TaskContract is ERC1155StorageFacet  {
+contract TaskContract is ERC1155StorageFacet, ERC1155TokenReceiver, CommonConstants  {
     // TaskStorage internal _storage;
+    bool immutable shouldRejectERC1155 = false;
     InterchainStorage internal _storageInterchain;
 
     event Logs(address contractAdr, string message);
@@ -160,6 +163,28 @@ contract TaskContract is ERC1155StorageFacet  {
         // }
         LibChat.sendMessage(_sender, _message, _replyTo);
         emit TaskUpdated(address(this), 'sendMessage', block.timestamp);
+    }
+
+    function onERC1155Received(address _operator, address _from, uint256 _id, uint256 _value, bytes calldata _data) external view returns(bytes4) {
+        if (shouldRejectERC1155 == true) {
+            revert("onERC1155Received: transfer not accepted");
+        } else {
+            return ERC1155_ACCEPTED;
+        }
+    }
+
+    function onERC1155BatchReceived(address _operator, address _from, uint256[] calldata _ids, uint256[] calldata _values, bytes calldata _data) external view returns(bytes4) {
+        if (shouldRejectERC1155 == true) {
+            revert("onERC1155BatchReceived: transfer not accepted");
+        } else {
+            return ERC1155_BATCH_ACCEPTED;
+        }
+    }
+
+    // ERC165 interface support
+    function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
+        return  interfaceID == 0x01ffc9a7 ||    // ERC165
+                interfaceID == 0x4e2312e0;      // ERC1155_ACCEPTED ^ ERC1155_BATCH_ACCEPTED;
     }
 
 }
