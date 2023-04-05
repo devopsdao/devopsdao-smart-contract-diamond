@@ -47,6 +47,6 @@
     "@sebasgoldberg/hardhat-wsprovider": "^0.1.1",
     "commander": "^9.4.1",
     "underscore": "^1.13.6",
-    "witnet-solidity-bridge": "github:witnet/witnet-solidity-bridge#feat/bytecodes"
+    "witnet-solidity-bridge": "github:witnet/witnet-solidity-bridge#d9ec58f051c3e661715e451a6f7d18c0237508e2"
   }
 }
