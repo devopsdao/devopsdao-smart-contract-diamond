@@ -46,6 +46,7 @@
   "dependencies": {
     "@sebasgoldberg/hardhat-wsprovider": "^0.1.1",
     "commander": "^9.4.1",
+    "lodash": "^4.17.21",
     "underscore": "^1.13.6",
     "witnet-solidity-bridge": "github:witnet/witnet-solidity-bridge#feat/bytecodes"
   }

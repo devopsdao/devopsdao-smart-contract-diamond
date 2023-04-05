@@ -67,7 +67,7 @@
         "request": "launch",
         "name": "hardhat witnetConfig",
         "skipFiles": ["<node_internals>/**"],
-        "runtimeExecutable": "${workspaceFolder}/npx hardhat",
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
         "args": ["witnetConfig", "--network", "mumbai"],
         "cwd": "${workspaceFolder}"
     },  
