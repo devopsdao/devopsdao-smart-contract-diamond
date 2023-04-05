@@ -1,5 +1,8 @@
 const fs = require("fs/promises");
 const path = require("node:path");
+const { methods } = require("underscore");
+
+const _ = require("lodash");
 
 const web3 = require("web3")
 
@@ -72,18 +75,64 @@ console.log(requestHashes)
     //   console.log(NewDataSourceHash);
     // });
 
+    const requestMethod = 1;
+    const requestSchema = "";
+    const requestAuthority = "https://api.github.com";
+    const requestPath = "repos/\\0\\/pulls";
+    const requestQuery = "state=all";
+    const requestBody = "";
+    const requestHeaders = [];
+    const requestRadonScript = "0x8218771869";
 
-    const dataSource = await witnetBytecodes.verifyDataSource(
-      1, // requestMethod
-      /* requestSchema */ "",
-      /* requestAuthority */ "https://api.github.com", // => will be substituted w/ WittyPixelsLib.baseURI() on next mint
-      /* requestPath */ "repos/\\0\\/pulls8", // => will by substituted w/ tokenId on next mint
-      /* requestQuery */ "state=all",
-      /* requestBody */ "",
-      [], // requestHeaders
-      "0x8218771869" // requestRadonScript
-      , { gasLimit: 8000000 }
+
+
+    let NewDataSourceHash;
+    let dataSourceHash = await witnetBytecodes.callStatic.verifyDataSource(
+      requestMethod,
+      requestSchema,
+      requestAuthority,
+      requestPath,
+      requestQuery,
+      requestBody,
+      requestHeaders,
+      requestRadonScript
+      , { type: 2 }
     );
+
+
+    const dataSourceLookup = await witnetBytecodes.callStatic.lookupDataSource(dataSourceHash);
+    console.log(dataSourceLookup)
+    if(dataSourceLookup.method === requestMethod && dataSourceLookup.url == `${requestAuthority}/${requestPath}?${requestQuery}`
+    && dataSourceLookup.body === requestBody && _.isEqual(dataSourceLookup.headers,requestHeaders)
+    && dataSourceLookup.script === requestRadonScript){
+      NewDataSourceHash = dataSourceHash;
+    }
+    else{
+      const dataSource = await witnetBytecodes.verifyDataSource(
+        requestMethod,
+        requestSchema,
+        requestAuthority,
+        requestPath,
+        requestQuery,
+        requestBody,
+        requestHeaders,
+        requestRadonScript
+        , { type: 2 }
+      );
+      const dataSourceReceipt = await dataSource.wait();
+      if(typeof dataSourceReceipt.events[0].args !=='undefined' && typeof dataSourceReceipt.events[0].args.hash !== 'undefined'){
+        console.log(`NewDataSourceHash`)
+        console.log(dataSourceReceipt.events[0].args.hash)
+        NewDataSourceHash = dataSourceReceipt.events[0].args.hash;
+      }
+      else{
+        console.log('could not verify the datasource');
+      }
+
+    }
+
+    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash = NewDataSourceHash;
+
 
 
     // /* requestAuthority */ "\\0\\",         // => will be substituted w/ WittyPixelsLib.baseURI() on next mint
@@ -93,7 +142,6 @@ console.log(requestHashes)
     // /* requestHeader */    new string[2][](0),
     // /* requestScript */    hex"80"
 
-    const dataSourceReceipt = await dataSource.wait();
 
     //other ways to parse events
     // let eventFilter = witnetBytecodes.filters.NewDataSourceHash()
@@ -111,27 +159,8 @@ console.log(requestHashes)
     // const newDataSourceHash = ethers.utils.defaultAbiCoder.decode(typesArray, dataSourceReceipt.events[0].data);
     
 
-    let NewDataSourceHash;
-    if(typeof dataSourceReceipt.events[0].args !=='undefined' && typeof dataSourceReceipt.events[0].args.hash !== 'undefined'){
-      console.log(`NewDataSourceHash`)
-      console.log(dataSourceReceipt.events[0].args.hash)
-      NewDataSourceHash = dataSourceReceipt.events[0].args.hash;
-    }
+    // let NewDataSourceHash;
 
-    else{
-      NewDataSourceHash = await witnetBytecodes.callStatic.verifyDataSource(
-        1, // requestMethod
-        /* requestSchema */ "",
-        /* requestAuthority */ "https://api.github.com", // => will be substituted w/ WittyPixelsLib.baseURI() on next mint
-        /* requestPath */ "repos/\\0\\/pulls", // => will by substituted w/ tokenId on next mint
-        /* requestQuery */ "state=all",
-        /* requestBody */ "",
-        [], // requestHeaders
-        "0x8218771869" // requestRadonScript
-        , { gasLimit: 8000000 }
-      );
-    }
-    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash = NewDataSourceHash;
   }
 
   if (
@@ -140,42 +169,60 @@ console.log(requestHashes)
       "undefined"
   ) {
     console.log(`verifying radon reducer`);
-    const radonReducer = await witnetBytecodes.verifyRadonReducer([
-      11, // opcode: ConcatenateAndHash
-      [], // filters
-      "0x", // script
+
+    let radonReducerHash;
+
+    const opcode = 11; //ConcatenateAndHash
+    const filters = [];
+    const reducerScript = "0x";
+
+    radonReducerHash = await witnetBytecodes.callStatic.verifyRadonReducer([
+      opcode,
+      filters,
+      reducerScript,
     ]
-    , { gasLimit: 8000000 }
+    , { type: 2 }
     );
 
-    const radonReducerReceipt = await radonReducer.wait();
+    const radonReducerLookup = await witnetBytecodes.lookupRadonReducer(radonReducerHash);
+    console.log(radonReducerLookup)
 
     let NewRadonReducerHash;
-    if(typeof radonReducerReceipt.events[0].args !=='undefined' && typeof radonReducerReceipt.events[0].args.hash !== 'undefined'){
-      console.log(`NewRadonReducerHash`)
-      console.log(radonReducerReceipt.events[0].args.hash)
-      NewRadonReducerHash = radonReducerReceipt.events[0].args.hash;
+    if(radonReducerLookup.opcode === opcode && _.isEqual(radonReducerLookup.filters, filters)
+    && radonReducerLookup.script === reducerScript){
+      NewRadonReducerHash = radonReducerHash;
     }
-
     else{
-      NewRadonReducerHash = await witnetBytecodes.callStatic.verifyRadonReducer([
+
+      const radonReducer = await witnetBytecodes.verifyRadonReducer([
         11, // opcode: ConcatenateAndHash
         [], // filters
         "0x", // script
       ]
       , { gasLimit: 8000000 }
       );
+
+      const radonReducerReceipt = await radonReducer.wait();
+
+      if(typeof radonReducerReceipt.events[0].args !=='undefined' && typeof radonReducerReceipt.events[0].args.hash !== 'undefined'){
+        console.log(`NewRadonReducerHash`)
+        console.log(radonReducerReceipt.events[0].args.hash)
+        NewRadonReducerHash = radonReducerReceipt.events[0].args.hash;
+      }
+
+      else{
+        console.log('could not verify the radon reducer');
+      }
     }
     requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash = NewRadonReducerHash;
-
   }
 
   const witnetSLA = {
     numWitnesses: 17,
     minConsensusPercentage: 66, // %
-    minerCommitFee: "100000000", // 0.1 WIT
-    witnessReward: "1000000000", // 1.0 WIT
-    witnessCollateral: "15000000000", // 15.0 WIT
+    minerCommitFee: 100000000, // 0.1 WIT
+    witnessReward: 1000000000, // 1.0 WIT
+    witnessCollateral: 15000000000, // 15.0 WIT
   };
 
   // console.log(witnetSLA)
@@ -186,27 +233,31 @@ console.log(requestHashes)
       "undefined"
   ) {
     console.log(`verifying radon SLA`);
-    const radonSLA = await witnetBytecodes.verifyRadonSLA([
+
+
+    slaHash = await witnetBytecodes.callStatic.verifyRadonSLA([
       witnetSLA.numWitnesses,
       witnetSLA.minConsensusPercentage,
       witnetSLA.witnessReward,
       witnetSLA.witnessCollateral,
       witnetSLA.minerCommitFee,
     ]
-    , { gasLimit: 8000000 }
+    , { type: 2 }
     );
 
-    const radonSLAReceipt = await radonSLA.wait();
+    const radonSLALookup = await witnetBytecodes.lookupRadonSLA(slaHash);
+    console.log(radonSLALookup)
 
     let NewSlaHash;
-    if(typeof radonSLAReceipt.events[0].args !=='undefined' && typeof radonSLAReceipt.events[0].args.hash !== 'undefined'){
-      console.log(`NewSlaHash`)
-      console.log(radonSLAReceipt.events[0].args.hash)
-      NewSlaHash = radonSLAReceipt.events[0].args.hash;
+    if(radonSLALookup.numWitnesses.toNumber() === witnetSLA.numWitnesses 
+      && radonSLALookup.minConsensusPercentage.toNumber() === witnetSLA.minConsensusPercentage
+      && radonSLALookup.witnessReward.toNumber() === witnetSLA.witnessReward 
+      && radonSLALookup.witnessCollateral.toNumber() === witnetSLA.witnessCollateral
+      && radonSLALookup.minerCommitFee.toNumber() === witnetSLA.minerCommitFee){
+        NewSlaHash = slaHash;
     }
-
     else{
-      NewSlaHash = await witnetBytecodes.callStatic.verifyRadonSLA([
+      const radonSLA = await witnetBytecodes.verifyRadonSLA([
         witnetSLA.numWitnesses,
         witnetSLA.minConsensusPercentage,
         witnetSLA.witnessReward,
@@ -214,8 +265,21 @@ console.log(requestHashes)
         witnetSLA.minerCommitFee,
       ]
       , { gasLimit: 8000000 }
-      );
+      );  
+      const radonSLAReceipt = await radonSLA.wait();
+
+      if(typeof radonSLAReceipt.events[0].args !=='undefined' && typeof radonSLAReceipt.events[0].args.hash !== 'undefined'){
+        console.log(`NewSlaHash`)
+        console.log(radonSLAReceipt.events[0].args.hash)
+        NewSlaHash = radonSLAReceipt.events[0].args.hash;
+      }
+  
+      else{
+        console.log('could not verify the radon SLA');
+  
+      }
     }
+
     requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewSlaHash = NewSlaHash;
 
   }
