@@ -111,6 +111,7 @@ const witnetSLA = {
   minerCommitRevealFee: 100000000, // 0.1 WIT
 };
 
+console.log(Object.values(witnetSLA));
 
 const dodaoFacets = [
   {
@@ -158,7 +159,7 @@ const dodaoFacets = [
   // },
   {
     name: 'WitnetFacet',
-    arguments: [witnetAddresses.WitnetRequestBoard, '0xbAf54296277d5bFd91A1Ce0dde62c56Df37a6480', Object.values(witnetSLA)],
+    arguments: [witnetAddresses.WitnetRequestBoard, '0xacE04e1C0DcD0348bF44ea750fC9c4E763b2E4CB', Object.values(witnetSLA)],
     // libraries: [
     //   'LibWitnetFacet',
     // ]

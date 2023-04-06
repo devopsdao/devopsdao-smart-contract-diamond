@@ -25,6 +25,7 @@ contract WitnetFacet
         UsingWitnet(_witnetRequestBoard)
     {
         require(
+            address(_witnetRequestTemplate).code.length > 0 &&
             _witnetRequestTemplate.class() == type(WitnetRequestTemplate).interfaceId
                 && _witnetRequestTemplate.getRadonRetrievalsCount() == 1
                 && _witnetRequestTemplate.parameterized()
