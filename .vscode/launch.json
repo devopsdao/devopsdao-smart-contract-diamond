@@ -58,8 +58,8 @@
         "request": "launch",
         "name": "hardhat diamondUpgrade",
         "skipFiles": ["<node_internals>/**"],
-        "runtimeExecutable": "${workspaceFolder}/npx hardhat",
-        "args": ["diamondUpgrade", "-facets AccountFacet", "--network", "localhost"],
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
+        "args": ["diamondUpgrade", "--facets", "WitnetFacet", "--network", "mumbai"],
         "cwd": "${workspaceFolder}"
     },  
     {

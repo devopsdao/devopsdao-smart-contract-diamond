@@ -2,6 +2,7 @@ async function expectThrow(promise, expectedRevertMessage="") {
     try {
       await promise;
     } catch (error) {
+      console.log(error)
       let invalidOpcode = false;
       let outOfGas = false;
       let revert = false;
