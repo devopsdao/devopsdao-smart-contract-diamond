@@ -1,103 +1,117 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import "../libraries/LibUtils.sol";
 import "witnet-solidity-bridge/contracts/UsingWitnet.sol";
-import "witnet-solidity-bridge/contracts/apps/WitnetRequestFactory.sol";
+import "witnet-solidity-bridge/contracts/requests/WitnetRequest.sol";
 
-import "../libraries/LibWitnetRequest.sol";
+import "../libraries/LibWitnetFacet.sol";
 
+contract WitnetFacet
+    is
+        UsingWitnet
+{
+    using LibWitnetFacet for WitnetRequestBoard;
+    using LibWitnetFacet for WitnetRequestTemplate;
 
-import "hardhat/console.sol";
+    event Logs(address indexed addr, string message);
 
-
-contract WitnetFacet is UsingWitnet
-          {
-    event Logs(address contractAdr, string message);
-    address public immutable witnetRequestFactory;
+    WitnetRequestTemplate public immutable witnetRequestTemplate;
 
     constructor(
-            address _witnetRequestBoard,
-            address _witnetRequestFactory
+            WitnetRequestBoard _witnetRequestBoard,
+            WitnetRequestTemplate _witnetRequestTemplate,
+            WitnetV2.RadonSLA memory _witnetRadonSLA
         )
-        UsingWitnet(WitnetRequestBoard(_witnetRequestBoard))
+        UsingWitnet(_witnetRequestBoard)
     {
-        witnetRequestFactory = _witnetRequestFactory;
-
-        // WitnetRequestStorage storage _storage = LibWitnetRequest.witnetRequestStorage();
-        // _storage.factory = WitnetRequestFactory(_witnetRequestFactory);
-        // _storage.WitnetRequestFactoryAddress = _witnetRequestFactory;
         require(
-            WitnetRequestFactory(witnetRequestFactory).supportsInterface(type(IWitnetRequestFactory).interfaceId),
-            "WitnetFacet: uncompliant WitnetRequestFactory"
+            _witnetRequestTemplate.class() == type(WitnetRequestTemplate).interfaceId
+                && _witnetRequestTemplate.getRadonRetrievalsCount() == 1
+                && _witnetRequestTemplate.parameterized()
+                && _witnetRequestTemplate.resultDataType() == WitnetV2.RadonDataTypes.Array
+            , "WitnetFacet: uncompliant WitnetRequestTemplate"
         );
-        emit Logs(address(this), string.concat("WitnetRequestFactory: ", LibUtils.addressToString(witnetRequestFactory)));
-
+        witnetRequestTemplate = _witnetRequestTemplate;
+        __storage().slaHash = witnetRequestTemplate.factory().registry().verifyRadonSLA(_witnetRadonSLA);
     }
 
-    function buildRequestTemplate(bytes32 httpGetValuesArray, bytes32 reducerModeNoFilters) public         returns 
-    (
-        WitnetRequestTemplate valuesArrayRequestTemplate
-    )
+    function witnetRadonSLA() external view returns (WitnetV2.RadonSLA memory) {
+        return witnetRequestTemplate.factory().registry().lookupRadonSLA(__storage().slaHash);
+    }
+
+    function _checkResultAvailability(uint256 _appId)
+        internal view
+        returns (bool)
     {
-        // WitnetRequestStorage storage _storage = LibWitnetRequest.witnetRequestStorage();
-        // WitnetRequestFactory _witnetRequestFactory = _storage.factory;
-
-        emit Logs(address(this), string.concat("WitnetRequestFactory: ", LibUtils.addressToString(witnetRequestFactory)));
-        require(
-            WitnetRequestFactory(witnetRequestFactory).supportsInterface(type(IWitnetRequestFactory).interfaceId),
-            "WitnetFacet: uncompliant WitnetRequestFactory"
-        );
-        // IWitnetBytecodes registry = factory.registry();
-        bytes32[] memory dataSources = new bytes32[](1);
-        dataSources[0] = httpGetValuesArray;
-
-        emit Logs(address(this), string.concat("dataSources: ", string(abi.encodePacked(httpGetValuesArray)), "retrievals: ", string(abi.encodePacked(reducerModeNoFilters))));
-
-        valuesArrayRequestTemplate = IWitnetRequestFactory(witnetRequestFactory).buildRequestTemplate(
-            /* retrieval templates */ dataSources,
-            /* aggregation reducer */ reducerModeNoFilters,
-            /* witnessing reducer  */ reducerModeNoFilters,
-            /* (reserved) */ 0
+        uint256 _witnetQueryId = __storage().queries[_appId].id;
+        return (
+            _witnetQueryId > 0
+                && _witnetCheckResultAvailability(_witnetQueryId)
         );
     }
 
-    // function createWitnetRequest(address taskAddress)
-    // external
-    // {
-    //     TaskStorage storage _storage = LibTasks.taskStorage();
-    //     // uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'auditor');
-    //     // require(balance > 0, 'must hold Auditor NFT to add to blacklist');
-    //     // require(_storage.taskContractsBlacklistMapping[taskAddress] != true, 'task is already blacklisted');
+    function _checkResultSuccess(uint256 _appId)
+        internal view
+        returns (bool)
+    {
+        uint256 _witnetQueryId = __storage().queries[_appId].id;
+        if (_witnetQueryId > 0 && _witnetCheckResultAvailability(_witnetQueryId)) {
+            return _witnetReadResult(_witnetQueryId).success;
+        } else {
+            return false;
+        }
+    }
 
+    function _postRequest(uint256 _appId, LibWitnetFacet.Args memory _args)
+        internal
+        returns (uint256 _witnetQueryId)
+    {
+        return _postRequest(
+            _appId,
+            witnetRequestTemplate.verifyRadonRequest(_args)
+        );
+    }
 
-    //     // WitnetRequestTemplate memory valuesArrayRequestTemplate;
+    function _postRequest(uint256 _appId, bytes32 _witnetRadHash)
+        internal
+        returns (uint256 _witnetQueryId)
+    {
+        uint _usedFunds;
+        LibWitnetFacet.Query storage __query = __storage().queries[_appId];
+        _witnetQueryId = __query.id;
+        if (_witnetQueryId == 0) {
+            // first attempt: request to the WRB
+            (_witnetQueryId, _usedFunds) = _witnetPostRequest(
+                _witnetRadHash,
+                __storage().slaHash
+            );
+            __query.id = _witnetQueryId;
+            __query.radHash = _witnetRadHash;
+        } else {
+            require(
+                _witnetRadHash == __query.radHash,
+                "WitnetFacet: radHash mistmatch"
+            );
+            if (!_witnetCheckResultAvailability(_witnetQueryId)) {
+                _usedFunds = _witnetUpgradeReward(_witnetQueryId);
+            } else {
+                Witnet.Result memory _result = _witnetReadResult(_witnetQueryId);
+                require(_result.success == false, "WitnetFact: solved query");
+                // if last attempt failed, retry by posting new request to the WRB
+                (_witnetQueryId, _usedFunds) = _witnetPostRequest(
+                    _witnetRadHash,
+                    __storage().slaHash
+                );
+                __query.id = _witnetQueryId;
+            }
+        }
+        // transfer back unused funds
+        if (_usedFunds < msg.value) {
+            payable(msg.sender).transfer(msg.value - _usedFunds);
+        }
+    }
 
-    //     // valuesArrayRequestTemplate = WittyPixelsLib.buildHttpRequestTemplates(_witnetRequestFactory);
-
-
-    //     // string[][] memory _args = new string[][](1);
-    //     // _args[0] = new string[](2);
-    //     // _args[0][0] = _baseuri;
-    //     // _args[0][1] = _tokenId.toString();
-    //     // __wpx721().tokenWitnetRequests[_tokenId] = WittyPixels.ERC721TokenWitnetRequests({
-    //     //     imageDigest: imageDigestRequestTemplate.settleArgs(_args),
-    //     //     tokenStats: valuesArrayRequestTemplate.settleArgs(_args)
-    //     // });
-
-    //     // {
-    //     //     uint _usedFunds;
-    //     //     // Ask Witnet to retrieve token's metadata stats from the token base uri provider:            
-    //     //     (__witnetQueries.tokenStatsId, _usedFunds) = _witnetPostRequest(
-    //     //         __witnetRequests.tokenStats.modifySLA(_witnetSLA)
-    //     //     );
-    //     //     _totalUsedFunds += _usedFunds;
-    //     // }
-
-
-    // }
-
-
+    function __storage() internal pure returns (LibWitnetFacet.Storage storage) {
+        return LibWitnetFacet.witnetFacetStorage();
+    }
 }
-
-
