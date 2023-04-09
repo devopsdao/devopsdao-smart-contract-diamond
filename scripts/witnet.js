@@ -49,8 +49,8 @@ async function configureWitnet() {
   }
 
   console.log("verifying");
-  if(typeof requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId] == "undefined"){
-    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId] = {};
+  if(typeof requestHashes.hashes[hre.network.config.chainId] == "undefined"){
+    requestHashes.hashes[hre.network.config.chainId] = {};
   }
 
   const witnetBytecodes = await ethers.getContractAt("IWitnetBytecodes", witnetAddresses.WitnetBytecodes);
@@ -64,51 +64,68 @@ async function configureWitnet() {
 console.log(requestHashes)
 
   if (
-    typeof requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId] == "undefined" ||
-    typeof requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash ==
+    typeof requestHashes.hashes[hre.network.config.chainId] == "undefined" ||
+    typeof requestHashes.hashes[hre.network.config.chainId].NewRadonRetrievalHash ==
       "undefined"
   ) {
     console.log(`verifying datasource`);
 
-    // await witnetBytecodes.on("NewDataSourceHash", (NewDataSourceHash, event) => {
+    // await witnetBytecodes.on("NewRadonRetrievalHash", (NewRadonRetrievalHash, event) => {
     //   console.log("received event");
-    //   console.log(NewDataSourceHash);
+    //   console.log(NewRadonRetrievalHash);
     // });
 
     const requestMethod = 1;
     const requestSchema = "";
     const requestAuthority = "https://api.github.com";
-    const requestPath = "repos/\\0\\/pulls";
+    const requestPath = "repos/\\0\\/pulls11111111111111111111111";
     const requestQuery = "state=all";
     const requestBody = "";
     const requestHeaders = [];
     const requestRadonScript = "0x8218771869";
 
+    let radonRetrievalHash = await witnetBytecodes.callStatic.verifyRadonRetrieval(
+        requestMethod,
+        requestSchema,
+        requestAuthority,
+        requestPath,
+        requestQuery,
+        requestBody,
+        requestHeaders,
+        requestRadonScript
+        , { type: 2 }
+      )
 
+      // await expect(
+      //   witnetBytecodes.callStatic.verifyDataSource(
+      //     requestMethod,
+      //     requestSchema,
+      //     requestAuthority,
+      //     requestPath,
+      //     requestQuery,
+      //     requestBody,
+      //     requestHeaders,
+      //     requestRadonScript
+      //     , { type: 2 }
+      //   )
+      // ).to.be.reverted;
 
-    let NewDataSourceHash;
-    let dataSourceHash = await witnetBytecodes.callStatic.verifyDataSource(
-      requestMethod,
-      requestSchema,
-      requestAuthority,
-      requestPath,
-      requestQuery,
-      requestBody,
-      requestHeaders,
-      requestRadonScript
-      , { type: 2 }
-    );
-
-
-    const dataSourceLookup = await witnetBytecodes.callStatic.lookupDataSource(dataSourceHash);
-    console.log(dataSourceLookup)
-    if(dataSourceLookup.method === requestMethod && dataSourceLookup.url == `${requestAuthority}/${requestPath}?${requestQuery}`
+    let dataSourceLookup;
+    try{
+      dataSourceLookup = await witnetBytecodes.callStatic.lookupRadonRetrieval(radonRetrievalHash);
+      console.log(dataSourceLookup)
+    }
+    catch{
+      console.log(`unknown datasource`)
+    }
+    let NewRadonRetrievalHash;
+    if(typeof dataSourceLookup !== 'undefined' && dataSourceLookup.method === requestMethod && dataSourceLookup.url == `${requestAuthority}/${requestPath}?${requestQuery}`
     && dataSourceLookup.body === requestBody && _.isEqual(dataSourceLookup.headers,requestHeaders)
     && dataSourceLookup.script === requestRadonScript){
-      NewDataSourceHash = dataSourceHash;
+      NewRadonRetrievalHash = radonRetrievalHash;
     }
     else{
-      const dataSource = await witnetBytecodes.verifyDataSource(
+      const dataSource = await witnetBytecodes.verifyRadonRetrieval(
         requestMethod,
         requestSchema,
         requestAuthority,
@@ -120,10 +137,16 @@ console.log(requestHashes)
         , { type: 2 }
       );
       const dataSourceReceipt = await dataSource.wait();
-      if(typeof dataSourceReceipt.events[0].args !=='undefined' && typeof dataSourceReceipt.events[0].args.hash !== 'undefined'){
-        console.log(`NewDataSourceHash`)
-        console.log(dataSourceReceipt.events[0].args.hash)
-        NewDataSourceHash = dataSourceReceipt.events[0].args.hash;
+      // console.log(dataSourceReceipt)
+      const eventFilter = witnetBytecodes.filters.NewRadonRetrievalHash()
+      const dataSourceEvents = await witnetBytecodes.queryFilter(eventFilter, dataSourceReceipt.blockNumber, dataSourceReceipt.blockNumber) //not working if I specify blocks
+      // console.log(`dataSourceEvents`)
+      // console.log(dataSourceEvents)
+
+      if(typeof dataSourceEvents[0].args !=='undefined' && typeof dataSourceEvents[0].args.hash !== 'undefined'){
+        console.log(`NewRadonRetrievalHash`)
+        console.log(dataSourceEvents[0].args.hash)
+        NewRadonRetrievalHash = dataSourceEvents[0].args.hash;
       }
       else{
         console.log('could not verify the datasource');
@@ -131,7 +154,7 @@ console.log(requestHashes)
 
     }
 
-    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash = NewDataSourceHash;
+    requestHashes.hashes[hre.network.config.chainId].NewRadonRetrievalHash = NewRadonRetrievalHash;
 
 
 
@@ -144,28 +167,28 @@ console.log(requestHashes)
 
 
     //other ways to parse events
-    // let eventFilter = witnetBytecodes.filters.NewDataSourceHash()
+    // let eventFilter = witnetBytecodes.filters.NewRadonRetrievalHash()
     // let events = await witnetBytecodes.queryFilter(eventFilter) //not working if I specify blocks
     // console.log(events)
     
     // use start block and end block as receipt.blockNumber
-    // const dataSourceEvent = await witnetBytecodes.queryFilter('NewDataSourceHash(bytes32 hash)', dataSourceReceipt.blockNumber, dataSourceReceipt.blockNumber)
+    // const dataSourceEvent = await witnetBytecodes.queryFilter('NewRadonRetrievalHash(bytes32 hash)', dataSourceReceipt.blockNumber, dataSourceReceipt.blockNumber)
 
 
     
     // const typesArray = [
     //   {type: 'bytes32', name: 'hash'},
     // ];
-    // const newDataSourceHash = ethers.utils.defaultAbiCoder.decode(typesArray, dataSourceReceipt.events[0].data);
+    // const NewRadonRetrievalHash = ethers.utils.defaultAbiCoder.decode(typesArray, dataSourceReceipt.events[0].data);
     
 
-    // let NewDataSourceHash;
+    // let NewRadonRetrievalHash;
 
   }
 
   if (
-    typeof requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId] == "undefined" ||
-    typeof requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash ==
+    typeof requestHashes.hashes[hre.network.config.chainId] == "undefined" ||
+    typeof requestHashes.hashes[hre.network.config.chainId].NewRadonReducerHash ==
       "undefined"
   ) {
     console.log(`verifying radon reducer`);
@@ -184,11 +207,17 @@ console.log(requestHashes)
     , { type: 2 }
     );
 
-    const radonReducerLookup = await witnetBytecodes.lookupRadonReducer(radonReducerHash);
-    console.log(radonReducerLookup)
 
+    let radonReducerLookup;
+    try{
+      radonReducerLookup = await witnetBytecodes.lookupRadonReducer(radonReducerHash);
+      console.log(radonReducerLookup)
+    }
+    catch{
+      console.log(`unknown radon reducer`)
+    }
     let NewRadonReducerHash;
-    if(radonReducerLookup.opcode === opcode && _.isEqual(radonReducerLookup.filters, filters)
+    if(typeof radonReducerLookup !== 'undefined' && radonReducerLookup.opcode === opcode && _.isEqual(radonReducerLookup.filters, filters)
     && radonReducerLookup.script === reducerScript){
       NewRadonReducerHash = radonReducerHash;
     }
@@ -204,32 +233,37 @@ console.log(requestHashes)
 
       const radonReducerReceipt = await radonReducer.wait();
 
-      if(typeof radonReducerReceipt.events[0].args !=='undefined' && typeof radonReducerReceipt.events[0].args.hash !== 'undefined'){
+      const eventFilter = witnetBytecodes.filters.NewRadonReducerHash()
+      const radonReducerEvents = await witnetBytecodes.queryFilter(eventFilter, radonReducerReceipt.blockNumber, radonReducerReceipt.blockNumber) //not working if I specify blocks
+      console.log(`radonReducerEvents`)
+      console.log(radonReducerEvents)
+
+      if(typeof radonReducerEvents[0].args !=='undefined' && typeof radonReducerEvents[0].args.hash !== 'undefined'){
         console.log(`NewRadonReducerHash`)
-        console.log(radonReducerReceipt.events[0].args.hash)
-        NewRadonReducerHash = radonReducerReceipt.events[0].args.hash;
+        console.log(radonReducerEvents[0].args.hash)
+        NewRadonReducerHash = radonReducerEvents[0].args.hash;
       }
 
       else{
         console.log('could not verify the radon reducer');
       }
     }
-    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash = NewRadonReducerHash;
+    requestHashes.hashes[hre.network.config.chainId].NewRadonReducerHash = NewRadonReducerHash;
   }
 
   const witnetSLA = {
-    numWitnesses: 17,
+    numWitnesses: 9,
     minConsensusPercentage: 66, // %
-    minerCommitFee: 100000000, // 0.1 WIT
     witnessReward: 1000000000, // 1.0 WIT
     witnessCollateral: 15000000000, // 15.0 WIT
+    minerCommitRevealFee: 100000000, // 0.1 WIT
   };
 
   // console.log(witnetSLA)
 
   if (
-    typeof requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId] == "undefined" ||
-    typeof requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewSlaHash ==
+    typeof requestHashes.hashes[hre.network.config.chainId] == "undefined" ||
+    typeof requestHashes.hashes[hre.network.config.chainId].NewSlaHash ==
       "undefined"
   ) {
     console.log(`verifying radon SLA`);
@@ -240,20 +274,26 @@ console.log(requestHashes)
       witnetSLA.minConsensusPercentage,
       witnetSLA.witnessReward,
       witnetSLA.witnessCollateral,
-      witnetSLA.minerCommitFee,
+      witnetSLA.minerCommitRevealFee,
     ]
     , { type: 2 }
     );
 
-    const radonSLALookup = await witnetBytecodes.lookupRadonSLA(slaHash);
-    console.log(radonSLALookup)
+    let radonSLALookup;
+    try{
+      radonSLALookup = await witnetBytecodes.lookupRadonSLA(slaHash);
+      console.log(radonSLALookup)
+    }
+    catch{
+      console.log(`unknown radon SLA`)
+    }
 
     let NewSlaHash;
-    if(radonSLALookup.numWitnesses.toNumber() === witnetSLA.numWitnesses 
+    if(typeof radonSLALookup !== 'undefined' && radonSLALookup.numWitnesses.toNumber() === witnetSLA.numWitnesses 
       && radonSLALookup.minConsensusPercentage.toNumber() === witnetSLA.minConsensusPercentage
       && radonSLALookup.witnessReward.toNumber() === witnetSLA.witnessReward 
       && radonSLALookup.witnessCollateral.toNumber() === witnetSLA.witnessCollateral
-      && radonSLALookup.minerCommitFee.toNumber() === witnetSLA.minerCommitFee){
+      && radonSLALookup.minerCommitRevealFee.toNumber() === witnetSLA.minerCommitRevealFee){
         NewSlaHash = slaHash;
     }
     else{
@@ -262,16 +302,21 @@ console.log(requestHashes)
         witnetSLA.minConsensusPercentage,
         witnetSLA.witnessReward,
         witnetSLA.witnessCollateral,
-        witnetSLA.minerCommitFee,
+        witnetSLA.minerCommitRevealFee,
       ]
       , { gasLimit: 8000000 }
       );  
       const radonSLAReceipt = await radonSLA.wait();
 
-      if(typeof radonSLAReceipt.events[0].args !=='undefined' && typeof radonSLAReceipt.events[0].args.hash !== 'undefined'){
+      const eventFilter = witnetBytecodes.filters.NewSlaHash()
+      const radonSLAEvents = await witnetBytecodes.queryFilter(eventFilter, radonSLAReceipt.blockNumber, radonSLAReceipt.blockNumber) //not working if I specify blocks
+      console.log(`radonSLAEvents`)
+      console.log(radonSLAEvents)
+
+      if(typeof radonSLAEvents[0].args !=='undefined' && typeof radonSLAEvents[0].args.hash !== 'undefined'){
         console.log(`NewSlaHash`)
-        console.log(radonSLAReceipt.events[0].args.hash)
-        NewSlaHash = radonSLAReceipt.events[0].args.hash;
+        console.log(radonSLAEvents[0].args.hash)
+        NewSlaHash = radonSLAEvents[0].args.hash;
       }
   
       else{
@@ -280,43 +325,86 @@ console.log(requestHashes)
       }
     }
 
-    requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewSlaHash = NewSlaHash;
+    requestHashes.hashes[hre.network.config.chainId].NewSlaHash = NewSlaHash;
 
   }
 
   console.log(requestHashes)
 
-  await fs.writeFile(path.join(__dirname, `../abi/witnet-requesthashes.json`), JSON.stringify(requestHashes));
 
 
 
   let IWitnetRequestFactory = await ethers.getContractAt("IWitnetRequestFactory", witnetAddresses.WitnetRequestFactory);
 
 
-  const valuesArrayRequestTemplate = await IWitnetRequestFactory.buildRequestTemplate(
-    /* retrieval templates */ [requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash],
-    /* aggregation reducer */ requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash,
-    /* witnessing reducer  */ requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash,
-    /* (reserved) */ 0
-  );
+  let requestTemplateLookup;
+  try{
+    requestTemplateLookup = await IWitnetRequestFactory.callStatic.buildRequestTemplate(
+      /* retrieval templates */ [requestHashes.hashes[hre.network.config.chainId].NewRadonRetrievalHash],
+      /* aggregation reducer */ requestHashes.hashes[hre.network.config.chainId].NewRadonReducerHash,
+      /* witnessing reducer  */ requestHashes.hashes[hre.network.config.chainId].NewRadonReducerHash,
+      /* (reserved) */ 0
+    );
+    // console.log(`found existing request template`)
+  }
+  catch{
+    console.log(`error looking up request template`)
+  }
 
-  console.log(valuesArrayRequestTemplate)
+  let requestTemplateAddress;
+  const code = await hre.ethers.provider.getCode(requestTemplateLookup);
+  if(typeof requestTemplateLookup !== 'undefined' && code !== '0x'){
+    console.log(`found existing request template`);
+    console.log(requestTemplateLookup)
+    requestTemplateAddress = requestTemplateLookup;
+  }
+  else{
+    console.log(`building request template`);
+    const requestTemplate = await IWitnetRequestFactory.buildRequestTemplate(
+      /* retrieval templates */ [requestHashes.hashes[hre.network.config.chainId].NewRadonRetrievalHash],
+      /* aggregation reducer */ requestHashes.hashes[hre.network.config.chainId].NewRadonReducerHash,
+      /* witnessing reducer  */ requestHashes.hashes[hre.network.config.chainId].NewRadonReducerHash,
+      /* (reserved) */ 0
+    );
+  
+    const requestTemplateReceipt = await requestTemplate.wait();
+  
+    // console.log(`RequestTemplate`)
+    // console.log(requestTemplateReceipt.events);
+    // console.log(requestTemplateReceipt.events[0].args)
+  
+    let eventFilter = IWitnetRequestFactory.filters.WitnetRequestTemplateBuilt()
+    let WitnetRequestTemplateBuiltEvents = await IWitnetRequestFactory.queryFilter(eventFilter, requestTemplateReceipt.blockNumber, requestTemplateReceipt.blockNumber) //not working if I specify blocks
+    
+    if(typeof WitnetRequestTemplateBuiltEvents !== 'undefined' && typeof WitnetRequestTemplateBuiltEvents[0].args !== 'undefined' && typeof WitnetRequestTemplateBuiltEvents[0].args.template !== 'undefined'){
+      requestTemplateAddress = WitnetRequestTemplateBuiltEvents[0].args.template;
+      console.log(requestTemplateAddress)
+    }
+  }
+  requestHashes.hashes[hre.network.config.chainId].WitnetRequestTemplate = requestTemplateAddress;
+
+
+  await fs.writeFile(path.join(__dirname, `../abi/witnet-requesthashes.json`), JSON.stringify(requestHashes));
+
+
+  
+  // console.log(requestTemplateReceipt)
 
   // const diamondAddress =
-  //   contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]["Diamond"];
+  //   contractAddresses.contracts[hre.network.config.chainId]["Diamond"];
   // console.log(`using Diamond: ${diamondAddress}`);
 
   // let witnetFacet = await ethers.getContractAt("WitnetFacet", diamondAddress);
 
   // console.log("building witnet request template");
   // // console.log(witnetAddresses.WitnetRequestFactory)
-  // console.log(requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash)
-  // console.log(requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash)
+  // console.log(requestHashes.hashes[hre.network.config.chainId].NewRadonRetrievalHash)
+  // console.log(requestHashes.hashes[hre.network.config.chainId].NewRadonReducerHash)
 
 
   // const requestTemplate = await witnetFacet.buildRequestTemplate(
-  //   requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewDataSourceHash,
-  //   requestHashes.hashes[this.__hardhatContext.environment.network.config.chainId].NewRadonReducerHash
+  //   requestHashes.hashes[hre.network.config.chainId].NewRadonRetrievalHash,
+  //   requestHashes.hashes[hre.network.config.chainId].NewRadonReducerHash
   // );
   // console.log(requestTemplate)
 }

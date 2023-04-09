@@ -87,7 +87,7 @@ const libraries = [
     name: 'LibInterchain',
   },
   {
-    name: 'LibWitnetRequest'
+    name: 'LibWitnetFacet'
   }
 ]
 
@@ -102,6 +102,16 @@ const diamondFacets = [
     name: 'OwnershipFacet',
   },
 ]
+
+const witnetSLA = {
+  numWitnesses: 9,
+  minConsensusPercentage: 66, // %
+  witnessReward: 1000000000, // 1.0 WIT
+  witnessCollateral: 15000000000, // 15.0 WIT
+  minerCommitRevealFee: 100000000, // 0.1 WIT
+};
+
+console.log(Object.values(witnetSLA));
 
 const dodaoFacets = [
   {
@@ -147,13 +157,13 @@ const dodaoFacets = [
   // {
   //   name: 'WormholeFacet',
   // },
-  // {
-  //   name: 'WitnetFacet',
-  //   arguments: [witnetAddresses.WitnetRequestBoard, witnetAddresses.WitnetRequestFactory],
-  //   libraries: [
-  //     'LibUtils',
-  //   ]
-  // },
+  {
+    name: 'WitnetFacet',
+    arguments: [witnetAddresses.WitnetRequestBoard, '0xacE04e1C0DcD0348bF44ea750fC9c4E763b2E4CB', Object.values(witnetSLA)],
+    // libraries: [
+    //   'LibWitnetFacet',
+    // ]
+  },
 ]
 
 const {

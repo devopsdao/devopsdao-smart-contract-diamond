@@ -5312,7 +5312,7 @@ __metadata:
     underscore: ^1.13.6
     web3: ^1.9.0
     witnet-requests: ^0.9.6
-    witnet-solidity-bridge: "github:witnet/witnet-solidity-bridge#feat/bytecodes"
+    witnet-solidity-bridge: "witnet/witnet-solidity-bridge#d9ec58f051c3e661715e451a6f7d18c0237508e2"
     zksync-web3: ^0.14.3
   languageName: unknown
   linkType: soft
@@ -12602,15 +12602,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"witnet-solidity-bridge@github:witnet/witnet-solidity-bridge#feat/bytecodes":
-  version: 0.6.5
-  resolution: "witnet-solidity-bridge@git+ssh://git@github.com/witnet/witnet-solidity-bridge.git#commit=34513dc6c4af68a5010bcf763bff7a737676e053"
+"witnet-solidity-bridge@witnet/witnet-solidity-bridge#d9ec58f051c3e661715e451a6f7d18c0237508e2":
+  version: 0.7.2
+  resolution: "witnet-solidity-bridge@https://github.com/witnet/witnet-solidity-bridge.git#commit=d9ec58f051c3e661715e451a6f7d18c0237508e2"
   dependencies:
     "@openzeppelin/contracts": 4.8.0
     "@openzeppelin/contracts-upgradeable": 4.8.0
     ado-contracts: 1.0.0
     lodash: 4.17.21
-  checksum: 9df1302227e7f6189d049cebae0ac209476934d2bb0bea39f6220a1f3b5fa986eab9fbd87e068237610f9432e87c31049f5e3d5c10a3413e37ab0643ea0f1db1
+  checksum: da3992c775896c3e6157cfdb33d7ccc35842ede23e3e73fc8c943725e312390ebf26d25553fa747dd024c74c8c4775cf8d27a645ccdc08ddd7d7997bc6bd1bfa
   languageName: node
   linkType: hard
 
