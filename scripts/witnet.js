@@ -9,12 +9,17 @@ const web3 = require("web3")
 // const ecosystem = "moonbeam";
 // const network = "moonbeam.moonbase";
 
-const ecosystem = "polygon";
-const network = "polygon.goerli";
+// const ecosystem = "polygon";
+// const network = "polygon.goerli";
 
-const witnetAddresses = require("witnet-solidity-bridge/migrations/witnet.addresses")[ecosystem][network];
+// const witnetAddresses = require("witnet-solidity-bridge/migrations/witnet.addresses")[ecosystem][network];
 
-console.log(witnetAddresses)
+// console.log(witnetAddresses)
+
+let ecosystem;
+let network;
+let witnetAddresses;
+let requestHashes;
 
 let contractAddresses;
 
@@ -35,7 +40,153 @@ task("witnetConfig", "configure Witnet facet")
     console.log(`updated witnet config`);
   });
 
+
+task("witnetQuery", "query Witnet facet")
+// .addParam("taskContract", "task contract")
+// .addParam("messageText", "message text")
+.setAction(async function (taskArguments, hre, runSuper) {
+  await queryWitnet();
+  console.log(`query complete`);
+});
+
+task("witnetRead", "read Witnet facet")
+// .addParam("taskContract", "task contract")
+// .addParam("messageText", "message text")
+.setAction(async function (taskArguments, hre, runSuper) {
+  await readWitnet();
+  console.log(`query complete`);
+});
+
+
+
+async function loadConfig(){
+
+
+
+  if(hre.network.config.witnet){
+    if (hre.network.config.chainId === 31337) {
+      ecosystem = "hardhat";
+      network = "hardhat.localhost";
+    } else if (hre.network.config.chainId === 1287) {
+      ecosystem = "moonbeam";
+      network = "moonbeam.moonbase";
+    } else if (hre.network.config.chainId === 4002) {
+      ecosystem = "fantom";
+      network = "fantom.goerli";
+    } else if (hre.network.config.chainId === 80001) {
+      ecosystem = "polygon";
+      network = "polygon.goerli";
+    } else if (hre.network.config.chainId === 280) {
+      ecosystem = "zksync";
+      network = "zksync.goerli";
+    }
+
+    witnetAddresses = require("witnet-solidity-bridge/migrations/witnet.addresses")[ecosystem][network];
+    // requestHashes = require(`../abi/witnet-requesthashes.json`)["hashes"][hre.network.config.chainId];
+  }
+}
+
+async function queryWitnet() {
+
+  await loadConfig();
+
+  try {
+    const existingRequestHashes = await fs.readFile(path.join(__dirname, `../abi/witnet-requesthashes.json`));
+    if (typeof existingRequestHashes !== "undefined") {
+      requestHashes = JSON.parse(existingRequestHashes);
+    }
+  } catch (error) {
+    requestHashes = {
+      hashes: {},
+    };
+  }
+
+  console.log("querying");
+  if(typeof requestHashes.hashes[hre.network.config.chainId] == "undefined"){
+    requestHashes.hashes[hre.network.config.chainId] = {};
+  }
+
+  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]["Diamond"];
+  console.log(`using Diamond: ${diamondAddress}`);
+
+  let WitnetRequestTemplate = await ethers.getContractAt("WitnetRequestTemplate", requestHashes.hashes[hre.network.config.chainId].WitnetRequestTemplate);
+
+
+  const args = ["devopsdao/devopsdao-smart-contract-diamond", "Merge pull request #11 from devopsdao/release"];
+
+  // console.log(WitnetRequestTemplate)
+
+  let witnetRequestTemplate = await WitnetRequestTemplate.verifyRadonRequest([args])
+
+  console.log(witnetRequestTemplate)
+
+  // let eventFilter = WitnetRequestTemplate.filters.NewRadonRequestHash()
+  // let WitnetRequestEvents = await WitnetRequestTemplate.queryFilter(eventFilter, requestTemplateReceipt.blockNumber, requestTemplateReceipt.blockNumber) //not working if I specify blocks
+  
+  // let NewRadonRequestHash;
+  // if(typeof WitnetRequestEvents !== 'undefined' && typeof WitnetRequestEvents[0].args !== 'undefined' && typeof WitnetRequestEvents[0].args.hash !== 'undefined'){
+  //   NewRadonRequestHash = WitnetRequestEvents[0].args.hash;
+  //   console.log(NewRadonRequestHash)
+  // }
+
+  // console.log(witnetRequestTemplate)
+
+  let witnetFacet = await ethers.getContractAt("WitnetFacet", diamondAddress);
+
+  
+  const options = {value: ethers.utils.parseEther("0.01")}
+  // let witnetRequest = await witnetFacet.postRequest(0, args, options);
+
+  console.log('witnetRequestTemplate')
+  console.log(witnetRequestTemplate.hash)
+
+  var witnetRequestTemplateHashBytes32 = new String(witnetRequestTemplate.hash).valueOf();
+
+  // const hashBytes32 = hre.ethers.utils.formatBytes32String(witnetRequestTemplateHashBytes32)
+
+  let witnetUpdateSLA = await witnetFacet.updateRadonSLA(requestHashes.hashes[hre.network.config.chainId].NewSlaHash);
+
+  console.log(witnetUpdateSLA);
+
+
+  let witnetRequest = await witnetFacet.postRequest2(1, witnetRequestTemplate.hash, options);
+
+
+  console.log(witnetRequest);
+
+  if (
+    typeof requestHashes.hashes[hre.network.config.chainId] == "undefined" ||
+    typeof requestHashes.hashes[hre.network.config.chainId].NewRadonRetrievalHash ==
+      "undefined"
+  ) {
+    console.log(`querying datasource`);
+  }
+}
+
+async function readWitnet() {
+
+  await loadConfig();
+
+  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]["Diamond"];
+  console.log(`using Diamond: ${diamondAddress}`);
+
+  let witnetFacet = await ethers.getContractAt("WitnetFacet", diamondAddress);
+
+
+  let witnetRead = await witnetFacet.callStatic.checkResultAvailability(1);
+
+
+  console.log(witnetRead);
+
+
+}
+
+
+
 async function configureWitnet() {
+
+  await loadConfig();
+
   let requestHashes;
   try {
     const existingRequestHashes = await fs.readFile(path.join(__dirname, `../abi/witnet-requesthashes.json`));
@@ -52,6 +203,8 @@ async function configureWitnet() {
   if(typeof requestHashes.hashes[hre.network.config.chainId] == "undefined"){
     requestHashes.hashes[hre.network.config.chainId] = {};
   }
+
+  console.log(witnetAddresses)
 
   const witnetBytecodes = await ethers.getContractAt("IWitnetBytecodes", witnetAddresses.WitnetBytecodes);
   // const witnetV2 = await ethers.getContractAt('WitnetV2', diamondAddress)
@@ -78,7 +231,7 @@ console.log(requestHashes)
     const requestMethod = 1;
     const requestSchema = "";
     const requestAuthority = "https://api.github.com";
-    const requestPath = "repos/\\0\\/pulls11111111111111111111111";
+    const requestPath = "repos/\\0\\/pulls";
     const requestQuery = "state=all";
     const requestBody = "";
     const requestHeaders = [];
@@ -252,7 +405,7 @@ console.log(requestHashes)
   }
 
   const witnetSLA = {
-    numWitnesses: 9,
+    numWitnesses: 1,
     minConsensusPercentage: 66, // %
     witnessReward: 1000000000, // 1.0 WIT
     witnessCollateral: 15000000000, // 15.0 WIT
@@ -368,6 +521,7 @@ console.log(requestHashes)
     );
   
     const requestTemplateReceipt = await requestTemplate.wait();
+    
   
     // console.log(`RequestTemplate`)
     // console.log(requestTemplateReceipt.events);

@@ -74,6 +74,7 @@ module.exports = {
         mnemonic: keys.mnemonic1,
       },
       zksync: false,
+      witnet: false,
       // mnemonic: MNEMONIC
     },
     goerli: {
@@ -85,6 +86,7 @@ module.exports = {
         mnemonic: keys.mnemonic1,
       },
       zksync: false,
+      witnet: true,
       // mnemonic: MNEMONIC
     },
     mumbai: {
@@ -99,6 +101,7 @@ module.exports = {
         mnemonic: keys.mnemonic1,
       },
       zksync: false,
+      witnet: true,
       // mnemonic: MNEMONIC
     },
     ftmTestnet: {
