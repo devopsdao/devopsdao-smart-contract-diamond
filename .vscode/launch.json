@@ -61,7 +61,7 @@
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
         "args": ["diamondUpgrade", "--facets", "WitnetFacet", "--network", "mumbai"],
         "cwd": "${workspaceFolder}"
-    },  
+    },
     {
         "type": "node",
         "request": "launch",
@@ -69,6 +69,15 @@
         "skipFiles": ["<node_internals>/**"],
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
         "args": ["witnetConfig", "--network", "mumbai"],
+        "cwd": "${workspaceFolder}"
+    },
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "hardhat witnetQuery",
+        "skipFiles": ["<node_internals>/**"],
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
+        "args": ["witnetQuery", "--network", "mumbai"],
         "cwd": "${workspaceFolder}"
     },  
     ]
