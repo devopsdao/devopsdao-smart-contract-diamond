@@ -79,6 +79,24 @@
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
         "args": ["witnetQuery", "--network", "mumbai"],
         "cwd": "${workspaceFolder}"
-    },  
+    },
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "hardhat witnetRead",
+        "skipFiles": ["<node_internals>/**"],
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
+        "args": ["witnetRead", "--network", "mumbai"],
+        "cwd": "${workspaceFolder}"
+    },
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "npx rad2sol",
+        "skipFiles": ["<node_internals>/**"],
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/rad2sol",
+        "args": ["--write-contracts"],
+        "cwd": "${workspaceFolder}"
+    },
     ]
 }
