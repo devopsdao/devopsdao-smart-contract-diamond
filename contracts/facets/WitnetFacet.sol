@@ -29,11 +29,11 @@ contract WitnetFacet
         UsingWitnet(_witnetRequestBoard)
     {
         require(
-            address(_witnetRequestTemplate).code.length > 0 &&
-            _witnetRequestTemplate.class() == type(WitnetRequestTemplate).interfaceId
+            address(_witnetRequestTemplate).code.length > 0
+                && _witnetRequestTemplate.class() == type(WitnetRequestTemplate).interfaceId
                 && _witnetRequestTemplate.getRadonRetrievalsCount() == 1
                 && _witnetRequestTemplate.parameterized()
-                && _witnetRequestTemplate.resultDataType() == WitnetV2.RadonDataTypes.Array
+                && _witnetRequestTemplate.resultDataType() == WitnetV2.RadonDataTypes.String
             , "WitnetFacet: uncompliant WitnetRequestTemplate"
         );
         witnetRequestTemplate = _witnetRequestTemplate;
@@ -57,6 +57,12 @@ contract WitnetFacet
     {
         uint256 _witnetQueryId = __storage().queries[_appId].id;
         return _witnetReadResult(_witnetQueryId);
+    }
+
+    function fetchResult(WitnetRequestBoard witnet, uint256 _appId) external
+        returns (LibWitnetFacet.Result memory)
+    {
+        return LibWitnetFacet.fetchResult(witnet, _appId);
     }
 
     function _checkResultAvailability(uint256 _appId)
@@ -87,9 +93,7 @@ contract WitnetFacet
         returns (uint256 _witnetQueryId)
     {
         return _postRequest(
-            _appId,
-            witnetRequestTemplate.verifyRadonRequest(_args)
-        );
+            _appId, _args);
     }
 
     function postRequest2(uint256 _appId, bytes32 _witnetRadHash)

@@ -39,9 +39,9 @@ const request = new Witnet.Request()
   .addSource(kraken)            // Use source 2
   .setAggregator(aggregator)    // Set the aggregation script
   .setTally(tally)              // Set the tally script
-  .setQuorum(25)                // Set witnesses count
+o  .setQuorum(25)                // Set witnesses count
   .setFees(1000000, 1000000)    // Set economic incentives (e.g. witness reward: 1 mWit, commit/reveal fee: 1 mWit)
-  .setCollateral(10000000000)   // Set collateral (e.g. 10 Wit)
+  .setCollateral(10000000000)   // Set cllateral (e.g. 10 Wit)
 
 // Do not forget to export the request object
 export { request as default }

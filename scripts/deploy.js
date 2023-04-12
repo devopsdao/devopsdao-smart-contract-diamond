@@ -47,31 +47,31 @@ const libraries = [
   {
     name: "LibUtils",
   },
-  // {
-  //   name: "LibAddress",
-  // },
-  // {
-  //   name: "LibTasks",
-  // },
-  // {
-  //   name: "LibTasksAudit",
-  // },
-  // {
-  //   name: "LibChat",
-  // },
-  // {
-  //   name: "LibWithdraw",
-  //   libraries: ["LibUtils"],
-  // },
-  // {
-  //   name: "LibTokens",
-  // },
-  // {
-  //   name: "LibTokenData",
-  // },
-  // {
-  //   name: "LibInterchain",
-  // },
+  {
+    name: "LibAddress",
+  },
+  {
+    name: "LibTasks",
+  },
+  {
+    name: "LibTasksAudit",
+  },
+  {
+    name: "LibChat",
+  },
+  {
+    name: "LibWithdraw",
+    libraries: ["LibUtils"],
+  },
+  {
+    name: "LibTokens",
+  },
+  {
+    name: "LibTokenData",
+  },
+  {
+    name: "LibInterchain",
+  },
   {
     name: "LibWitnetFacet",
   },
@@ -84,9 +84,9 @@ const diamondFacets = [
   {
     name: "DiamondLoupeFacet",
   },
-  // {
-  //   name: "OwnershipFacet",
-  // },
+  {
+    name: "OwnershipFacet",
+  },
 ];
 
 const witnetSLA = {
@@ -100,39 +100,39 @@ const witnetSLA = {
 console.log(Object.values(witnetSLA));
 
 const dodaoFacets = [
-  // {
-  //   name: "TaskCreateFacet",
-  //   libraries: ["LibTasks", "LibTasksAudit", "LibChat", "LibWithdraw"],
-  // },
-  // {
-  //   name: "TaskDataFacet",
-  // },
-  // {
-  //   name: "AccountFacet",
-  // },
-  // {
-  //   name: "TokenFacet",
-  //   libraries: ["LibTokens", "LibTokenData"],
-  // },
-  // {
-  //   name: "TokenDataFacet",
-  //   libraries: ["LibTokenData"],
-  // },
-  // {
-  //   name: 'InterchainFacet',
-  // },
-  // {
-  //   name: 'AxelarFacet',
-  // },
-  // {
-  //   name: 'HyperlaneFacet',
-  // },
-  // {
-  //   name: 'LayerzeroFacet',
-  // },
-  // {
-  //   name: 'WormholeFacet',
-  // },
+  {
+    name: "TaskCreateFacet",
+    libraries: ["LibTasks", "LibTasksAudit", "LibChat", "LibWithdraw"],
+  },
+  {
+    name: "TaskDataFacet",
+  },
+  {
+    name: "AccountFacet",
+  },
+  {
+    name: "TokenFacet",
+    libraries: ["LibTokens", "LibTokenData"],
+  },
+  {
+    name: "TokenDataFacet",
+    libraries: ["LibTokenData"],
+  },
+  {
+    name: 'InterchainFacet',
+  },
+  {
+    name: 'AxelarFacet',
+  },
+  {
+    name: 'HyperlaneFacet',
+  },
+  {
+    name: 'LayerzeroFacet',
+  },
+  {
+    name: 'WormholeFacet',
+  },
 ];
 
 const {
@@ -201,7 +201,9 @@ async function deployDiamond() {
   // DiamondInit provides a function that is called when the diamond is upgraded or deployed to initialize state variables
   // Read about how the diamondCut function works in the EIP2535 Diamonds standard
   const DiamondInit = await ethers.getContractFactory("DiamondInit");
-  const diamondInit = await DiamondInit.deploy({ type: 2 });
+  
+  let feeData = await ethers.provider.getFeeData();
+  const diamondInit = await DiamondInit.deploy({ type: 2, gasPrice: feeData.gasPrice });
   await diamondInit.deployed();
   console.log("DiamondInit deployed:", diamondInit.address);
 
@@ -215,6 +217,8 @@ async function deployDiamond() {
 
   // The `facetCuts` variable is the FacetCut[] that contains the functions to add during diamond deployment
   const { facetCuts, facetAddresses } = await deployFacets(facets, libAddresses);
+
+  console.log("Facets deployed")
 
   // Creating a function call
   // This call gets executed during deployment and can also be executed in upgrades
@@ -233,8 +237,10 @@ async function deployDiamond() {
   // console.log(facetCuts)
 
   // deploy Diamond
+  feeData = await ethers.provider.getFeeData();
+
   const Diamond = await ethers.getContractFactory("Diamond");
-  const diamond = await Diamond.deploy(facetCuts, diamondArgs, { type: 2 });
+  const diamond = await Diamond.deploy(facetCuts, diamondArgs, { type: 2, gasPrice: feeData.gasPrice });
   await diamond.deployed();
   console.log("");
   console.log("Diamond deployed:", diamond.address);
@@ -476,7 +482,7 @@ async function deployLibs(libraries) {
       Lib = await ethers.getContractFactory(library.name, { libraries: Libs });
     }
     const feeData = await ethers.provider.getFeeData();
-    const lib = await Lib.deploy({ type: 2 });
+    const lib = await Lib.deploy({ type: 2, gasPrice: feeData.gasPrice });
     // const lib = await Lib.deploy({ type: 2, gasLimit: 20000, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas});
     await lib.deployed();
     libAddresses[library.name] = lib.address;
@@ -502,11 +508,12 @@ async function deployFacets(FacetInits, libAddresses) {
       console.log(`${FacetInit.name} libraries: ${JSON.stringify(Libs)}`);
       Facet = await ethers.getContractFactory(FacetInit.name, { libraries: Libs });
     }
+    const feeData = await ethers.provider.getFeeData();
     let facet;
     if (typeof FacetInit.arguments != "undefined") {
-      facet = await Facet.deploy(...FacetInit.arguments, { type: 2 });
+      facet = await Facet.deploy(...FacetInit.arguments, { type: 2, gasPrice: feeData.gasPrice });
     } else {
-      facet = await Facet.deploy({ type: 2 });
+      facet = await Facet.deploy({ type: 2, gasPrice: feeData.gasPrice });
     }
     await facet.deployed();
     console.log(`${FacetInit.name} deployed: ${facet.address}`);

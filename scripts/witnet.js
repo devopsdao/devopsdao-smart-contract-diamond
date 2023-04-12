@@ -117,42 +117,60 @@ async function queryWitnet() {
   // console.log(WitnetRequestTemplate)
 
   let witnetRequestTemplate = await WitnetRequestTemplate.verifyRadonRequest([args])
+  const witnetRequestTemplateReceipt = await witnetRequestTemplate.wait();
 
-  console.log(witnetRequestTemplate)
+  console.log(witnetRequestTemplateReceipt)
 
-  // let eventFilter = WitnetRequestTemplate.filters.NewRadonRequestHash()
-  // let WitnetRequestEvents = await WitnetRequestTemplate.queryFilter(eventFilter, requestTemplateReceipt.blockNumber, requestTemplateReceipt.blockNumber) //not working if I specify blocks
+  const witnetBytecodes = await ethers.getContractAt("IWitnetBytecodes", witnetAddresses.WitnetBytecodes);
+
+  let eventFilter = witnetBytecodes.filters.NewRadHash()
+  let WitnetRequestEvents = await witnetBytecodes.queryFilter(eventFilter, witnetRequestTemplateReceipt.blockNumber, witnetRequestTemplateReceipt.blockNumber) //not working if I specify blocks
   
-  // let NewRadonRequestHash;
-  // if(typeof WitnetRequestEvents !== 'undefined' && typeof WitnetRequestEvents[0].args !== 'undefined' && typeof WitnetRequestEvents[0].args.hash !== 'undefined'){
-  //   NewRadonRequestHash = WitnetRequestEvents[0].args.hash;
-  //   console.log(NewRadonRequestHash)
-  // }
+  let NewRadonRequestHash;
+  if(typeof WitnetRequestEvents !== 'undefined' && WitnetRequestEvents.length > 0 && typeof WitnetRequestEvents[0].args !== 'undefined' && typeof WitnetRequestEvents[0].args.hash !== 'undefined'){
+    NewRadonRequestHash = WitnetRequestEvents[0].args.hash;
+    console.log(NewRadonRequestHash)
+  }
+
+  NewRadonRequestHash = await WitnetRequestTemplate.callStatic.verifyRadonRequest([args])
 
   // console.log(witnetRequestTemplate)
 
   let witnetFacet = await ethers.getContractAt("WitnetFacet", diamondAddress);
 
   
-  const options = {value: ethers.utils.parseEther("0.01")}
   // let witnetRequest = await witnetFacet.postRequest(0, args, options);
 
-  console.log('witnetRequestTemplate')
-  console.log(witnetRequestTemplate.hash)
+  console.log('NewRadonRequestHash')
+  console.log(NewRadonRequestHash)
 
-  var witnetRequestTemplateHashBytes32 = new String(witnetRequestTemplate.hash).valueOf();
-
-  // const hashBytes32 = hre.ethers.utils.formatBytes32String(witnetRequestTemplateHashBytes32)
 
   let witnetUpdateSLA = await witnetFacet.updateRadonSLA(requestHashes.hashes[hre.network.config.chainId].NewSlaHash);
 
   console.log(witnetUpdateSLA);
 
 
-  let witnetRequest = await witnetFacet.postRequest2(1, witnetRequestTemplate.hash, options);
+  feeData = await ethers.provider.getFeeData();
+
+  const options = { type: 2, gasPrice: feeData.gasPrice, value: ethers.utils.parseEther("0.01")}
 
 
-  console.log(witnetRequest);
+  // let witnetRequest = await witnetFacet.postRequest2(12, NewRadonRequestHash, options);
+
+  let witnetPostRequest = await witnetFacet.postRequest(14, args, options);
+
+  const witnetPostRequestReceipt = await witnetPostRequest.wait();
+
+  let witnetRequestEventFilter = witnetFacet.filters.NewRadonRequestHash()
+  let witnetPostRequestEvents = await witnetFacet.queryFilter(witnetRequestEventFilter, witnetPostRequestReceipt.blockNumber, witnetPostRequestReceipt.blockNumber) //not working if I specify blocks
+  
+  let NewRadonRequestHash2
+  if(typeof witnetPostRequestEvents !== 'undefined' && witnetPostRequestEvents.length > 0 && typeof witnetPostRequestEvents[0].args !== 'undefined' && typeof witnetPostRequestEvents[0].args.hash !== 'undefined'){
+    NewRadonRequestHash2 = witnetPostRequestEvents[0].args.hash;
+    console.log(NewRadonRequestHash2)
+  }
+
+  console.log(NewRadonRequestHash2);
 
   if (
     typeof requestHashes.hashes[hre.network.config.chainId] == "undefined" ||
@@ -167,16 +185,39 @@ async function readWitnet() {
 
   await loadConfig();
 
+  try {
+    const existingRequestHashes = await fs.readFile(path.join(__dirname, `../abi/witnet-requesthashes.json`));
+    if (typeof existingRequestHashes !== "undefined") {
+      requestHashes = JSON.parse(existingRequestHashes);
+    }
+  } catch (error) {
+    requestHashes = {
+      hashes: {},
+    };
+  }
+
+  // let WitnetRequestTemplate = await ethers.getContractAt("WitnetRequestTemplate", requestHashes.hashes[hre.network.config.chainId].WitnetRequestTemplate);
+
+  // const resultDataType = await WitnetRequestTemplate.callStatic.resultDataType();
+  // console.log(resultDataType);
+
   const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]["Diamond"];
   console.log(`using Diamond: ${diamondAddress}`);
 
   let witnetFacet = await ethers.getContractAt("WitnetFacet", diamondAddress);
 
 
-  let witnetRead = await witnetFacet.callStatic.checkResultAvailability(1);
+  let resultAvailability = await witnetFacet.callStatic.checkResultAvailability(14);
 
+  console.log(resultAvailability);
+
+  let witnetRead = await witnetFacet.callStatic.readResult(14);
 
   console.log(witnetRead);
+
+  let witnetFetch = await witnetFacet.callStatic.fetchResult(witnetAddresses.WitnetRequestBoard, 14);
+
+  console.log(witnetFetch);
 
 
 }
@@ -235,7 +276,9 @@ console.log(requestHashes)
     const requestQuery = "state=all";
     const requestBody = "";
     const requestHeaders = [];
-    const requestRadonScript = "0x8218771869";
+    // const requestRadonScript = "0x8218771869";
+    const requestRadonScript = "0x851876821182821867657469746c65831875a1635c315cf5f4821183821867696d65726765645f617418748218430082181800821867657374617465";
+
 
     let radonRetrievalHash = await witnetBytecodes.callStatic.verifyRadonRetrieval(
         requestMethod,
@@ -348,7 +391,7 @@ console.log(requestHashes)
 
     let radonReducerHash;
 
-    const opcode = 11; //ConcatenateAndHash
+    const opcode = 2; //Mode
     const filters = [];
     const reducerScript = "0x";
 
@@ -377,9 +420,9 @@ console.log(requestHashes)
     else{
 
       const radonReducer = await witnetBytecodes.verifyRadonReducer([
-        11, // opcode: ConcatenateAndHash
-        [], // filters
-        "0x", // script
+        opcode, // opcode: ConcatenateAndHash
+        filters, // filters
+        reducerScript, // script
       ]
       , { gasLimit: 8000000 }
       );
@@ -405,7 +448,7 @@ console.log(requestHashes)
   }
 
   const witnetSLA = {
-    numWitnesses: 1,
+    numWitnesses: 5,
     minConsensusPercentage: 66, // %
     witnessReward: 1000000000, // 1.0 WIT
     witnessCollateral: 15000000000, // 15.0 WIT
