@@ -48,6 +48,6 @@
     "commander": "^9.4.1",
     "lodash": "^4.17.21",
     "underscore": "^1.13.6",
-    "witnet-solidity-bridge": "witnet/witnet-solidity-bridge#d9ec58f051c3e661715e451a6f7d18c0237508e2"
+    "witnet-solidity-bridge": "witnet/witnet-solidity-bridge#5d782b39d35406c5957ba675e4b593f45dcbe3c5"
   }
 }
