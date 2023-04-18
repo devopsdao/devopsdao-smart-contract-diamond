@@ -1922,16 +1922,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@matterlabs/hardhat-zksync-solc@npm:^0.3.14":
-  version: 0.3.14
-  resolution: "@matterlabs/hardhat-zksync-solc@npm:0.3.14"
+"@matterlabs/hardhat-zksync-solc@npm:^0.3.15":
+  version: 0.3.16
+  resolution: "@matterlabs/hardhat-zksync-solc@npm:0.3.16"
   dependencies:
     "@nomiclabs/hardhat-docker": ^2.0.0
     chalk: 4.1.2
     dockerode: ^3.3.4
   peerDependencies:
-    hardhat: ^2.12.6
-  checksum: 11ca4bc8fbe1d654412249cd99c689f84ac1d7d4515cac1cd99d1700b91108b472b518a5ef6aafc16c1c008cb785800504a5b58f5591ddaf05f930fe9e184ffe
+    hardhat: ^2.13.0
+  checksum: e6caf562d21caeebc8d51eb17cb2b45116c5470b9f42ec4344ba676d1de9f056e36f2edd2bd99f601d45f44eec48c151f1fe7e6e4f80793313eaa4eef3966c26
   languageName: node
   linkType: hard
 
@@ -5277,7 +5277,7 @@ __metadata:
     "@ethersproject/web": ^5.7.1
     "@hyperlane-xyz/core": ^0.5.6
     "@matterlabs/hardhat-zksync-deploy": ^0.6.3
-    "@matterlabs/hardhat-zksync-solc": ^0.3.14
+    "@matterlabs/hardhat-zksync-solc": ^0.3.15
     "@nomicfoundation/hardhat-chai-matchers": ^1.0.6
     "@nomicfoundation/hardhat-network-helpers": ^1.0.6
     "@nomiclabs/hardhat-ethers": ^2.2.2

@@ -21,7 +21,9 @@ require("@matterlabs/hardhat-zksync-solc");
 
 require("./scripts/accounts.js");
 require("./scripts/deploy.js");
-require("./scripts/hardhat-tasks.js");
+// require("./scripts/hardhat-tasks-diamond.js");
+require("./scripts/hardhat-tasks-dodao.js");
+require("./scripts/hardhat-tasks-nft.js");
 require("./scripts/witnet.js");
 
 const fs = require("fs");

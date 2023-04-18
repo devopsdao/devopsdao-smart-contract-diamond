@@ -157,7 +157,7 @@ async function queryWitnet() {
 
   // let witnetRequest = await witnetFacet.postRequest2(12, NewRadonRequestHash, options);
 
-  let witnetPostRequest = await witnetFacet.postRequest(14, args, options);
+  let witnetPostRequest = await witnetFacet.postRequest(15, args, options);
 
   const witnetPostRequestReceipt = await witnetPostRequest.wait();
 
@@ -207,15 +207,15 @@ async function readWitnet() {
   let witnetFacet = await ethers.getContractAt("WitnetFacet", diamondAddress);
 
 
-  let resultAvailability = await witnetFacet.callStatic.checkResultAvailability(14);
+  let resultAvailability = await witnetFacet.callStatic.checkResultAvailability(15);
 
   console.log(resultAvailability);
 
-  let witnetRead = await witnetFacet.callStatic.readResult(14);
+  let witnetRead = await witnetFacet.callStatic.readResult(15);
 
   console.log(witnetRead);
 
-  let witnetFetch = await witnetFacet.callStatic.fetchResult(witnetAddresses.WitnetRequestBoard, 14);
+  let witnetFetch = await witnetFacet.callStatic.fetchResult(witnetAddresses.WitnetRequestBoard, 15);
 
   console.log(witnetFetch);
 

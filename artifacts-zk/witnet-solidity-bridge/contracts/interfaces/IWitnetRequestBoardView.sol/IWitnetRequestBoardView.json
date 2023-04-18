@@ -50,18 +50,18 @@
             {
               "components": [
                 {
-                  "internalType": "contract IWitnetRequest",
+                  "internalType": "address",
                   "name": "addr",
                   "type": "address"
                 },
                 {
-                  "internalType": "address",
-                  "name": "requester",
-                  "type": "address"
+                  "internalType": "bytes32",
+                  "name": "slaHash",
+                  "type": "bytes32"
                 },
                 {
                   "internalType": "bytes32",
-                  "name": "hash",
+                  "name": "radHash",
                   "type": "bytes32"
                 },
                 {
@@ -152,18 +152,18 @@
         {
           "components": [
             {
-              "internalType": "contract IWitnetRequest",
+              "internalType": "address",
               "name": "addr",
               "type": "address"
             },
             {
-              "internalType": "address",
-              "name": "requester",
-              "type": "address"
+              "internalType": "bytes32",
+              "name": "slaHash",
+              "type": "bytes32"
             },
             {
               "internalType": "bytes32",
-              "name": "hash",
+              "name": "radHash",
               "type": "bytes32"
             },
             {

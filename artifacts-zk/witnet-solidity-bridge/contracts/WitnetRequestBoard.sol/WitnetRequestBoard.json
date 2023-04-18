@@ -1147,18 +1147,18 @@
             {
               "components": [
                 {
-                  "internalType": "contract IWitnetRequest",
+                  "internalType": "address",
                   "name": "addr",
                   "type": "address"
                 },
                 {
-                  "internalType": "address",
-                  "name": "requester",
-                  "type": "address"
+                  "internalType": "bytes32",
+                  "name": "slaHash",
+                  "type": "bytes32"
                 },
                 {
                   "internalType": "bytes32",
-                  "name": "hash",
+                  "name": "radHash",
                   "type": "bytes32"
                 },
                 {
@@ -1389,8 +1389,32 @@
     {
       "inputs": [
         {
+          "internalType": "bytes32",
+          "name": "radHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "slaHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "postRequest",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "_queryId",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "contract IWitnetRequest",
-          "name": "_addr",
+          "name": "addr",
           "type": "address"
         }
       ],
@@ -1418,18 +1442,18 @@
         {
           "components": [
             {
-              "internalType": "contract IWitnetRequest",
+              "internalType": "address",
               "name": "addr",
               "type": "address"
             },
             {
-              "internalType": "address",
-              "name": "requester",
-              "type": "address"
+              "internalType": "bytes32",
+              "name": "slaHash",
+              "type": "bytes32"
             },
             {
               "internalType": "bytes32",
-              "name": "hash",
+              "name": "radHash",
               "type": "bytes32"
             },
             {
@@ -1676,6 +1700,19 @@
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "registry",
+      "outputs": [
+        {
+          "internalType": "contract IWitnetBytecodes",
+          "name": "",
+          "type": "address"
         }
       ],
       "stateMutability": "view",

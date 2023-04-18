@@ -49,8 +49,8 @@
         "request": "launch",
         "name": "hardhat test",
         "skipFiles": ["<node_internals>/**"],
-        "runtimeExecutable": "npx hardhat",
-        "args": ["test", "--network", "localhost"],
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
+        "args": ["test", "--network", "zkSyncTestnet"],
         "cwd": "${workspaceFolder}"
     },
     {

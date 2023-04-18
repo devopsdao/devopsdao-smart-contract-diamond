@@ -7,41 +7,64 @@
       "anonymous": false,
       "inputs": [
         {
-          "components": [
-            {
-              "internalType": "uint256",
-              "name": "numWitnesses",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "minConsensusPercentage",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "witnessReward",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "witnessCollateral",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "minerCommitFee",
-              "type": "uint256"
-            }
-          ],
+          "indexed": true,
+          "internalType": "contract WitnetRequest",
+          "name": "request",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "radHash",
+          "type": "bytes32"
+        },
+        {
           "indexed": false,
-          "internalType": "struct WitnetV2.RadonSLA",
-          "name": "sla",
-          "type": "tuple"
+          "internalType": "string[][]",
+          "name": "args",
+          "type": "string[][]"
+        }
+      ],
+      "name": "WitnetRequestBuilt",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract IWitnetRequest",
+          "name": "request",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "radHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "slaHash",
+          "type": "bytes32"
         }
       ],
       "name": "WitnetRequestSettled",
       "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "aggregator",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     },
     {
       "inputs": [],
@@ -54,6 +77,25 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string[][]",
+          "name": "args",
+          "type": "string[][]"
+        }
+      ],
+      "name": "buildRequest",
+      "outputs": [
+        {
+          "internalType": "contract WitnetRequest",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -97,6 +139,130 @@
     },
     {
       "inputs": [],
+      "name": "factory",
+      "outputs": [
+        {
+          "internalType": "contract IWitnetRequestFactory",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getRadonAggregator",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "enum WitnetV2.RadonReducerOpcodes",
+              "name": "opcode",
+              "type": "uint8"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "enum WitnetV2.RadonFilterOpcodes",
+                  "name": "opcode",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "args",
+                  "type": "bytes"
+                }
+              ],
+              "internalType": "struct WitnetV2.RadonFilter[]",
+              "name": "filters",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "bytes",
+              "name": "script",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct WitnetV2.RadonReducer",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "getRadonRetrievalByIndex",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint8",
+              "name": "argsCount",
+              "type": "uint8"
+            },
+            {
+              "internalType": "enum WitnetV2.DataRequestMethods",
+              "name": "method",
+              "type": "uint8"
+            },
+            {
+              "internalType": "enum WitnetV2.RadonDataTypes",
+              "name": "resultDataType",
+              "type": "uint8"
+            },
+            {
+              "internalType": "string",
+              "name": "url",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "body",
+              "type": "string"
+            },
+            {
+              "internalType": "string[2][]",
+              "name": "headers",
+              "type": "string[2][]"
+            },
+            {
+              "internalType": "bytes",
+              "name": "script",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct WitnetV2.RadonRetrieval",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getRadonRetrievalsCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "getRadonSLA",
       "outputs": [
         {
@@ -123,11 +289,53 @@
             },
             {
               "internalType": "uint256",
-              "name": "minerCommitFee",
+              "name": "minerCommitRevealFee",
               "type": "uint256"
             }
           ],
           "internalType": "struct WitnetV2.RadonSLA",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getRadonTally",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "enum WitnetV2.RadonReducerOpcodes",
+              "name": "opcode",
+              "type": "uint8"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "enum WitnetV2.RadonFilterOpcodes",
+                  "name": "opcode",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "args",
+                  "type": "bytes"
+                }
+              ],
+              "internalType": "struct WitnetV2.RadonFilter[]",
+              "name": "filters",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "bytes",
+              "name": "script",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct WitnetV2.RadonReducer",
           "name": "",
           "type": "tuple"
         }
@@ -150,7 +358,72 @@
     },
     {
       "inputs": [],
-      "name": "initialized",
+      "name": "parameterized",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "radHash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "resultDataMaxSize",
+      "outputs": [
+        {
+          "internalType": "uint16",
+          "name": "",
+          "type": "uint16"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "resultDataType",
+      "outputs": [
+        {
+          "internalType": "enum WitnetV2.RadonDataTypes",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "retrievals",
+      "outputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "",
+          "type": "bytes32[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "secured",
       "outputs": [
         {
           "internalType": "bool",
@@ -187,7 +460,7 @@
             },
             {
               "internalType": "uint256",
-              "name": "minerCommitFee",
+              "name": "minerCommitRevealFee",
               "type": "uint256"
             }
           ],
@@ -196,10 +469,10 @@
           "type": "tuple"
         }
       ],
-      "name": "modifySLA",
+      "name": "settleRadonSLA",
       "outputs": [
         {
-          "internalType": "contract IWitnetRequest",
+          "internalType": "contract WitnetRequest",
           "name": "",
           "type": "address"
         }
@@ -209,7 +482,7 @@
     },
     {
       "inputs": [],
-      "name": "radHash",
+      "name": "slaHash",
       "outputs": [
         {
           "internalType": "bytes32",
@@ -222,7 +495,7 @@
     },
     {
       "inputs": [],
-      "name": "slaHash",
+      "name": "tally",
       "outputs": [
         {
           "internalType": "bytes32",
@@ -244,6 +517,25 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string[][]",
+          "name": "args",
+          "type": "string[][]"
+        }
+      ],
+      "name": "verifyRadonRequest",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

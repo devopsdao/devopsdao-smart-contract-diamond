@@ -8,19 +8,6 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "contract WitnetRequest",
-          "name": "request",
-          "type": "address"
-        }
-      ],
-      "name": "WitnetRequestBuilt",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
           "internalType": "contract WitnetRequestTemplate",
           "name": "template",
           "type": "address"
@@ -34,40 +21,6 @@
       ],
       "name": "WitnetRequestTemplateBuilt",
       "type": "event"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32[]",
-          "name": "sourcesIds",
-          "type": "bytes32[]"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "aggregatorId",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "tallyId",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "uint16",
-          "name": "resultDataMaxSize",
-          "type": "uint16"
-        }
-      ],
-      "name": "buildRequest",
-      "outputs": [
-        {
-          "internalType": "contract WitnetRequest",
-          "name": "request",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
     },
     {
       "inputs": [

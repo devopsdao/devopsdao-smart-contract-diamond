@@ -20,6 +20,8 @@ const {
 
 const { deployDiamond } = require("../scripts/deploy.js");
 
+const { deployZkSync } = require("../deploy/deploy.js");
+
 // const { assert } = require("chai");
 
 describe("DiamondTest", async function () {
@@ -47,14 +49,16 @@ describe("DiamondTest", async function () {
     const existingAddresses = fs.readFileSync(path.join(__dirname, `../abi/addresses.json`));
     let contractAddresses;
 
-    console.log(hre.network.config.chainId)
+    // console.log(hre.network.config.chainId)
 
     testExistingDiamond = false
+
+    let zksync = true;
 
     if(typeof existingAddresses !== 'undefined' && testExistingDiamond){
       contractAddresses = JSON.parse(existingAddresses);
     }
-    console.log(contractAddresses)
+    // console.log(contractAddresses)
 
     if(typeof contractAddresses !== 'undefined'){
       console.log('using existing diamond')
@@ -62,13 +66,22 @@ describe("DiamondTest", async function () {
       facetCount = 14;
     }
     else{
-      console.log('deploying diamond');
-      ({diamondAddress, facetCount} = await deployDiamond());
-      console.log('deploying diamond');
+      if(zksync === false){
+        console.log('deploying diamond');
+        ({diamondAddress, facetCount} = await deployDiamond());
+      }
+      else{
+        console.log('deploying diamond to zksync');
+        ({diamondAddress, facetCount} = await deployZkSync());
+        console.log('deployed diamond to zksync');
+      }
+      console.log('deployed diamond');
     }
     console.log(`testing Diamond: ${diamondAddress}`);
 
-    diamondCutFacet = await ethers.getContractAt("DiamondCutFacet", diamondAddress);
+
+
+    diamondCutFacet = await hre.ethers.getContractAt("DiamondCutFacet", diamondAddress);
     diamondLoupeFacet = await ethers.getContractAt("DiamondLoupeFacet", diamondAddress);
     ownershipFacet = await ethers.getContractAt("OwnershipFacet", diamondAddress);
     taskCreateFacet = await ethers.getContractAt("TaskCreateFacet", diamondAddress);
@@ -281,9 +294,12 @@ describe("dodao facets test", async function () {
   });
 
   it("tokenDataFacet created NFT setURI", async () => {
+    let feeData = await ethers.provider.getFeeData();
+
     const auditorSetNFTURI = await tokenFacet
       .connect(signers[0])
-      .setURI("https://example2.com/{id}", createdAuditorNftBaseType);
+      .setURI("https://example2.com/{id}", createdAuditorNftBaseType, { type: 2, gasPrice: feeData.gasPrice });
+    await auditorSetNFTURI.wait();
     const auditorNFTURI2 = await tokenDataFacet.connect(signers[2]).uri(createdAuditorNftBaseType);
     assert.equal(auditorNFTURI2, "https://example2.com/{id}");
   });
@@ -291,9 +307,12 @@ describe("dodao facets test", async function () {
   let auditorNFTURI3;
 
   it("tokenDataFacet created NFT setURIOfName", async () => {
+    let feeData = await ethers.provider.getFeeData();
+
     const auditorSetNFTURIofName = await tokenFacet
       .connect(signers[0])
-      .setURIOfName("https://example3.com/{id}", "auditor");
+      .setURIOfName("https://example3.com/{id}", "auditor", { type: 2, gasPrice: feeData.gasPrice });
+    await auditorSetNFTURIofName.wait();
     auditorNFTURI3 = await tokenDataFacet.connect(signers[2]).uri(createdAuditorNftBaseType);
     assert.equal(auditorNFTURI3, "https://example3.com/{id}");
   });
@@ -309,10 +328,11 @@ describe("dodao facets test", async function () {
     // await expectEvent(createAuditorNFTReceipt, 'URI', {
     //   value: this.value,
     // });
+    let feeData = await ethers.provider.getFeeData();
 
     const mintAuditorNFT = await tokenFacet
       .connect(signers[0])
-      .mintNonFungible(createdAuditorNftBaseType, [signers[2].address]);
+      .mintNonFungible(createdAuditorNftBaseType, [signers[2].address], { type: 2, gasPrice: feeData.gasPrice });
     const mintAuditorNFTReceipt = await mintAuditorNFT.wait();
 
     const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0];
@@ -461,10 +481,10 @@ describe("dodao facets test", async function () {
       // //   { gasLimit: 30000000 });
       // console.log(encodedCall)
 
-      createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData, {
-        // gasLimit: 30000000,
-        type: 2
-      });
+      let feeData = await ethers.provider.getFeeData();
+
+      createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData, { type: 2, gasPrice: feeData.gasPrice });
+      await createTaskContract.wait();
 
       // test event listener
       await tokenFacet.on("URI", (URI, type, event) => {
@@ -486,27 +506,29 @@ describe("dodao facets test", async function () {
       );
       // expect(getNewTaskContractsBeforeBlacklist).to.have.members(getTaskContracts);
       assert.deepEqual(allTasks, getTaskContracts);
-      console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZAAAAAAAAAAAZZZZZZZZZZZZZZZZZ')
-      console.log(getTaskContracts)
     });
 
     it("tokenDataFacet addTaskToBlacklist", async () => {
-      console.log('pre addContractToBlacklist')
-      console.log(getTaskContracts)
-      console.log('pzzzrzze addContractToBlacklist')
+
+      let feeData = await ethers.provider.getFeeData();
+
       const addContractToBlacklist = await taskDataFacet
         .connect(signers[2])
-        .addTaskToBlacklist(getTaskContracts[getTaskContracts.length - 1]);
-        console.log('post add addContractToBlacklist')
+        .addTaskToBlacklist(getTaskContracts[getTaskContracts.length - 1], { type: 2, gasPrice: feeData.gasPrice });
+      await addContractToBlacklist.wait();
 
       const getNewTaskContractsAfterBlacklist = await taskDataFacet.connect(signers[0]).getTaskContractsByState("new");
       assert.deepEqual(getNewTaskContractsAfterBlacklist, []);
     });
 
     it("tokenDataFacet removeTaskFromBlacklist", async () => {
+
+      let feeData = await ethers.provider.getFeeData();
+
       const removeContractFromBlacklist = await taskDataFacet
         .connect(signers[2])
-        .removeTaskFromBlacklist(getTaskContracts[getTaskContracts.length - 1]);
+        .removeTaskFromBlacklist(getTaskContracts[getTaskContracts.length - 1], { type: 2, gasPrice: feeData.gasPrice });
+      await removeContractFromBlacklist.wait();
 
       const getNewTaskContractsAfterBlacklistRemoval = await taskDataFacet
         .connect(signers[0])
@@ -568,10 +590,14 @@ describe("dodao facets test", async function () {
     const messageTextParticipate = "I am the best to make it";
 
     it("taskContract taskParticipate", async () => {
+
+      let feeData = await ethers.provider.getFeeData();
+
       //first participant
       taskParticipate = await taskContract
         .connect(signers[1])
-        .taskParticipate(signers[1].address, messageTextParticipate, messageReplyTo);
+        .taskParticipate(signers[1].address, messageTextParticipate, messageReplyTo, { type: 2, gasPrice: feeData.gasPrice });
+      await taskParticipate.wait();
       getTaskDataParticipate = await taskContract.getTaskData();
       assert.equal(getTaskDataParticipate.participants[0], signers[1].address);
       assert.equal(getTaskDataParticipate.messages[0].id, 1);
@@ -583,10 +609,14 @@ describe("dodao facets test", async function () {
     });
 
     it("taskContract taskParticipate 2", async () => {
+
+      let feeData = await ethers.provider.getFeeData();
+
       //second participant
       taskParticipate = await taskContract
         .connect(signers[3])
-        .taskParticipate(signers[3].address, messageTextParticipate, messageReplyTo);
+        .taskParticipate(signers[3].address, messageTextParticipate, messageReplyTo, { type: 2, gasPrice: feeData.gasPrice });
+      await taskParticipate.wait();
       getTaskDataParticipate = await taskContract.getTaskData();
       assert.equal(getTaskDataParticipate.participants[1], signers[3].address);
       assert.equal(getTaskDataParticipate.messages[1].id, 2);
@@ -598,6 +628,9 @@ describe("dodao facets test", async function () {
     });
 
     it("taskContract taskStateChange - agreed (select Performer)", async () => {
+
+      let feeData = await ethers.provider.getFeeData();
+
       const taskStateAgreed = "agreed";
       const messageTextAgreed = "selected you for the first task";
       taskStateChangeAgreed = await taskContract
@@ -608,8 +641,10 @@ describe("dodao facets test", async function () {
           taskStateAgreed,
           messageTextAgreed,
           messageReplyTo,
-          0
+          0,
+          { type: 2, gasPrice: feeData.gasPrice }
         );
+      await taskStateChangeAgreed.wait();
       getTaskDataAgreed = await taskContract.getTaskData();
       assert.equal(getTaskDataAgreed.taskState, taskStateAgreed);
       assert.equal(getTaskDataAgreed.participant, signers[1].address);
@@ -622,6 +657,9 @@ describe("dodao facets test", async function () {
     });
 
     it("taskContract taskStateChange - progress", async () => {
+
+      let feeData = await ethers.provider.getFeeData();
+
       const taskStateProgress = "progress";
       const messageTextProgress = "starting job!";
       taskStateChangeProgress = await taskContract
@@ -632,8 +670,10 @@ describe("dodao facets test", async function () {
           taskStateProgress,
           messageTextProgress,
           messageReplyTo,
-          0
+          0,
+          { type: 2, gasPrice: feeData.gasPrice }
         );
+      await taskStateChangeProgress.wait();
       getTaskDataProgress = await taskContract.getTaskData();
       assert.equal(getTaskDataProgress.taskState, taskStateProgress);
       assert.equal(getTaskDataProgress.messages[3].id, 4);
@@ -645,6 +685,8 @@ describe("dodao facets test", async function () {
     });
 
     it("taskContract taskStateChange - review", async () => {
+      let feeData = await ethers.provider.getFeeData();
+
       const taskStateReview = "review";
       const messageTextReview = "please kindly review!";
       taskStateChangeReview = await taskContract
@@ -655,8 +697,10 @@ describe("dodao facets test", async function () {
           taskStateReview,
           messageTextReview,
           messageReplyTo,
-          0
+          0,
+          { type: 2, gasPrice: feeData.gasPrice }
         );
+      await taskStateChangeReview.wait();
       getTaskDataReview = await taskContract.getTaskData();
       assert.equal(getTaskDataReview.taskState, taskStateReview);
       assert.equal(getTaskDataReview.messages[4].id, 5);
@@ -669,6 +713,8 @@ describe("dodao facets test", async function () {
 
     if (favour === "no_audit") {
       it("taskContract taskStateChange - completed", async () => {
+        let feeData = await ethers.provider.getFeeData();
+
         const taskStateCompleted = "completed";
         const messageTextCompleted = "work is accepted, signing review";
         const messageReplyTo = 0;
@@ -684,8 +730,10 @@ describe("dodao facets test", async function () {
             taskStateCompleted,
             messageTextCompleted,
             messageReplyTo,
-            5
+            5,
+            { type: 2, gasPrice: feeData.gasPrice }
           );
+        await taskStateChangeCompleted.wait();
         getTaskDataCompleted = await taskContract.getTaskData();
         assert.equal(getTaskDataCompleted.taskState, taskStateCompleted);
         assert.equal(getTaskDataCompleted.participant, signers[1].address);
@@ -701,6 +749,8 @@ describe("dodao facets test", async function () {
       const taskStateAudit = "audit";
 
       it("tokenDataFacet taskStateChange - audit", async () => {
+        let feeData = await ethers.provider.getFeeData();
+
         const taskAuditStateRequested = "requested";
         let messageTextAudit;
         if (favour == "customer") {
@@ -713,11 +763,15 @@ describe("dodao facets test", async function () {
               taskStateAudit,
               messageTextAudit,
               messageReplyTo,
-              0
+              0,
+              { type: 2, gasPrice: feeData.gasPrice }
             );
+          await taskStateChangeAudit.wait();
         }
 
         if (favour == "performer") {
+          let feeData = await ethers.provider.getFeeData();
+
           messageTextAudit = "work is indeed done, acceptance is too long";
           taskStateChangeAudit = await taskContract
             .connect(signers[1])
@@ -727,8 +781,10 @@ describe("dodao facets test", async function () {
               taskStateAudit,
               messageTextAudit,
               messageReplyTo,
-              0
+              0,
+              { type: 2, gasPrice: feeData.gasPrice }
             );
+          await taskStateChangeAudit.wait();
         }
 
         getTaskDataAudit = await taskContract.getTaskData();
@@ -753,10 +809,13 @@ describe("dodao facets test", async function () {
       });
 
       it("taskContract taskAuditParticipate", async () => {
+        let feeData = await ethers.provider.getFeeData();
+
         const messageTextAuditParticipate = "I am honorable auditor";
         taskAuditParticipate = await taskContract
           .connect(signers[2])
-          .taskAuditParticipate(signers[2].address, messageTextAuditParticipate, messageReplyTo);
+          .taskAuditParticipate(signers[2].address, messageTextAuditParticipate, messageReplyTo, { type: 2, gasPrice: feeData.gasPrice });
+        await taskAuditParticipate.wait();
         getTaskDataAuditParticipate = await taskContract.getTaskData();
         assert.equal(getTaskDataAuditParticipate.auditors[0], signers[2].address);
         assert.equal(getTaskDataAuditParticipate.messages[6].id, 7);
@@ -768,11 +827,13 @@ describe("dodao facets test", async function () {
       });
 
       it("tokenDataFacet taskStateChange - performing audit (this auditor not applied) ", async () => {
+        let feeData = await ethers.provider.getFeeData();
+
         const taskStateAudit = "audit";
         const messageTextSelectAuditor = "selected a proper auditor";
         const taskAuditStatePerforming = "performing";
         await expect(
-          taskStateChangeSelectAuditor = await taskContract
+          taskContract
           .connect(signers[0])
           .taskStateChange(
             signers[0].address,
@@ -780,9 +841,11 @@ describe("dodao facets test", async function () {
             taskStateAudit,
             messageTextSelectAuditor,
             messageReplyTo,
-            0
+            0,
+            { type: 2, gasPrice: feeData.gasPrice }
           )
-        ).to.be.reverted("auditor has not applied");
+        ).to.be.revertedWith("auditor has not applied");
+        // await taskStateChangeSelectAuditor.wait();
   
 
       });
@@ -790,6 +853,8 @@ describe("dodao facets test", async function () {
 
 
       it("tokenDataFacet taskStateChange - performing audit (selected an auditor) ", async () => {
+        let feeData = await ethers.provider.getFeeData();
+
         const messageTextSelectAuditor = "selected a proper auditor";
         const taskAuditStatePerforming = "performing";
         taskStateChangeSelectAuditor = await taskContract
@@ -800,8 +865,10 @@ describe("dodao facets test", async function () {
             taskStateAudit,
             messageTextSelectAuditor,
             messageReplyTo,
-            0
+            0,
+            { type: 2, gasPrice: feeData.gasPrice }
           );
+        await taskStateChangeSelectAuditor.wait();
         getTaskDataSelectAuditor = await taskContract.getTaskData();
         assert.equal(getTaskDataSelectAuditor.auditState, taskAuditStatePerforming);
         assert.equal(getTaskDataSelectAuditor.auditor, signers[2].address);
@@ -814,6 +881,8 @@ describe("dodao facets test", async function () {
       });
 
       it("taskContract taskAuditDecision", async () => {
+        let feeData = await ethers.provider.getFeeData();
+
         const messageTextAuditDecision = `${favour} is right`;
         const taskAuditStateFinished = "finished";
         let taskStateAuditDecision;
@@ -827,7 +896,8 @@ describe("dodao facets test", async function () {
         }
         taskAuditDecision = await taskContract
           .connect(signers[2])
-          .taskAuditDecision(signers[2].address, favour, messageTextAuditDecision, 0, rating);
+          .taskAuditDecision(signers[2].address, favour, messageTextAuditDecision, 0, rating, { type: 2, gasPrice: feeData.gasPrice });
+        await taskAuditDecision.wait();
         getTaskDataDecision = await taskContract.getTaskData();
         assert.equal(getTaskDataDecision.taskState, taskStateAuditDecision);
         assert.equal(getTaskDataDecision.auditState, taskAuditStateFinished);
@@ -944,14 +1014,15 @@ describe("dodao facets test", async function () {
     // assert.equal([signers[0],signers[1]], getAccountsList)
 
     // const getAccountsData = await accountFacet.connect(signers[0]).getAccountsData(getAccountsList)
-
-    // console.log(getTaskDataDecision)
   }
 
   it("taskContract taskStateChange - canceled", async () => {
-    createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData, {
-      gasLimit: 30000000,
-    });
+    let feeData = await ethers.provider.getFeeData();
+
+    createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData, { type: 2, gasPrice: feeData.gasPrice });
+
+    await createTaskContract.wait();
+
     const getTaskContracts = await taskDataFacet.getTaskContracts();
 
     const taskStateCanceled = "canceled";
@@ -970,6 +1041,8 @@ describe("dodao facets test", async function () {
         messageReplyTo,
         0
       );
+
+    await taskStateChangeCanceled.wait();
     getTaskDataAgreed = await taskContract.getTaskData();
     assert.equal(getTaskDataAgreed.taskState, taskStateCanceled);
     assert.equal(getTaskDataAgreed.participant, "0x0000000000000000000000000000000000000000");

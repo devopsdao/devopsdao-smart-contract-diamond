@@ -47,8 +47,32 @@
     {
       "inputs": [
         {
+          "internalType": "bytes32",
+          "name": "radHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "slaHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "postRequest",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "_queryId",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "contract IWitnetRequest",
-          "name": "_addr",
+          "name": "addr",
           "type": "address"
         }
       ],
