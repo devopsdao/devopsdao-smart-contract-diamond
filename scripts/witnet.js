@@ -122,8 +122,9 @@ async function queryWitnet() {
   console.log(witnetRequestTemplateReceipt)
 
   const witnetBytecodes = await ethers.getContractAt("IWitnetBytecodes", witnetAddresses.WitnetBytecodes);
+  const witnetBytecodesEvents = await ethers.getContractAt("IWitnetBytecodesEvents", witnetAddresses.WitnetBytecodes);
 
-  let eventFilter = witnetBytecodes.filters.NewRadHash()
+  let eventFilter = witnetBytecodesEvents.filters.NewRadHash()
   let WitnetRequestEvents = await witnetBytecodes.queryFilter(eventFilter, witnetRequestTemplateReceipt.blockNumber, witnetRequestTemplateReceipt.blockNumber) //not working if I specify blocks
   
   let NewRadonRequestHash;
@@ -248,6 +249,7 @@ async function configureWitnet() {
   console.log(witnetAddresses)
 
   const witnetBytecodes = await ethers.getContractAt("IWitnetBytecodes", witnetAddresses.WitnetBytecodes);
+  const witnetBytecodesEvents = await ethers.getContractAt("IWitnetBytecodesEvents", witnetAddresses.WitnetBytecodes);
   // const witnetV2 = await ethers.getContractAt('WitnetV2', diamondAddress)
 
   // WitnetV2.DataRequestMethods
@@ -334,7 +336,7 @@ console.log(requestHashes)
       );
       const dataSourceReceipt = await dataSource.wait();
       // console.log(dataSourceReceipt)
-      const eventFilter = witnetBytecodes.filters.NewRadonRetrievalHash()
+      const eventFilter = witnetBytecodesEvents.filters.NewRadonRetrievalHash()
       const dataSourceEvents = await witnetBytecodes.queryFilter(eventFilter, dataSourceReceipt.blockNumber, dataSourceReceipt.blockNumber) //not working if I specify blocks
       // console.log(`dataSourceEvents`)
       // console.log(dataSourceEvents)
@@ -429,7 +431,7 @@ console.log(requestHashes)
 
       const radonReducerReceipt = await radonReducer.wait();
 
-      const eventFilter = witnetBytecodes.filters.NewRadonReducerHash()
+      const eventFilter = witnetBytecodesEvents.filters.NewRadonReducerHash()
       const radonReducerEvents = await witnetBytecodes.queryFilter(eventFilter, radonReducerReceipt.blockNumber, radonReducerReceipt.blockNumber) //not working if I specify blocks
       console.log(`radonReducerEvents`)
       console.log(radonReducerEvents)
@@ -504,7 +506,7 @@ console.log(requestHashes)
       );  
       const radonSLAReceipt = await radonSLA.wait();
 
-      const eventFilter = witnetBytecodes.filters.NewSlaHash()
+      const eventFilter = witnetBytecodesEvents.filters.NewSlaHash()
       const radonSLAEvents = await witnetBytecodes.queryFilter(eventFilter, radonSLAReceipt.blockNumber, radonSLAReceipt.blockNumber) //not working if I specify blocks
       console.log(`radonSLAEvents`)
       console.log(radonSLAEvents)
