@@ -145,6 +145,8 @@ async function queryWitnet() {
   console.log('NewRadonRequestHash')
   console.log(NewRadonRequestHash)
 
+  console.log('updateRadonSLA');
+  console.log(requestHashes.hashes[hre.network.config.chainId].NewSlaHash)
 
   let witnetUpdateSLA = await witnetFacet.updateRadonSLA(requestHashes.hashes[hre.network.config.chainId].NewSlaHash);
 
@@ -156,9 +158,9 @@ async function queryWitnet() {
   const options = { type: 2, gasPrice: feeData.gasPrice, value: ethers.utils.parseEther("0.01")}
 
 
-  // let witnetRequest = await witnetFacet.postRequest2(12, NewRadonRequestHash, options);
+  let witnetPostRequest = await witnetFacet['postRequest(uint256,bytes32)'](12, NewRadonRequestHash, options);
 
-  let witnetPostRequest = await witnetFacet.postRequest(15, args, options);
+  // let witnetPostRequest = await witnetFacet['postRequest(uint256,bytes32)'](15, args, options);
 
   const witnetPostRequestReceipt = await witnetPostRequest.wait();
 
@@ -212,13 +214,13 @@ async function readWitnet() {
 
   console.log(resultAvailability);
 
-  let witnetRead = await witnetFacet.callStatic.readResult(15);
+  let witnetRead = await witnetFacet.callStatic.getLastResult(15);
 
   console.log(witnetRead);
 
-  let witnetFetch = await witnetFacet.callStatic.fetchResult(witnetAddresses.WitnetRequestBoard, 15);
+  // let witnetFetch = await witnetFacet.callStatic.fetchResult(witnetAddresses.WitnetRequestBoard, 15);
 
-  console.log(witnetFetch);
+  // console.log(witnetFetch);
 
 
 }

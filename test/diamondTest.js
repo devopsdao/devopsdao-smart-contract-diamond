@@ -53,7 +53,7 @@ describe("DiamondTest", async function () {
 
     testExistingDiamond = false
 
-    let zksync = true;
+    let zksync = false;
 
     if(typeof existingAddresses !== 'undefined' && testExistingDiamond){
       contractAddresses = JSON.parse(existingAddresses);

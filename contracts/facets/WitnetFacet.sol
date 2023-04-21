@@ -29,7 +29,7 @@ contract WitnetFacet
     {
         require(
             address(_witnetRequestTemplate).code.length > 0
-                && _witnetRequestTemplate.class() == type(WitnetRequestTemplate).interfaceId
+                // && _witnetRequestTemplate.class() == type(WitnetRequestTemplate).interfaceId
                 && _witnetRequestTemplate.getRadonRetrievalsCount() == 1
                 && _witnetRequestTemplate.parameterized()
                 && _witnetRequestTemplate.resultDataType() == WitnetV2.RadonDataTypes.String
@@ -94,7 +94,9 @@ contract WitnetFacet
     }
 
     function updateRadonSLA(bytes32 slaHash) external {
-        __storage().slaHash = slaHash;
+        LibWitnetFacet.Storage storage _storage = LibWitnetFacet.witnetFacetStorage();
+        _storage.slaHash = slaHash;
+        // __storage().slaHash = slaHash;
     }
 
     function witnetRadonSLA() external view returns (WitnetV2.RadonSLA memory) {
