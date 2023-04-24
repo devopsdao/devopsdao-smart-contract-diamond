@@ -11,8 +11,8 @@ library LibWitnetFacet {
     
     struct Storage {
        bytes32 slaHash;
-       mapping (/* appId */ uint256 => Query) queries;
-       mapping (/* appId */ uint256 => Result) results;
+       mapping (/* taskAddress */ address => Query) queries;
+       mapping (/* taskAddress */ address => Result) results;
     }
 
     struct Args {

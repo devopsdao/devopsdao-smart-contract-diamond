@@ -29,6 +29,7 @@ struct TaskData{
     string taskType;
     string title;
     string description;
+    string repository;
     string[] tags;
     string[] symbols;
     uint256[] amounts;
@@ -65,6 +66,7 @@ struct Task {
     string taskType;
     string title;
     string description;
+    string repository;
     string[] tags;
     uint256[] tagsNFT;
     string[] symbols;

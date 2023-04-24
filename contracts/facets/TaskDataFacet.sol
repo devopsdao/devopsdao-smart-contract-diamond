@@ -89,7 +89,7 @@ contract TaskDataFacet  {
         TaskStorage storage _storage = LibTasks.taskStorage();
         uint256 taskCount = 0;
         for (uint256 i = 0; i < _storage.taskContracts.length; i++) {
-            Task memory task = TaskContract(address(_storage.taskContracts[i])).getTaskData();
+            Task memory task = TaskContract(payable(_storage.taskContracts[i])).getTaskData();
             if(keccak256(bytes(task.taskState)) == keccak256(bytes(_taskState))
             && ((keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false) 
             || keccak256(bytes(task.taskState)) != keccak256(bytes(TASK_STATE_NEW)))
@@ -100,7 +100,7 @@ contract TaskDataFacet  {
         address[] memory taskContracts = new address[](taskCount);
         uint256 foundTaskId = 0;
         for (uint256 i = 0; i < _storage.taskContracts.length; i++) {
-            Task memory task = TaskContract(address(_storage.taskContracts[i])).getTaskData();
+            Task memory task = TaskContract(payable(_storage.taskContracts[i])).getTaskData();
             if(keccak256(bytes(task.taskState)) == keccak256(bytes(_taskState))
             && ((keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false) 
             || keccak256(bytes(task.taskState)) != keccak256(bytes(TASK_STATE_NEW)))
@@ -195,14 +195,14 @@ contract TaskDataFacet  {
         for (uint256 i = 0; i < taskContracts.length; i++) {
             TaskWithBalance memory taskWithBalance;
             // tasks[i] = TaskContract(address(_storage.taskContracts[i])).getTaskData();
-            taskWithBalance.task = TaskContract(taskContracts[i]).getTaskData();
+            taskWithBalance.task = TaskContract(payable(taskContracts[i])).getTaskData();
             taskWithBalance.tokenNames = new string[](taskWithBalance.task.symbols.length);
             taskWithBalance.tokenBalances = new uint256[](taskWithBalance.task.symbols.length);
 
             for (uint256 idx = 0; idx < taskWithBalance.task.symbols.length; idx++) {
                 taskWithBalance.tokenNames[idx] = taskWithBalance.task.symbols[idx];
                 if(keccak256(bytes(taskWithBalance.task.symbols[idx])) == keccak256(bytes('ETH'))){
-                    taskWithBalance.tokenBalances[idx] = TaskContract(taskContracts[i]).getBalance();
+                    taskWithBalance.tokenBalances[idx] = TaskContract(payable(taskContracts[i])).getBalance();
                 }
                 else{
                     taskWithBalance.tokenBalances[idx] = TokenDataFacet(address(this)).balanceOfName(taskContracts[i], taskWithBalance.task.symbols[idx]);

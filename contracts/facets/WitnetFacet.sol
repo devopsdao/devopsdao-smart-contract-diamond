@@ -4,8 +4,11 @@ pragma solidity ^0.8.17;
 import "witnet-solidity-bridge/contracts/UsingWitnet.sol";
 import "witnet-solidity-bridge/contracts/libs/Witnet.sol";
 import "../libraries/LibWitnetFacet.sol";
+import "../libraries/LibTasks.sol";
+import "../contracts/TaskContract.sol";
 
 import "../libraries/LibUtils.sol";
+
 
 contract WitnetFacet
     is
@@ -39,20 +42,20 @@ contract WitnetFacet
         __storage().slaHash = witnetRequestTemplate.registry().verifyRadonSLA(_witnetRadonSLA);
     }
 
-    function checkResultAvailability(uint256 _appId) external view returns (bool) {
-        return _checkResultAvailability(_appId);
+    function checkResultAvailability(address taskAddress) external view returns (bool) {
+        return _checkResultAvailability(taskAddress);
     }
 
-    function getLastWitnetQuery(uint256 _appId) external view returns (Witnet.Query memory) {
-        return witnet.getQueryData(__storage().queries[_appId].id);
+    function getLastWitnetQuery(address taskAddress) external view returns (Witnet.Query memory) {
+        return witnet.getQueryData(__storage().queries[taskAddress].id);
     }
 
-    function getLastWitnetResult(uint256 _appId) external view returns (Witnet.Result memory) {
-        return witnet.readResponseResult(__storage().queries[_appId].id);
+    function getLastWitnetResult(address taskAddress) external view returns (Witnet.Result memory) {
+        return witnet.readResponseResult(__storage().queries[taskAddress].id);
     }
 
-    function getLastResult(uint256 _appId) public view returns (LibWitnetFacet.Result memory _result) {
-        uint _queryId = __storage().queries[_appId].id;
+    function getLastResult(address taskAddress) public view returns (LibWitnetFacet.Result memory _result) {
+        uint _queryId = __storage().queries[taskAddress].id;
         Witnet.ResultStatus _status = witnet.checkResultStatus(_queryId);
         if (_status == Witnet.ResultStatus.Ready) {
             Witnet.Result memory _witnetResult = witnet.readResponseResult(_queryId);
@@ -79,18 +82,33 @@ contract WitnetFacet
         }
     }
 
-    function postRequest(uint256 _appId, LibWitnetFacet.Args memory _args)
+    function postRequest(address taskAddress)
         public payable
         returns (uint256 _queryId)
-    {
-        return _postRequest(_appId, _args);
+    {   
+        Task memory task = TaskContract(payable(taskAddress)).getTaskData();
+
+        LibWitnetFacet.Args memory args;
+        args.subpath = task.repository;
+        args.title = string.concat("dodao.dev/#/tasks/0x04eae63a76963cb6faace493264f3345fdce69fe task: ", task.title);
+
+        return _postRequest(taskAddress, args);
     }
 
-    function postRequest(uint256 _appId, bytes32 _radHash)
+    function postRequestTest(address taskAddress, LibWitnetFacet.Args memory _args)
         public payable
         returns (uint256 _queryId)
     {
-        return _postRequest(_appId, _radHash);
+        TaskStorage storage _storage = LibTasks.taskStorage();
+
+        return _postRequest(taskAddress, _args);
+    }
+
+    function postRequest(address taskAddress, bytes32 _radHash)
+        public payable
+        returns (uint256 _queryId)
+    {
+        return _postRequest(taskAddress, _radHash);
     }
 
     function updateRadonSLA(bytes32 slaHash) external {
@@ -107,31 +125,31 @@ contract WitnetFacet
     // ================================================================================================================
     // --- Internal methods -------------------------------------------------------------------------------------------
 
-    function _checkResultAvailability(uint256 _appId)
+    function _checkResultAvailability(address taskAddress)
         internal view
         returns (bool)
     {
-        uint256 _queryId = __storage().queries[_appId].id;
+        uint256 _queryId = __storage().queries[taskAddress].id;
         return (
             _queryId > 0
                 && _witnetCheckResultAvailability(_queryId)
         );
     }
 
-    function _postRequest(uint256 _appId, LibWitnetFacet.Args memory _args)
+    function _postRequest(address taskAddress, LibWitnetFacet.Args memory _args)
         internal
         returns (uint256 _queryId)
     {
         bytes32 _radHash = witnetRequestTemplate.verifyRadonRequest(_args);
         emit NewRadonRequestHash(_radHash);
-        return _postRequest(_appId, _radHash);
+        return _postRequest(taskAddress, _radHash);
     }
 
-    function _postRequest(uint256 _appId, bytes32 _witnetRadHash)
+    function _postRequest(address taskAddress, bytes32 _witnetRadHash)
         internal
         returns (uint256 _queryId)
     {
-        LibWitnetFacet.Query storage __query = __storage().queries[_appId];
+        LibWitnetFacet.Query storage __query = __storage().queries[taskAddress];
         _queryId = __query.id;
         uint _usedFunds;
         if (_queryId == 0) {
@@ -149,7 +167,7 @@ contract WitnetFacet
                 _usedFunds = _witnetUpgradeReward(_queryId);
             } else {
                 // if last attempt is solved but result is not yet final...
-                LibWitnetFacet.Result memory _lastResult = getLastResult(_appId);
+                LibWitnetFacet.Result memory _lastResult = getLastResult(taskAddress);
                 if (
                     _lastResult.failed == false
                         && _lastResult.pendingMerge == false 

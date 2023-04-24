@@ -38,6 +38,7 @@ contract TaskContract is ERC1155StorageFacet, ERC1155TokenReceiver, CommonConsta
         _storage.tasks[address(this)].taskType = _taskData.taskType;
         _storage.tasks[address(this)].title = _taskData.title;
         _storage.tasks[address(this)].description = _taskData.description;
+        _storage.tasks[address(this)].repository = _taskData.repository;
         _storage.tasks[address(this)].tags = _taskData.tags;
         _storage.tasks[address(this)].symbols = _taskData.symbols;
         _storage.tasks[address(this)].amounts = _taskData.amounts;
@@ -163,6 +164,10 @@ contract TaskContract is ERC1155StorageFacet, ERC1155TokenReceiver, CommonConsta
         // }
         LibChat.sendMessage(_sender, _message, _replyTo);
         emit TaskUpdated(address(this), 'sendMessage', block.timestamp);
+    }
+
+    receive() payable external {
+        emit TaskUpdated(address(this), 'topup', block.timestamp);
     }
 
     function onERC1155Received(address _operator, address _from, uint256 _id, uint256 _value, bytes calldata _data) external view returns(bytes4) {
