@@ -67,10 +67,6 @@ library LibWithdraw {
             for(uint i; i < _storage.tasks[address(this)].symbols.length; i++) {
                 bytes memory symbolBytes = bytes(_storage.tasks[address(this)].symbols[i]);
                 bytes memory chainBytes = bytes(_chain);
-
-                //check USDC balance
-                address tokenAddress = IAxelarGateway(gateway_).tokenAddresses("aUSDC");
-                uint256 contractUSDCAmount = IERC20(tokenAddress).balanceOf(address(this))/10;
                 
                 //check ETH balance
                 if (address(this).balance!= 0) {
@@ -94,18 +90,24 @@ library LibWithdraw {
                     keccak256(chainBytes) == keccak256(bytes("Avalanche")) ||
                     keccak256(chainBytes) == keccak256(bytes("Polygon"))
                 )) {
+                    //check USDC balance
+                    address tokenAddress = IAxelarGateway(gateway_).tokenAddresses("aUSDC");
+                    uint256 contractUSDCAmount = IERC20(tokenAddress).balanceOf(address(this));
                     IERC20(tokenAddress).approve(gateway_, contractUSDCAmount);
                     IAxelarGateway(gateway_).sendToken(_chain, LibUtils.addressToString(_storage.tasks[address(this)].participant), "aUSDC", contractUSDCAmount);
                 } else if (keccak256(symbolBytes) == keccak256(bytes("aUSDC")) && keccak256(chainBytes) == keccak256(bytes("Moonbase"))) {
                     emit Logs(address(this), string.concat("withdrawing ", _storage.tasks[address(this)].symbols[i], " to ", _chain, "address:",LibUtils.addressToString(_storage.tasks[address(this)].participant)));
+                    //check USDC balance
+                    address tokenAddress = IAxelarGateway(gateway_).tokenAddresses("aUSDC");
+                    uint256 contractUSDCAmount = IERC20(tokenAddress).balanceOf(address(this));
                     IERC20(tokenAddress).approve(address(this), contractUSDCAmount);
                     IERC20(tokenAddress).transferFrom(address(this), _storage.tasks[address(this)].participant, contractUSDCAmount);
                 }
-                else{
-                    revert RevertReason({
-                        message: "invalid destination network"
-                    });
-                }
+                // else{
+                //     revert RevertReason({
+                //         message: "invalid destination network"
+                //     });
+                // }
             }
         
         }
