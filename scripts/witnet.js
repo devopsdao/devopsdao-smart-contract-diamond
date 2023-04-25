@@ -291,7 +291,7 @@ async function configureWitnet() {
 
   console.log("request radon script:");
   console.log(requestRadonScript);
-
+  chainBytes
   if (
     typeof requestHashes.hashes[hre.network.config.chainId] == "undefined" ||
     typeof requestHashes.hashes[hre.network.config.chainId].NewRadonRetrievalHash == "undefined"
