@@ -34,7 +34,7 @@ contract DiamondInit {
         ds.supportedInterfaces[type(IDiamondCut).interfaceId] = true;
         ds.supportedInterfaces[type(IDiamondLoupe).interfaceId] = true;
         ds.supportedInterfaces[type(IERC173).interfaceId] = true;
-        ds.supportedInterfaces[type(IERC1155).interfaceId] = true;
+        ds.supportedInterfaces[0x4e2312e0] = true;//ERC-1155
         ds.supportedInterfaces[type(ERC1155Metadata_URI).interfaceId] = true;
 
         // add your own state variables 

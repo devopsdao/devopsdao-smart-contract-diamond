@@ -379,7 +379,7 @@ library LibTokens {
     function mintNonFungible(
         uint256 _type,
         address[] calldata _to
-    ) public creatorOnly(_type) {
+    ) public {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
         // No need to check this is a nf type rather than an id since
         // creatorOnly() will only let a type pass through.

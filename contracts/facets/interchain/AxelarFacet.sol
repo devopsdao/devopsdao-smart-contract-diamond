@@ -4,7 +4,6 @@ pragma solidity 0.8.17;
 import { AxelarExecutable } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/executables/AxelarExecutable.sol';
 import { IAxelarExecutable } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarExecutable.sol';
 import { IAxelarGateway } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol';
-import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol';
 import { IAxelarGasService } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol';
 import "../TaskCreateFacet.sol";
 import "../../contracts/TaskContract.sol";
@@ -259,8 +258,8 @@ contract AxelarFacet is IAxelarExecutable {
         string _title,
         string _description,
         string[] _tags,
-        string[] _symbol,
-        uint256[] _amount
+        string[] _tokenNames
+        // uint256[] _amount
     );
 
     event TaskParticipating(
@@ -324,8 +323,8 @@ contract AxelarFacet is IAxelarExecutable {
                 _taskData.title,
                 _taskData.description,
                 _taskData.tags,
-                _taskData.symbols,
-                _taskData.amounts
+                _taskData.tokenNames
+                // _taskData.amounts
             );
             TaskCreateFacet(_storage.configAxelar.destinationDiamond)
                 .createTaskContract(

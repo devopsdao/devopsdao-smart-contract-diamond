@@ -59,8 +59,9 @@
         "name": "hardhat diamondUpgrade",
         "skipFiles": ["<node_internals>/**"],
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
-        "args": ["diamondUpgrade", "--facets", "WitnetFacet", "--network", "mumbai"],
-        "cwd": "${workspaceFolder}"
+        "args": ["diamondUpgrade", "--facets", "TaskDataFacet", "--network", "moonbase"],
+        "cwd": "${workspaceFolder}",
+        "sourceMaps": true
     },
     {
         "type": "node",

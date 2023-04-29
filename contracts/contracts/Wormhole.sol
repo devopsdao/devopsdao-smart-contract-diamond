@@ -2,7 +2,6 @@
 pragma solidity 0.8.17;
 
 import "../external/wormhole/interfaces/IWormhole.sol";
-import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol';
 import "../facets/TaskCreateFacet.sol";
 import "../contracts/TaskContract.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -195,8 +194,8 @@ contract Wormhole is Ownable {
         string _title,
         string _description,
         string[] _tags,
-        string[] _symbol,
-        uint256[] _amount
+        string[] _tokenName
+        // uint256[] _amount
     );
 
     event TaskParticipating(
@@ -294,8 +293,8 @@ contract Wormhole is Ownable {
                 _taskData.title,
                 _taskData.description,
                 _taskData.tags,
-                _taskData.symbols,
-                _taskData.amounts
+                _taskData.tokenNames
+                // _taskData.amounts
             );
             TaskCreateFacet(destinationDiamond)
                 .createTaskContract(

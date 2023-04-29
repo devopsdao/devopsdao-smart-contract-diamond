@@ -7,10 +7,7 @@ pragma solidity ^0.8.17;
 //     uint256 secondVar;
 //     uint256 firstVar;
 //     uint256 lastVar;
-//   }
-
-import { IAxelarGateway } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol';
-import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol';
+//   }s
 
 import "../libraries/LibTasks.sol";
 import "../facets/tokenstorage/ERC1155StorageFacet.sol";
@@ -49,7 +46,7 @@ library LibTasksAudit {
     ) external {
         TaskStorage storage _storage = LibTasks.taskStorage();
 
-        // (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.tasks[address(this)].contractParent).getInterchainConfigs();
+        // (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.task.contractParent).getInterchainConfigs();
         // if(msg.sender != configAxelar.sourceAddress 
         //     && msg.sender != configHyperlane.sourceAddress 
         //     && msg.sender != configLayerzero.sourceAddress
@@ -59,47 +56,47 @@ library LibTasksAudit {
         // }
 
         require(
-            _sender != _storage.tasks[address(this)].contractOwner &&
-                _sender != _storage.tasks[address(this)].participant,
+            _sender != _storage.task.contractOwner &&
+                _sender != _storage.task.participant,
             "contract owner or participant cannot audit"
         );
         // console.log(address(this));
         // console.log(TASK_STATE_AUDIT);
         require(
-            keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
+            keccak256(bytes(_storage.task.taskState)) ==
                 keccak256(bytes(TASK_STATE_AUDIT)),
             "task is not in the audit state"
         );
         // TODO: add NFT based auditor priviledge check
-        //_storage.tasks[address(this)].countMessages++;
+        //_storage.task.countMessages++;
         Message memory message;
-        message.id = _storage.tasks[address(this)].messages.length + 1;
+        message.id = _storage.task.messages.length + 1;
         message.text = _message;
         message.timestamp = block.timestamp;
         message.sender = _sender;
         message.taskState = TASK_STATE_AUDIT;
         message.replyTo = _replyTo;
         bool existed = false;
-        if (_storage.tasks[address(this)].auditors.length == 0) {
-            _storage.tasks[address(this)].auditors.push(_sender);
-            _storage.tasks[address(this)].messages.push(message);
-            IAccountFacet(_storage.tasks[address(this)].contractParent).addAuditParticipantTask(_sender, address(this));
+        if (_storage.task.auditors.length == 0) {
+            _storage.task.auditors.push(_sender);
+            _storage.task.messages.push(message);
+            IAccountFacet(_storage.task.contractParent).addAuditParticipantTask(_sender, address(this));
         } else {
             for (
                 uint256 i = 0;
-                i < _storage.tasks[address(this)].auditors.length;
+                i < _storage.task.auditors.length;
                 i++
             ) {
-                if (_storage.tasks[address(this)].auditors[i] == _sender) {
+                if (_storage.task.auditors[i] == _sender) {
                     existed = true;
                     break;
                 }
             }
             if (!existed) {
-                _storage.tasks[address(this)].auditors.push(_sender);
+                _storage.task.auditors.push(_sender);
                 _storage.accounts[_sender].auditParticipantTasks.push(address(this));
-                _storage.tasks[address(this)].messages.push(message);
-                IAccountFacet(_storage.tasks[address(this)].contractParent).addAuditParticipantTask(_sender, address(this));
+                _storage.task.messages.push(message);
+                IAccountFacet(_storage.task.contractParent).addAuditParticipantTask(_sender, address(this));
             }
         }
     }
@@ -115,7 +112,7 @@ library LibTasksAudit {
     ) external {
         TaskStorage storage _storage = LibTasks.taskStorage();
 
-        // (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.tasks[address(this)].contractParent).getInterchainConfigs();
+        // (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.task.contractParent).getInterchainConfigs();
         // if(msg.sender != configAxelar.sourceAddress 
         //     && msg.sender != configHyperlane.sourceAddress 
         //     && msg.sender != configLayerzero.sourceAddress
@@ -126,17 +123,17 @@ library LibTasksAudit {
 
         require(
             _replyTo == 0 ||
-                _replyTo <= _storage.tasks[address(this)].messages.length + 1,
+                _replyTo <= _storage.task.messages.length + 1,
             "invalid replyTo id"
         );
-        address auditor = _storage.tasks[address(this)].auditor;
-        string memory taskType = _storage.tasks[address(this)].taskType;
-        string memory taskState = _storage.tasks[address(this)].taskState;
-        string memory auditState = _storage.tasks[address(this)].auditState;
+        address auditor = _storage.task.auditor;
+        string memory taskType = _storage.task.taskType;
+        string memory taskState = _storage.task.taskState;
+        string memory auditState = _storage.task.auditState;
         // TODO: add NFT based auditor priviledge check
-        //_storage.tasks[address(this)].countMessages++;
+        //_storage.task.countMessages++;
         Message memory message;
-        message.id = _storage.tasks[address(this)].messages.length + 1;
+        message.id = _storage.task.messages.length + 1;
         message.text = _message;
         message.timestamp = block.timestamp;
         message.sender = _sender;
@@ -152,12 +149,12 @@ library LibTasksAudit {
             _rating <= 5
         ) {
             _storage
-                .tasks[address(this)]
+                .task
                 .auditState = TASK_AUDIT_STATE_FINISHED;
-            _storage.tasks[address(this)].taskState = TASK_STATE_CANCELED;
-            // _storage.tasks[address(this)].rating = _rating;
+            _storage.task.taskState = TASK_STATE_CANCELED;
+            // _storage.task.rating = _rating;
             message.taskState = TASK_STATE_CANCELED;
-            _storage.tasks[address(this)].messages.push(message);
+            _storage.task.messages.push(message);
         } else if (
             _sender == auditor &&
             keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT)) &&
@@ -169,12 +166,12 @@ library LibTasksAudit {
             _rating <= 5
         ) {
             _storage
-                .tasks[address(this)]
+                .task
                 .auditState = TASK_AUDIT_STATE_FINISHED;
-            _storage.tasks[address(this)].taskState = TASK_STATE_NEW;
-            // _storage.tasks[address(this)].rating = _rating;
+            _storage.task.taskState = TASK_STATE_NEW;
+            // _storage.task.rating = _rating;
             message.taskState = TASK_STATE_NEW;
-            _storage.tasks[address(this)].messages.push(message);
+            _storage.task.messages.push(message);
         } else if (
             _sender == auditor &&
             keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT)) &&
@@ -185,12 +182,12 @@ library LibTasksAudit {
             _rating <= 5
         ) {
             _storage
-                .tasks[address(this)]
+                .task
                 .auditState = TASK_AUDIT_STATE_FINISHED;
-            _storage.tasks[address(this)].taskState = TASK_STATE_COMPLETED;
-            _storage.tasks[address(this)].rating = _rating;
+            _storage.task.taskState = TASK_STATE_COMPLETED;
+            _storage.task.rating = _rating;
             message.taskState = TASK_STATE_COMPLETED;
-            _storage.tasks[address(this)].messages.push(message);
+            _storage.task.messages.push(message);
         } else revert("conditions are not met");
     }
 

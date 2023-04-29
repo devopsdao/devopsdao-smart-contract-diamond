@@ -6,7 +6,7 @@ import "../libraries/LibTasks.sol";
 import "../libraries/LibTasksAudit.sol";
 import "../libraries/LibChat.sol";
 import "../libraries/LibWithdraw.sol";
-import "../libraries/LibInterchain.sol";
+// import "../libraries/LibInterchain.sol";
 
 import "../facets/TokenDataFacet.sol";
 
@@ -20,10 +20,10 @@ import "hardhat/console.sol";
 // error RevertReason (string message);
 
 
-contract TaskContract is ERC1155StorageFacet, ERC1155TokenReceiver, CommonConstants  {
+contract TaskContract is ERC1155TokenReceiver, CommonConstants  {
     // TaskStorage internal _storage;
     bool immutable shouldRejectERC1155 = false;
-    InterchainStorage internal _storageInterchain;
+    // InterchainStorage internal _storageInterchain;
 
     event Logs(address contractAdr, string message);
     event LogsValue(address contractAdr, string message, uint value);
@@ -34,18 +34,22 @@ contract TaskContract is ERC1155StorageFacet, ERC1155TokenReceiver, CommonConsta
         TaskData memory _taskData
     ) payable {
         TaskStorage storage _storage = LibTasks.taskStorage();
-        _storage.tasks[address(this)].nanoId = _taskData.nanoId;
-        _storage.tasks[address(this)].taskType = _taskData.taskType;
-        _storage.tasks[address(this)].title = _taskData.title;
-        _storage.tasks[address(this)].description = _taskData.description;
-        _storage.tasks[address(this)].repository = _taskData.repository;
-        _storage.tasks[address(this)].tags = _taskData.tags;
-        _storage.tasks[address(this)].symbols = _taskData.symbols;
-        _storage.tasks[address(this)].amounts = _taskData.amounts;
-        _storage.tasks[address(this)].taskState = TASK_STATE_NEW;
-        _storage.tasks[address(this)].contractParent = msg.sender;
-        _storage.tasks[address(this)].contractOwner = _sender;
-        _storage.tasks[address(this)].createTime = block.timestamp;
+        _storage.task.nanoId = _taskData.nanoId;
+        _storage.task.taskType = _taskData.taskType;
+        _storage.task.title = _taskData.title;
+        _storage.task.description = _taskData.description;
+        _storage.task.repository = _taskData.repository;
+        _storage.task.tags = _taskData.tags;
+        _storage.task.tokenNames = _taskData.tokenNames;
+        // _storage.task.amounts = _taskData.amounts;
+        _storage.task.tokenContracts = _taskData.tokenContracts;
+        _storage.task.tokenIds = _taskData.tokenIds;
+        _storage.task.tokenAmounts = _taskData.tokenAmounts;
+
+        _storage.task.taskState = TASK_STATE_NEW;
+        _storage.task.contractParent = msg.sender;
+        _storage.task.contractOwner = _sender;
+        _storage.task.createTime = block.timestamp;
 
         emit TaskUpdated(address(this), 'TaskContract', block.timestamp);
     }
@@ -53,26 +57,26 @@ contract TaskContract is ERC1155StorageFacet, ERC1155TokenReceiver, CommonConsta
     function getTaskData() external view returns (Task memory task)
     {
         TaskStorage storage _storage = LibTasks.taskStorage();
-        // uint256 balance = TokenFacet(_storage.tasks[address(this)].contractParent).balanceOf(msg.sender, 1);
-        task = _storage.tasks[address(this)];
-        for(uint i; i < task.tags.length; i++) {
-            task.tags[i];
-        }
-        return _storage.tasks[address(this)];
+        // uint256 balance = TokenFacet(_storage.task.contractParent).balanceOf(msg.sender, 1);
+        // task = _storage.task;
+        // for(uint i; i < task.tags.length; i++) {
+        //     task.tags[i];
+        // }
+        return _storage.task;
     }
 
 
-    function getBalance() public view returns (uint256) {
-        return address(this).balance;
-    }
+    // function getBalance() public view returns (uint256) {
+    //     return address(this).balance;
+    // }
 
     function transferToaddress(address payable _addressToSend, string memory _chain) external payable {
-        // address payable contractOwner = _storage.tasks[address(this)].contractOwner;
-        // address payable participant = _storage.tasks[address(this)].participant;
+        // address payable contractOwner = _storage.task.contractOwner;
+        // address payable participant = _storage.task.participant;
         // uint256 balance = address(this).balance;
-        // string memory taskState = _storage.tasks[address(this)].taskState;
-        // string[] memory symbols = _storage.tasks[address(this)].symbols;
-        // uint256[] memory amounts = _storage.tasks[address(this)].amounts;
+        // string memory taskState = _storage.task.taskState;
+        // string[] memory symbols = _storage.task.symbols;
+        // uint256[] memory amounts = _storage.task.amounts;
 
         LibWithdraw.withdraw(_addressToSend, _chain);
         emit TaskUpdated(address(this), 'transferToaddress', block.timestamp);
@@ -90,8 +94,8 @@ contract TaskContract is ERC1155StorageFacet, ERC1155TokenReceiver, CommonConsta
         // uint256[] memory amount = new uint256[](1);
         // to[0] = _sender;
         // amount[0] = uint256(1);
-        // TokenFacet(_storage.tasks[address(this)].contractParent).mintFungible(1, to, amount);
-        // uint256 balance = TokenDataFacet(_storage.tasks[address(this)].contractParent).balanceOfName(msg.sender, 'auditor');
+        // TokenFacet(_storage.task.contractParent).mintFungible(1, to, amount);
+        // uint256 balance = TokenDataFacet(_storage.task.contractParent).balanceOfName(msg.sender, 'auditor');
         // // console.log(balance);
         // require(balance>0, 'must hold Auditor NFT to audit');
         
@@ -135,7 +139,7 @@ contract TaskContract is ERC1155StorageFacet, ERC1155TokenReceiver, CommonConsta
         uint256 rating
     ) external {
         TaskStorage storage _storage = LibTasks.taskStorage();
-        // uint256 balance = TokenDataFacet(_storage.tasks[address(this)].contractParent).balanceOfName(msg.sender, 'auditor');
+        // uint256 balance = TokenDataFacet(_storage.task.contractParent).balanceOfName(msg.sender, 'auditor');
         // // console.log(balance);
         // require(balance>0, 'must hold Auditor NFT to audit');
 

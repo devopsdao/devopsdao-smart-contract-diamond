@@ -9,9 +9,6 @@ pragma solidity ^0.8.17;
 //     uint256 lastVar;
 //   }
 
-import { IAxelarGateway } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol';
-import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol';
-
 import "../libraries/LibTasks.sol";
 import "../facets/tokenstorage/ERC1155StorageFacet.sol";
 import "../facets/TokenFacet.sol";
@@ -45,7 +42,7 @@ library LibChat {
     ) external {
         TaskStorage storage _storage = taskStorage();
 
-        (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.tasks[address(this)].contractParent).getInterchainConfigs();
+        (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.task.contractParent).getInterchainConfigs();
         if(msg.sender != configAxelar.sourceAddress 
             && msg.sender != configHyperlane.sourceAddress 
             && msg.sender != configLayerzero.sourceAddress
@@ -55,21 +52,21 @@ library LibChat {
         }
 
         require(
-            (_storage.tasks[address(this)].participants.length == 0 &&
-                keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
+            (_storage.task.participants.length == 0 &&
+                keccak256(bytes(_storage.task.taskState)) ==
                 keccak256(bytes(TASK_STATE_NEW))) ||
-                (_sender == _storage.tasks[address(this)].contractOwner ||
-                    _sender == _storage.tasks[address(this)].participant ||
-                    _sender == _storage.tasks[address(this)].auditor),
+                (_sender == _storage.task.contractOwner ||
+                    _sender == _storage.task.participant ||
+                    _sender == _storage.task.auditor),
             "only task owner, participant or auditor can send a message when a participant is selected"
         );
         Message memory message;
-        message.id = _storage.tasks[address(this)].messages.length + 1;
+        message.id = _storage.task.messages.length + 1;
         message.text = _message;
         message.timestamp = block.timestamp;
         message.sender = _sender;
         message.replyTo = _replyTo;
-        message.taskState = _storage.tasks[address(this)].taskState;
-        _storage.tasks[address(this)].messages.push(message);
+        message.taskState = _storage.task.taskState;
+        _storage.task.messages.push(message);
     }
 }

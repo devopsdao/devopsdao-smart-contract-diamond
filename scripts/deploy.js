@@ -3,6 +3,7 @@
 // const { ethers } = require("hardhat");
 const fs = require("fs").promises;
 const { arrayCompare } = require("arweave/node/lib/merkle.js");
+// const { ethers } = require("hardhat");
 const path = require("node:path");
 var _ = require("underscore");
 
@@ -203,7 +204,9 @@ async function deployDiamond() {
   const DiamondInit = await ethers.getContractFactory("DiamondInit");
   
   let feeData = await ethers.provider.getFeeData();
-  const diamondInit = await DiamondInit.deploy({ type: 2, gasPrice: feeData.gasPrice });
+  
+  // const diamondInit = await DiamondInit.deploy({ type: 2, gasPrice: feeData.gasPrice });
+  const diamondInit = await DiamondInit.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
   await diamondInit.deployed();
   console.log("DiamondInit deployed:", diamondInit.address);
 
@@ -240,7 +243,9 @@ async function deployDiamond() {
   feeData = await ethers.provider.getFeeData();
 
   const Diamond = await ethers.getContractFactory("Diamond");
-  const diamond = await Diamond.deploy(facetCuts, diamondArgs, { type: 2, gasPrice: feeData.gasPrice });
+  
+  // const diamond = await Diamond.deploy(facetCuts, diamondArgs, { type: 2, gasPrice: feeData.gasPrice });
+  const diamond = await Diamond.deploy(facetCuts, diamondArgs, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
   await diamond.deployed();
   console.log("");
   console.log("Diamond deployed:", diamond.address);
@@ -482,7 +487,8 @@ async function deployLibs(libraries) {
       Lib = await ethers.getContractFactory(library.name, { libraries: Libs });
     }
     const feeData = await ethers.provider.getFeeData();
-    const lib = await Lib.deploy({ type: 2, gasPrice: feeData.gasPrice });
+    // const lib = await Lib.deploy({ type: 2, gasPrice: feeData.gasPrice });
+    const lib = await Lib.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas});
     // const lib = await Lib.deploy({ type: 2, gasLimit: 20000, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas});
     await lib.deployed();
     libAddresses[library.name] = lib.address;
@@ -511,11 +517,16 @@ async function deployFacets(FacetInits, libAddresses) {
     const feeData = await ethers.provider.getFeeData();
     let facet;
     if (typeof FacetInit.arguments != "undefined") {
-      facet = await Facet.deploy(...FacetInit.arguments, { type: 2, gasPrice: feeData.gasPrice });
+      console.log('deploying facet');
+      // facet = await Facet.deploy(...FacetInit.arguments, { type: 2, gasPrice: feeData.gasPrice });
+      facet = await Facet.deploy(...FacetInit.arguments, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     } else {
+      console.log('deploying facet');
       facet = await Facet.deploy({ type: 2, gasPrice: feeData.gasPrice });
+      // facet = await Facet.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     }
-    await facet.deployed();
+    const tx = await facet.deployed();
+    // const raw = hre.ethers.getRawTransaction(tx);
     console.log(`${FacetInit.name} deployed: ${facet.address}`);
     facetCuts.push({
       facetAddress: facet.address,
