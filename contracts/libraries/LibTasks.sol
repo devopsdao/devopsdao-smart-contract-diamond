@@ -33,7 +33,7 @@ struct TaskData{
     string description;
     string repository;
     string[] tags;
-    string[] tokenNames;
+    string[][] tokenNames;
     // uint256[] amounts;
     address[] tokenContracts;
     // mapping(address => Token) tokens;
@@ -82,7 +82,7 @@ struct Task {
     string repository;
     string[] tags;
     uint256[] tagsNFT;
-    string[] tokenNames;
+    string[][] tokenNames;
     address[] tokenContracts;
     uint256[][] tokenIds;
     uint256[][] tokenAmounts;
@@ -105,8 +105,11 @@ struct Task {
 
 struct TaskWithBalance {
     Task task;
-    string[] tokenNames;
-    uint256[] tokenBalances;
+    // string[][] tokenNames;
+    // address[] tokenContracts;
+    // uint256[][] tokenIds;
+    // uint256[][] tokenAmounts;
+    uint256[][] tokenBalances;
 }
 
 struct Message {

@@ -167,7 +167,7 @@ contract WormholeFacet {
         string _title,
         string _description,
         string[] _tags,
-        string[] _tokenNames
+        string[][] _tokenNames
         // uint256[] _amount
     );
 

@@ -176,7 +176,7 @@ contract Hyperlane {
         string _title,
         string _description,
         string[] _tags,
-        string[] _tokenName
+        string[][] _tokenNames
         // uint256[] _amount
     );
 
