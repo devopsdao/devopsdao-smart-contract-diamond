@@ -196,16 +196,33 @@ contract TaskDataFacet  {
             TaskWithBalance memory taskWithBalance;
             // tasks[i] = TaskContract(address(_storage.taskContracts[i])).getTaskData();
             taskWithBalance.task = TaskContract(payable(taskContracts[i])).getTaskData();
-            taskWithBalance.tokenNames = new string[](taskWithBalance.task.tokenNames.length);
-            taskWithBalance.tokenBalances = new uint256[](taskWithBalance.task.tokenAmounts.length);
+            // taskWithBalance.tokenNames = new string[][](taskWithBalance.task.tokenNames.length);
+            // taskWithBalance.tokenContracts = new address[](taskWithBalance.task.tokenContracts.length);
+            // taskWithBalance.tokenNames = new string[][](taskWithBalance.task.tokenNames.length);
+            // taskWithBalance.tokenAmounts = new uint256[][](taskWithBalance.task.tokenAmounts.length);
+            taskWithBalance.tokenBalances = new uint256[][](taskWithBalance.task.tokenNames.length);
 
-            for (uint256 idx = 0; idx < taskWithBalance.task.tokenNames.length; idx++) {
-                taskWithBalance.tokenNames[idx] = taskWithBalance.task.tokenNames[idx];
-                if(keccak256(bytes(taskWithBalance.task.tokenNames[idx])) == keccak256(bytes('ETH'))){
-                    taskWithBalance.tokenBalances[idx] = taskContracts[i].balance;
+            for (uint256 idx = 0; idx < taskWithBalance.task.tokenContracts.length; idx++) {
+                // taskWithBalance.tokenNames[idx] = taskWithBalance.task.tokenNames[idx];
+                if(taskWithBalance.task.tokenContracts[idx] == address(0x0)){
+                    taskWithBalance.tokenBalances[idx][0] = taskContracts[i].balance;
                 }
                 else{
-                    taskWithBalance.tokenBalances[idx] = TokenDataFacet(address(this)).balanceOfName(taskContracts[i], taskWithBalance.task.tokenNames[idx]);
+                    if(IERC165(taskWithBalance.task.tokenContracts[idx]).supportsInterface(type(IERC1155).interfaceId)){
+                        // taskWithBalance.tokenBalances[idx][id] = IERC1155(taskWithBalance.task.tokenContracts[idx]).balanceOfBatch()
+                        for (uint id = 0; id < taskWithBalance.task.tokenIds[i].length; id++){
+                            taskWithBalance.tokenBalances[idx][id] = IERC1155(taskWithBalance.task.tokenContracts[idx]).balanceOf(taskContracts[i], taskWithBalance.task.tokenIds[i][id]);
+                        }
+                    }
+                    else if(IERC165(taskWithBalance.task.tokenContracts[idx]).supportsInterface(type(IERC20).interfaceId)){
+                        taskWithBalance.tokenBalances[idx][0] = IERC20(taskWithBalance.task.tokenContracts[idx]).balanceOf(taskContracts[i]);
+                    }
+                    else if(IERC165(taskWithBalance.task.tokenContracts[idx]).supportsInterface(type(IERC721).interfaceId)){
+                        for (uint id = 0; id < taskWithBalance.task.tokenIds[i].length; id++){
+                            taskWithBalance.tokenBalances[idx][id] = IERC721(taskWithBalance.task.tokenContracts[idx]).balanceOf(taskContracts[i]);
+                        }
+                    }
+                    // taskWithBalance.tokenAmounts[idx] = TokenDataFacet(address(this)).balanceOfName(taskContracts[i], taskWithBalance.task.tokenNames[idx]);
                 }
             }
             tasks[i] = taskWithBalance;
