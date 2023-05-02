@@ -82,6 +82,17 @@ async function setURIOfName(metadataURI, nfType){
   return nftID
 }
 
+async function balanceOf(account, nftId){
+  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
+  let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+  // console.log(`getting balance of ${account} ${nftId}`)
+  // const baseType = await tokenFacet.getTokenBaseType(nfType)
+  const balance = await tokenFacet.connect(account).balanceOf(account, nftId)
+  // console.log(balance);
+  // assert.equal(uri, nftURI)
+  return balance
+}
+
 async function uploadMetadata(nfType){
     const metadataJSON = await fs.readFile(path.join(__dirname,`./metadata/${nfType}.json`), 'utf-8');
     // console.log(metadataJSON)
@@ -282,6 +293,42 @@ task(
 
 
 
+  }
+);
+
+
+task(
+  "nftBalanceOf",
+  "get NFT balance")
+  .addParam("accounts", "NFT ids")
+  .addParam("ids", "NFT ids")
+  .setAction(
+  async function (taskArguments, hre, runSuper) {
+
+    const accounts = []
+    if(taskArguments.accounts.indexOf(',') != -1){
+      accounts = taskArguments.accounts.split(',')
+    }
+    else{
+      accounts.push(taskArguments.accounts)
+    }
+
+
+    const nftIds = []
+    if(taskArguments.ids.indexOf(',') != -1){
+      nftIds = taskArguments.ids.split(',')
+    }
+    else{
+      nftIds.push(taskArguments.ids)
+    }
+
+    let id = 0;
+    for(const account of accounts){
+      console.log(`get "${account}" balance for ${nftIds[id]}`)
+      const balance = await balanceOf(account, nftIds[id])
+      console.log(balance);
+      id++;
+    }
   }
 );
 

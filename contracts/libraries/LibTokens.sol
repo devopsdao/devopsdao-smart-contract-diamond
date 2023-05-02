@@ -517,7 +517,7 @@ library LibTokens {
             // You could keep balance of NF type in base type id like so:
             uint256 baseType = getNonFungibleBaseType(_id);
             _tokenStorage.balances[baseType][_from] = _tokenStorage.balances[baseType][_from] - _value;
-            _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] - _value;
+            _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] + _value;
 
             //maintain ownerTokens
             for (uint256 index = 0; index < _tokenStorage.ownerTokens[_to].length; index++) {
@@ -575,6 +575,7 @@ library LibTokens {
             // Cache value to local variable to reduce read costs.
             uint256 id = _ids[i];
             uint256 value = _values[i];
+
             _requireBalance(_from, id, value);
 
             if (isNonFungible(id)) {
@@ -584,7 +585,7 @@ library LibTokens {
             // You could keep balance of NF type in base type id like so:
                 uint256 baseType = getNonFungibleBaseType(id);
                 _tokenStorage.balances[baseType][_from] = _tokenStorage.balances[baseType][_from] - value;
-                _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] - value;
+                _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] + value;
 
                 //maintain ownerTokens
                 // for (uint256 index = 0; index < _tokenStorage.ownerTokens[_to].length; index++) {
@@ -862,10 +863,19 @@ library LibTokens {
         uint256 amount_
     ) private view {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
-        require(
-            _tokenStorage.balances[id_][account_] >= amount_,
-            "ERC1155: Insufficient balance"
-        );
+
+        if (isNonFungibleItem(id_)){
+            require(
+            _tokenStorage.nfOwners[id_] == account_,
+                "ERC1155: Insufficient balance"
+            );
+        }
+        else{
+            require(
+                _tokenStorage.balances[id_][account_] >= amount_,
+                "ERC1155: Insufficient balance"
+            );
+        }
     }
 
     // function _requireReceiver(

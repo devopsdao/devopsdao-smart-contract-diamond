@@ -77,6 +77,10 @@ contract TaskCreateFacet is ERC1155StorageFacet {
                 console.log('safeBatchTransferFrom');
             if(IERC165(taskData.tokenContracts[i]).supportsInterface(0x4e2312e0)){
                 console.log('safeBatchTransferFrom supportsInterface');
+                console.log(_sender);
+                console.log(taskContractAddress);
+                console.log(taskData.tokenIds[i][0]);
+                console.log(taskData.tokenAmounts[i][0]);
                 // IERC1155(taskData.tokenContracts[i]).setApprovalForAll(taskContractAddress, true);
                 IERC1155(taskData.tokenContracts[i]).safeBatchTransferFrom(_sender, taskContractAddress, taskData.tokenIds[i], taskData.tokenAmounts[i], bytes(''));
             }
