@@ -520,7 +520,7 @@ library LibTokens {
             _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] + _value;
 
             //maintain ownerTokens
-            for (uint256 index = 0; index < _tokenStorage.ownerTokens[_to].length; index++) {
+            for (uint256 index = 0; index < _tokenStorage.ownerTokens[_from].length; index++) {
                 if(_tokenStorage.ownerTokens[_from][index] == _id){
                     // _storage.taskContractsBlacklistMapping[taskAddress] = false;
                     for (uint i = index; i < _tokenStorage.ownerTokens[_from].length-1; i++){
@@ -530,6 +530,8 @@ library LibTokens {
                 }
                 _tokenStorage.ownerTokens[_to].push(_id);
             }
+
+
         } else {
             _tokenStorage.balances[_id][_from] =
                 _tokenStorage.balances[_id][_from] -
