@@ -572,38 +572,44 @@ library LibTokens {
             "Need operator approval for 3rd party transfers."
         );
         for (uint256 i = 0; i < _ids.length; ++i) {
-            // Cache value to local variable to reduce read costs.
-            uint256 id = _ids[i];
-            uint256 value = _values[i];
+            // Cache value to local variable to reduce read costs.(cannot use this because of variable count limit)
+            // uint256 id = _ids[i];
+            // uint256 value = _values[i];
 
-            _requireBalance(_from, id, value);
+            _requireBalance(_from, _ids[i], _values[i]);
 
-            if (isNonFungible(id)) {
-                require(_tokenStorage.nfOwners[id] == _from);
-                _tokenStorage.nfOwners[id] = _to;
+            if (isNonFungible(_ids[i])) {
+                require(_tokenStorage.nfOwners[_ids[i]] == _from);
+                _tokenStorage.nfOwners[_ids[i]] = _to;
 
-            // You could keep balance of NF type in base type id like so:
-                uint256 baseType = getNonFungibleBaseType(id);
-                _tokenStorage.balances[baseType][_from] = _tokenStorage.balances[baseType][_from] - value;
-                _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] + value;
+                // You could keep balance of NF type in base type id like so:
+                uint256 baseType = getNonFungibleBaseType(_ids[i]);
+                _tokenStorage.balances[baseType][_from] = _tokenStorage.balances[baseType][_from] - _values[i];
+                _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] + _values[i];
 
                 //maintain ownerTokens
-                // for (uint256 index = 0; index < _tokenStorage.ownerTokens[_to].length; index++) {
-                //     if(_tokenStorage.ownerTokens[_from][index] == id){
-                //         // _storage.taskContractsBlacklistMapping[taskAddress] = false;
-                //         for (uint idx = index; idx < _tokenStorage.ownerTokens[_from].length-1; idx++){
-                //             _tokenStorage.ownerTokens[_from][idx] = _tokenStorage.ownerTokens[_from][idx+1];
-                //         }
-                //         _tokenStorage.ownerTokens[_from].pop();
-                //     }
-                //     _tokenStorage.ownerTokens[_to].push(id);
-                // }
+                console.log('_tokenStorage.ownerTokens[_from].length');
+                console.log(_tokenStorage.ownerTokens[_from].length);
+                for (uint256 index = 0; index < _tokenStorage.ownerTokens[_from].length; index++) {
+                    console.log('_tokenStorage.ownerTokens[_from][index]');
+                    console.log(_tokenStorage.ownerTokens[_from][index]);
+                    console.log('_ids[i]');
+                    console.log(_ids[i]);
+                    if(_tokenStorage.ownerTokens[_from][index] == _ids[i]){
+                        // _storage.taskContractsBlacklistMapping[taskAddress] = false;
+                        for (uint idx = index; idx < _tokenStorage.ownerTokens[_from].length-1; idx++){
+                            _tokenStorage.ownerTokens[_from][idx] = _tokenStorage.ownerTokens[_from][idx+1];
+                        }
+                        _tokenStorage.ownerTokens[_from].pop();
+                    }
+                    _tokenStorage.ownerTokens[_to].push(_ids[i]);
+                }
                 
             } else {
-                _tokenStorage.balances[id][_from] = _tokenStorage
-                .balances[id][_from] - value;
-                _tokenStorage.balances[id][_to] = value +
-                    _tokenStorage.balances[id][_to];
+                _tokenStorage.balances[_ids[i]][_from] = _tokenStorage
+                .balances[_ids[i]][_from] - _values[i];
+                _tokenStorage.balances[_ids[i]][_to] = _values[i] +
+                    _tokenStorage.balances[_ids[i]][_to];
             }
         }
 

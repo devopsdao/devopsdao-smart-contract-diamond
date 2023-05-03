@@ -93,6 +93,33 @@ async function balanceOf(account, nftId){
   return balance
 }
 
+async function balanceOfName(account, name){
+  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
+  let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+  let tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress)
+
+  // console.log(`getting balance of ${account} ${nftId}`)
+  // const baseType = await tokenFacet.getTokenBaseType(nfType)
+  const balance = await tokenDataFacet.connect(account).balanceOfName(account, name)
+  // console.log(balance);
+  // assert.equal(uri, nftURI)
+  return balance
+}
+
+
+async function balanceOfBatchName(accounts, names){
+  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
+  let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+  let tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress)
+
+  // console.log(`getting balance of ${account} ${nftId}`)
+  // const baseType = await tokenFacet.getTokenBaseType(nfType)
+  const balance = await tokenDataFacet.connect(accounts[0]).balanceOfBatchName(accounts, names)
+  console.log(balance);
+  // assert.equal(uri, nftURI)
+  return balance
+}
+
 async function uploadMetadata(nfType){
     const metadataJSON = await fs.readFile(path.join(__dirname,`./metadata/${nfType}.json`), 'utf-8');
     // console.log(metadataJSON)
@@ -329,6 +356,71 @@ task(
       console.log(balance);
       id++;
     }
+  }
+);
+
+
+task(
+  "nftBalanceOfName",
+  "get NFT balance")
+  .addParam("accounts", "NFT ids")
+  .addParam("names", "NFT names")
+  .setAction(
+  async function (taskArguments, hre, runSuper) {
+
+    const accounts = []
+    if(taskArguments.accounts.indexOf(',') != -1){
+      accounts = taskArguments.accounts.split(',')
+    }
+    else{
+      accounts.push(taskArguments.accounts)
+    }
+
+
+    const nftNames = []
+    if(taskArguments.names.indexOf(',') != -1){
+      nftNames = taskArguments.names.split(',')
+    }
+    else{
+      nftNames.push(taskArguments.names)
+    }
+
+    let id = 0;
+    for(const account of accounts){
+      console.log(`get "${account}" balance for ${nftNames[id]}`)
+      const balance = await balanceOfName(account, nftNames[id])
+      console.log(balance);
+      id++;
+    }
+  }
+);
+
+task(
+  "nftBalanceOfBatchName",
+  "get NFT balance")
+  .addParam("accounts", "NFT ids")
+  .addParam("names", "NFT names")
+  .setAction(
+  async function (taskArguments, hre, runSuper) {
+
+    const accounts = []
+    if(taskArguments.accounts.indexOf(',') != -1){
+      accounts = taskArguments.accounts.split(',')
+    }
+    else{
+      accounts.push(taskArguments.accounts)
+    }
+
+
+    const nftNames = []
+    if(taskArguments.names.indexOf(',') != -1){
+      nftNames = taskArguments.names.split(',')
+    }
+    else{
+      nftNames.push(taskArguments.names)
+    }
+
+    const balances = await balanceOfBatchName(accounts, nftNames)
   }
 );
 
