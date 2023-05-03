@@ -12350,10 +12350,9 @@
     "request" "^2.88.2"
     "witnet-radon-js" "^0.8.4"
 
-"witnet-solidity-bridge@witnet/witnet-solidity-bridge#5d782b39d35406c5957ba675e4b593f45dcbe3c5":
-  "integrity" "sha512-yTpWlwVyApj9yp0l7DHGJEtgooZoROW2VDtkHUvCXZsOGRQza++ls1GXZakaWZU9C/58P7DzZ/HA/ODUxyG0hA=="
-  "resolved" "git+ssh://git@github.com/witnet/witnet-solidity-bridge.git#5d782b39d35406c5957ba675e4b593f45dcbe3c5"
-  "version" "0.7.4"
+"witnet-solidity-bridge@github:witnet/witnet-solidity-bridge#0.7.x":
+  "resolved" "git+ssh://git@github.com/witnet/witnet-solidity-bridge.git#4259665422b23d5f0ab2e65b81120f5f08db0854"
+  "version" "0.7.5"
   dependencies:
     "@openzeppelin/contracts" "4.8.0"
     "@openzeppelin/contracts-upgradeable" "4.8.0"

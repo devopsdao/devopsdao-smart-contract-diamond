@@ -200,18 +200,30 @@ contract TaskDataFacet  {
             // taskWithBalance.tokenContracts = new address[](taskWithBalance.task.tokenContracts.length);
             // taskWithBalance.tokenNames = new string[][](taskWithBalance.task.tokenNames.length);
             // taskWithBalance.tokenAmounts = new uint256[][](taskWithBalance.task.tokenAmounts.length);
-            taskWithBalance.tokenBalances = new uint256[][](taskWithBalance.task.tokenNames.length);
+            taskWithBalance.tokenBalances = new uint256[][](taskWithBalance.task.tokenIds.length);
+
+            // console.log('taskWithBalance.task.tokenContracts[0]');
+            // console.log(taskWithBalance.task.tokenContracts[0]);
 
             for (uint256 idx = 0; idx < taskWithBalance.task.tokenContracts.length; idx++) {
+                // console.log('taskWithBalance.task.tokenContracts[idx]');
+                // console.log(taskWithBalance.task.tokenContracts[idx]);
+
+                // console.log('taskWithBalance.task.tokenIds[idx].length;');
+                // console.log(taskWithBalance.task.tokenIds[idx].length);
                 // taskWithBalance.tokenNames[idx] = taskWithBalance.task.tokenNames[idx];
                 if(taskWithBalance.task.tokenContracts[idx] == address(0x0)){
                     taskWithBalance.tokenBalances[idx][0] = taskContracts[i].balance;
                 }
                 else{
-                    if(IERC165(taskWithBalance.task.tokenContracts[idx]).supportsInterface(type(IERC1155).interfaceId)){
+                    if(IERC165(taskWithBalance.task.tokenContracts[idx]).supportsInterface(0x4e2312e0)){
                         // taskWithBalance.tokenBalances[idx][id] = IERC1155(taskWithBalance.task.tokenContracts[idx]).balanceOfBatch()
-                        for (uint id = 0; id < taskWithBalance.task.tokenIds[i].length; id++){
-                            taskWithBalance.tokenBalances[idx][id] = IERC1155(taskWithBalance.task.tokenContracts[idx]).balanceOf(taskContracts[i], taskWithBalance.task.tokenIds[i][id]);
+                        for (uint id = 0; id < taskWithBalance.task.tokenIds[idx].length; id++){
+
+                            console.log('taskWithBalance.task.tokenIds[idx][id]');
+                            console.log(taskWithBalance.task.tokenIds[idx][id]);
+                            taskWithBalance.tokenBalances[idx] = new uint256[](taskWithBalance.task.tokenIds[idx].length);
+                            taskWithBalance.tokenBalances[idx][id] = IERC1155(taskWithBalance.task.tokenContracts[idx]).balanceOf(taskContracts[i], taskWithBalance.task.tokenIds[idx][id]);
                         }
                     }
                     else if(IERC165(taskWithBalance.task.tokenContracts[idx]).supportsInterface(type(IERC20).interfaceId)){

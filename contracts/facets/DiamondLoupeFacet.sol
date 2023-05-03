@@ -14,8 +14,6 @@ import { IERC165 } from "../interfaces/IERC165.sol";
 import { IERC1155 } from "../interfaces/IERC1155.sol";
 
 
-import "hardhat/console.sol";
-
 
 contract DiamondLoupeFacet is IDiamondLoupe, IERC165 {
     // Diamond Loupe Functions
@@ -147,8 +145,6 @@ contract DiamondLoupeFacet is IDiamondLoupe, IERC165 {
     // This implements ERC-165.
     function supportsInterface(bytes4 _interfaceId) external override view returns (bool) {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
-        console.log(fromCode(_interfaceId));
-        console.log(fromCode(type(IERC1155).interfaceId));
         return ds.supportedInterfaces[_interfaceId];
     }
 
