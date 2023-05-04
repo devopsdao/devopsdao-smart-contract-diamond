@@ -33,6 +33,7 @@ contract TaskContract is ERC1155TokenReceiver, CommonConstants  {
         address payable _sender,
         TaskData memory _taskData
     ) payable {
+
         TaskStorage storage _storage = LibTasks.taskStorage();
         _storage.task.nanoId = _taskData.nanoId;
         _storage.task.taskType = _taskData.taskType;
@@ -40,7 +41,7 @@ contract TaskContract is ERC1155TokenReceiver, CommonConstants  {
         _storage.task.description = _taskData.description;
         _storage.task.repository = _taskData.repository;
         _storage.task.tags = _taskData.tags;
-        _storage.task.tokenNames = _taskData.tokenNames;
+        // _storage.task.tokenNames = _taskData.tokenNames;
         // _storage.task.amounts = _taskData.amounts;
         _storage.task.tokenContracts = _taskData.tokenContracts;
         _storage.task.tokenIds = _taskData.tokenIds;

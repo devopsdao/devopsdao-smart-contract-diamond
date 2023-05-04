@@ -193,8 +193,8 @@ contract Wormhole is Ownable {
         string _taskType,
         string _title,
         string _description,
-        string[] _tags,
-        string[][] _tokenNames
+        string[] _tags
+        // string[][] _tokenNames
         // uint256[] _amount
     );
 
@@ -292,8 +292,8 @@ contract Wormhole is Ownable {
                 _taskData.taskType,
                 _taskData.title,
                 _taskData.description,
-                _taskData.tags,
-                _taskData.tokenNames
+                _taskData.tags
+                // _taskData.tokenNames
                 // _taskData.amounts
             );
             TaskCreateFacet(destinationDiamond)

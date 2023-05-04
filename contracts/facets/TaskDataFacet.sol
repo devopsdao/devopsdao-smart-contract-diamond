@@ -200,6 +200,7 @@ contract TaskDataFacet  {
             // taskWithBalance.tokenContracts = new address[](taskWithBalance.task.tokenContracts.length);
             // taskWithBalance.tokenNames = new string[][](taskWithBalance.task.tokenNames.length);
             // taskWithBalance.tokenAmounts = new uint256[][](taskWithBalance.task.tokenAmounts.length);
+            taskWithBalance.tokenNames = new string[][](taskWithBalance.task.tokenIds.length);
             taskWithBalance.tokenBalances = new uint256[][](taskWithBalance.task.tokenIds.length);
 
             // console.log('taskWithBalance.task.tokenContracts[0]');
@@ -217,13 +218,18 @@ contract TaskDataFacet  {
                 }
                 else{
                     if(IERC165(taskWithBalance.task.tokenContracts[idx]).supportsInterface(0x4e2312e0)){
+                        taskWithBalance.tokenNames[idx] = new string[](taskWithBalance.task.tokenIds[idx].length);
+                        taskWithBalance.tokenBalances[idx] = new uint256[](taskWithBalance.task.tokenIds[idx].length);
                         // taskWithBalance.tokenBalances[idx][id] = IERC1155(taskWithBalance.task.tokenContracts[idx]).balanceOfBatch()
                         for (uint id = 0; id < taskWithBalance.task.tokenIds[idx].length; id++){
-
                             console.log('taskWithBalance.task.tokenIds[idx][id]');
                             console.log(taskWithBalance.task.tokenIds[idx][id]);
-                            taskWithBalance.tokenBalances[idx] = new uint256[](taskWithBalance.task.tokenIds[idx].length);
+
+                            taskWithBalance.tokenNames[idx][id] = TokenDataFacet(address(this)).getTokenName(taskWithBalance.task.tokenIds[idx][id]);
+                            console.log('taskWithBalance.tokenNames[idx][id]');
+                            console.log(taskWithBalance.tokenNames[idx][id]);
                             taskWithBalance.tokenBalances[idx][id] = IERC1155(taskWithBalance.task.tokenContracts[idx]).balanceOf(taskContracts[i], taskWithBalance.task.tokenIds[idx][id]);
+
                         }
                     }
                     else if(IERC165(taskWithBalance.task.tokenContracts[idx]).supportsInterface(type(IERC20).interfaceId)){

@@ -23,13 +23,13 @@ import {IERC20} from "../interfaces/IERC20.sol";
 import {IERC721} from "../interfaces/IERC721.sol";
 
 
-// import "../facets/TokenFacet.sol";
+import "../facets/TokenDataFacet.sol";
 
 import "hardhat/console.sol";
 
 
 
-contract TaskCreateFacet is ERC1155StorageFacet {
+contract TaskCreateFacet {
     // TaskStorage internal _storage;
     InterchainStorage internal _storageInterchain;
 
@@ -77,6 +77,7 @@ contract TaskCreateFacet is ERC1155StorageFacet {
         , "invalid NFT data");
 
         for (uint i = 0; i < taskData.tokenContracts.length; i++){
+
                 // console.log('safeBatchTransferFrom');
             if(IERC165(taskData.tokenContracts[i]).supportsInterface(0x4e2312e0)){
                 // console.log('safeBatchTransferFrom supportsInterface');
