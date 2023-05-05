@@ -865,7 +865,8 @@ library LibTokens {
         );
     }
 
-    function _requireBalance(
+    function 
+    _requireBalance(
         address account_,
         uint256 id_,
         uint256 amount_
