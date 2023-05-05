@@ -82,6 +82,17 @@ async function setURIOfName(metadataURI, nfType){
   return nftID
 }
 
+async function safeBatchTransferFrom(from, to, nftIds, values, data){
+  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
+  let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+  // console.log(`getting balance of ${account} ${nftId}`)
+  // const baseType = await tokenFacet.getTokenBaseType(nfType)
+  const balance = await tokenFacet.safeBatchTransferFrom(from, to, nftIds, values, data)
+  // console.log(balance);
+  // assert.equal(uri, nftURI)
+  return balance
+}
+
 async function balanceOf(account, nftId){
   const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
   let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
@@ -119,6 +130,18 @@ async function balanceOfBatchName(accounts, names){
   // assert.equal(uri, nftURI)
   return balance
 }
+
+
+function fromAscii(str, padding) {
+  var hex = '0x';
+  for (var i = 0; i < str.length; i++) {
+      var code = str.charCodeAt(i);
+      var n = code.toString(16);
+      hex += n.length < 2 ? '0' + n : n;
+  }
+  return hex + '0'.repeat(padding*2 - hex.length + 2);
+};
+
 
 async function uploadMetadata(nfType){
     const metadataJSON = await fs.readFile(path.join(__dirname,`./metadata/${nfType}.json`), 'utf-8');
@@ -319,6 +342,38 @@ task(
     console.log(`updated NFT URIs ${nftNames} ${nftIds}`)
 
 
+
+  }
+);
+
+
+task(
+  "nftSafeBatchTransferFrom",
+  "send nfts in batch")
+  .addParam("from", "source address")
+  .addParam("to", "destination address")
+  .addParam("ids", "NFT ids")
+  .addParam("values", "values")
+  .setAction(
+  async function (taskArguments, hre, runSuper) {
+
+    const nftIds = []
+    if(taskArguments.ids.indexOf(',') != -1){
+      nftIds = taskArguments.ids.split(',')
+    }
+    else{
+      nftIds.push(taskArguments.ids)
+    }
+
+    const values = []
+    if(taskArguments.values.indexOf(',') != -1){
+      values = taskArguments.values.split(',')
+    }
+    else{
+      values.push(taskArguments.values)
+    }
+
+    const tx = await safeBatchTransferFrom(taskArguments.from, taskArguments.to, nftIds, values, fromAscii(''))
 
   }
 );
