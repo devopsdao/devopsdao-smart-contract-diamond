@@ -214,6 +214,9 @@ contract TaskDataFacet  {
                 // console.log(taskWithBalance.task.tokenIds[idx].length);
                 // taskWithBalance.tokenNames[idx] = taskWithBalance.task.tokenNames[idx];
                 if(taskWithBalance.task.tokenContracts[idx] == address(0x0)){
+                    taskWithBalance.tokenNames[idx] = new string[](taskWithBalance.task.tokenIds[idx].length);
+                    taskWithBalance.tokenNames[idx][0] = 'ETH';
+                    taskWithBalance.tokenBalances[idx] = new uint256[](taskWithBalance.task.tokenIds[idx].length);
                     taskWithBalance.tokenBalances[idx][0] = taskContracts[i].balance;
                 }
                 else{
@@ -233,10 +236,16 @@ contract TaskDataFacet  {
                         }
                     }
                     else if(IERC165(taskWithBalance.task.tokenContracts[idx]).supportsInterface(type(IERC20).interfaceId)){
+                        taskWithBalance.tokenNames[idx] = new string[](taskWithBalance.task.tokenIds[idx].length);
+                        taskWithBalance.tokenBalances[idx] = new uint256[](taskWithBalance.task.tokenIds[idx].length);
+                        taskWithBalance.tokenNames[idx][0] = 'ERC20-token';
                         taskWithBalance.tokenBalances[idx][0] = IERC20(taskWithBalance.task.tokenContracts[idx]).balanceOf(taskContracts[i]);
                     }
                     else if(IERC165(taskWithBalance.task.tokenContracts[idx]).supportsInterface(type(IERC721).interfaceId)){
+                        taskWithBalance.tokenNames[idx] = new string[](taskWithBalance.task.tokenIds[idx].length);
+                        taskWithBalance.tokenBalances[idx] = new uint256[](taskWithBalance.task.tokenIds[idx].length);
                         for (uint id = 0; id < taskWithBalance.task.tokenIds[i].length; id++){
+                            taskWithBalance.tokenNames[idx][id] = 'ERC20-token';
                             taskWithBalance.tokenBalances[idx][id] = IERC721(taskWithBalance.task.tokenContracts[idx]).balanceOf(taskContracts[i]);
                         }
                     }
