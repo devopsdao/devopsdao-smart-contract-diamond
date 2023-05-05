@@ -79,6 +79,8 @@ contract TaskCreateFacet {
         for (uint i = 0; i < taskData.tokenContracts.length; i++){
             if(taskData.tokenContracts[i] == address(0x0)){
                     //do nothing if it's a native token
+                require(taskData.tokenAmounts[i][0] == msg.value
+                , "ETH value must match tokenAmount");
             }
             else if(IERC165(taskData.tokenContracts[i]).supportsInterface(0x4e2312e0)){
                 // console.log('safeBatchTransferFrom supportsInterface');
