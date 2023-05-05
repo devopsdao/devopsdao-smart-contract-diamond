@@ -77,7 +77,7 @@ library LibWithdraw {
             }
 
             for (uint i = 0; i < _storage.task.tokenContracts.length; i++){
-                if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(type(IERC1155).interfaceId)){
+                if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(0x4e2312e0)){
                     IERC1155(_storage.task.tokenContracts[i]).safeBatchTransferFrom(address(this), _addressToSend, _storage.task.tokenIds[i], _storage.task.tokenAmounts[i], bytes(''));
                 }
                 else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(type(IERC20).interfaceId)){

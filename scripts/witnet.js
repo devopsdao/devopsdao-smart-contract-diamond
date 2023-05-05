@@ -162,7 +162,7 @@ async function queryWitnet() {
 
   const options = { type: 2, gasPrice: feeData.gasPrice, value: ethers.utils.parseEther("0.01") };
 
-  let witnetPostRequest = await witnetFacet["postRequest(uint256,bytes32)"](22, NewRadonRequestHash, options);
+  let witnetPostRequest = await witnetFacet["postRequest(address,bytes32)"]("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266", NewRadonRequestHash, options);
 
   // let witnetPostRequest = await witnetFacet['postRequest(uint256,bytes32)'](15, args, options);
 
@@ -268,7 +268,7 @@ async function configureWitnet() {
 
   console.log("compiling witnet script");
 
-  const bytecode = Witnet.Script([Witnet.TYPES.STRING])
+  const bytecode = new Witnet.Script([Witnet.TYPES.STRING])
     .parseJSONArray()
     .filter(
       new Witnet.Script([Witnet.TYPES.MAP])
@@ -291,7 +291,7 @@ async function configureWitnet() {
 
   console.log("request radon script:");
   console.log(requestRadonScript);
-  chainBytes
+  
   if (
     typeof requestHashes.hashes[hre.network.config.chainId] == "undefined" ||
     typeof requestHashes.hashes[hre.network.config.chainId].NewRadonRetrievalHash == "undefined"
