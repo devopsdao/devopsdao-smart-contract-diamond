@@ -77,7 +77,7 @@ contract TaskCreateFacet {
         , "invalid NFT data");
 
         for (uint i = 0; i < taskData.tokenContracts.length; i++){
-            if(_storage.task.tokenContracts[i] == address(0x0)){
+            if(taskData.tokenContracts[i] == address(0x0)){
                     //do nothing if it's a native token
             }
             else if(IERC165(taskData.tokenContracts[i]).supportsInterface(0x4e2312e0)){
