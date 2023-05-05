@@ -79,6 +79,8 @@ contract TaskCreateFacet {
         for (uint i = 0; i < taskData.tokenContracts.length; i++){
             if(taskData.tokenContracts[i] == address(0x0)){
                     //do nothing if it's a native token
+                require(taskData.tokenAmounts[i].length == 1
+                , "native token is specified at index 0");
                 require(taskData.tokenAmounts[i][0] == msg.value
                 , "ETH value must match tokenAmount");
             }
