@@ -181,7 +181,7 @@ async function configureWitnet(){
       name: "WitnetFacet",
       arguments: [witnetAddresses.WitnetRequestBoard, requestHashes.WitnetRequestTemplate, Object.values(witnetSLA)],
       libraries: [
-        // 'LibUtils',
+        'LibUtils',
       ]
       }
     );

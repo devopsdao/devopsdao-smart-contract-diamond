@@ -90,7 +90,8 @@ contract WitnetFacet
 
         LibWitnetFacet.Args memory args;
         args.subpath = task.repository;
-        args.title = string.concat("dodao.dev/#/tasks/0x04eae63a76963cb6faace493264f3345fdce69fe task: ", task.title);
+        // args.title = string.concat("dodao.dev/#/tasks/",LibUtils.addressToString(taskAddress), " task: ", task.title);
+        args.title = string.concat("dodao.dev/#/tasks/",LibUtils.addressToString(taskAddress));
 
         return _postRequest(taskAddress, args);
     }

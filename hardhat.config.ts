@@ -76,7 +76,7 @@ module.exports = {
         mnemonic: keys.mnemonic1,
       },
       zksync: false,
-      witnet: false,
+      witnet: true,
       // mnemonic: MNEMONIC
     },
     goerli: {

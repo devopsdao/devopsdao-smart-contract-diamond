@@ -69,7 +69,7 @@
         "name": "hardhat witnetConfig",
         "skipFiles": ["<node_internals>/**"],
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
-        "args": ["witnetConfig", "--network", "mumbai"],
+        "args": ["witnetConfig", "--network", "moonbase"],
         "cwd": "${workspaceFolder}"
     },
     {

@@ -50,6 +50,15 @@ task("witnetQuery", "query Witnet facet")
     console.log(`query complete`);
   });
 
+task("witnetPost", "query Witnet facet")
+  // .addParam("taskContract", "task contract")
+  // .addParam("messageText", "message text")
+  .setAction(async function (taskArguments, hre, runSuper) {
+    await postWitnet();
+    console.log(`query complete`);
+  });
+
+
 task("witnetRead", "read Witnet facet")
   // .addParam("taskContract", "task contract")
   // .addParam("messageText", "message text")
@@ -110,7 +119,8 @@ async function queryWitnet() {
   );
 
   // const args = ["devopsdao/devopsdao-smart-contract-diamond", "Merge pull request #11 from devopsdao/release"];
-  const args = ["devopsdao/devopsdao-smart-contract-diamond", "preparing witnet release"];
+  // const args = ["devopsdao/devopsdao-smart-contract-diamond", "dodao.dev/#/tasks/0xc95097afbb067903605ed29da484fd334b30d4a2 task: test witnet integration"];
+  const args = ["devopsdao/devopsdao-smart-contract-diamond", "dodao.dev/#/tasks/0xa83bC4CE2FfBCA6aC085c22b40eaA7a09cF6373e"];
 
   // console.log(WitnetRequestTemplate)
 
@@ -162,9 +172,16 @@ async function queryWitnet() {
 
   const options = { type: 2, gasPrice: feeData.gasPrice, value: ethers.utils.parseEther("0.01") };
 
-  let witnetPostRequest = await witnetFacet["postRequest(address,bytes32)"]("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266", NewRadonRequestHash, options);
+  // let witnetPostRequest = await witnetFacet["postRequest(address,bytes32)"]("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266", NewRadonRequestHash, options);
+
+  
+  console.log('posting witnet request')
+
+
+  let witnetPostRequest = await witnetFacet["postRequest(address)"]("0xa83bC4CE2FfBCA6aC085c22b40eaA7a09cF6373e", options);
 
   // let witnetPostRequest = await witnetFacet['postRequest(uint256,bytes32)'](15, args, options);
+
 
   const witnetPostRequestReceipt = await witnetPostRequest.wait();
 
@@ -194,6 +211,54 @@ async function queryWitnet() {
   ) {
     console.log(`querying datasource`);
   }
+}
+
+
+async function postWitnet() {
+  await loadConfig();
+
+  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]["Diamond"];
+  console.log(`using Diamond: ${diamondAddress}`);
+
+  let witnetFacet = await ethers.getContractAt("WitnetFacet", diamondAddress);
+
+  feeData = await ethers.provider.getFeeData();
+
+  const options = { type: 2, gasPrice: feeData.gasPrice, value: ethers.utils.parseEther("0.01") };
+
+  // let witnetPostRequest = await witnetFacet["postRequest(address,bytes32)"]("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266", NewRadonRequestHash, options);
+
+  
+  console.log('posting witnet request')
+
+
+  let witnetPostRequest = await witnetFacet["postRequest(address)"]("0x60cdb4fed978cb4453ecaeaa952325b1d47ce739", options);
+
+  // let witnetPostRequest = await witnetFacet['postRequest(uint256,bytes32)'](15, args, options);
+
+
+  const witnetPostRequestReceipt = await witnetPostRequest.wait();
+
+  let witnetRequestEventFilter = witnetFacet.filters.NewRadonRequestHash();
+  let witnetPostRequestEvents = await witnetFacet.queryFilter(
+    witnetRequestEventFilter,
+    witnetPostRequestReceipt.blockNumber,
+    witnetPostRequestReceipt.blockNumber
+  ); //not working if I specify blocks
+
+  let NewRadonRequestHash2;
+  if (
+    typeof witnetPostRequestEvents !== "undefined" &&
+    witnetPostRequestEvents.length > 0 &&
+    typeof witnetPostRequestEvents[0].args !== "undefined" &&
+    typeof witnetPostRequestEvents[0].args.hash !== "undefined"
+  ) {
+    NewRadonRequestHash2 = witnetPostRequestEvents[0].args.hash;
+    console.log(NewRadonRequestHash2);
+  }
+
+  console.log(NewRadonRequestHash2);
+
 }
 
 async function readWitnet() {
@@ -611,6 +676,18 @@ async function configureWitnet() {
     }
   }
   requestHashes.hashes[hre.network.config.chainId].WitnetRequestTemplate = requestTemplateAddress;
+
+
+  console.log("updating WitnetFacet with NewSlaHash");
+  console.log(requestHashes.hashes[hre.network.config.chainId].NewSlaHash);
+
+  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]["Diamond"];
+  console.log(`using Diamond: ${diamondAddress}`);
+
+
+  let witnetFacet = await ethers.getContractAt("WitnetFacet", diamondAddress);
+
+  let witnetUpdateSLA = await witnetFacet.updateRadonSLA(requestHashes.hashes[hre.network.config.chainId].NewSlaHash);
 
   await fs.writeFile(path.join(__dirname, `../abi/witnet-requesthashes.json`), JSON.stringify(requestHashes));
 
