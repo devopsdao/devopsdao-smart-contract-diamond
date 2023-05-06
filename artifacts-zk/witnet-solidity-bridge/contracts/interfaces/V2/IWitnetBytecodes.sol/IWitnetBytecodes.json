@@ -11,17 +11,6 @@
           "type": "bytes32"
         }
       ],
-      "name": "UnknownDataSource",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "hash",
-          "type": "bytes32"
-        }
-      ],
       "name": "UnknownRadonReducer",
       "type": "error"
     },
@@ -34,6 +23,17 @@
         }
       ],
       "name": "UnknownRadonRequest",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "hash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "UnknownRadonRetrieval",
       "type": "error"
     },
     {
@@ -70,19 +70,6 @@
           "type": "bytes32"
         }
       ],
-      "name": "NewDataSourceHash",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "bytes32",
-          "name": "hash",
-          "type": "bytes32"
-        }
-      ],
       "name": "NewRadHash",
       "type": "event"
     },
@@ -97,6 +84,19 @@
         }
       ],
       "name": "NewRadonReducerHash",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "hash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "NewRadonRetrievalHash",
       "type": "event"
     },
     {
@@ -173,6 +173,45 @@
         {
           "internalType": "bytes32",
           "name": "drQueryHash",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "sources",
+          "type": "bytes32[]"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "aggregator",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "tally",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint16",
+          "name": "resultMaxSize",
+          "type": "uint16"
+        },
+        {
+          "internalType": "string[][]",
+          "name": "args",
+          "type": "string[][]"
+        }
+      ],
+      "name": "hashOf",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
           "type": "bytes32"
         }
       ],
@@ -293,100 +332,6 @@
           "type": "bytes32"
         }
       ],
-      "name": "lookupDataSource",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "uint8",
-              "name": "argsCount",
-              "type": "uint8"
-            },
-            {
-              "internalType": "enum WitnetV2.DataRequestMethods",
-              "name": "method",
-              "type": "uint8"
-            },
-            {
-              "internalType": "enum WitnetV2.RadonDataTypes",
-              "name": "resultDataType",
-              "type": "uint8"
-            },
-            {
-              "internalType": "string",
-              "name": "url",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "body",
-              "type": "string"
-            },
-            {
-              "internalType": "string[2][]",
-              "name": "headers",
-              "type": "string[2][]"
-            },
-            {
-              "internalType": "bytes",
-              "name": "script",
-              "type": "bytes"
-            }
-          ],
-          "internalType": "struct WitnetV2.DataSource",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "hash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "lookupDataSourceArgsCount",
-      "outputs": [
-        {
-          "internalType": "uint8",
-          "name": "",
-          "type": "uint8"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "hash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "lookupDataSourceResultDataType",
-      "outputs": [
-        {
-          "internalType": "enum WitnetV2.RadonDataTypes",
-          "name": "",
-          "type": "uint8"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "hash",
-          "type": "bytes32"
-        }
-      ],
       "name": "lookupRadonReducer",
       "outputs": [
         {
@@ -431,7 +376,7 @@
       "inputs": [
         {
           "internalType": "bytes32",
-          "name": "hash",
+          "name": "radHash",
           "type": "bytes32"
         }
       ],
@@ -479,7 +424,7 @@
       "inputs": [
         {
           "internalType": "bytes32",
-          "name": "hash",
+          "name": "radHash",
           "type": "bytes32"
         }
       ],
@@ -498,7 +443,7 @@
       "inputs": [
         {
           "internalType": "bytes32",
-          "name": "hash",
+          "name": "radHash",
           "type": "bytes32"
         }
       ],
@@ -517,7 +462,7 @@
       "inputs": [
         {
           "internalType": "bytes32",
-          "name": "hash",
+          "name": "radHash",
           "type": "bytes32"
         }
       ],
@@ -536,7 +481,7 @@
       "inputs": [
         {
           "internalType": "bytes32",
-          "name": "hash",
+          "name": "radHash",
           "type": "bytes32"
         }
       ],
@@ -555,7 +500,7 @@
       "inputs": [
         {
           "internalType": "bytes32",
-          "name": "hash",
+          "name": "radHash",
           "type": "bytes32"
         }
       ],
@@ -607,6 +552,100 @@
           "type": "bytes32"
         }
       ],
+      "name": "lookupRadonRetrieval",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint8",
+              "name": "argsCount",
+              "type": "uint8"
+            },
+            {
+              "internalType": "enum WitnetV2.DataRequestMethods",
+              "name": "method",
+              "type": "uint8"
+            },
+            {
+              "internalType": "enum WitnetV2.RadonDataTypes",
+              "name": "resultDataType",
+              "type": "uint8"
+            },
+            {
+              "internalType": "string",
+              "name": "url",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "body",
+              "type": "string"
+            },
+            {
+              "internalType": "string[2][]",
+              "name": "headers",
+              "type": "string[2][]"
+            },
+            {
+              "internalType": "bytes",
+              "name": "script",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct WitnetV2.RadonRetrieval",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "hash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "lookupRadonRetrievalArgsCount",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "hash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "lookupRadonRetrievalResultDataType",
+      "outputs": [
+        {
+          "internalType": "enum WitnetV2.RadonDataTypes",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "slaHash",
+          "type": "bytes32"
+        }
+      ],
       "name": "lookupRadonSLA",
       "outputs": [
         {
@@ -633,7 +672,7 @@
             },
             {
               "internalType": "uint256",
-              "name": "minerCommitFee",
+              "name": "minerCommitRevealFee",
               "type": "uint256"
             }
           ],
@@ -649,7 +688,7 @@
       "inputs": [
         {
           "internalType": "bytes32",
-          "name": "hash",
+          "name": "slaHash",
           "type": "bytes32"
         }
       ],
@@ -675,60 +714,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "enum WitnetV2.DataRequestMethods",
-          "name": "requestMethod",
-          "type": "uint8"
-        },
-        {
-          "internalType": "string",
-          "name": "requestSchema",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "requestAuthority",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "requestPath",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "requestQuery",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "requestBody",
-          "type": "string"
-        },
-        {
-          "internalType": "string[2][]",
-          "name": "requestHeaders",
-          "type": "string[2][]"
-        },
-        {
-          "internalType": "bytes",
-          "name": "requestRadonScript",
-          "type": "bytes"
-        }
-      ],
-      "name": "verifyDataSource",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "hash",
-          "type": "bytes32"
-        }
-      ],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -811,6 +796,60 @@
       "outputs": [
         {
           "internalType": "bytes32",
+          "name": "radHash",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum WitnetV2.DataRequestMethods",
+          "name": "requestMethod",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "requestSchema",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "requestAuthority",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "requestPath",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "requestQuery",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "requestBody",
+          "type": "string"
+        },
+        {
+          "internalType": "string[2][]",
+          "name": "requestHeaders",
+          "type": "string[2][]"
+        },
+        {
+          "internalType": "bytes",
+          "name": "requestRadonScript",
+          "type": "bytes"
+        }
+      ],
+      "name": "verifyRadonRetrieval",
+      "outputs": [
+        {
+          "internalType": "bytes32",
           "name": "hash",
           "type": "bytes32"
         }
@@ -844,7 +883,7 @@
             },
             {
               "internalType": "uint256",
-              "name": "minerCommitFee",
+              "name": "minerCommitRevealFee",
               "type": "uint256"
             }
           ],
@@ -857,7 +896,7 @@
       "outputs": [
         {
           "internalType": "bytes32",
-          "name": "hash",
+          "name": "slaHash",
           "type": "bytes32"
         }
       ],

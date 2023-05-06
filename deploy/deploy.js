@@ -98,13 +98,18 @@ const libraries = [
   {
     name: 'LibTokenData',
   },
-  {
-    name: 'LibInterchain',
-  },
-  {
-    name: 'LibWitnetRequest'
-  }
+  // {
+  //   name: 'LibInterchain',
+  // },
 ]
+
+if(zksync === false){
+  libraries.push(
+    {
+      name: 'LibWitnetRequest'
+    }
+  )
+}
 
 const diamondFacets = [
   {
@@ -147,21 +152,21 @@ const dodaoFacets = [
       'LibTokenData',
     ]
   },
-  {
-    name: 'InterchainFacet',
-  },
-  {
-    name: 'AxelarFacet',
-  },
-  {
-    name: 'HyperlaneFacet',
-  },
-  {
-    name: 'LayerzeroFacet',
-  },
-  {
-    name: 'WormholeFacet',
-  },
+  // {
+  //   name: 'InterchainFacet',
+  // },
+  // {
+  //   name: 'AxelarFacet',
+  // },
+  // {
+  //   name: 'HyperlaneFacet',
+  // },
+  // {
+  //   name: 'LayerzeroFacet',
+  // },
+  // {
+  //   name: 'WormholeFacet',
+  // },
 ]
 
 if(zksync === false){
@@ -201,17 +206,17 @@ async function deployZkSync(){
 
   // console.log(deployer.zkWallet.address)
 
-  const depositAmount = ethers.utils.parseEther("1");
+  // const depositAmount = ethers.utils.parseEther("1");
 
-  const depositHandle = await deployer.zkWallet.deposit({
-    to: deployer.zkWallet.address,
-    token: utils.ETH_ADDRESS,
-    amount: depositAmount,
-  });
-  // Wait until the deposit is processed on zkSync
-  await depositHandle.wait();
+  // const depositHandle = await deployer.zkWallet.deposit({
+  //   to: deployer.zkWallet.address,
+  //   token: utils.ETH_ADDRESS,
+  //   amount: depositAmount,
+  // });
+  // // Wait until the deposit is processed on zkSync
+  // await depositHandle.wait();
 
-  console.log(`deposited ${depositAmount}`)
+  // console.log(`deposited ${depositAmount}`)
   await deployDiamond();
 
 }
@@ -308,9 +313,11 @@ async function deployDiamond () {
   let DiamondInit;
   let diamondInit;
 
+  let feeData = await ethers.provider.getFeeData();
+
   if(zksync === false){
     DiamondInit = await ethers.getContractFactory('DiamondInit')
-    diamondInit = await DiamondInit.deploy({type: 2})
+    diamondInit = await DiamondInit.deploy( { type: 2, gasPrice: feeData.gasPrice })
     await diamondInit.deployed()
   }
   else{
@@ -347,15 +354,18 @@ async function deployDiamond () {
   console.log(facetCuts)
 
   // deploy Diamond
+  feeData = await ethers.provider.getFeeData();
+
 
   let Diamond
   let diamond
   if(zksync === false){
     Diamond = await ethers.getContractFactory('Diamond')
-    diamond = await Diamond.deploy(facetCuts, diamondArgs, {type: 2})
+    diamond = await Diamond.deploy(facetCuts, diamondArgs, { type: 2, gasPrice: feeData.gasPrice })
     await diamond.deployed()  }
   else{
     Diamond = await deployer.loadArtifact("Diamond");
+    const deploymentFee = await deployer.estimateDeployFee(Diamond, [facetCuts, diamondArgs]);
     diamond = await deployer.deploy(Diamond, [facetCuts, diamondArgs]);
   }
 
@@ -477,6 +487,8 @@ async function upgradeDiamondFacets(facets, libraries) {
 
   // assert.sameMembers(facetsDeployed[12].functionSelectors, getSelectors(existingFacets['TaskCreateFacet']))  
 
+  let feeData = await ethers.provider.getFeeData();
+
   for(const facet of facets){
     if(typeof existingFacets[facet.name] != 'undefined'){
       tx = await diamondCutFacet.diamondCut(
@@ -485,7 +497,7 @@ async function upgradeDiamondFacets(facets, libraries) {
           action: FacetCutAction.Remove,
           functionSelectors: existingFacetSelectors[facet.name]
         }],
-        ethers.constants.AddressZero, '0x', { type: 2 })
+        ethers.constants.AddressZero, '0x', { type: 2, gasPrice: feeData.gasPrice })
       receipt = await tx.wait()
       console.log(`${facet.name} removed`)
     }
@@ -499,8 +511,11 @@ async function upgradeDiamondFacets(facets, libraries) {
   const {facetCuts, facetAddresses} = await deployFacets(facets, libAddresses)
 
   console.log('upgrading diamond with a new facets')
+
+  feeData = await ethers.provider.getFeeData();
+
   // Any number of functions from any number of facets can be added/replaced/removed in a
-  tx = await diamondCutFacet.diamondCut(facetCuts, ethers.constants.AddressZero, '0x', { type: 2 })
+  tx = await diamondCutFacet.diamondCut(facetCuts, ethers.constants.AddressZero, '0x', { type: 2, gasPrice: feeData.gasPrice })
   receipt = await tx.wait()
   if (!receipt.status) {
     throw Error(`Diamond upgrade failed: ${tx.hash}`)
@@ -567,6 +582,8 @@ async function upgradeDiamondAxelarFacet () {
 
   console.log(`axelarGMP facet deployed:`, axelarGMP.address)
 
+
+  let feeData = await ethers.provider.getFeeData();
   
   // Any number of functions from any number of facets can be added/replaced/removed in a
   // single transaction
@@ -577,7 +594,7 @@ async function upgradeDiamondAxelarFacet () {
       functionSelectors: getSelectors(AxelarGMP)
     }
   ]
-  tx = await diamondCutFacet.diamondCut(cut, ethers.constants.AddressZero, '0x', { type: 2 })
+  tx = await diamondCutFacet.diamondCut(cut, ethers.constants.AddressZero, '0x', { type: 2, gasPrice: feeData.gasPrice })
   receipt = await tx.wait()
   if (!receipt.status) {
     throw Error(`Diamond upgrade failed: ${tx.hash}`)
@@ -620,9 +637,12 @@ async function deployLibs(libraries){
         Lib = await deployer.loadArtifact(library.name, {libraries: Libs})
       }
     }
+
+    let feeData = await ethers.provider.getFeeData();
+
     let lib
     if(zksync === false){
-      lib = await Lib.deploy({type: 2});
+      lib = await Lib.deploy({ type: 2, gasPrice: feeData.gasPrice });
       await lib.deployed();    
     }
     else{
@@ -664,10 +684,12 @@ async function deployFacets(FacetInits, libAddresses){
         Facet = await deployer.loadArtifact(FacetInit.name, {libraries: Libs})
       }
     }
+    let feeData = await ethers.provider.getFeeData();
+
     let facet;
     if(typeof FacetInit.arguments != 'undefined'){
       if(zksync === false){
-        facet = await Facet.deploy(...FacetInit.arguments, { type: 2 })
+        facet = await Facet.deploy(...FacetInit.arguments, { type: 2, gasPrice: feeData.gasPrice })
         await facet.deployed();    
       }
       else{
@@ -676,7 +698,7 @@ async function deployFacets(FacetInits, libAddresses){
     }
     else{
       if(zksync === false){
-        facet = await Facet.deploy({ type: 2 })
+        facet = await Facet.deploy({ type: 2, gasPrice: feeData.gasPrice })
         await facet.deployed()
       }
       else{
@@ -786,4 +808,5 @@ if (require.main === module) {
 
 exports.deployDiamond = deployDiamond
 exports.upgradeDiamondFacets = upgradeDiamondFacets
+exports.deployZkSync = deployZkSync
 exports.default = deployZkSync

@@ -155,7 +155,7 @@ library LibTasksAudit {
                 .tasks[address(this)]
                 .auditState = TASK_AUDIT_STATE_FINISHED;
             _storage.tasks[address(this)].taskState = TASK_STATE_CANCELED;
-            _storage.tasks[address(this)].rating = _rating;
+            // _storage.tasks[address(this)].rating = _rating;
             message.taskState = TASK_STATE_CANCELED;
             _storage.tasks[address(this)].messages.push(message);
         } else if (
@@ -172,7 +172,7 @@ library LibTasksAudit {
                 .tasks[address(this)]
                 .auditState = TASK_AUDIT_STATE_FINISHED;
             _storage.tasks[address(this)].taskState = TASK_STATE_NEW;
-            _storage.tasks[address(this)].rating = _rating;
+            // _storage.tasks[address(this)].rating = _rating;
             message.taskState = TASK_STATE_NEW;
             _storage.tasks[address(this)].messages.push(message);
         } else if (
