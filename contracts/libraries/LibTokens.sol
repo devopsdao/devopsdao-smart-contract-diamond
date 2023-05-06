@@ -379,7 +379,7 @@ library LibTokens {
     function mintNonFungible(
         uint256 _type,
         address[] calldata _to
-    ) public creatorOnly(_type) {
+    ) public {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
         // No need to check this is a nf type rather than an id since
         // creatorOnly() will only let a type pass through.
@@ -517,10 +517,10 @@ library LibTokens {
             // You could keep balance of NF type in base type id like so:
             uint256 baseType = getNonFungibleBaseType(_id);
             _tokenStorage.balances[baseType][_from] = _tokenStorage.balances[baseType][_from] - _value;
-            _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] - _value;
+            _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] + _value;
 
             //maintain ownerTokens
-            for (uint256 index = 0; index < _tokenStorage.ownerTokens[_to].length; index++) {
+            for (uint256 index = 0; index < _tokenStorage.ownerTokens[_from].length; index++) {
                 if(_tokenStorage.ownerTokens[_from][index] == _id){
                     // _storage.taskContractsBlacklistMapping[taskAddress] = false;
                     for (uint i = index; i < _tokenStorage.ownerTokens[_from].length-1; i++){
@@ -530,6 +530,8 @@ library LibTokens {
                 }
                 _tokenStorage.ownerTokens[_to].push(_id);
             }
+
+
         } else {
             _tokenStorage.balances[_id][_from] =
                 _tokenStorage.balances[_id][_from] -
@@ -572,37 +574,44 @@ library LibTokens {
             "Need operator approval for 3rd party transfers."
         );
         for (uint256 i = 0; i < _ids.length; ++i) {
-            // Cache value to local variable to reduce read costs.
-            uint256 id = _ids[i];
-            uint256 value = _values[i];
-            _requireBalance(_from, id, value);
+            // Cache value to local variable to reduce read costs.(cannot use this because of variable count limit)
+            // uint256 id = _ids[i];
+            // uint256 value = _values[i];
 
-            if (isNonFungible(id)) {
-                require(_tokenStorage.nfOwners[id] == _from);
-                _tokenStorage.nfOwners[id] = _to;
+            _requireBalance(_from, _ids[i], _values[i]);
 
-            // You could keep balance of NF type in base type id like so:
-                uint256 baseType = getNonFungibleBaseType(id);
-                _tokenStorage.balances[baseType][_from] = _tokenStorage.balances[baseType][_from] - value;
-                _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] - value;
+            if (isNonFungible(_ids[i])) {
+                require(_tokenStorage.nfOwners[_ids[i]] == _from);
+                _tokenStorage.nfOwners[_ids[i]] = _to;
+
+                // You could keep balance of NF type in base type id like so:
+                uint256 baseType = getNonFungibleBaseType(_ids[i]);
+                _tokenStorage.balances[baseType][_from] = _tokenStorage.balances[baseType][_from] - _values[i];
+                _tokenStorage.balances[baseType][_to]   = _tokenStorage.balances[baseType][_to] + _values[i];
 
                 //maintain ownerTokens
-                // for (uint256 index = 0; index < _tokenStorage.ownerTokens[_to].length; index++) {
-                //     if(_tokenStorage.ownerTokens[_from][index] == id){
-                //         // _storage.taskContractsBlacklistMapping[taskAddress] = false;
-                //         for (uint idx = index; idx < _tokenStorage.ownerTokens[_from].length-1; idx++){
-                //             _tokenStorage.ownerTokens[_from][idx] = _tokenStorage.ownerTokens[_from][idx+1];
-                //         }
-                //         _tokenStorage.ownerTokens[_from].pop();
-                //     }
-                //     _tokenStorage.ownerTokens[_to].push(id);
-                // }
+                console.log('_tokenStorage.ownerTokens[_from].length');
+                console.log(_tokenStorage.ownerTokens[_from].length);
+                for (uint256 index = 0; index < _tokenStorage.ownerTokens[_from].length; index++) {
+                    console.log('_tokenStorage.ownerTokens[_from][index]');
+                    console.log(_tokenStorage.ownerTokens[_from][index]);
+                    console.log('_ids[i]');
+                    console.log(_ids[i]);
+                    if(_tokenStorage.ownerTokens[_from][index] == _ids[i]){
+                        // _storage.taskContractsBlacklistMapping[taskAddress] = false;
+                        for (uint idx = index; idx < _tokenStorage.ownerTokens[_from].length-1; idx++){
+                            _tokenStorage.ownerTokens[_from][idx] = _tokenStorage.ownerTokens[_from][idx+1];
+                        }
+                        _tokenStorage.ownerTokens[_from].pop();
+                    }
+                    _tokenStorage.ownerTokens[_to].push(_ids[i]);
+                }
                 
             } else {
-                _tokenStorage.balances[id][_from] = _tokenStorage
-                .balances[id][_from] - value;
-                _tokenStorage.balances[id][_to] = value +
-                    _tokenStorage.balances[id][_to];
+                _tokenStorage.balances[_ids[i]][_from] = _tokenStorage
+                .balances[_ids[i]][_from] - _values[i];
+                _tokenStorage.balances[_ids[i]][_to] = _values[i] +
+                    _tokenStorage.balances[_ids[i]][_to];
             }
         }
 
@@ -856,16 +865,30 @@ library LibTokens {
         );
     }
 
-    function _requireBalance(
+    function 
+    _requireBalance(
         address account_,
         uint256 id_,
         uint256 amount_
     ) private view {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
-        require(
-            _tokenStorage.balances[id_][account_] >= amount_,
-            "ERC1155: Insufficient balance"
-        );
+
+        if (isNonFungibleItem(id_)){
+            require(
+            _tokenStorage.nfOwners[id_] == account_,
+                "ERC1155: Insufficient balance"
+            );
+        }
+        else{
+            require(
+                amount_ > 0,
+                "ERC1155: Cannot send 0"
+            );
+            require(
+                _tokenStorage.balances[id_][account_] >= amount_,
+                "ERC1155: Insufficient balance"
+            );
+        }
     }
 
     // function _requireReceiver(

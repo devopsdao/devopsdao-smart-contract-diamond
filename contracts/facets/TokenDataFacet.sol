@@ -64,17 +64,21 @@ contract TokenDataFacet {
       return LibTokenData.getTokenName(_id);
     }
 
+    function getTokenNames(
+        uint256[] calldata _ids
+    ) external view virtual returns (string[] memory) {
+      return LibTokenData.getTokenNames(_ids);
+    }
+
     function getTokenIds(
         address _owner
     ) external view virtual returns (uint256[] memory) {
-        console.log(_owner);
       return LibTokenData.getTokenIds(_owner);
     }
 
     function getTokenNames(
         address _owner
     ) external view virtual returns (string[] memory) {
-        console.log(_owner);
       return LibTokenData.getTokenNames(_owner);
     }
 

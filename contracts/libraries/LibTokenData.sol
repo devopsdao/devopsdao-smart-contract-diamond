@@ -295,6 +295,17 @@ library LibTokenData {
         return _tokenStorage.tokenTypeNames[baseType];
     }
 
+    function getTokenNames(
+        uint256[] calldata _ids
+    ) external view returns (string[] memory) {
+        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+        string[] memory names = new string[](_ids.length);
+        for (uint256 i = 0; i < _ids.length; ++i) {
+            names[i] = _tokenStorage.tokenTypeNames[getNonFungibleBaseType(_ids[i])];
+        }
+        return names;
+    }
+
     function getTokenIds(
         address owner
     ) external view returns (uint256[] memory) {
@@ -310,13 +321,9 @@ library LibTokenData {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
         
         string[] memory names = new string[](_tokenStorage.ownerTokens[owner].length);
-        console.log('ownerTokenz.length');
-        console.log(_tokenStorage.ownerTokens[owner].length);
         for (uint256 i = 0; i < _tokenStorage.ownerTokens[owner].length; ++i) {
             uint256 baseType = getNonFungibleBaseType(_tokenStorage.ownerTokens[owner][i]);
             names[i] = _tokenStorage.tokenTypeNames[baseType];
-            console.log(names[i]);
-            console.log(baseType);
         }
         return names;
     }

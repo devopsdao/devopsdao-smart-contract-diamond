@@ -9,9 +9,6 @@ pragma solidity ^0.8.17;
 //     uint256 lastVar;
 //   }
 
-import { IAxelarGateway } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol';
-import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol';
-
 import "../facets/tokenstorage/ERC1155StorageFacet.sol";
 import "../facets/TokenFacet.sol";
 
@@ -19,6 +16,11 @@ import "../libraries/LibInterchain.sol";
 
 import "../interfaces/IAccountFacet.sol";
 import "../interfaces/IInterchainFacet.sol";
+
+import {IERC165} from "../interfaces/IERC165.sol";
+import {IERC1155} from "../interfaces/IERC1155.sol";
+import {IERC20} from "../interfaces/IERC20.sol";
+import {IERC721} from "../interfaces/IERC721.sol";
 
 
 error RevertReason (string message);
@@ -29,15 +31,27 @@ struct TaskData{
     string taskType;
     string title;
     string description;
+    string repository;
     string[] tags;
-    string[] symbols;
-    uint256[] amounts;
+    // string[][] tokenNames;
+    // uint256[] amounts;
+    address[] tokenContracts;
+    // mapping(address => Token) tokens;
+    uint256[][] tokenIds;
+    uint256[][] tokenAmounts;
     // mapping(string => string) ext;
     // mapping(string => bool) extMapping;
 }
 
+// struct Token {
+//     string name;
+//     uint256[] tokenIds;
+//     uint256[] tokenAmounts;    
+// }
+
 struct TaskStorage {
-    mapping(address => Task) tasks;
+    Task task;
+    // mapping(address => Task) tasks;
     address[] taskContracts;
     mapping(address => bool) taskContractsMapping;
     address[] taskContractsBlacklist;
@@ -65,10 +79,13 @@ struct Task {
     string taskType;
     string title;
     string description;
+    string repository;
     string[] tags;
     uint256[] tagsNFT;
-    string[] symbols;
-    uint256[] amounts;
+    // string[][] tokenNames;
+    address[] tokenContracts;
+    uint256[][] tokenIds;
+    uint256[][] tokenAmounts;
     // mapping(string => string) ext;
     // mapping(string => bool) extMapping;
     string taskState;
@@ -88,8 +105,11 @@ struct Task {
 
 struct TaskWithBalance {
     Task task;
-    string[] tokenNames;
-    uint256[] tokenBalances;
+    string[][] tokenNames;
+    // address[] tokenContracts;
+    // uint256[][] tokenIds;
+    // uint256[][] tokenAmounts;
+    uint256[][] tokenBalances;
 }
 
 struct Message {
@@ -176,7 +196,7 @@ library LibTasks {
     ) external {
         TaskStorage storage _storage = taskStorage();
 
-        // (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.tasks[address(this)].contractParent).getInterchainConfigs();
+        // (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.task.contractParent).getInterchainConfigs();
         // if(msg.sender != configAxelar.sourceAddress 
         //     && msg.sender != configHyperlane.sourceAddress 
         //     && msg.sender != configLayerzero.sourceAddress
@@ -185,29 +205,40 @@ library LibTasks {
         //     _sender = payable(msg.sender);
         // }
 
-        // (bool success, bytes memory result) = _storage.tasks[address(this)].contractParent.call(abi.encodeWithSignature("addParticipantTask(address,address)", _sender, address(this)));
+        // (bool success, bytes memory result) = _storage.task.contractParent.call(abi.encodeWithSignature("addParticipantTask(address,address)", _sender, address(this)));
         require(
-            _sender != _storage.tasks[address(this)].contractOwner,
+            _sender != _storage.task.contractOwner,
             "contract owner cannot participate"
         );
         // console.log('taskState');
         // console.log(address(this));
-        // console.log(_storage.tasks[address(this)].taskState);
+        // console.log(_storage.task.taskState);
         require(
-            keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
+            keccak256(bytes(_storage.task.taskState)) ==
                 keccak256(bytes(TASK_STATE_NEW)),
             "task is not in new state"
         );
 
-        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
-        for (uint i = 0; i < _storage.tasks[address(this)].symbols.length; i++){
-            if(_tokenStorage.tokenNames[_storage.tasks[address(this)].symbols[i]] > 0){
-                TokenFacet(address(this)).safeTransferFrom(_sender, address(this), _tokenStorage.tokenNames[_storage.tasks[address(this)].symbols[i]], 1, bytes(''));
+        for (uint i = 0; i < _storage.task.tokenContracts.length; i++){
+            if(_storage.task.tokenContracts[i] == address(0x0)){
+                //do nothing if it's a native token
+            }
+            else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(0x4e2312e0)){
+                IERC1155(_storage.task.tokenContracts[i]).safeBatchTransferFrom(_sender, address(this), _storage.task.tokenIds[i], _storage.task.tokenAmounts[i], bytes(''));
+            }
+            else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(type(IERC20).interfaceId)){
+                IERC20(_storage.task.tokenContracts[i]).transferFrom(_sender, address(this), _storage.task.tokenAmounts[i][0]);
+            }
+            else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(type(IERC721).interfaceId)){
+                for (uint id = 0; id < _storage.task.tokenIds[i].length; id++){
+                    IERC721(_storage.task.tokenContracts[i]).safeTransferFrom(_sender, address(this), _storage.task.tokenIds[i][id]);
+                }
             }
         }
-        //   _storage.tasks[address(this)].countMessages++;
+
+        //   _storage.task.countMessages++;
         Message memory message;
-        message.id = _storage.tasks[address(this)].messages.length + 1;
+        message.id = _storage.task.messages.length + 1;
         message.text = _message;
         message.timestamp = block.timestamp;
         message.sender = _sender;
@@ -216,35 +247,35 @@ library LibTasks {
         bool existed = false;
 
         //assess if "if clause" should be removed, just keeping the loop
-        if (_storage.tasks[address(this)].participants.length == 0) {
-            _storage.tasks[address(this)].participants.push(_sender);
-            _storage.tasks[address(this)].messages.push(message);
-            IAccountFacet(_storage.tasks[address(this)].contractParent).addParticipantTask(_sender, address(this));
-            // (bool success, bytes memory result) = _storage.tasks[address(this)].contractParent.call{gas: 500000}(abi.encodeWithSignature("addParticipantTask(address,address)", _sender, address(this)));
+        if (_storage.task.participants.length == 0) {
+            _storage.task.participants.push(_sender);
+            _storage.task.messages.push(message);
+            IAccountFacet(_storage.task.contractParent).addParticipantTask(_sender, address(this));
+            // (bool success, bytes memory result) = _storage.task.contractParent.call{gas: 500000}(abi.encodeWithSignature("addParticipantTask(address,address)", _sender, address(this)));
             // console.log(success);
         } else {
             for (
                 uint256 i = 0;
-                i < _storage.tasks[address(this)].participants.length;
+                i < _storage.task.participants.length;
                 i++
             ) {
-                if (_storage.tasks[address(this)].participants[i] == _sender) {
+                if (_storage.task.participants[i] == _sender) {
                     existed = true;
                 }
             }
             if (!existed) {
-                _storage.tasks[address(this)].participants.push(_sender);
+                _storage.task.participants.push(_sender);
                 _storage.accounts[_sender].participantTasks.push(address(this));
-                _storage.tasks[address(this)].messages.push(message);
+                _storage.task.messages.push(message);
 
                 // bytes4 functionSelector = bytes4(keccak256("addParticipantTask(address,address)"));
-                // address test = address(_storage.tasks[address(this)].contractParent);
+                // address test = address(_storage.task.contractParent);
                 // bytes memory myFunctionCall = abi.encodeWithSelector(bytes4(keccak256("addParticipantTask(address,address)")), 4);
-                IAccountFacet(_storage.tasks[address(this)].contractParent).addParticipantTask(_sender, address(this));
-                // (bool success, bytes memory result) = _storage.tasks[address(this)].contractParent.call(abi.encodeWithSignature("addParticipantTask(address,address)", _sender, address(this)));
+                IAccountFacet(_storage.task.contractParent).addParticipantTask(_sender, address(this));
+                // (bool success, bytes memory result) = _storage.task.contractParent.call(abi.encodeWithSignature("addParticipantTask(address,address)", _sender, address(this)));
                 // console.log(success);
                 // console.log(result);
-                // _storage.tasks[address(this)].contractParent.addParticipantTask(_sender, address(this));
+                // _storage.task.contractParent.addParticipantTask(_sender, address(this));
 
             }
         }
@@ -261,7 +292,7 @@ library LibTasks {
     ) external {
         TaskStorage storage _storage = taskStorage();
         
-        // (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.tasks[address(this)].contractParent).getInterchainConfigs();
+        // (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.task.contractParent).getInterchainConfigs();
         // if(msg.sender != configAxelar.sourceAddress 
         //     && msg.sender != configHyperlane.sourceAddress 
         //     && msg.sender != configLayerzero.sourceAddress
@@ -272,167 +303,167 @@ library LibTasks {
 
         require(
             _replyTo == 0 ||
-                _replyTo <= _storage.tasks[address(this)].messages.length + 1,
+                _replyTo <= _storage.task.messages.length + 1,
             "invalid replyTo id"
         );
-        // address contractOwner = _storage.tasks[address(this)].contractOwner;
-        // string memory taskType = _storage.tasks[address(this)].taskType;
-        // string memory taskState = _storage.tasks[address(this)].taskState;
-        // string memory auditState = _storage.tasks[address(this)].auditState;
+        // address contractOwner = _storage.task.contractOwner;
+        // string memory taskType = _storage.task.taskType;
+        // string memory taskState = _storage.task.taskState;
+        // string memory auditState = _storage.task.auditState;
         // address[] memory participants = _storage
-        //     .tasks[address(this)]
+        //     .task
         //     .participants;
-        address[] memory auditors = _storage.tasks[address(this)].auditors;
-        //_storage.tasks[address(this)].countMessages++;
+        address[] memory auditors = _storage.task.auditors;
+        //_storage.task.countMessages++;
         Message memory message;
-        message.id = _storage.tasks[address(this)].messages.length + 1;
+        message.id = _storage.task.messages.length + 1;
         message.text = _message;
         message.timestamp = block.timestamp;
         message.sender = _sender;
         message.taskState = _state;
         message.replyTo = _replyTo;
         if (
-            _sender == _storage.tasks[address(this)].contractOwner &&
+            _sender == _storage.task.contractOwner &&
             _sender != _participant &&
-            keccak256(bytes(_storage.tasks[address(this)].taskState)) == keccak256(bytes(TASK_STATE_NEW)) &&
+            keccak256(bytes(_storage.task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) &&
             keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_AGREED)) &&
-            (keccak256(bytes(_storage.tasks[address(this)].taskType)) ==
+            (keccak256(bytes(_storage.task.taskType)) ==
                 keccak256(bytes(TASK_TYPE_PRIVATE)) ||
-                keccak256(bytes(_storage.tasks[address(this)].taskType)) ==
+                keccak256(bytes(_storage.task.taskType)) ==
                 keccak256(bytes(TASK_TYPE_PUBLIC)))
         ) {
             bool participantApplied = false;
             for (uint256 i = 0; i < _storage
-            .tasks[address(this)]
+            .task
             .participants.length; i++) {
                 if (_storage
-            .tasks[address(this)]
+            .task
             .participants[i] == _participant) {
                     participantApplied = true;
                     break;
                 }
             }
             if (participantApplied) {
-                _storage.tasks[address(this)].taskState = _state;
-                _storage.tasks[address(this)].participant = _participant;
-                _storage.tasks[address(this)].messages.push(message);
+                _storage.task.taskState = _state;
+                _storage.task.participant = _participant;
+                _storage.task.messages.push(message);
             } else {
                 revert("participant has not applied");
             }
         } else if (
-            _sender == _storage.tasks[address(this)].contractOwner &&
+            _sender == _storage.task.contractOwner &&
             _sender != _participant &&
-            keccak256(bytes(_storage.tasks[address(this)].taskState)) == keccak256(bytes(TASK_STATE_NEW)) &&
+            keccak256(bytes(_storage.task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) &&
             keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_AGREED)) &&
-            keccak256(bytes(_storage.tasks[address(this)].taskType)) == keccak256(bytes(TASK_TYPE_HACKATON))
+            keccak256(bytes(_storage.task.taskType)) == keccak256(bytes(TASK_TYPE_HACKATON))
         ) {
             if (_storage
-            .tasks[address(this)]
+            .task
             .participants.length > 0) {
-                _storage.tasks[address(this)].taskState = _state;
-                _storage.tasks[address(this)].messages.push(message);
+                _storage.task.taskState = _state;
+                _storage.task.messages.push(message);
             } else {
                 revert("participants have not applied");
             }
         } else if (
-            _sender == _storage.tasks[address(this)].participant &&
-            keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
+            _sender == _storage.task.participant &&
+            keccak256(bytes(_storage.task.taskState)) ==
             keccak256(bytes(TASK_STATE_AGREED)) &&
             keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_PROGRESS))
         ) {
-            string[] memory symbols = _storage.tasks[address(this)].symbols;
-            uint256[] memory amounts = _storage.tasks[address(this)].amounts;
-            ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
-            for (uint i = 0; i < symbols.length; i++) {
-                if (_tokenStorage.tokenNames[symbols[i]] > 0) {
-                    if (_tokenStorage.tokenNames[symbols[i]] > 0) {
-                        uint256 tokenBalance = TokenFacet(
-                            _storage.tasks[address(this)].contractParent
-                        ).balanceOf(
-                                address(this),
-                                _tokenStorage.tokenNames[symbols[i]]
-                            );
-                        if (tokenBalance >= amounts[i]) {
-                            TokenFacet(
-                                _storage.tasks[address(this)].contractParent
-                            ).safeTransferFrom(
-                                    address(this),
-                                    _participant,
-                                    _tokenStorage.tokenNames[symbols[i]],
-                                    amounts[i],
-                                    bytes("")
-                                );
-                        }
-                    }
-                }
-            }
+            // string[] memory tokenNames = _storage.task.tokenNames;
+            // uint256[] memory amounts = _storage.task.amounts;
+            // ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+            // for (uint i = 0; i < tokenNames.length; i++) {
+            //     if (_tokenStorage.tokenNames[tokenNames[i]] > 0) {
+            //         if (_tokenStorage.tokenNames[tokenNames[i]] > 0) {
+            //             uint256 tokenBalance = TokenFacet(
+            //                 _storage.task.contractParent
+            //             ).balanceOf(
+            //                     address(this),
+            //                     _tokenStorage.tokenNames[tokenNames[i]]
+            //                 );
+            //             if (tokenBalance >= amounts[i]) {
+            //                 TokenFacet(
+            //                     _storage.task.contractParent
+            //                 ).safeTransferFrom(
+            //                         address(this),
+            //                         _participant,
+            //                         _tokenStorage.tokenNames[tokenNames[i]],
+            //                         amounts[i],
+            //                         bytes("")
+            //                     );
+            //             }
+            //         }
+            //     }
+            // }
 
-            _storage.tasks[address(this)].taskState = TASK_STATE_PROGRESS;
-            _storage.tasks[address(this)].messages.push(message);
+            _storage.task.taskState = TASK_STATE_PROGRESS;
+            _storage.task.messages.push(message);
         } else if (
-            _sender == _storage.tasks[address(this)].participant &&
-            keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
+            _sender == _storage.task.participant &&
+            keccak256(bytes(_storage.task.taskState)) ==
             keccak256(bytes(TASK_STATE_PROGRESS)) &&
             keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_REVIEW))
         ) {
-            _storage.tasks[address(this)].taskState = TASK_STATE_REVIEW;
-            _storage.tasks[address(this)].messages.push(message);
+            _storage.task.taskState = TASK_STATE_REVIEW;
+            _storage.task.messages.push(message);
         } else if (
-            _sender == _storage.tasks[address(this)].contractOwner &&
-            _sender != _storage.tasks[address(this)].participant &&
-            keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
+            _sender == _storage.task.contractOwner &&
+            _sender != _storage.task.participant &&
+            keccak256(bytes(_storage.task.taskState)) ==
             keccak256(bytes(TASK_STATE_REVIEW)) &&
             keccak256(bytes(_state)) ==
             keccak256(bytes(TASK_STATE_COMPLETED)) &&
             _rating != 0 &&
             _rating <= 5
         ) {
-            _storage.tasks[address(this)].taskState = TASK_STATE_COMPLETED;
-            _storage.tasks[address(this)].rating = _rating;
-            _storage.tasks[address(this)].messages.push(message);
+            _storage.task.taskState = TASK_STATE_COMPLETED;
+            _storage.task.rating = _rating;
+            _storage.task.messages.push(message);
         } else if (
-            keccak256(bytes(_storage.tasks[address(this)].taskState)) == keccak256(bytes(TASK_STATE_NEW)) &&
-            _sender == _storage.tasks[address(this)].contractOwner &&
+            keccak256(bytes(_storage.task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) &&
+            _sender == _storage.task.contractOwner &&
             keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_CANCELED))
         ) {
-            _storage.tasks[address(this)].taskState = TASK_STATE_CANCELED;
-            _storage.tasks[address(this)].messages.push(message);
+            _storage.task.taskState = TASK_STATE_CANCELED;
+            _storage.task.messages.push(message);
         } else if (
             keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_AUDIT))
         ) {
             if (
-                _sender == _storage.tasks[address(this)].contractOwner &&
-                _sender != _storage.tasks[address(this)].participant &&
-                (keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
+                _sender == _storage.task.contractOwner &&
+                _sender != _storage.task.participant &&
+                (keccak256(bytes(_storage.task.taskState)) ==
                     keccak256(bytes(TASK_STATE_AGREED)) ||
-                    keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
+                    keccak256(bytes(_storage.task.taskState)) ==
                     keccak256(bytes(TASK_STATE_PROGRESS)) ||
-                    keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
+                    keccak256(bytes(_storage.task.taskState)) ==
                     keccak256(bytes(TASK_STATE_REVIEW)))
             ) {
-                _storage.tasks[address(this)].taskState = TASK_STATE_AUDIT;
-                _storage.tasks[address(this)].auditInitiator = _sender;
+                _storage.task.taskState = TASK_STATE_AUDIT;
+                _storage.task.auditInitiator = _sender;
                 _storage
-                    .tasks[address(this)]
+                    .task
                     .auditState = TASK_AUDIT_STATE_REQUESTED;
-                _storage.tasks[address(this)].messages.push(message);
+                _storage.task.messages.push(message);
             } else if (
-                _sender == _storage.tasks[address(this)].participant &&
-                (keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
+                _sender == _storage.task.participant &&
+                (keccak256(bytes(_storage.task.taskState)) ==
                     keccak256(bytes(TASK_STATE_REVIEW)))
             ) {
-                _storage.tasks[address(this)].taskState = TASK_STATE_AUDIT;
-                _storage.tasks[address(this)].auditInitiator = _sender;
+                _storage.task.taskState = TASK_STATE_AUDIT;
+                _storage.task.auditInitiator = _sender;
                 _storage
-                    .tasks[address(this)]
+                    .task
                     .auditState = TASK_AUDIT_STATE_REQUESTED;
-                _storage.tasks[address(this)].messages.push(message);
+                _storage.task.messages.push(message);
                 //TODO: audit history need to add
             } else if (
-                _sender == _storage.tasks[address(this)].contractOwner &&
-                keccak256(bytes(_storage.tasks[address(this)].taskState)) ==
+                _sender == _storage.task.contractOwner &&
+                keccak256(bytes(_storage.task.taskState)) ==
                 keccak256(bytes(TASK_STATE_AUDIT)) &&
-                keccak256(bytes(_storage.tasks[address(this)].auditState)) ==
+                keccak256(bytes(_storage.task.auditState)) ==
                 keccak256(bytes(TASK_AUDIT_STATE_REQUESTED)) &&
                 auditors.length != 0
             ) {
@@ -445,10 +476,10 @@ library LibTasks {
                 }
                 if (auditorApplied) {
                     _storage
-                        .tasks[address(this)]
+                        .task
                         .auditState = TASK_AUDIT_STATE_PERFORMING;
-                    _storage.tasks[address(this)].messages.push(message);
-                    _storage.tasks[address(this)].auditor = _participant;
+                    _storage.task.messages.push(message);
+                    _storage.task.auditor = _participant;
                 } else {
                     revert("auditor has not applied");
                 }

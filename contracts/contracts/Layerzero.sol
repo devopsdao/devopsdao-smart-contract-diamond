@@ -215,9 +215,9 @@ contract Layerzero is ILayerZeroReceiver {
         string _taskType,
         string _title,
         string _description,
-        string[] _tags,
-        string[] _symbol,
-        uint256[] _amount
+        string[] _tags
+        // string[][] _tokenNames
+        // uint256[] _amount
     );
 
     event TaskParticipating(
@@ -295,9 +295,9 @@ contract Layerzero is ILayerZeroReceiver {
                 _taskData.taskType,
                 _taskData.title,
                 _taskData.description,
-                _taskData.tags,
-                _taskData.symbols,
-                _taskData.amounts
+                _taskData.tags
+                // _taskData.tokenNames
+                // _taskData.amounts
             );
             TaskCreateFacet(destinationDiamond)
                 .createTaskContract(

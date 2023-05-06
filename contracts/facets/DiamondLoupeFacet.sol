@@ -11,6 +11,9 @@ pragma solidity ^0.8.0;
 import { LibDiamond } from  "../libraries/LibDiamond.sol";
 import { IDiamondLoupe } from "../interfaces/IDiamondLoupe.sol";
 import { IERC165 } from "../interfaces/IERC165.sol";
+import { IERC1155 } from "../interfaces/IERC1155.sol";
+
+
 
 contract DiamondLoupeFacet is IDiamondLoupe, IERC165 {
     // Diamond Loupe Functions
@@ -144,4 +147,24 @@ contract DiamondLoupeFacet is IDiamondLoupe, IERC165 {
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         return ds.supportedInterfaces[_interfaceId];
     }
+
+    function toHexDigit(uint8 d) pure internal returns (bytes1) {
+    if (0 <= d && d <= 9) {
+      return bytes1(uint8(bytes1('0')) + d);
+    } else if (10 <= uint8(d) && uint8(d) <= 15) {
+      return bytes1(uint8(bytes1('a')) + d - 10);
+    }
+    revert();
+  }
+
+  function fromCode(bytes4 code) public pure returns (string memory) {
+    bytes memory result = new bytes(10);
+    result[0] = bytes1('0');
+    result[1] = bytes1('x');
+    for (uint i = 0; i < 4; ++i) {
+      result[2 * i + 2] = toHexDigit(uint8(code[i]) / 16);
+      result[2 * i + 3] = toHexDigit(uint8(code[i]) % 16);
+    }
+    return string(result);
+  }
 }
