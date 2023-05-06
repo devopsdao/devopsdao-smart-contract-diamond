@@ -90,7 +90,7 @@ contract TaskContract is ERC1155TokenReceiver, CommonConstants  {
 
 
     function taskAuditParticipate(address _sender, string memory _message, uint256 _replyTo) external {
-        TaskStorage storage _storage = LibTasks.taskStorage();
+        // TaskStorage storage _storage = LibTasks.taskStorage();
         // address[] memory to = new address[](1);
         // uint256[] memory amount = new uint256[](1);
         // to[0] = _sender;
@@ -100,13 +100,7 @@ contract TaskContract is ERC1155TokenReceiver, CommonConstants  {
         // // console.log(balance);
         // require(balance>0, 'must hold Auditor NFT to audit');
         
-        // if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
-        //     && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
-        //     && msg.sender != _storageInterchain.configLayerzero.sourceAddress
-        //     && msg.sender != _storageInterchain.configWormhole.sourceAddress
-        // ){
-        //     _sender = payable(msg.sender);
-        // }
+
         LibTasksAudit.taskAuditParticipate(_sender, _message, _replyTo);
         emit TaskUpdated(address(this), 'taskAuditParticipate', block.timestamp);
     }
@@ -139,7 +133,7 @@ contract TaskContract is ERC1155TokenReceiver, CommonConstants  {
         uint256 _replyTo,
         uint256 rating
     ) external {
-        TaskStorage storage _storage = LibTasks.taskStorage();
+        // TaskStorage storage _storage = LibTasks.taskStorage();
         // uint256 balance = TokenDataFacet(_storage.task.contractParent).balanceOfName(msg.sender, 'auditor');
         // // console.log(balance);
         // require(balance>0, 'must hold Auditor NFT to audit');
@@ -175,7 +169,7 @@ contract TaskContract is ERC1155TokenReceiver, CommonConstants  {
         emit TaskUpdated(address(this), 'topup', block.timestamp);
     }
 
-    function onERC1155Received(address _operator, address _from, uint256 _id, uint256 _value, bytes calldata _data) external view returns(bytes4) {
+    function onERC1155Received(address /*_operator*/, address /*_from*/, uint256 /*_id*/, uint256 /*_value*/, bytes calldata /*_data*/) external view returns(bytes4) {
         if (shouldRejectERC1155 == true) {
             revert("onERC1155Received: transfer not accepted");
         } else {
@@ -183,7 +177,7 @@ contract TaskContract is ERC1155TokenReceiver, CommonConstants  {
         }
     }
 
-    function onERC1155BatchReceived(address _operator, address _from, uint256[] calldata _ids, uint256[] calldata _values, bytes calldata _data) external view returns(bytes4) {
+    function onERC1155BatchReceived(address /*_operator*/, address /*_from*/, uint256[] calldata /*_ids*/, uint256[] calldata /*_values*/, bytes calldata /*_data*/) external view returns(bytes4) {
         if (shouldRejectERC1155 == true) {
             revert("onERC1155BatchReceived: transfer not accepted");
         } else {

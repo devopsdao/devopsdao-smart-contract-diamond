@@ -122,12 +122,12 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
     }
 
     function onERC1155Received(
-        address operator,
-        address from,
-        uint256 id,
-        uint256 value,
-        bytes calldata data
-    ) external returns (bytes4) {
+        address /*operator*/,
+        address /*from*/,
+        uint256 /*id*/,
+        uint256 /*value*/,
+        bytes calldata /*data*/
+    ) external pure returns (bytes4) {
         return
             bytes4(
                 keccak256(

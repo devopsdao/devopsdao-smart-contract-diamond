@@ -772,11 +772,11 @@ library LibTokens {
     }
 
     function onERC1155Received(
-        address _operator,
-        address _from,
-        uint256 _id,
-        uint256 _value,
-        bytes memory _data
+        address /*_operator*/,
+        address /*_from*/,
+        uint256 /*_id*/,
+        uint256 /*_value*/,
+        bytes memory /*_data*/
     ) public view returns (bytes4) {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
         if (_tokenStorage.shouldReject == true) {
@@ -787,11 +787,11 @@ library LibTokens {
     }
 
     function onERC1155BatchReceived(
-        address _operator,
-        address _from,
-        uint256[] calldata _ids,
-        uint256[] calldata _values,
-        bytes calldata _data
+        address /*_operator*/,
+        address /*_from*/,
+        uint256[] calldata /*_ids*/,
+        uint256[] calldata /*_values*/,
+        bytes calldata /*_data*/
     ) public view returns (bytes4) {
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
         if (_tokenStorage.shouldReject == true) {

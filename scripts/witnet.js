@@ -241,7 +241,7 @@ async function postWitnet() {
   console.log('posting witnet request')
 
 
-  let witnetPostRequest = await witnetFacet["postRequest(address)"]("0x60cdb4fed978cb4453ecaeaa952325b1d47ce739", options);
+  let witnetPostRequest = await witnetFacet["postRequest(address)"]("0x145c45f34c06a11daa7c3b29948cd1217ed582ab", options);
 
   // let witnetPostRequest = await witnetFacet['postRequest(uint256,bytes32)'](15, args, options);
 
@@ -701,6 +701,8 @@ async function configureWitnet() {
   let witnetFacet = await ethers.getContractAt("WitnetFacet", diamondAddress);
 
   let witnetUpdateSLA = await witnetFacet.updateRadonSLA(requestHashes.hashes[hre.network.config.chainId].NewSlaHash);
+
+  console.log('WitnetFacet configured')
 
   // console.log(requestTemplateReceipt)
 

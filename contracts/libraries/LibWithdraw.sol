@@ -57,12 +57,13 @@ library LibWithdraw {
 
 
     function withdraw(address payable _addressToSend, string memory _chain) external{
+        
         TaskStorage storage _storage = taskStorage();
         if(msg.sender != _storage.task.participant && msg.sender != _storage.task.contractOwner){
             revert('not a participant or contractOwner');
         }
 
-        address gateway_ = 0x5769D84DD62a6fD969856c75c7D321b84d455929;
+        // address gateway_ = 0x5769D84DD62a6fD969856c75c7D321b84d455929;
 
         if (keccak256(bytes(_storage.task.taskState)) == keccak256(bytes(TASK_STATE_CANCELED))) {
             _storage.task.contractOwner.transfer(address(this).balance);
