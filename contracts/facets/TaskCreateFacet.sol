@@ -31,7 +31,7 @@ import "hardhat/console.sol";
 
 contract TaskCreateFacet {
     // TaskStorage internal _storage;
-    InterchainStorage internal _storageInterchain;
+    // InterchainStorage internal _storageInterchain;
 
     event TaskCreated(address contractAdr, string message, uint timestamp);
 
@@ -43,6 +43,7 @@ contract TaskCreateFacet {
     {
         TaskStorage storage _storage = LibTasks.taskStorage();
 
+        InterchainStorage storage _storageInterchain = LibInterchain.interchainStorage();
         // address sender;
         if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
             && msg.sender != _storageInterchain.configHyperlane.sourceAddress 

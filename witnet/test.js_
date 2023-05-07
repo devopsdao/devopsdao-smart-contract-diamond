@@ -1,14 +1,25 @@
 import * as Witnet from "witnet-requests"
 
-const bitstamp = new Witnet.Source("https://www.bitstamp.net/api/ticker/")
-  .parseJSONMap()
-  .getFloat("last")
+const github = new Witnet.Source("https://api.github.com/repos/devopsdao/devopsdao-smart-contract-diamond/pulls?state=all")
+  .parseJSONArray()
+  .filter(
+    new Witnet.Script([Witnet.TYPES.MAP])
+      // from all elements in the array,
+      // select the ones which "title" field
+      // match wildcard #1
+      .getString("title")
+      .match({ "\\1\\": true }, false)
+  )
+  .filter(
+    // from all elements in the array,
+    // select the ones which "merged_at" field
+    // string length is greater than zero
+    new Witnet.Script([Witnet.TYPES.MAP]).getString("merged_at").length().greaterThan(0)
+  )
+  .getMap(0)
+  .getString("state");
 
-const coindesk = new Witnet.Source("https://api.coindesk.com/v1/bpi/currentprice.json")
-  .parseJSONMap()
-  .getMap("bpi")
-  .getMap("USD")
-  .getFloat("rate_float")
+
 
 const aggregator = new Witnet.Aggregator({
   filters: [
@@ -25,8 +36,7 @@ const tally = new Witnet.Tally({
 })
 
 const request = new Witnet.Request()
-  .addSource(bitstamp)
-  .addSource(coindesk)
+  .addSource(github)
   .setAggregator(aggregator)
   .setTally(tally)
   .setQuorum(25)

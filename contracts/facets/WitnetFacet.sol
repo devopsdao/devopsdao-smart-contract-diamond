@@ -82,6 +82,17 @@ contract WitnetFacet
         }
     }
 
+    function saveSuccessfulResult(address taskAddress) public {
+            LibWitnetFacet.Result memory _result = getLastResult(taskAddress);
+            if(keccak256(bytes(_result.status)) == keccak256("closed")){
+                Task memory task = TaskContract(payable(taskAddress)).getTaskData();
+                TaskContract(payable(taskAddress)).taskStateChange(task.contractOwner, task.participant, TASK_STATE_COMPLETED, 'automatically accepting based on PR merge', 0, 5);
+            }
+            else{
+                revert('PR not merged');
+            }
+    }
+
     function postRequest(address taskAddress)
         public payable
         returns (uint256 _queryId)
@@ -100,8 +111,6 @@ contract WitnetFacet
         public payable
         returns (uint256 _queryId)
     {
-        TaskStorage storage _storage = LibTasks.taskStorage();
-
         return _postRequest(taskAddress, _args);
     }
 

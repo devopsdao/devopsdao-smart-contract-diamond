@@ -40,7 +40,17 @@ library LibChat {
         string memory _message,
         uint256 _replyTo
     ) external {
-        TaskStorage storage _storage = taskStorage();
+        TaskStorage storage _storage = LibTasks.taskStorage();
+
+        InterchainStorage storage _storageInterchain = LibInterchain.interchainStorage();
+        if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
+            && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
+            && msg.sender != _storageInterchain.configLayerzero.sourceAddress
+            && msg.sender != _storageInterchain.configWormhole.sourceAddress
+            && msg.sender != _storage.task.contractParent
+        ){
+            _sender = payable(msg.sender);
+        }
 
         (ConfigAxelar memory configAxelar, ConfigHyperlane memory configHyperlane, ConfigLayerzero memory configLayerzero, ConfigWormhole memory configWormhole) = IInterchainFacet(_storage.task.contractParent).getInterchainConfigs();
         if(msg.sender != configAxelar.sourceAddress 

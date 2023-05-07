@@ -66,6 +66,7 @@ task("witnetRead", "read Witnet facet")
     await readWitnet();
     console.log(`query complete`);
   });
+  
 
 async function loadConfig() {
   if (hre.network.config.witnet) {
@@ -87,6 +88,14 @@ async function loadConfig() {
     }
 
     witnetAddresses = require("witnet-solidity-bridge/migrations/witnet.addresses")[ecosystem][network];
+
+    const WitnetRequestBoard = await ethers.getContractAt("WitnetRequestBoard", witnetAddresses.WitnetRequestBoard);
+
+    witnetBytecodesAddress = await WitnetRequestBoard.callStatic.registry();
+    witnetRequestFactoryAddress = await WitnetRequestBoard.callStatic.factory();
+
+    console.log(`witnetBytecodesAddress: ${witnetBytecodesAddress}`);
+    console.log(`witnetRequestFactoryAddress: ${witnetRequestFactoryAddress}`);
     // requestHashes = require(`../abi/witnet-requesthashes.json`)["hashes"][hre.network.config.chainId];
   }
 }
@@ -129,8 +138,8 @@ async function queryWitnet() {
 
   console.log(witnetRequestTemplateReceipt);
 
-  const witnetBytecodes = await ethers.getContractAt("IWitnetBytecodes", witnetAddresses.WitnetBytecodes);
-  const witnetBytecodesEvents = await ethers.getContractAt("IWitnetBytecodesEvents", witnetAddresses.WitnetBytecodes);
+  const witnetBytecodes = await ethers.getContractAt("IWitnetBytecodes", witnetBytecodesAddress);
+  const witnetBytecodesEvents = await ethers.getContractAt("IWitnetBytecodesEvents", witnetBytecodesAddress);
 
   let eventFilter = witnetBytecodesEvents.filters.NewRadHash();
   let WitnetRequestEvents = await witnetBytecodes.queryFilter(
@@ -232,7 +241,7 @@ async function postWitnet() {
   console.log('posting witnet request')
 
 
-  let witnetPostRequest = await witnetFacet["postRequest(address)"]("0x60cdb4fed978cb4453ecaeaa952325b1d47ce739", options);
+  let witnetPostRequest = await witnetFacet["postRequest(address)"]("0x145c45f34c06a11daa7c3b29948cd1217ed582ab", options);
 
   // let witnetPostRequest = await witnetFacet['postRequest(uint256,bytes32)'](15, args, options);
 
@@ -320,8 +329,8 @@ async function configureWitnet() {
 
   console.log(witnetAddresses);
 
-  const witnetBytecodes = await ethers.getContractAt("IWitnetBytecodes", witnetAddresses.WitnetBytecodes);
-  const witnetBytecodesEvents = await ethers.getContractAt("IWitnetBytecodesEvents", witnetAddresses.WitnetBytecodes);
+  const witnetBytecodes = await ethers.getContractAt("IWitnetBytecodes", witnetBytecodesAddress);
+  const witnetBytecodesEvents = await ethers.getContractAt("IWitnetBytecodesEvents", witnetBytecodesAddress);
   // const witnetV2 = await ethers.getContractAt('WitnetV2', diamondAddress)
 
   // WitnetV2.DataRequestMethods
@@ -623,7 +632,7 @@ async function configureWitnet() {
 
   console.log(requestHashes);
 
-  let IWitnetRequestFactory = await ethers.getContractAt("IWitnetRequestFactory", witnetAddresses.WitnetRequestFactory);
+  let IWitnetRequestFactory = await ethers.getContractAt("IWitnetRequestFactory", witnetRequestFactoryAddress);
 
   let requestTemplateLookup;
   try {
@@ -681,6 +690,10 @@ async function configureWitnet() {
   console.log("updating WitnetFacet with NewSlaHash");
   console.log(requestHashes.hashes[hre.network.config.chainId].NewSlaHash);
 
+  await fs.writeFile(path.join(__dirname, `../abi/witnet-requesthashes.json`), JSON.stringify(requestHashes));
+
+
+
   const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]["Diamond"];
   console.log(`using Diamond: ${diamondAddress}`);
 
@@ -689,7 +702,7 @@ async function configureWitnet() {
 
   let witnetUpdateSLA = await witnetFacet.updateRadonSLA(requestHashes.hashes[hre.network.config.chainId].NewSlaHash);
 
-  await fs.writeFile(path.join(__dirname, `../abi/witnet-requesthashes.json`), JSON.stringify(requestHashes));
+  console.log('WitnetFacet configured')
 
   // console.log(requestTemplateReceipt)
 
@@ -700,7 +713,7 @@ async function configureWitnet() {
   // let witnetFacet = await ethers.getContractAt("WitnetFacet", diamondAddress);
 
   // console.log("building witnet request template");
-  // // console.log(witnetAddresses.WitnetRequestFactory)
+  // // console.log(witnetRequestFactoryAddress)
   // console.log(requestHashes.hashes[hre.network.config.chainId].NewRadonRetrievalHash)
   // console.log(requestHashes.hashes[hre.network.config.chainId].NewRadonReducerHash)
 
