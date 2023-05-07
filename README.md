@@ -1,6 +1,6 @@
 # Dodao.dev smart contract
 
-This is Dodao.dev EIP-2535 based smart-contract, with Axelar, Hyperlane, Layerzero and Wormhole integrations.
+This is Dodao.dev EIP-2535 based smart-contract, with Axelar, Hyperlane, Layerzero and Wormhole integrations, using Witnet Oracle to access Web2.
 
 ## Installation
 
