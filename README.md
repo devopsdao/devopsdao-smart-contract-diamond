@@ -24,7 +24,7 @@ The [scripts/deploy.js](scripts/deploy.js) deployment script includes comments t
 npx hardhat test
 ```
 
-## Upgrade a diamond
+## Upgrade a  diamond
 
 Use deploy.js with --upgrade argument
 
