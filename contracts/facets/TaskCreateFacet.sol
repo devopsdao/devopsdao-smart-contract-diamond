@@ -75,7 +75,7 @@ contract TaskCreateFacet {
         // }
 
         require(taskData.tokenContracts.length == taskData.tokenIds.length && taskData.tokenContracts.length == taskData.tokenAmounts.length
-        , "invalid NFT data");
+        , "invalid token data");
 
         for (uint i = 0; i < taskData.tokenContracts.length; i++){
             if(taskData.tokenContracts[i] == address(0x0)){
