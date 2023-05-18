@@ -66,19 +66,24 @@ contract WitnetFacet
             });
         } else if (_status == Witnet.ResultStatus.Error) {
             Witnet.ResultError memory _witnetError = witnet.checkResultError(_queryId);
-            if (_witnetError.code == Witnet.ResultErrorCodes.ArrayIndexOutOfBounds) {
-                _result = LibWitnetFacet.Result({
-                    failed: false,
-                    pendingMerge: true,
-                    status: "(unmerged)"
-                });
-            } else {
-                _result = LibWitnetFacet.Result({
-                    failed: true,
-                    pendingMerge: false,
-                    status: _witnetError.reason
-                });
-            }
+            // if (_witnetError.code == Witnet.ResultErrorCodes.MapKeyNotFound) {
+            //     _result = LibWitnetFacet.Result({
+            //         failed: false,
+            //         pendingMerge: true,
+            //         status: "(unmerged)"
+            //     });
+            // } else {
+            //     _result = LibWitnetFacet.Result({
+            //         failed: true,
+            //         pendingMerge: false,
+            //         status: _witnetError.reason
+            //     });
+            // }
+            _result = LibWitnetFacet.Result({
+                failed: true,
+                pendingMerge: false,
+                status: _witnetError.reason
+            });
         }
     }
 

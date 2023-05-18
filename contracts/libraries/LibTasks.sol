@@ -228,22 +228,22 @@ library LibTasks {
             "task is not in new state"
         );
 
-        for (uint i = 0; i < _storage.task.tokenContracts.length; i++){
-            if(_storage.task.tokenContracts[i] == address(0x0)){
-                //do nothing if it's a native token
-            }
-            else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(0x4e2312e0)){
-                IERC1155(_storage.task.tokenContracts[i]).safeBatchTransferFrom(_sender, address(this), _storage.task.tokenIds[i], _storage.task.tokenAmounts[i], bytes(''));
-            }
-            else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(type(IERC20).interfaceId)){
-                IERC20(_storage.task.tokenContracts[i]).transferFrom(_sender, address(this), _storage.task.tokenAmounts[i][0]);
-            }
-            else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(type(IERC721).interfaceId)){
-                for (uint id = 0; id < _storage.task.tokenIds[i].length; id++){
-                    IERC721(_storage.task.tokenContracts[i]).safeTransferFrom(_sender, address(this), _storage.task.tokenIds[i][id]);
-                }
-            }
-        }
+        // for (uint i = 0; i < _storage.task.tokenContracts.length; i++){
+        //     if(_storage.task.tokenContracts[i] == address(0x0)){
+        //         //do nothing if it's a native token
+        //     }
+        //     else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(0x4e2312e0)){
+        //         IERC1155(_storage.task.tokenContracts[i]).safeBatchTransferFrom(_sender, address(this), _storage.task.tokenIds[i], _storage.task.tokenAmounts[i], bytes(''));
+        //     }
+        //     else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(type(IERC20).interfaceId)){
+        //         IERC20(_storage.task.tokenContracts[i]).transferFrom(_sender, address(this), _storage.task.tokenAmounts[i][0]);
+        //     }
+        //     else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(type(IERC721).interfaceId)){
+        //         for (uint id = 0; id < _storage.task.tokenIds[i].length; id++){
+        //             IERC721(_storage.task.tokenContracts[i]).safeTransferFrom(_sender, address(this), _storage.task.tokenIds[i][id]);
+        //         }
+        //     }
+        // }
 
         //   _storage.task.countMessages++;
         Message memory message;
