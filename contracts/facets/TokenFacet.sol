@@ -9,6 +9,7 @@ import "../facets/tokenstorage/ERC1155StorageFacet.sol";
 import "../interfaces/IERC1155.sol";
 import "../interfaces/IERC1155TokenReceiver.sol";
 
+
 import "hardhat/console.sol";
 
 contract TokenFacet is ERC1155StorageFacet, IERC1155 {
@@ -97,7 +98,7 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
     function isApprovedForAll(
         address account_,
         address operator_
-    ) external view returns (bool) {
+    ) public view returns (bool) {
         return LibTokens.isApprovedForAll(account_, operator_);
     }
 
