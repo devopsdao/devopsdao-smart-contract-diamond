@@ -57,7 +57,6 @@ The `test/diamondTest.js` file gives tests for the `diamondCut` function and the
 
 Dodao.dev team
 
-
 ## Docs
 
 see [docs.dodao.dev](https://docs.dodao.dev)
