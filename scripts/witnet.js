@@ -444,13 +444,14 @@ async function configureWitnet() {
         { type: 2 }
       );
       const dataSourceReceipt = await dataSource.wait();
-      // console.log(dataSourceReceipt)
+
       const eventFilter = witnetBytecodesEvents.filters.NewRadonRetrievalHash();
       const dataSourceEvents = await witnetBytecodes.queryFilter(
         eventFilter,
         dataSourceReceipt.blockNumber,
         dataSourceReceipt.blockNumber
-      ); //not working if I specify blocks
+      ); 
+      
       // console.log(`dataSourceEvents`)
       // console.log(dataSourceEvents)
 
@@ -614,7 +615,7 @@ async function configureWitnet() {
         eventFilter,
         radonSLAReceipt.blockNumber,
         radonSLAReceipt.blockNumber
-      ); //not working if I specify blocks
+      );
       console.log(`radonSLAEvents`);
       console.log(radonSLAEvents);
 
