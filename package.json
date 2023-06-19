@@ -19,7 +19,7 @@
     "@nomiclabs/hardhat-truffle5": "^2.0.7",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@nomiclabs/hardhat-web3": "^2.0.0",
-    "@openzeppelin/contracts": "^4.8.0",
+    "@openzeppelin/contracts": "^4.9.2",
     "@openzeppelin/hardhat-upgrades": "^1.21.0",
     "@openzeppelin/test-helpers": "^0.5.16",
     "@solidstate/contracts": "^0.0.45",
