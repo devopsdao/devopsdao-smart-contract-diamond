@@ -14,6 +14,9 @@ contract WitnetFacet
     is
         UsingWitnet
 {
+    bool public constant contractWitnetFacet = true;
+    // string public constant contractName = 'WitnetFacet';
+
     using Witnet for Witnet.Result;
 
     using LibWitnetFacet for WitnetRequestBoard;

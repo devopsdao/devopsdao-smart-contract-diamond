@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
 import "hardhat/console.sol";
@@ -309,7 +310,7 @@ library LibTokenData {
     function getTokenIds(
         address owner
     ) external view returns (uint256[] memory) {
-        console.log(owner);
+        // console.log(owner);
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
         return _tokenStorage.ownerTokens[owner];
     }
@@ -317,7 +318,7 @@ library LibTokenData {
     function getTokenNames(
         address owner
     ) external view returns (string[] memory) {
-        console.log(owner);
+        // console.log(owner);
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
         
         string[] memory names = new string[](_tokenStorage.ownerTokens[owner].length);

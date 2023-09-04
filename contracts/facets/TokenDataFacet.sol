@@ -12,6 +12,8 @@ import "../facets/tokenstorage/ERC1155StorageFacet.sol";
 import "hardhat/console.sol";
 
 contract TokenDataFacet {
+    bool public constant contractTokenDataFacet = true;
+    // string public constant contractName = 'TokenDataFacet';
 
 
     function uri(uint256 id_) public view returns (string memory) {
@@ -68,6 +70,13 @@ contract TokenDataFacet {
         uint256[] calldata _ids
     ) external view virtual returns (string[] memory) {
       return LibTokenData.getTokenNames(_ids);
+    }
+
+    //ERC1155Enumerable.sol, TODO: support all funcs
+    function tokensByAccount(
+        address _owner
+    ) external view virtual returns (uint256[] memory) {
+      return LibTokenData.getTokenIds(_owner);
     }
 
     function getTokenIds(
@@ -130,7 +139,6 @@ contract TokenDataFacet {
         address[] calldata accounts_,
         string[] calldata names_
     ) external view returns (uint256[] memory) {
-        console.log(accounts_[0]);
         return LibTokenData.balanceOfBatchName(accounts_, names_);
     }
 

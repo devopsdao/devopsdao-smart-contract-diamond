@@ -243,6 +243,8 @@ async function deployDiamond() {
   feeData = await ethers.provider.getFeeData();
 
   const Diamond = await ethers.getContractFactory("Diamond");
+
+  // console.log(facetCuts);
   
   // const diamond = await Diamond.deploy(facetCuts, diamondArgs, { type: 2, gasPrice: feeData.gasPrice });
   const diamond = await Diamond.deploy(facetCuts, diamondArgs, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });

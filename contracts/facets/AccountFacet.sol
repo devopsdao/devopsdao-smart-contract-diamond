@@ -21,31 +21,32 @@ import "hardhat/console.sol";
 
 
 contract AccountFacet  {
+    bool public constant contractAccountFacet = true;
 
     event AccountCreated(address ownerAddr, string message, uint timestamp);
 
 
-    function addAccountToBlacklist(address taskAddress)
+    function addAccountToBlacklist(address accountAddress)
     external
     {
         TaskStorage storage _storage = LibTasks.taskStorage();
         uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'auditor');
         require(balance > 0, 'must hold Auditor NFT to add to blacklist');
-        require(_storage.taskContractsMapping[taskAddress] == true, 'task does not exist');
-        require(_storage.accountsBlacklistMapping[taskAddress] != true, 'task is already blacklisted');
-        _storage.accountsBlacklist.push(taskAddress);
-        _storage.accountsBlacklistMapping[taskAddress] = true;
+        require(_storage.accountsMapping[accountAddress] == true, 'account does not exist');
+        require(_storage.accountsBlacklistMapping[accountAddress] != true, 'account is already blacklisted');
+        _storage.accountsBlacklist.push(accountAddress);
+        _storage.accountsBlacklistMapping[accountAddress] = true;
     }
 
-    function removeAccountFromBlacklist(address taskAddress) external{
+    function removeAccountFromBlacklist(address accountAddress) external{
         TaskStorage storage _storage = LibTasks.taskStorage();
         uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'auditor');
         require(balance > 0, 'must hold Auditor NFT to add to blacklist');
-        require(_storage.taskContractsMapping[taskAddress] == true, 'task does not exist');
+        require(_storage.accountsMapping[accountAddress] == true, 'account does not exist');
 
         for (uint256 index = 0; index < _storage.accountsBlacklist.length; index++) {
-            if(_storage.accountsBlacklist[index] == taskAddress){
-                _storage.accountsBlacklistMapping[taskAddress] = false;
+            if(_storage.accountsBlacklist[index] == accountAddress){
+                _storage.accountsBlacklistMapping[accountAddress] = false;
                 for (uint i = index; i<_storage.accountsBlacklist.length-1; i++){
                     _storage.accountsBlacklist[i] = _storage.accountsBlacklist[i+1];
                 }
@@ -117,8 +118,33 @@ contract AccountFacet  {
         _storage.accounts[_sender].customerRatings.push(rating);
     }
 
-
     function getAccountsList()
+    external
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        // return _storage.accountsList;
+        // for (uint256 i = 0; i < _storage.accountsList.length; i++) {
+        //     if(_storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false)
+        //     {
+        //         taskCount++;
+        //     }
+        // }
+        address[] memory accounts = new address[](_storage.accountsList.length - _storage.accountsBlacklist.length);
+        uint256 accountId = 0;
+        for (uint256 i = 0; i < _storage.accountsList.length; i++) {
+            if(_storage.accountsBlacklistMapping[_storage.accountsList[i]] == false)
+            {
+                accounts[accountId] = _storage.accountsList[i];
+                accountId++;
+            }
+        }
+        return accounts;
+    }
+
+
+    function getRawAccountsList()
     external
     view
     returns (address[] memory)

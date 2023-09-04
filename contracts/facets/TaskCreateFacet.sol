@@ -30,6 +30,8 @@ import "hardhat/console.sol";
 
 
 contract TaskCreateFacet {
+    bool public constant contractTaskCreateFacet = true;
+    // string public constant contractName = 'TaskCreateFacet';
     // TaskStorage internal _storage;
     // InterchainStorage internal _storageInterchain;
 

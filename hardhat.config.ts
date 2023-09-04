@@ -1,5 +1,5 @@
 /* global ethers task */
-require("@nomiclabs/hardhat-waffle");
+// require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ethers");
 // require("@sebasgoldberg/hardhat-wsprovider");
 require("@nomicfoundation/hardhat-chai-matchers");
@@ -339,6 +339,18 @@ module.exports = {
       // flat: true,
       only: [":IERC1155$"],
       rename: () => "IERC1155.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":IERC1155Enumerable$"],
+      rename: () => "IERC1155Enumerable.abi",
       spacing: 2,
       // pretty: true,
       format: "json",

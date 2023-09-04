@@ -21,6 +21,8 @@ import "hardhat/console.sol";
 
 
 contract TaskDataFacet  {
+    bool public constant contractTaskDataFacet = true;
+    // string public constant contractName = 'TaskDataFacet';
     // TaskStorage internal _storage;
     // InterchainStorage internal _storageInterchain;
 

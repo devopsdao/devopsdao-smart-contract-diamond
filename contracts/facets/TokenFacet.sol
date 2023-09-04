@@ -13,6 +13,8 @@ import "../interfaces/IERC1155TokenReceiver.sol";
 import "hardhat/console.sol";
 
 contract TokenFacet is ERC1155StorageFacet, IERC1155 {
+    bool public constant contractTokenFacet = true;
+    // string public constant contractName = 'TokenFacet';
 
     function name() external pure returns(string memory){
         return "dodao.dev token";
