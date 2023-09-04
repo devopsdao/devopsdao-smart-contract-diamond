@@ -477,6 +477,7 @@ describe("dodao facets test", async function () {
 
   it("tokenDataFacet minted NFT getTokenIds", async () => {
     const ownedTokenIds = await tokenDataFacet.connect(signers[2]).getTokenIds(signers[2].address);
+    // console.log(ownedTokenIds);
     assert.deepEqual(ownedTokenIds, [mintedAuditorNFTid]);
   });
 
@@ -1107,6 +1108,12 @@ describe("dodao facets test", async function () {
     assert.equal(getTaskDataAgreed.messages[0].taskState, taskStateCanceled);
     assert.equal(getTaskDataAgreed.messages[0].replyTo, messageReplyTo);
   });
+
+  it("tokenDataFacet minted NFT getTokenIds", async () => {
+    const ownedTokenIds = await tokenDataFacet.connect(signers[2]).getTokenIds(signers[2].address);
+    assert.deepEqual(ownedTokenIds, [mintedAuditorNFTid]);
+  });
+
 
 
   it("tokenDataFacet addAccountToBlacklist", async () => {
