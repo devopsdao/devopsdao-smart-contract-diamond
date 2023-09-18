@@ -102,20 +102,20 @@ contract AccountFacet  {
         _storage.accounts[_sender].auditParticipantTasks.push(taskAddress);
     }
 
-    function addPerformerRating(address _sender, address taskAddress, uint256 rating) external{
+    function addPerformerRating(address _account, address taskAddress, uint256 rating) external{
         TaskStorage storage _storage = LibTasks.taskStorage();
         require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
         require(msg.sender == taskAddress, 'sender must be task contract');
 
-        _storage.accounts[_sender].performerRatings.push(rating);
+        _storage.accounts[_account].performerRatings.push(rating);
     }
 
-    function addCustomerRating(address _sender, address taskAddress, uint256 rating) external{
+    function addCustomerRating(address _account, address taskAddress, uint256 rating) external{
         TaskStorage storage _storage = LibTasks.taskStorage();
         require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
         require(msg.sender == taskAddress, 'sender must be task contract');
 
-        _storage.accounts[_sender].customerRatings.push(rating);
+        _storage.accounts[_account].customerRatings.push(rating);
     }
 
     function getAccountsList()
