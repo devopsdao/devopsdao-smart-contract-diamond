@@ -72,7 +72,7 @@ contract TaskContract is ERC1155TokenReceiver, CommonConstants  {
     //     return address(this).balance;
     // }
 
-    function withdrawndRate(address _sender, address payable _addressToSend, string memory _chain, uint256 rating) external payable {
+    function withdrawAndRate(address _sender, address payable _addressToSend, string memory _chain, uint256 rating) external payable {
         // address payable contractOwner = _storage.task.contractOwner;
         // address payable participant = _storage.task.participant;
         // uint256 balance = address(this).balance;
