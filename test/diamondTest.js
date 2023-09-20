@@ -481,23 +481,23 @@ describe("dodao facets test", async function () {
     assert.deepEqual(ownedTokenIds, [mintedAuditorNFTid]);
   });
 
-  // it("tokenDataFacet mintNonFungible", async () => {
-  //   // openzeppelin test helpers, not compatible with ethers.js
-  //   // await expectEvent(createAuditorNFTReceipt, 'URI', {
-  //   //   value: this.value,
-  //   // });
-  //   let feeData = await ethers.provider.getFeeData();
+  it("tokenDataFacet mintNonFungible", async () => {
+    // openzeppelin test helpers, not compatible with ethers.js
+    // await expectEvent(createAuditorNFTReceipt, 'URI', {
+    //   value: this.value,
+    // });
+    let feeData = await ethers.provider.getFeeData();
 
-  //   const mintAuditorNFT = await tokenFacet
-  //     .connect(signers[0])
-  //     .mintNonFungible(createdAuditorNftBaseType, [signers[2].address], { type: 2, gasPrice: feeData.gasPrice });
-  //   const mintAuditorNFTReceipt = await mintAuditorNFT.wait();
+    const mintAuditorNFT = await tokenFacet
+      .connect(signers[0])
+      .mintNonFungible(createdAuditorNftBaseType, [signers[2].address], { type: 2, gasPrice: feeData.gasPrice });
+    const mintAuditorNFTReceipt = await mintAuditorNFT.wait();
 
-  //   const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0];
-  //   let mintedAuditorNFTamount;
-  //   ({ value: mintedAuditorNFTamount, id: mintedAuditorNFTid } = mintAuditorNFTEvent.args);
-  //   assert.equal(mintedAuditorNFTamount, 1);
-  // });
+    const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0];
+    let mintedAuditorNFTamount;
+    ({ value: mintedAuditorNFTamount, id: mintedAuditorNFTid } = mintAuditorNFTEvent.args);
+    assert.equal(mintedAuditorNFTamount, 1);
+  });
 
   it("tokenDataFacet minted NFT getTokenNames", async () => {
     // console.log(signers[2].address);
@@ -1109,11 +1109,18 @@ describe("dodao facets test", async function () {
     assert.equal(getTaskDataAgreed.messages[0].replyTo, messageReplyTo);
   });
 
-  it("tokenDataFacet minted NFT getTokenIds", async () => {
-    const ownedTokenIds = await tokenDataFacet.connect(signers[2]).getTokenIds(signers[2].address);
-    assert.deepEqual(ownedTokenIds, [mintedAuditorNFTid]);
-  });
+  // it("tokenDataFacet minted NFT getTokenIds", async () => {
+  //   const ownedTokenIds = await tokenDataFacet.connect(signers[2]).getTokenIds(signers[2].address);
+  //   assert.deepEqual(ownedTokenIds, [mintedAuditorNFTid]);
+  // });
 
+
+  // it("tokenDataFacet minted NFT balanceOfBatch", async () => {
+  //   const auditorNFTBalanceOfBatch = await tokenFacet
+  //     .connect(signers[2])
+  //     .balanceOfBatch([signers[2].address], [mintedAuditorNFTid]);
+  //   assert.deepEqual(auditorNFTBalanceOfBatch, [ethers.BigNumber.from(1)]);
+  // });
 
 
   it("tokenDataFacet addAccountToBlacklist", async () => {

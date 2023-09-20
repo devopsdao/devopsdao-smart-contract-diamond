@@ -57,21 +57,31 @@ library LibWithdraw {
     }
 
 
-    function withdraw(address payable _addressToSend, string memory _chain) external{
+    function withdraw(address _sender, address payable _addressToSend, string memory _chain, uint256 _rating) external{
         
         TaskStorage storage _storage = taskStorage();
-        if(msg.sender != _storage.task.participant && msg.sender != _storage.task.contractOwner){
+
+        InterchainStorage storage _storageInterchain = LibInterchain.interchainStorage();
+        if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
+            && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
+            && msg.sender != _storageInterchain.configLayerzero.sourceAddress
+            && msg.sender != _storageInterchain.configWormhole.sourceAddress
+            && msg.sender != _storage.task.contractParent
+        ){
+            _sender = payable(msg.sender);
+        }
+        
+        if(_sender != _storage.task.participant && _sender != _storage.task.contractOwner){
             revert('not a participant or contractOwner');
         }
 
         // address gateway_ = 0x5769D84DD62a6fD969856c75c7D321b84d455929;
 
-        if (keccak256(bytes(_storage.task.taskState)) == keccak256(bytes(TASK_STATE_CANCELED))) {
+        if (keccak256(bytes(_storage.task.taskState)) == keccak256(bytes(TASK_STATE_CANCELED)) && _sender == _storage.task.contractOwner) {
             _storage.task.contractOwner.transfer(address(this).balance);
         } else if (
-            keccak256(bytes(_storage.task.taskState)) == keccak256(bytes(TASK_STATE_COMPLETED)) //|| 1==1
+            keccak256(bytes(_storage.task.taskState)) == keccak256(bytes(TASK_STATE_COMPLETED)) && _sender == _storage.task.participant
         ) {
-
 
             if (address(this).balance!= 0) {
                 emit Logs(address(this), string.concat("withdrawing ETH to Ethereum address: ",LibUtils.addressToString(_storage.task.participant)));
@@ -94,6 +104,8 @@ library LibWithdraw {
                     }
                 }
             }
+
+            IAccountFacet(_storage.task.contractParent).addCustomerRating(_sender, address(this), _rating);
 
 
             // for(uint i; i < _storage.task.symbols.length; i++) {
