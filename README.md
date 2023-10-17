@@ -5,8 +5,8 @@ This is Dodao.dev EIP-2535 based smart-contract, with Axelar, Hyperlane, Layerze
 ## Installation
 
 1. Install NPM packages:
-```console
-npm install
+```console 
+npm install 
 ```
 
 ## Deployment
