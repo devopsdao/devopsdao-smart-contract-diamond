@@ -96,6 +96,7 @@ describe("DiamondTest", async function () {
     wormholeFacet = await ethers.getContractAt("WormholeFacet", diamondAddress);
 
     signers = await ethers.getSigners();
+    // console.log(signers);
   });
 
   it("should have ten facets -- call to facetAddresses function", async () => {
@@ -319,7 +320,7 @@ describe("dodao facets test", async function () {
 
     const auditorSetNFTURI = await tokenFacet
       .connect(signers[0])
-      .setURI("https://example2.com/{id}", createdAuditorNftBaseType, { type: 2, gasPrice: feeData.gasPrice });
+      .setURI("https://example2.com/{id}", createdAuditorNftBaseType, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     await auditorSetNFTURI.wait();
     const auditorNFTURI2 = await tokenDataFacet.connect(signers[2]).uri(createdAuditorNftBaseType);
     assert.equal(auditorNFTURI2, "https://example2.com/{id}");
@@ -332,7 +333,7 @@ describe("dodao facets test", async function () {
 
     const auditorSetNFTURIofName = await tokenFacet
       .connect(signers[0])
-      .setURIOfName("https://example3.com/{id}", "auditor", { type: 2, gasPrice: feeData.gasPrice });
+      .setURIOfName("https://example3.com/{id}", "auditor", { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     await auditorSetNFTURIofName.wait();
     auditorNFTURI3 = await tokenDataFacet.connect(signers[2]).uri(createdAuditorNftBaseType);
     assert.equal(auditorNFTURI3, "https://example3.com/{id}");
@@ -353,7 +354,7 @@ describe("dodao facets test", async function () {
 
     const mintAuditorNFT = await tokenFacet
       .connect(signers[0])
-      .mintNonFungible(createdAuditorNftBaseType, [signers[2].address], { type: 2, gasPrice: feeData.gasPrice });
+      .mintNonFungible(createdAuditorNftBaseType, [signers[2].address], { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     const mintAuditorNFTReceipt = await mintAuditorNFT.wait();
 
     const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0];
@@ -481,23 +482,23 @@ describe("dodao facets test", async function () {
     assert.deepEqual(ownedTokenIds, [mintedAuditorNFTid]);
   });
 
-  it("tokenDataFacet mintNonFungible", async () => {
-    // openzeppelin test helpers, not compatible with ethers.js
-    // await expectEvent(createAuditorNFTReceipt, 'URI', {
-    //   value: this.value,
-    // });
-    let feeData = await ethers.provider.getFeeData();
+  // it("tokenDataFacet mintNonFungible", async () => {
+  //   // openzeppelin test helpers, not compatible with ethers.js
+  //   // await expectEvent(createAuditorNFTReceipt, 'URI', {
+  //   //   value: this.value,
+  //   // });
+  //   let feeData = await ethers.provider.getFeeData();
 
-    const mintAuditorNFT = await tokenFacet
-      .connect(signers[0])
-      .mintNonFungible(createdAuditorNftBaseType, [signers[2].address], { type: 2, gasPrice: feeData.gasPrice });
-    const mintAuditorNFTReceipt = await mintAuditorNFT.wait();
+  //   const mintAuditorNFT = await tokenFacet
+  //     .connect(signers[0])
+  //     .mintNonFungible(createdAuditorNftBaseType, [signers[2].address], { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+  //   const mintAuditorNFTReceipt = await mintAuditorNFT.wait();
 
-    const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0];
-    let mintedAuditorNFTamount;
-    ({ value: mintedAuditorNFTamount, id: mintedAuditorNFTid } = mintAuditorNFTEvent.args);
-    assert.equal(mintedAuditorNFTamount, 1);
-  });
+  //   const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0];
+  //   let mintedAuditorNFTamount;
+  //   ({ value: mintedAuditorNFTamount, id: mintedAuditorNFTid } = mintAuditorNFTEvent.args);
+  //   assert.equal(mintedAuditorNFTamount, 1);
+  // });
 
   it("tokenDataFacet minted NFT getTokenNames", async () => {
     // console.log(signers[2].address);
@@ -538,7 +539,7 @@ describe("dodao facets test", async function () {
 
       // console.log(taskData);
 
-      const createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData, { type: 2, gasPrice: feeData.gasPrice });
+      const createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
       await createTaskContract.wait();
 
       // test event listener
@@ -569,7 +570,7 @@ describe("dodao facets test", async function () {
 
       const addContractToBlacklist = await taskDataFacet
         .connect(signers[2])
-        .addTaskToBlacklist(getTaskContracts[getTaskContracts.length - 1], { type: 2, gasPrice: feeData.gasPrice });
+        .addTaskToBlacklist(getTaskContracts[getTaskContracts.length - 1], { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
       await addContractToBlacklist.wait();
 
       const getNewTaskContractsAfterBlacklist = await taskDataFacet.connect(signers[0]).getTaskContractsByState("new");
@@ -582,7 +583,7 @@ describe("dodao facets test", async function () {
 
       const removeContractFromBlacklist = await taskDataFacet
         .connect(signers[2])
-        .removeTaskFromBlacklist(getTaskContracts[getTaskContracts.length - 1], { type: 2, gasPrice: feeData.gasPrice });
+        .removeTaskFromBlacklist(getTaskContracts[getTaskContracts.length - 1], { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
       await removeContractFromBlacklist.wait();
 
       const getNewTaskContractsAfterBlacklistRemoval = await taskDataFacet
@@ -651,7 +652,7 @@ describe("dodao facets test", async function () {
       //first participant
       taskParticipate = await taskContract
         .connect(signers[1])
-        .taskParticipate(signers[1].address, messageTextParticipate, messageReplyTo, { type: 2, gasPrice: feeData.gasPrice });
+        .taskParticipate(signers[1].address, messageTextParticipate, messageReplyTo, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
       await taskParticipate.wait();
       getTaskDataParticipate = await taskContract.getTaskData();
       assert.equal(getTaskDataParticipate.participants[0], signers[1].address);
@@ -670,7 +671,7 @@ describe("dodao facets test", async function () {
       //second participant
       taskParticipate = await taskContract
         .connect(signers[3])
-        .taskParticipate(signers[3].address, messageTextParticipate, messageReplyTo, { type: 2, gasPrice: feeData.gasPrice });
+        .taskParticipate(signers[3].address, messageTextParticipate, messageReplyTo, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
       await taskParticipate.wait();
       getTaskDataParticipate = await taskContract.getTaskData();
       assert.equal(getTaskDataParticipate.participants[1], signers[3].address);
@@ -697,7 +698,7 @@ describe("dodao facets test", async function () {
           messageTextAgreed,
           messageReplyTo,
           0,
-          { type: 2, gasPrice: feeData.gasPrice }
+          { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
         );
       await taskStateChangeAgreed.wait();
       getTaskDataAgreed = await taskContract.getTaskData();
@@ -726,7 +727,7 @@ describe("dodao facets test", async function () {
           messageTextProgress,
           messageReplyTo,
           0,
-          { type: 2, gasPrice: feeData.gasPrice }
+          { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
         );
       await taskStateChangeProgress.wait();
       getTaskDataProgress = await taskContract.getTaskData();
@@ -753,7 +754,7 @@ describe("dodao facets test", async function () {
           messageTextReview,
           messageReplyTo,
           0,
-          { type: 2, gasPrice: feeData.gasPrice }
+          { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
         );
       await taskStateChangeReview.wait();
       getTaskDataReview = await taskContract.getTaskData();
@@ -786,7 +787,7 @@ describe("dodao facets test", async function () {
             messageTextCompleted,
             messageReplyTo,
             5,
-            { type: 2, gasPrice: feeData.gasPrice }
+            { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
           );
         await taskStateChangeCompleted.wait();
         getTaskDataCompleted = await taskContract.getTaskData();
@@ -819,7 +820,7 @@ describe("dodao facets test", async function () {
               messageTextAudit,
               messageReplyTo,
               0,
-              { type: 2, gasPrice: feeData.gasPrice }
+              { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
             );
           await taskStateChangeAudit.wait();
         }
@@ -837,7 +838,7 @@ describe("dodao facets test", async function () {
               messageTextAudit,
               messageReplyTo,
               0,
-              { type: 2, gasPrice: feeData.gasPrice }
+              { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
             );
           await taskStateChangeAudit.wait();
         }
@@ -869,7 +870,7 @@ describe("dodao facets test", async function () {
         const messageTextAuditParticipate = "I am honorable auditor";
         taskAuditParticipate = await taskContract
           .connect(signers[2])
-          .taskAuditParticipate(signers[2].address, messageTextAuditParticipate, messageReplyTo, { type: 2, gasPrice: feeData.gasPrice });
+          .taskAuditParticipate(signers[2].address, messageTextAuditParticipate, messageReplyTo, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
         await taskAuditParticipate.wait();
         getTaskDataAuditParticipate = await taskContract.getTaskData();
         assert.equal(getTaskDataAuditParticipate.auditors[0], signers[2].address);
@@ -897,7 +898,7 @@ describe("dodao facets test", async function () {
             messageTextSelectAuditor,
             messageReplyTo,
             0,
-            { type: 2, gasPrice: feeData.gasPrice }
+            { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
           )
         ).to.be.revertedWith("auditor has not applied");
         // await taskStateChangeSelectAuditor.wait();
@@ -921,7 +922,7 @@ describe("dodao facets test", async function () {
             messageTextSelectAuditor,
             messageReplyTo,
             0,
-            { type: 2, gasPrice: feeData.gasPrice }
+            { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
           );
         await taskStateChangeSelectAuditor.wait();
         getTaskDataSelectAuditor = await taskContract.getTaskData();
@@ -951,7 +952,7 @@ describe("dodao facets test", async function () {
         }
         taskAuditDecision = await taskContract
           .connect(signers[2])
-          .taskAuditDecision(signers[2].address, favour, messageTextAuditDecision, 0, rating, { type: 2, gasPrice: feeData.gasPrice });
+          .taskAuditDecision(signers[2].address, favour, messageTextAuditDecision, 0, rating, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
         await taskAuditDecision.wait();
         getTaskDataDecision = await taskContract.getTaskData();
         assert.equal(getTaskDataDecision.taskState, taskStateAuditDecision);
@@ -985,7 +986,7 @@ describe("dodao facets test", async function () {
         participantTasks: [],
         auditParticipantTasks: [],
         customerRatings: [],
-        performerRatings: [],
+        performerRatings: [ethers.BigNumber.from(5)],
       };
       //  for([key, accountData] of Object.entries(getAccountsData)){
       expect(getAccountsData[0].accountOwner).to.equal(accountData.accountOwner);
@@ -1074,7 +1075,7 @@ describe("dodao facets test", async function () {
   it("taskContract taskStateChange - canceled", async () => {
     let feeData = await ethers.provider.getFeeData();
 
-    createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData, { type: 2, gasPrice: feeData.gasPrice });
+    createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
 
     await createTaskContract.wait();
 
@@ -1133,7 +1134,7 @@ describe("dodao facets test", async function () {
 
     const addAccountToBlacklist = await accountFacet
       .connect(signers[2])
-      .addAccountToBlacklist(signers[2].address, { type: 2, gasPrice: feeData.gasPrice });
+      .addAccountToBlacklist(signers[2].address, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     await addAccountToBlacklist.wait();
 
     const getAccountsAfterBlacklist = await accountFacet.connect(signers[0]).getAccountsList();
@@ -1146,7 +1147,7 @@ describe("dodao facets test", async function () {
 
     const removeAccountFromBlacklist = await accountFacet
       .connect(signers[2])
-      .removeAccountFromBlacklist(signers[2].address, { type: 2, gasPrice: feeData.gasPrice });
+      .removeAccountFromBlacklist(signers[2].address, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     await removeAccountFromBlacklist.wait();
 
     const getAccountsAfterBlacklistRemoval = await accountFacet

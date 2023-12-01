@@ -85,11 +85,12 @@ function fromAscii(str, padding) {
 };
 
 async function testSafeTransferFrom(operator, from, to, id, quantity, data, gasMessage='testSafeTransferFrom') {
+    let feeData = await ethers.provider.getFeeData();
 
     let preBalanceFrom = await mainContract.balanceOf(from, id);
     let preBalanceTo   = await mainContract.balanceOf(to, id);
 
-    tx = await mainContract.connect(operator).safeTransferFrom(from, to, id, quantity, data);
+    tx = await mainContract.connect(operator).safeTransferFrom(from, to, id, quantity, data, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     receipt = await tx.wait()
     recordGasUsed(receipt, gasMessage);
     verifyTransferEvent(receipt, id, from, to, quantity, operator.address);
@@ -132,6 +133,7 @@ function verifyTransferEvents(tx, ids, from, to, quantities, operator) {
 }
 
 async function testSafeBatchTransferFrom(operator, from, to, ids, quantities, data, gasMessage='testSafeBatchTransferFrom') {
+    let feeData = await ethers.provider.getFeeData();
 
     let preBalanceFrom = [];
     let preBalanceTo   = [];
@@ -142,7 +144,7 @@ async function testSafeBatchTransferFrom(operator, from, to, ids, quantities, da
         preBalanceTo.push(await mainContract.balanceOf(to, id));
     }
 
-    tx = await mainContract.connect(operator).safeBatchTransferFrom(from, to, ids, quantities, data);
+    tx = await mainContract.connect(operator).safeBatchTransferFrom(from, to, ids, quantities, data, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     receipt = await tx.wait()
     recordGasUsed(receipt, gasMessage);
     verifyTransferEvents(receipt, ids, from, to, quantities, operator.address);
@@ -215,6 +217,7 @@ describe('ERC1155Mintable - tests all core 1155 functionality.', (accounts) => {
     });
 
     it('Create initial items', async () => {
+        let feeData = await ethers.provider.getFeeData();
 
         // Make sure the Transfer event respects the create or mint spec.
         // Also fetch the created id.
@@ -244,7 +247,7 @@ describe('ERC1155Mintable - tests all core 1155 functionality.', (accounts) => {
 
         let hammerQuantity = 5;
         let hammerUri = 'https://metadata.enjincoin.io/hammer.json';
-        tx = await mainContract.connect(signers[0]).create(hammerUri, 'hammer', false);
+        tx = await mainContract.connect(signers[0]).create(hammerUri, 'hammer', false, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
         receipt = await tx.wait()
         hammerId = verifyCreateTransfer(receipt, 0, signers[0].address);
         idSet.push(hammerId);
@@ -254,7 +257,7 @@ describe('ERC1155Mintable - tests all core 1155 functionality.', (accounts) => {
         // Make sure the URI event is emited correctly.
         verifyURI(receipt, hammerUri, hammerId);
 
-        const mintHammerTokens = await tokenFacet.connect(signers[0]).mintFungibleByName('hammer', [signers[0].address], [ethers.BigNumber.from(hammerQuantity)])
+        const mintHammerTokens = await tokenFacet.connect(signers[0]).mintFungibleByName('hammer', [signers[0].address], [ethers.BigNumber.from(hammerQuantity)], { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas })
         const mintHammerTokensReceipt = await mintHammerTokens.wait()
 
         let swordQuantity = 200;
@@ -265,7 +268,7 @@ describe('ERC1155Mintable - tests all core 1155 functionality.', (accounts) => {
         idSet.push(swordId);
         verifyURI(receipt, swordUri, swordId);
 
-        const mintSwordTokens = await tokenFacet.connect(signers[0]).mintFungibleByName('sword', [signers[0].address], [ethers.BigNumber.from(swordQuantity)])
+        const mintSwordTokens = await tokenFacet.connect(signers[0]).mintFungibleByName('sword', [signers[0].address], [ethers.BigNumber.from(swordQuantity)], { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas })
         const mintSwordTokensReceipt = await mintSwordTokens.wait()
 
         let maceQuantity = 1000000;
@@ -276,108 +279,140 @@ describe('ERC1155Mintable - tests all core 1155 functionality.', (accounts) => {
         idSet.push(maceId);
         verifyURI(receipt, maceUri, maceId);
 
-        const mintMaceTokens = await tokenFacet.connect(signers[0]).mintFungibleByName('mace', [signers[0].address], [ethers.BigNumber.from(maceQuantity)])
+        const mintMaceTokens = await tokenFacet.connect(signers[0]).mintFungibleByName('mace', [signers[0].address], [ethers.BigNumber.from(maceQuantity)], { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas })
         const mintMaceTokensReceipt = await mintMaceTokens.wait()
     });
 
     it('safeTransferFrom throws with no balance', async () => {
-        await expectThrow(mainContract.connect(signers[1]).safeTransferFrom(signers[1].address, signers[0].address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii('')));
+        let feeData = await ethers.provider.getFeeData();
+        await expectThrow(mainContract.connect(signers[1]).safeTransferFrom(signers[1].address, signers[0].address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii(''), { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('safeTransferFrom throws with invalid id', async () => {
-        await expectThrow(mainContract.connect(signers[1]).safeTransferFrom(signers[1].address, signers[0].address, ethers.BigNumber.from(32), ethers.BigNumber.from(1), fromAscii('')));
+        let feeData = await ethers.provider.getFeeData();
+        await expectThrow(mainContract.connect(signers[1]).safeTransferFrom(signers[1].address, signers[0].address, ethers.BigNumber.from(32), ethers.BigNumber.from(1), fromAscii(''), { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('safeTransferFrom throws with no approval', async () => {
-        await expectThrow(mainContract.connect(signers[1]).safeTransferFrom(signers[0].address, signers[1].address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii('')));
+        let feeData = await ethers.provider.getFeeData();
+        await expectThrow(mainContract.connect(signers[1]).safeTransferFrom(signers[0].address, signers[1].address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii(''), { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('safeTransferFrom throws when exceeding balance', async () => {
-        await expectThrow(mainContract.connect(signers[0]).safeTransferFrom(signers[0].address, signers[1].address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(6), fromAscii('')));
+        let feeData = await ethers.provider.getFeeData();
+        await expectThrow(mainContract.connect(signers[0]).safeTransferFrom(signers[0].address, signers[1].address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(6), fromAscii(''), { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('safeTransferFrom throws when sending to non-receiver contract', async () => {
-        await expectThrow(mainContract.connect(signers[0]).safeTransferFrom(signers[0].address, ERC1155MockNonReceiver.address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii('')));
+        let feeData = await ethers.provider.getFeeData();
+        await expectThrow(mainContract.connect(signers[0]).safeTransferFrom(signers[0].address, ERC1155MockNonReceiver.address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii(''), { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('safeTransferFrom throws if invalid response from receiver contract', async () => {
-        await receiverContract.setShouldReject(true);
-        await expectThrow(mainContract.connect(signers[0]).safeTransferFrom(signers[0].address, receiverContract.address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii('Bob')));
+        let feeData = await ethers.provider.getFeeData();
+        tx = await receiverContract.connect(signers[0]).setShouldReject(true);
+        receipt = await tx.wait();
+        await expectThrow(mainContract.connect(signers[0]).safeTransferFrom(signers[0].address, receiverContract.address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii('Bob'), { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('safeTransferFrom from self with enough balance', async () => {
+        let feeData = await ethers.provider.getFeeData();
         await testSafeTransferFrom(signers[0], signers[0].address, signers[1].address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii(''));
         await testSafeTransferFrom(signers[1], signers[1].address, signers[0].address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii(''));
   });
 
     it('safeTransferFrom to self with enough balance', async () => {
+        let feeData = await ethers.provider.getFeeData();
         await testSafeTransferFrom(signers[0], signers[0].address, signers[0].address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii(''));
     });
 
     it('safeTransferFrom zero value', async () => {
+        let feeData = await ethers.provider.getFeeData();
         await testSafeTransferFrom(signers[2], signers[2].address, signers[0].address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(0), fromAscii(''));
     });
 
     it('safeTransferFrom from approved operator', async () => {
-        await mainContract.connect(signers[0]).setApprovalForAll(signers[2].address, true);
+        let feeData = await ethers.provider.getFeeData();
+        tx = await mainContract.connect(signers[0]).setApprovalForAll(signers[2].address, true, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        receipt = await tx.wait();
         await testSafeTransferFrom(signers[2], signers[0].address, signers[1].address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii(''));
-        await mainContract.connect(signers[0]).setApprovalForAll(signers[2].address, false);
+        tx = await mainContract.connect(signers[0]).setApprovalForAll(signers[2].address, false, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        receipt = await tx.wait();
 
         // Restore state
-        await mainContract.connect(signers[1]).setApprovalForAll(signers[2].address, true);
+        tx = await mainContract.connect(signers[1]).setApprovalForAll(signers[2].address, true, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        receipt = await tx.wait();
         await testSafeTransferFrom(signers[2], signers[1].address, signers[0].address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii(''));
-        await mainContract.connect(signers[1]).setApprovalForAll(signers[2].address, false);
+        tx = await mainContract.connect(signers[1]).setApprovalForAll(signers[2].address, false, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        receipt = await tx.wait();
     });
 
     it('safeTransferFrom to receiver contract', async () => {
-        await receiverContract.setShouldReject(false);
+        let feeData = await ethers.provider.getFeeData();
+        tx = await receiverContract.connect(signers[0]).setShouldReject(false, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        receipt = await tx.wait();
         await testSafeTransferFrom(signers[0], signers[0].address, receiverContract.address, ethers.BigNumber.from(hammerId), ethers.BigNumber.from(1), fromAscii('SomethingMeaningfull'), 'testSafeTransferFrom receiver');
 
         // ToDo restore state
     });
 
     it('safeBatchTransferFrom throws with insuficient balance', async () => {
-        await expectThrow(mainContract.connect(signers[0]).safeBatchTransferFrom(signers[1].address, signers[0].address, idSet, quantities, fromAscii('')));
+        let feeData = await ethers.provider.getFeeData();
+        await expectThrow(mainContract.connect(signers[0]).safeBatchTransferFrom(signers[1].address, signers[0].address, idSet, quantities, fromAscii(''), { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('safeBatchTransferFrom throws with invalid id', async () => {
-        await expectThrow(mainContract.connect(signers[0]).safeBatchTransferFrom(signers[0].address, signers[1].address, [32, swordId, maceId], quantities, fromAscii('')));
+        let feeData = await ethers.provider.getFeeData();
+        await expectThrow(mainContract.connect(signers[0]).safeBatchTransferFrom(signers[0].address, signers[1].address, [32, swordId, maceId], quantities, fromAscii(''), { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('safeBatchTransferFrom throws with no approval', async () => {
-        await expectThrow(mainContract.connect(signers[1]).safeBatchTransferFrom(signers[0].address, signers[2].address, idSet, quantities, fromAscii('')));
+        let feeData = await ethers.provider.getFeeData();
+        await expectThrow(mainContract.connect(signers[1]).safeBatchTransferFrom(signers[0].address, signers[2].address, idSet, quantities, fromAscii(''), { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('safeBatchTransferFrom throws when exceeding balance', async () => {
-        await expectThrow(mainContract.connect(signers[0]).safeBatchTransferFrom(signers[0].address, signers[1].address, idSet, [ethers.BigNumber.from(6),ethers.BigNumber.from(1),ethers.BigNumber.from(1)], fromAscii('')));
+        let feeData = await ethers.provider.getFeeData();
+        await expectThrow(mainContract.connect(signers[0]).safeBatchTransferFrom(signers[0].address, signers[1].address, idSet, [ethers.BigNumber.from(6),ethers.BigNumber.from(1),ethers.BigNumber.from(1)], fromAscii(''), { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('safeBatchTransferFrom throws when sending to a non-receiver contract', async () => {
-        await expectThrow(mainContract.connect(signers[0]).safeBatchTransferFrom(signers[0].address, mainContract.address, idSet, quantities, fromAscii('')));
+        let feeData = await ethers.provider.getFeeData();
+        await expectThrow(mainContract.connect(signers[0]).safeBatchTransferFrom(signers[0].address, mainContract.address, idSet, quantities, fromAscii(''), { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('safeBatchTransferFrom throws with invalid receiver contract reply', async () => {
-        await receiverContract.setShouldReject(true);
-        await expectThrow(mainContract.connect(signers[0]).safeBatchTransferFrom(signers[0].address, receiverContract.address, idSet, quantities, fromAscii('')));
+        let feeData = await ethers.provider.getFeeData();
+        tx = await receiverContract.connect(signers[0]).setShouldReject(true);
+        receipt = await tx.wait();
+        await expectThrow(mainContract.connect(signers[0]).safeBatchTransferFrom(signers[0].address, receiverContract.address, idSet, quantities, fromAscii(''), { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('safeBatchTransferFrom ok with valid receiver contract reply', async () => {
-        await receiverContract.setShouldReject(false);
+        let feeData = await ethers.provider.getFeeData();
+        tx = await receiverContract.connect(signers[0]).setShouldReject(false, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        receipt = await tx.wait();
         await testSafeBatchTransferFrom(signers[0], signers[0].address, receiverContract.address, idSet, quantities, fromAscii(''), 'testSafeBatchTransferFrom receiver');
     });
 
     it('safeBatchTransferFrom from self with enough balance', async () => {
+        let feeData = await ethers.provider.getFeeData();
         await testSafeBatchTransferFrom(signers[0], signers[0].address, signers[1].address, idSet, quantities, fromAscii(''));
         await testSafeBatchTransferFrom(signers[1], signers[1].address, signers[0].address, idSet, quantities, fromAscii(''));
     });
 
     it('safeBatchTransferFrom by operator with enough balance', async () => {
-        await mainContract.connect(signers[0]).setApprovalForAll(signers[2].address, true);
-        await mainContract.connect(signers[1]).setApprovalForAll(signers[2].address, true);
+        let feeData = await ethers.provider.getFeeData();
+        tx = await mainContract.connect(signers[0]).setApprovalForAll(signers[2].address, true, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        receipt = await tx.wait();
+        tx = await mainContract.connect(signers[1]).setApprovalForAll(signers[2].address, true, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        receipt = await tx.wait();
         await testSafeBatchTransferFrom(signers[2], signers[0].address, signers[1].address, idSet, quantities, fromAscii(''));
         await testSafeBatchTransferFrom(signers[2], signers[1].address, signers[0].address, idSet, quantities, fromAscii(''));
-        await mainContract.connect(signers[0]).setApprovalForAll(signers[2].address, false);
-        await mainContract.connect(signers[1]).setApprovalForAll(signers[2].address, false);
+        tx = await mainContract.connect(signers[0]).setApprovalForAll(signers[2].address, false, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        receipt = await tx.wait();
+        tx = await mainContract.connect(signers[1]).setApprovalForAll(signers[2].address, false, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        receipt = await tx.wait();
     });
 
     it('safeBatchTransferFrom to self with enough balance', async () => {
@@ -390,6 +425,7 @@ describe('ERC1155Mintable - tests all core 1155 functionality.', (accounts) => {
 
     // ToDo test event setApprovalForAll
     it('safeBatchTransferFrom by operator with enough balance', async () => {
+        let feeData = await ethers.provider.getFeeData();
 
         function verifySetApproval(tx, operator, owner, approved) {
             for (let event of tx.events) {
@@ -403,11 +439,11 @@ describe('ERC1155Mintable - tests all core 1155 functionality.', (accounts) => {
             assert(false, 'Did not find ApprovalForAll event');
         }
 
-        tx = await mainContract.connect(signers[0]).setApprovalForAll(user3, true);
+        tx = await mainContract.connect(signers[0]).setApprovalForAll(user3, true, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
         receipt = await tx.wait()
         verifySetApproval(receipt, user3, user1, true);
 
-        tx = await mainContract.connect(signers[0]).setApprovalForAll(user3, false);
+        tx = await mainContract.connect(signers[0]).setApprovalForAll(user3, false, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
         receipt = await tx.wait()
         verifySetApproval(receipt, user3, user1, false);
     });
@@ -443,6 +479,7 @@ describe('ERC1155Mintable - tests all core 1155 functionality.', (accounts) => {
 
     it('ERC1165 - supportsInterface: ERC1155', async () => {
         let erc1155interface = '0xd9b67a26';
+        console.log(await diamondLoupeFacet.supportsInterface(erc1155interface));
         assert(await diamondLoupeFacet.supportsInterface(erc1155interface) === true);
     });
 
@@ -452,19 +489,22 @@ describe('ERC1155Mintable - tests all core 1155 functionality.', (accounts) => {
     });
 
     it('setURI only callable by minter (implementation specific)', async () => {
+        let feeData = await ethers.provider.getFeeData();
         let newHammerUri = 'https://metadata.enjincoin.io/new_hammer.json';
-        await expectThrow(mainContract.connect(signers[1]).setURI(newHammerUri, hammerId));
+        await expectThrow(mainContract.connect(signers[1]).setURI(newHammerUri, hammerId, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('setURI emits the right event', async () => {
+        let feeData = await ethers.provider.getFeeData();
         let newHammerUri = 'https://metadata.enjincoin.io/new_hammer.json';
-        tx = await mainContract.connect(signers[0]).setURI(newHammerUri, hammerId);
+        tx = await mainContract.connect(signers[0]).setURI(newHammerUri, hammerId, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
         receipt = await tx.wait()
         verifyURI(receipt, newHammerUri, hammerId);
     });
 
     it('mint (implementation specific) - callable only from initial minter ()', async () => {
-        await expectThrow(mainContract.connect(signers[1]).mintFungible(hammerId, [user3], [1]));
+        let feeData = await ethers.provider.getFeeData();
+        await expectThrow(mainContract.connect(signers[1]).mintFungible(hammerId, [user3], [1], { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }));
     });
 
     it('mint (implementation specific) - fails on receiver contract invalid response - not tested', async () => {

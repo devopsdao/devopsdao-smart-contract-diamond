@@ -57,9 +57,19 @@ module.exports = {
     hardhat: {
       allowUnlimitedContractSize: true,
     },
+    tanssi: {
+      url: "https://fraa-dancebox-3041-rpc.a.dancebox.tanssi.network", // URL of the zkSync network RPC
+      ethNetwork: "dodao", // Can also be the RPC URL of the Ethereum network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
+      zksync: false,
+      chainId: 855456,
+      accounts: {
+        mnemonic: keys.mnemonic1,
+      },
+    },
     zkSyncTestnet: {
       url: "https://zksync2-testnet.zksync.dev", // URL of the zkSync network RPC
       ethNetwork: "goerli", // Can also be the RPC URL of the Ethereum network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
+      chainId: 280,
       zksync: true,
       accounts: {
         mnemonic: keys.mnemonic1,
@@ -82,21 +92,21 @@ module.exports = {
     goerli: {
       // url: 'https://rpc.ankr.com/eth_goerli',
       // url: 'https://goerli.infura.io/v3/8fc30a844b8e42e794f1410dd02bc19e',
-      url: "https://eth-goerli.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
+      url: "https://eth-sepolia.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
       chainId: 5,
       accounts: {
         mnemonic: keys.mnemonic1,
       },
       zksync: false,
-      witnet: true,
+      witnet: false,
       // mnemonic: MNEMONIC
     },
     mumbai: {
       // url: `https://moonbase-alpha.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f`,
       // url: `https://moonbeam-alpha.api.onfinality.io/rpc?apikey=a574e9f5-b1db-4984-8362-89b749437b81`,
       // url: "https://polygon-mumbai.g.alchemy.com/v2/-sn0RpRj5k290N7WqZprO5t7awxg3NVT",
-      // url: "https://polygon-testnet.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
-      url: "https://rpc-mumbai.maticvigil.com",
+      url: "https://polygon-testnet.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
+      // url: "https://rpc-mumbai.maticvigil.com",
       // url: 'https://moonbeam-mainnet.gateway.pokt.network/v1/lb/629a2b5650ec8c0039bb30f0',
       chainId: 80001,
       accounts: {
@@ -107,8 +117,8 @@ module.exports = {
       // mnemonic: MNEMONIC
     },
     ftmTestnet: {
-      url: "https://rpc.testnet.fantom.network",
-      // url: "https://fantom-testnet.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
+      // url: "https://rpc.testnet.fantom.network",
+      url: "https://fantom-testnet.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
       chainId: 4002,
       accounts: {
         mnemonic: keys.mnemonic1,

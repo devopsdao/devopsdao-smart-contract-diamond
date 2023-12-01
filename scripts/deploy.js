@@ -192,6 +192,7 @@ async function configureWitnet(){
 async function deployDiamond() {
   await configureWitnet();
   const accounts = await ethers.getSigners();
+  // console.log(accounts);
   const contractOwner = accounts[0];
   console.log(`using wallet: ${contractOwner.address}`);
 
@@ -524,8 +525,8 @@ async function deployFacets(FacetInits, libAddresses) {
       facet = await Facet.deploy(...FacetInit.arguments, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     } else {
       console.log('deploying facet');
-      facet = await Facet.deploy({ type: 2, gasPrice: feeData.gasPrice });
-      // facet = await Facet.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+      // facet = await Facet.deploy({ type: 2, gasPrice: feeData.gasPrice });
+      facet = await Facet.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     }
     const tx = await facet.deployed();
     // const raw = hre.ethers.getRawTransaction(tx);

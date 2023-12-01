@@ -50,7 +50,7 @@
         "name": "hardhat test",
         "skipFiles": ["<node_internals>/**"],
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
-        "args": ["test", "--network", "zkSyncTestnet"],
+        "args": ["test", "--network", "tanssi"],
         "cwd": "${workspaceFolder}"
     },
     {
