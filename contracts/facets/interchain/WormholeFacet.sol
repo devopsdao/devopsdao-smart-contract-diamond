@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.17;
+pragma solidity ^0.8.17;
 
 import "../../external/wormhole/interfaces/IWormhole.sol";
 // import "@openzeppelin/contracts/access/Ownable.sol";

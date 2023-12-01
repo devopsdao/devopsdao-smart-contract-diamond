@@ -11,6 +11,56 @@
           "type": "uint256"
         }
       ],
+      "name": "checkResultError",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "enum Witnet.ResultErrorCodes",
+              "name": "code",
+              "type": "uint8"
+            },
+            {
+              "internalType": "string",
+              "name": "reason",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct Witnet.ResultError",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_queryId",
+          "type": "uint256"
+        }
+      ],
+      "name": "checkResultStatus",
+      "outputs": [
+        {
+          "internalType": "enum Witnet.ResultStatus",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_queryId",
+          "type": "uint256"
+        }
+      ],
       "name": "deleteQuery",
       "outputs": [
         {

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
 import "hardhat/console.sol";
@@ -880,10 +881,10 @@ library LibTokens {
             );
         }
         else{
-            require(
-                amount_ > 0,
-                "ERC1155: Cannot send 0"
-            );
+            // require(
+            //     amount_ > 0,
+            //     "ERC1155: Cannot send 0"
+            // );
             require(
                 _tokenStorage.balances[id_][account_] >= amount_,
                 "ERC1155: Insufficient balance"

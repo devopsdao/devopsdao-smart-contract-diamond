@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
 // import {LibDiamond} from '../libraries/LibDiamond.sol';
@@ -71,17 +72,28 @@ contract TaskContract is ERC1155TokenReceiver, CommonConstants  {
     //     return address(this).balance;
     // }
 
-    function transferToaddress(address payable _addressToSend, string memory _chain) external payable {
+    function withdrawAndRate(address _sender, address payable _addressToSend, string memory _chain, uint256 rating) external payable {
         // address payable contractOwner = _storage.task.contractOwner;
         // address payable participant = _storage.task.participant;
         // uint256 balance = address(this).balance;
         // string memory taskState = _storage.task.taskState;
         // string[] memory symbols = _storage.task.symbols;
         // uint256[] memory amounts = _storage.task.amounts;
-
-        LibWithdraw.withdraw(_addressToSend, _chain);
+        LibWithdraw.withdraw(_sender, _addressToSend, _chain, rating);
         emit TaskUpdated(address(this), 'transferToaddress', block.timestamp);
     }
+
+    // function transferToaddress(address payable _addressToSend, string memory _chain) external payable {
+    //     // address payable contractOwner = _storage.task.contractOwner;
+    //     // address payable participant = _storage.task.participant;
+    //     // uint256 balance = address(this).balance;
+    //     // string memory taskState = _storage.task.taskState;
+    //     // string[] memory symbols = _storage.task.symbols;
+    //     // uint256[] memory amounts = _storage.task.amounts;
+
+    //     LibWithdraw.withdraw(_addressToSend, _chain);
+    //     emit TaskUpdated(address(this), 'transferToaddress', block.timestamp);
+    // }
 
     function taskParticipate(address _sender, string memory _message, uint256 _replyTo) external {
         LibTasks.taskParticipate(_sender, _message, _replyTo);

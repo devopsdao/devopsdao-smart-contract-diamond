@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.0;
 
-/******************************************************************************\
-* Author: Nick Mudge <nick@perfectabstractions.com>, Twitter/Github: @mudgen
-* EIP-2535 Diamonds
-/******************************************************************************/
+
 // import "../libraries/LibTasks.sol";
 
 interface ITaskContract2 {

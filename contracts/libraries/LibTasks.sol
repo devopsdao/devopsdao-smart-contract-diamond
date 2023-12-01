@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //LibTasks.sol
 
 pragma solidity ^0.8.17;
@@ -440,13 +441,16 @@ library LibTasks {
             _storage.task.taskState = TASK_STATE_COMPLETED;
             _storage.task.rating = _rating;
             _storage.task.messages.push(message);
+            IAccountFacet(_storage.task.contractParent).addPerformerRating(_sender, address(this), _rating);
         } else if (
             keccak256(bytes(_storage.task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) &&
             _sender == _storage.task.contractOwner &&
             keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_CANCELED))
         ) {
             _storage.task.taskState = TASK_STATE_CANCELED;
+            _storage.task.rating = _rating;
             _storage.task.messages.push(message);
+            IAccountFacet(_storage.task.contractParent).addPerformerRating(_sender, address(this), _rating);
         } else if (
             keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_AUDIT))
         ) {

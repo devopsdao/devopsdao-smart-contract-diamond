@@ -206,17 +206,18 @@ async function deployZkSync(){
 
   // console.log(deployer.zkWallet.address)
 
+  console.log(`depositing funds to zksync`);
   const depositAmount = ethers.utils.parseEther("1");
 
-  const depositHandle = await deployer.zkWallet.deposit({
-    to: deployer.zkWallet.address,
-    token: utils.ETH_ADDRESS,
-    amount: depositAmount,
-  });
-  // Wait until the deposit is processed on zkSync
-  await depositHandle.wait();
+  // const depositHandle = await deployer.zkWallet.deposit({
+  //   to: deployer.zkWallet.address,
+  //   token: utils.ETH_ADDRESS,
+  //   amount: depositAmount,
+  // });
+  // // Wait until the deposit is processed on zkSync
+  // await depositHandle.wait();
 
-  console.log(`deposited ${depositAmount}`)
+  // console.log(`deposited ${depositAmount}`)
   await deployDiamond();
 
 }
@@ -426,6 +427,8 @@ async function upgradeDiamondFacets(facets, libraries) {
       let equal;
       for (facetDeployed of facetsDeployed){
         // console.log(`checking ${facet.name}`)
+        const deployedFacet = await ethers.getContractAt(facet.name, facetDeployed.facetAddress)
+        
         equal = _.isEqual(facetDeployed.functionSelectors, getSelectors(existingFacet));
         if(equal){
           break;

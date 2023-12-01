@@ -78,7 +78,7 @@
       "name": "factory",
       "outputs": [
         {
-          "internalType": "contract IWitnetRequestFactory",
+          "internalType": "contract WitnetRequestFactory",
           "name": "",
           "type": "address"
         }
@@ -247,6 +247,19 @@
           "internalType": "bool",
           "name": "",
           "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "registry",
+      "outputs": [
+        {
+          "internalType": "contract WitnetBytecodes",
+          "name": "",
+          "type": "address"
         }
       ],
       "stateMutability": "view",
