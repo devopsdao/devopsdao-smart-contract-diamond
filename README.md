@@ -1,8 +1,9 @@
 # Dodao.dev smart contract
 
-This is Dodao.dev EIP-2535 based smart-contract, with EIP-1155 multi-token support and Axelar, Hyperlane, Layerzero and Wormhole integrations, using Witnet Oracle to access Web2 APIs.
+This is Dodao.dev EIP-2535 based smart-contract, with EIP-1155 multi-token support and Axelar, Hyperlane, Layerzero and Wormhole integrations, using [Witnet Oracle](https://witnet.io) to access Web2 APIs (thank you Witnet team ❤️ for a grant!).
 
-Blockchains: Tanssi Dancebox Appchain(thank you [Tanssi](https://www.tanssi.network/) for onboarding us as Appchain Pioneers!), ZkSync testnet, Moonbeam Moonbase-alpha, Polygon Mumbai, Fantom testnet, Ethereum Goerli
+Blockchains: Tanssi Dancebox Appchain(thank you [Tanssi](https://www.tanssi.network/) ❤️ for onboarding us as Appchain Pioneers!), ZkSync testnet, Moonbeam Moonbase-alpha, Polygon Mumbai, Fantom testnet, Ethereum Goerli
+
 
 ## Installation
 
