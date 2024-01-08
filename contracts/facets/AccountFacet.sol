@@ -41,7 +41,7 @@ contract AccountFacet  {
     function removeAccountFromBlacklist(address accountAddress) external{
         TaskStorage storage _storage = LibTasks.taskStorage();
         uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'auditor');
-        require(balance > 0, 'must hold Auditor NFT to add to blacklist');
+        require(balance > 0, 'must hold Auditor NFT to remove from blacklist');
         require(_storage.accountsMapping[accountAddress] == true, 'account does not exist');
 
         for (uint256 index = 0; index < _storage.accountsBlacklist.length; index++) {
@@ -143,6 +143,14 @@ contract AccountFacet  {
         return accounts;
     }
 
+    function getAccountsBlacklist()
+    external
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        return _storage.accountsBlacklist;
+    }
 
     function getRawAccountsList()
     external
