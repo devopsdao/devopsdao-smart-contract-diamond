@@ -129,6 +129,8 @@ library LibWithdraw {
                 }
             }
 
+            _storage.task.customerRating = _rating;
+
             IAccountFacet(_storage.task.contractParent).addCustomerRating(_sender, address(this), _rating);
 
 

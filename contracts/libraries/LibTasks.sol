@@ -91,7 +91,8 @@ struct Task {
     // mapping(string => bool) extMapping;
     string taskState;
     string auditState;
-    uint256 rating;
+    uint256 performerRating;
+    uint256 customerRating;
     address payable contractOwner;
     address payable participant;
     address auditInitiator;
@@ -439,7 +440,7 @@ library LibTasks {
             _rating <= 5
         ) {
             _storage.task.taskState = TASK_STATE_COMPLETED;
-            _storage.task.rating = _rating;
+            _storage.task.performerRating = _rating;
             _storage.task.messages.push(message);
             IAccountFacet(_storage.task.contractParent).addPerformerRating(_sender, address(this), _rating);
         } else if (
@@ -448,7 +449,7 @@ library LibTasks {
             keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_CANCELED))
         ) {
             _storage.task.taskState = TASK_STATE_CANCELED;
-            _storage.task.rating = _rating;
+            _storage.task.performerRating = _rating;
             _storage.task.messages.push(message);
             IAccountFacet(_storage.task.contractParent).addPerformerRating(_sender, address(this), _rating);
         } else if (

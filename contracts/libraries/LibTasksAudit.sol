@@ -173,7 +173,7 @@ library LibTasksAudit {
                 .task
                 .auditState = TASK_AUDIT_STATE_FINISHED;
             _storage.task.taskState = TASK_STATE_CANCELED;
-            _storage.task.rating = _rating;
+            _storage.task.performerRating = _rating;
             message.taskState = TASK_STATE_CANCELED;
             _storage.task.messages.push(message);
         } else if (
@@ -190,7 +190,7 @@ library LibTasksAudit {
                 .task
                 .auditState = TASK_AUDIT_STATE_FINISHED;
             _storage.task.taskState = TASK_STATE_NEW;
-            _storage.task.rating = _rating;
+            // _storage.task.rating = _rating;
             message.taskState = TASK_STATE_NEW;
             _storage.task.messages.push(message);
         } else if (
@@ -206,7 +206,7 @@ library LibTasksAudit {
                 .task
                 .auditState = TASK_AUDIT_STATE_FINISHED;
             _storage.task.taskState = TASK_STATE_COMPLETED;
-            _storage.task.rating = _rating;
+            _storage.task.performerRating = _rating;
             message.taskState = TASK_STATE_COMPLETED;
             _storage.task.messages.push(message);
         } else revert("conditions are not met");
