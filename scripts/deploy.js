@@ -338,6 +338,19 @@ async function upgradeDiamondFacets(facets, libraries) {
   const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]["Diamond"];
   console.log(`upgrading Diamond: ${diamondAddress}`);
 
+
+  try{
+    const existingDeployedContracts = await fs.readFile(path.join(__dirname, `../abi/deployed-contracts.json`));
+    deployedContracts = JSON.parse(existingDeployedContracts);
+  }
+  catch{
+    console.log(`existing ../abi/deployed-contracts.json not found, will create new`);
+    deployedContracts = {
+      deployArgs: {},
+    };
+    deployedContracts.deployArgs[hre.network.config.chainId] = {};
+  }
+
   const diamondLoupeFacet = await ethers.getContractAt("DiamondLoupeFacet", diamondAddress);
   const diamondCutFacet = await ethers.getContractAt("DiamondCutFacet", diamondAddress);
 
