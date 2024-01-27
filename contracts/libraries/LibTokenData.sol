@@ -5,6 +5,7 @@ import "hardhat/console.sol";
 import "./structs/ERC1155FacetStorage.sol";
 
 library LibTokenData {
+    bool public constant contractLibTokenData = true;
 
     function erc1155Storage()
         internal

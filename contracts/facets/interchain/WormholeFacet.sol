@@ -9,6 +9,7 @@ import "../../contracts/TaskContract.sol";
 
 
 contract WormholeFacet {
+    bool public constant contractWormholeFacet = true;
     InterchainStorage internal _storage;
 
     // This function defines a super simple Wormhole 'module'.

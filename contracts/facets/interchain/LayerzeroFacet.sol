@@ -7,6 +7,7 @@ import "../../external/layerzero/interfaces/ILayerZeroReceiver.sol";
 import "../TaskCreateFacet.sol";
 
 contract LayerzeroFacet is ILayerZeroReceiver {
+    bool public constant contractLayerzeroFacet = true;
     InterchainStorage internal _storage;
 
     event ReceiveMsg(

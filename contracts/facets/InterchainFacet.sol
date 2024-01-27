@@ -21,6 +21,7 @@ import "hardhat/console.sol";
 
 
 contract InterchainFacet  {
+    bool public constant contractInterchainFacet = true;
 
     event InterchainUpdate(address ownerAddr, string message, uint timestamp);
 

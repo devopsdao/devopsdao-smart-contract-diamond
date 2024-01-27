@@ -89,18 +89,18 @@ module.exports = {
       witnet: true,
       // mnemonic: MNEMONIC
     },
-    goerli: {
-      // url: 'https://rpc.ankr.com/eth_goerli',
-      // url: 'https://goerli.infura.io/v3/8fc30a844b8e42e794f1410dd02bc19e',
-      url: "https://eth-sepolia.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
-      chainId: 5,
-      accounts: {
-        mnemonic: keys.mnemonic1,
-      },
-      zksync: false,
-      witnet: false,
-      // mnemonic: MNEMONIC
-    },
+    // goerli: {
+    //   // url: 'https://rpc.ankr.com/eth_goerli',
+    //   // url: 'https://goerli.infura.io/v3/8fc30a844b8e42e794f1410dd02bc19e',
+    //   url: "https://eth-sepolia.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
+    //   chainId: 5,
+    //   accounts: {
+    //     mnemonic: keys.mnemonic1,
+    //   },
+    //   zksync: false,
+    //   witnet: false,
+    //   // mnemonic: MNEMONIC
+    // },
     mumbai: {
       // url: `https://moonbase-alpha.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f`,
       // url: `https://moonbeam-alpha.api.onfinality.io/rpc?apikey=a574e9f5-b1db-4984-8362-89b749437b81`,
@@ -126,8 +126,34 @@ module.exports = {
       zksync: false,
       // mnemonic: MNEMONIC
     },
-    localhost: {
-      chainId: 31337,
+    sonic: {
+      url: "https://rpc.sonic.fantom.network/",
+      chainId: 64165,
+      accounts: {
+        mnemonic: keys.mnemonic1,
+      },
+      zksync: false,
+      // mnemonic: MNEMONIC
+    },
+    scrollSepolia: {
+      url: "https://sepolia-rpc.scroll.io",
+      chainId: 534351,
+      accounts: {
+        mnemonic: keys.mnemonic1,
+      },
+      zksync: false,
+      witnet: false,
+      // mnemonic: MNEMONIC
+    },
+    ethereumSepolia: {
+      url: "https://rpc2.sepolia.org/",
+      chainId: 11155111,
+      accounts: {
+        mnemonic: keys.mnemonic1,
+      },
+      zksync: false,
+      witnet: false,
+      // mnemonic: MNEMONIC
     },
     ganache: {
       url: "http://localhost:8500/0",
@@ -137,13 +163,28 @@ module.exports = {
       },
       zksync: false,
     },
+    localhost: {
+      chainId: 31337,
+    },
   },
   etherscan: {
     // Your API key for Etherscan
     // Obtain one at https://etherscan.io/
     apiKey: {
-      ftmTestnet: keys.ftmscan
-    }
+      ftmTestnet: keys.ftmscan,
+      "Fantom Sonic Testnet": "lore-public" // api key is not required for contract verification
+
+    },
+    customChains: [
+      {
+        network: "Fantom Sonic Testnet",
+        chainId: 64165,
+        urls: {
+          apiURL: " https://api.lorescan.com/64165",
+          browserURL: "https://sonicscan.io/"
+        }
+      }
+    ]
   },
   settings: {
     viaIR: true,

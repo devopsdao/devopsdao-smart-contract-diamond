@@ -69,7 +69,7 @@ contract TaskDataFacet  {
         }
     }
 
-    function getTaskContracts()
+    function getRawTaskContracts()
     external
     view
     returns (address[] memory)
@@ -81,6 +81,45 @@ contract TaskDataFacet  {
         //     msg.sender
         // );
         return _storage.taskContracts;
+    }
+
+    function getTaskContracts()
+    external
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        uint256 taskCount = 0;
+        for (uint256 i = 0; i < _storage.taskContracts.length; i++) {
+            if(_storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false){
+                taskCount++;
+            }
+        }
+        address[] memory taskContracts = new address[](taskCount);
+        uint256 foundTaskId = 0;
+        for (uint256 i = 0; i < _storage.taskContracts.length; i++) {
+            if(
+             (_storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false))
+            {
+                taskContracts[foundTaskId] = _storage.taskContracts[i];
+                foundTaskId++;
+            }
+        }
+        return _storage.taskContracts;
+    }
+
+    function getTaskContractsBlacklist()
+    external
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        // TaskStorage storage _storage = LibTasks.taskStorage();
+        // console.log(
+        // "msg.sender %s",
+        //     msg.sender
+        // );
+        return _storage.taskContractsBlacklist;
     }
 
     function getTaskContractsByState(string calldata _taskState)

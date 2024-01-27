@@ -7,6 +7,7 @@ import '../../external/hyperlane/interfaces/IOutbox.sol';
 import "../TaskCreateFacet.sol";
 
 contract HyperlaneFacet {
+    bool public constant contractHyperlaneFacet = true;
     InterchainStorage internal _storage;
 
     event SentMessage(uint32 destinationDomain, address destinationAddress, bytes payload);

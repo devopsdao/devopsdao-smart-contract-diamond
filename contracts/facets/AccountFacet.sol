@@ -30,8 +30,8 @@ contract AccountFacet  {
     external
     {
         TaskStorage storage _storage = LibTasks.taskStorage();
-        uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'auditor');
-        require(balance > 0, 'must hold Auditor NFT to add to blacklist');
+        uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'governor');
+        require(balance > 0, 'must hold Governor NFT to add to blacklist');
         require(_storage.accountsMapping[accountAddress] == true, 'account does not exist');
         require(_storage.accountsBlacklistMapping[accountAddress] != true, 'account is already blacklisted');
         _storage.accountsBlacklist.push(accountAddress);
@@ -40,8 +40,8 @@ contract AccountFacet  {
 
     function removeAccountFromBlacklist(address accountAddress) external{
         TaskStorage storage _storage = LibTasks.taskStorage();
-        uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'auditor');
-        require(balance > 0, 'must hold Auditor NFT to remove from blacklist');
+        uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'governor');
+        require(balance > 0, 'must hold Governor NFT to remove from blacklist');
         require(_storage.accountsMapping[accountAddress] == true, 'account does not exist');
 
         for (uint256 index = 0; index < _storage.accountsBlacklist.length; index++) {
@@ -100,6 +100,71 @@ contract AccountFacet  {
             _storage.accounts[_sender].accountOwner = _sender;
         }
         _storage.accounts[_sender].auditParticipantTasks.push(taskAddress);
+    }
+
+
+    function addAgreedTask(address _sender, address taskAddress) external{
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
+        require(msg.sender == taskAddress, 'sender must be task contract');
+
+        // if(_storage.accountsMapping[_sender] != true){
+        //     _storage.accountsList.push(_sender);
+        //     _storage.accountsMapping[_sender] = true;
+        // }
+        //set the account owner if it is not set
+        if(_storage.accounts[_sender].accountOwner == address(0x0)){
+            _storage.accounts[_sender].accountOwner = _sender;
+        }
+        _storage.accounts[_sender].agreedTasks.push(taskAddress);
+    }
+
+    function addAuditAgreedTask(address _sender, address taskAddress) external{
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
+        require(msg.sender == taskAddress, 'sender must be task contract');
+
+        // if(_storage.accountsMapping[_sender] != true){
+        //     _storage.accountsList.push(_sender);
+        //     _storage.accountsMapping[_sender] = true;
+        // }
+        //set the account owner if it is not set
+        if(_storage.accounts[_sender].accountOwner == address(0x0)){
+            _storage.accounts[_sender].accountOwner = _sender;
+        }
+        _storage.accounts[_sender].auditAgreedTasks.push(taskAddress);
+    }
+
+    function addCompetedTask(address _sender, address taskAddress) external{
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
+        require(msg.sender == taskAddress, 'sender must be task contract');
+
+        // if(_storage.accountsMapping[_sender] != true){
+        //     _storage.accountsList.push(_sender);
+        //     _storage.accountsMapping[_sender] = true;
+        // }
+        //set the account owner if it is not set
+        if(_storage.accounts[_sender].accountOwner == address(0x0)){
+            _storage.accounts[_sender].accountOwner = _sender;
+        }
+        _storage.accounts[_sender].completedTasks.push(taskAddress);
+    }
+
+    function addAuditCompletedTask(address _sender, address taskAddress) external{
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
+        require(msg.sender == taskAddress, 'sender must be task contract');
+
+        // if(_storage.accountsMapping[_sender] != true){
+        //     _storage.accountsList.push(_sender);
+        //     _storage.accountsMapping[_sender] = true;
+        // }
+        //set the account owner if it is not set
+        if(_storage.accounts[_sender].accountOwner == address(0x0)){
+            _storage.accounts[_sender].accountOwner = _sender;
+        }
+        _storage.accounts[_sender].auditCompletedTasks.push(taskAddress);
     }
 
     function addPerformerRating(address _account, address taskAddress, uint256 rating) external{

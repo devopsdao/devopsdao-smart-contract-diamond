@@ -130,6 +130,10 @@ struct Account {
     address[] ownerTasks;
     address[] participantTasks;
     address[] auditParticipantTasks;
+    address[] agreedTasks;
+    address[] auditAgreedTasks;
+    address[] completedTasks;
+    address[] auditCompletedTasks;
     uint256[] customerRatings;
     uint256[] performerRatings;
 }
@@ -155,6 +159,8 @@ string constant TASK_AUDIT_STATE_PERFORMING = "performing";
 string constant TASK_AUDIT_STATE_FINISHED = "finished";
 
 library LibTasks {
+    bool public constant contractLibTasks = true;
+
     event Logs(address contractAdr, string message);
 
     // function appStorage() internal pure returns (TaskStorage storage ds) {
@@ -197,6 +203,7 @@ library LibTasks {
         uint256 _replyTo
     ) external {
         TaskStorage storage _storage = taskStorage();
+        require(_storage.accountsBlacklistMapping[_sender] != true, 'account is blacklisted');
 
         InterchainStorage storage _storageInterchain = LibInterchain.interchainStorage();
         if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
@@ -276,7 +283,7 @@ library LibTasks {
             }
             if (!existed) {
                 _storage.task.participants.push(_sender);
-                _storage.accounts[_sender].participantTasks.push(address(this));
+                // _storage.accounts[_sender].participantTasks.push(address(this));
                 _storage.task.messages.push(message);
 
                 // bytes4 functionSelector = bytes4(keccak256("addParticipantTask(address,address)"));
@@ -302,6 +309,7 @@ library LibTasks {
         uint256 _rating
     ) external {
         TaskStorage storage _storage = taskStorage();
+        require(_storage.accountsBlacklistMapping[_sender] != true, 'account is blacklisted');
 
         InterchainStorage storage _storageInterchain = LibInterchain.interchainStorage();
         if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
@@ -368,6 +376,7 @@ library LibTasks {
                 _storage.task.taskState = _state;
                 _storage.task.participant = _participant;
                 _storage.task.messages.push(message);
+                IAccountFacet(_storage.task.contractParent).addAgreedTask(_participant, address(this));
             } else {
                 revert("participant has not applied");
             }
@@ -442,7 +451,8 @@ library LibTasks {
             _storage.task.taskState = TASK_STATE_COMPLETED;
             _storage.task.performerRating = _rating;
             _storage.task.messages.push(message);
-            IAccountFacet(_storage.task.contractParent).addPerformerRating(_sender, address(this), _rating);
+            IAccountFacet(_storage.task.contractParent).addCompletedTask(_storage.task.participant, address(this));
+            IAccountFacet(_storage.task.contractParent).addPerformerRating(_storage.task.participant, address(this), _rating);
         } else if (
             keccak256(bytes(_storage.task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) &&
             _sender == _storage.task.contractOwner &&
@@ -451,7 +461,7 @@ library LibTasks {
             _storage.task.taskState = TASK_STATE_CANCELED;
             _storage.task.performerRating = _rating;
             _storage.task.messages.push(message);
-            IAccountFacet(_storage.task.contractParent).addPerformerRating(_sender, address(this), _rating);
+            IAccountFacet(_storage.task.contractParent).addPerformerRating(_storage.task.participant, address(this), _rating);
         } else if (
             keccak256(bytes(_state)) == keccak256(bytes(TASK_STATE_AUDIT))
         ) {
@@ -502,8 +512,9 @@ library LibTasks {
                     _storage
                         .task
                         .auditState = TASK_AUDIT_STATE_PERFORMING;
-                    _storage.task.messages.push(message);
                     _storage.task.auditor = _participant;
+                    _storage.task.messages.push(message);
+                    IAccountFacet(_storage.task.contractParent).addAuditAgreedTask(_participant, address(this));
                 } else {
                     revert("auditor has not applied");
                 }

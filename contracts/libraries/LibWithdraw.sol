@@ -26,6 +26,7 @@ import {IERC721} from "../interfaces/IERC721.sol";
 
 
 library LibWithdraw {
+    bool public constant contractLibWithdraw = true;
     event Logs(address contractAdr, string message);
 
     function appStorage() internal pure returns (TaskStorage storage ds) {
@@ -60,6 +61,7 @@ library LibWithdraw {
     function withdraw(address _sender, address payable _addressToSend, string memory _chain, uint256 _rating) external{
         
         TaskStorage storage _storage = taskStorage();
+        require(_storage.accountsBlacklistMapping[_sender] != true, 'account is blacklisted');
 
         InterchainStorage storage _storageInterchain = LibInterchain.interchainStorage();
         if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
@@ -131,7 +133,7 @@ library LibWithdraw {
 
             _storage.task.customerRating = _rating;
 
-            IAccountFacet(_storage.task.contractParent).addCustomerRating(_sender, address(this), _rating);
+            IAccountFacet(_storage.task.contractParent).addCustomerRating(_storage.task.contractOwner, address(this), _rating);
 
 
             // for(uint i; i < _storage.task.symbols.length; i++) {

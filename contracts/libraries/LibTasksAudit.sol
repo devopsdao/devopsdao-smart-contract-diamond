@@ -20,6 +20,7 @@ import "../interfaces/IAccountFacet.sol";
 import "../interfaces/IInterchainFacet.sol";
 
 library LibTasksAudit {
+    bool public constant contractLibTasksAudit = true;
     event Logs(address contractAdr, string message);
 
     // function appStorage() internal pure returns (TaskStorage storage ds) {
@@ -46,6 +47,7 @@ library LibTasksAudit {
         uint256 _replyTo
     ) external {
         TaskStorage storage _storage = LibTasks.taskStorage();
+        require(_storage.accountsBlacklistMapping[_sender] != true, 'account is blacklisted');
 
         InterchainStorage storage _storageInterchain = LibInterchain.interchainStorage();
         if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
@@ -122,6 +124,7 @@ library LibTasksAudit {
         uint256 _rating
     ) external {
         TaskStorage storage _storage = LibTasks.taskStorage();
+        require(_storage.accountsBlacklistMapping[_sender] != true, 'account is blacklisted');
 
         InterchainStorage storage _storageInterchain = LibInterchain.interchainStorage();
         if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
@@ -176,6 +179,7 @@ library LibTasksAudit {
             _storage.task.performerRating = _rating;
             message.taskState = TASK_STATE_CANCELED;
             _storage.task.messages.push(message);
+            IAccountFacet(_storage.task.contractParent).addAuditCompletedTask(auditor, address(this));
         } else if (
             _sender == auditor &&
             keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT)) &&
@@ -193,6 +197,7 @@ library LibTasksAudit {
             // _storage.task.rating = _rating;
             message.taskState = TASK_STATE_NEW;
             _storage.task.messages.push(message);
+            IAccountFacet(_storage.task.contractParent).addAuditCompletedTask(auditor, address(this));
         } else if (
             _sender == auditor &&
             keccak256(bytes(taskState)) == keccak256(bytes(TASK_STATE_AUDIT)) &&
@@ -209,6 +214,7 @@ library LibTasksAudit {
             _storage.task.performerRating = _rating;
             message.taskState = TASK_STATE_COMPLETED;
             _storage.task.messages.push(message);
+            IAccountFacet(_storage.task.contractParent).addAuditCompletedTask(auditor, address(this));
         } else revert("conditions are not met");
     }
 

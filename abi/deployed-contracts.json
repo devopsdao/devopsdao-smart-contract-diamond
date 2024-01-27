@@ -1,0 +1,252 @@
+{
+  "deployArgs": {
+    "64165": {
+      "DiamondCutFacet": {
+        "address": "0x330fD071303d8a471A9d17bE3C010e8d2dBD683e"
+      },
+      "DiamondLoupeFacet": {
+        "address": "0xd7D7eb231926bd1D79B5d2Ce2f38C7A334976247"
+      },
+      "OwnershipFacet": {
+        "address": "0x3692F4822CaE7DF67d785F07A25D7Eb74ACE62Fe"
+      },
+      "TaskCreateFacet": {
+        "address": "0xC3f9B595FA93E70c4e79d6e40f52c64Ce95539bC"
+      },
+      "TaskDataFacet": {
+        "address": "0x00871a6Fb5704111d7Fd17bDBb97C8658c459267"
+      },
+      "AccountFacet": {
+        "address": "0x9dAACE52639bE228643683597ccB3f313D9cA6f9"
+      },
+      "TokenFacet": {
+        "address": "0x7028e5B0B4B90F03DE51D21691Cb61A57809Ed05"
+      },
+      "TokenDataFacet": {
+        "address": "0x0d652BB9E371d55104d736Edc34d837825736CD2"
+      },
+      "InterchainFacet": {
+        "address": "0x9b34B832ca25feaA13b3079EFE8661D7F46fC992"
+      },
+      "AxelarFacet": {
+        "address": "0x6b4c486EACd935540BDF1F2041A1634fe18B456e"
+      },
+      "HyperlaneFacet": {
+        "address": "0xCaf2335020350E1A24f532d76251eE748d8BBdfc"
+      },
+      "LayerzeroFacet": {
+        "address": "0x3AA009fDBc42e25ec0F26954f5223d0dD1DDE6d5"
+      },
+      "WormholeFacet": {
+        "address": "0x704D49da884e49bD8259eCed7fbB1e1361525940"
+      },
+      "Diamond": {
+        "address": "0xA24eBbFCe303D866c2278147E5BdFE53a3CFc4D6",
+        "deployArgs": [
+          [
+            {
+              "facetAddress": "0x330fD071303d8a471A9d17bE3C010e8d2dBD683e",
+              "action": 0,
+              "functionSelectors": [
+                "0xeb454826",
+                "0x1f931c1c"
+              ]
+            },
+            {
+              "facetAddress": "0xd7D7eb231926bd1D79B5d2Ce2f38C7A334976247",
+              "action": 0,
+              "functionSelectors": [
+                "0x5eb0f534",
+                "0xcdffacc6",
+                "0x52ef6b2c",
+                "0xadfca15e",
+                "0x7a0ed627",
+                "0x2c0ad2ad",
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0x3692F4822CaE7DF67d785F07A25D7Eb74ACE62Fe",
+              "action": 0,
+              "functionSelectors": [
+                "0xb15a09e8",
+                "0x8da5cb5b",
+                "0xf2fde38b"
+              ]
+            },
+            {
+              "facetAddress": "0xC3f9B595FA93E70c4e79d6e40f52c64Ce95539bC",
+              "action": 0,
+              "functionSelectors": [
+                "0x2bb117a9",
+                "0xd8929ea6"
+              ]
+            },
+            {
+              "facetAddress": "0x00871a6Fb5704111d7Fd17bDBb97C8658c459267",
+              "action": 0,
+              "functionSelectors": [
+                "0x7267a186",
+                "0xd8ced0ed",
+                "0x61d868fd",
+                "0xbbd63456",
+                "0x6ece1857",
+                "0xcd8ac8df",
+                "0xedd2f344",
+                "0xf21fe5e2",
+                "0xeb82e900",
+                "0xd1cf26f1",
+                "0xaf4316db",
+                "0x4f56bf4b"
+              ]
+            },
+            {
+              "facetAddress": "0x9dAACE52639bE228643683597ccB3f313D9cA6f9",
+              "action": 0,
+              "functionSelectors": [
+                "0x56fd9644",
+                "0x08f99714",
+                "0x402bdf6e",
+                "0x4bc27b63",
+                "0x3c8b0dcb",
+                "0xf20b7b31",
+                "0x4bf83d01",
+                "0x5587b594",
+                "0x2a13a5e8",
+                "0xf02e4b04",
+                "0xc6a8ade3",
+                "0x89a76332"
+              ]
+            },
+            {
+              "facetAddress": "0x7028e5B0B4B90F03DE51D21691Cb61A57809Ed05",
+              "action": 0,
+              "functionSelectors": [
+                "0x00fdd58e",
+                "0x4e1273f4",
+                "0x090fa810",
+                "0x63892068",
+                "0xe985e9c5",
+                "0x78b27221",
+                "0x3b04ddc4",
+                "0xf9419088",
+                "0x4ac6acb6",
+                "0x06fdde03",
+                "0xf23a6e61",
+                "0x2eb2c2d6",
+                "0xf242432a",
+                "0xa22cb465",
+                "0x67db3b8f",
+                "0x8217b83a",
+                "0x95d89b41"
+              ]
+            },
+            {
+              "facetAddress": "0x0d652BB9E371d55104d736Edc34d837825736CD2",
+              "action": 0,
+              "functionSelectors": [
+                "0x80b20931",
+                "0x9cd86c08",
+                "0xcb086f9d",
+                "0x9fd71bde",
+                "0xa5767449",
+                "0x4f558e79",
+                "0xa1e26093",
+                "0x8ac7b7a5",
+                "0xadfd07a8",
+                "0x4ee52a62",
+                "0xd004b036",
+                "0xdbe16c07",
+                "0x01bc466a",
+                "0xc866dd0b",
+                "0x85bff2e7",
+                "0xbd85b039",
+                "0x88ff3907",
+                "0x9af793fb",
+                "0x27040961",
+                "0x8d938412",
+                "0x0fd38d11",
+                "0x0e89341c",
+                "0x748937f6",
+                "0x8a31d522"
+              ]
+            },
+            {
+              "facetAddress": "0x9b34B832ca25feaA13b3079EFE8661D7F46fC992",
+              "action": 0,
+              "functionSelectors": [
+                "0x4d703df9",
+                "0x210a854d"
+              ]
+            },
+            {
+              "facetAddress": "0x6b4c486EACd935540BDF1F2041A1634fe18B456e",
+              "action": 0,
+              "functionSelectors": [
+                "0xe0e93ba2",
+                "0x36e7a01d",
+                "0x49160658",
+                "0x1a98b2e0",
+                "0x116191b6",
+                "0x1e7e62dc",
+                "0x7e231db3",
+                "0x6d2acd61",
+                "0x8458bc1e",
+                "0xa4c2c4f2"
+              ]
+            },
+            {
+              "facetAddress": "0xCaf2335020350E1A24f532d76251eE748d8BBdfc",
+              "action": 0,
+              "functionSelectors": [
+                "0xedce44d2",
+                "0x62b5cd23",
+                "0x56d5d475",
+                "0xa39410b4",
+                "0x4a6fe41a",
+                "0xceed9b7d",
+                "0x802480ac",
+                "0x7fcfaeac"
+              ]
+            },
+            {
+              "facetAddress": "0x3AA009fDBc42e25ec0F26954f5223d0dD1DDE6d5",
+              "action": 0,
+              "functionSelectors": [
+                "0x9fbc3870",
+                "0xdecb6e13",
+                "0x40a7bb10",
+                "0x001d3567",
+                "0xd0638372",
+                "0xdf170459",
+                "0xcef171b7",
+                "0xc571b2e4",
+                "0x49d289c8"
+              ]
+            },
+            {
+              "facetAddress": "0x704D49da884e49bD8259eCed7fbB1e1361525940",
+              "action": 0,
+              "functionSelectors": [
+                "0xf2bc8463",
+                "0x77f1b3b7",
+                "0xe08f9624",
+                "0x4d5c50aa",
+                "0xca13dcd5",
+                "0x9459dcfc",
+                "0xa01efa2a",
+                "0xdc270cf1",
+                "0x3315243d"
+              ]
+            }
+          ],
+          {
+            "owner": "0x65aD69b9F84BaA2F8dFeB6223dc1cB3Ee537f8C5",
+            "init": "0x0386a8110D5691e6124736714F2B8Cf94E07bacf",
+            "initCalldata": "0xe1c7392a"
+          }
+        ]
+      }
+    }
+  }
+}

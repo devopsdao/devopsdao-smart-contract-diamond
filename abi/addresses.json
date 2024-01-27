@@ -1,1 +1,28 @@
-{"contracts":{"280":{"Diamond":"0x41F4b54789E4d60d9dA00d52406F395492c8D100"},"1287":{"Diamond":"0x76df4ED54AB171FCAe6B7c25AA92bF232482Bee3"},"2500":{"Diamond":"0xc544C0dcBC09c3568dca2A7A9007799071416F48"},"4002":{"Diamond":"0x63a7541A645b3bcb6607053f70F371E6eb85DAE3"},"31337":{"Diamond":"0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f"},"80001":{"Diamond":"0x68866992502324F527EA9B6e97dE1CAA579aD236"},"855456":{"Diamond":"0x2F22d84FC4a659D4619d7408A8dCd11299CE3325"}}}
+{
+  "contracts": {
+    "280": {
+      "Diamond": "0x1CC5b9CA26236F9E2677A97C7FE324afBcE706d1"
+    },
+    "1287": {
+      "Diamond": "0x63FF6a1b79F85B0588cA98CBE490c087eABc6459"
+    },
+    "2500": {
+      "Diamond": "0xc544C0dcBC09c3568dca2A7A9007799071416F48"
+    },
+    "4002": {
+      "Diamond": "0x9B4a285881bE210C35999B3bCFF7F9A4f03ACec2"
+    },
+    "31337": {
+      "Diamond": "0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f"
+    },
+    "64165": {
+      "Diamond": "0xA24eBbFCe303D866c2278147E5BdFE53a3CFc4D6"
+    },
+    "80001": {
+      "Diamond": "0x98280ca7Fb208dCbc0A9681ff0D929DcDc13640a"
+    },
+    "855456": {
+      "Diamond": "0x782FE094f443EE94a4dE6d7dd617B672102E8C18"
+    }
+  }
+}
