@@ -1,6 +1,9 @@
 /* global artifacts, contract, it, assert */
 /* eslint-disable prefer-reflect */
 
+const path = require("node:path");
+const fs = require("fs");
+
 const { expectThrow } = require('./helpers/expectThrow');
 // const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 
@@ -181,7 +184,22 @@ describe('ERC1155Mintable - tests all core 1155 functionality.', (accounts) => {
     let addresses = []
   
     before(async function () {
-      ({diamondAddress, facetCount} = await deployDiamond());
+        if(hre.network.config.chainId == 31337 && false){
+            ({diamondAddress, facetCount} = await deployDiamond());
+        }
+        else{
+            try{
+                console.log(__dirname);
+                const existingAddresses = fs.readFileSync(path.join(__dirname, `../abi/addresses.json`));
+                contractAddresses = JSON.parse(existingAddresses);
+                diamondAddress = contractAddresses.contracts[hre.network.config.chainId]["Diamond"];
+              }
+              catch{
+                console.log(`existing ../abi/addresses.json not found, please deploy first`);
+              }
+              console.log(`testing pre-deployed diamond ${diamondAddress}`);
+
+        }
 
       const ERC1155MockReceiverContract = await ethers.getContractFactory('ERC1155MockReceiver')
       const erc1155MockReceiver = await ERC1155MockReceiverContract.deploy()

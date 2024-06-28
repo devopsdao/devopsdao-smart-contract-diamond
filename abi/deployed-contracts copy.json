@@ -1,0 +1,568 @@
+{
+  "deployArgs": {
+    "31337": {
+      "DiamondInit": {
+        "address": "0xc351628EB244ec633d5f21fBD6621e1a683B1181"
+      },
+      "LibUtils": {
+        "address": "0xFD471836031dc5108809D173A067e8486B9047A3"
+      },
+      "LibAddress": {
+        "address": "0xcbEAF3BDe82155F56486Fb5a1072cb8baAf547cc"
+      },
+      "LibTasks": {
+        "address": "0x1429859428C0aBc9C2C47C8Ee9FBaf82cFA0F20f"
+      },
+      "LibTasksAudit": {
+        "address": "0xB0D4afd8879eD9F52b28595d31B441D079B2Ca07"
+      },
+      "LibChat": {
+        "address": "0x162A433068F51e18b7d13932F27e66a3f99E6890"
+      },
+      "LibWithdraw": {
+        "address": "0x922D6956C99E12DFeB3224DEA977D0939758A1Fe"
+      },
+      "LibTokens": {
+        "address": "0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f"
+      },
+      "LibTokenData": {
+        "address": "0x1fA02b2d6A771842690194Cf62D91bdd92BfE28d"
+      },
+      "LibInterchain": {
+        "address": "0xdbC43Ba45381e02825b14322cDdd15eC4B3164E6"
+      },
+      "LibWitnetFacet": {
+        "address": "0x04C89607413713Ec9775E14b954286519d836FEf"
+      },
+      "DiamondCutFacet": {
+        "address": "0x4C4a2f8c81640e47606d3fd77B353E87Ba015584"
+      },
+      "DiamondLoupeFacet": {
+        "address": "0x21dF544947ba3E8b3c32561399E88B52Dc8b2823"
+      },
+      "OwnershipFacet": {
+        "address": "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2"
+      },
+      "TaskCreateFacet": {
+        "address": "0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43"
+      },
+      "TaskDataFacet": {
+        "address": "0xDC11f7E700A4c898AE5CAddB1082cFfa76512aDD"
+      },
+      "AccountFacet": {
+        "address": "0x51A1ceB83B83F1985a81C295d1fF28Afef186E02"
+      },
+      "TokenFacet": {
+        "address": "0x36b58F5C1969B7b6591D752ea6F5486D069010AB"
+      },
+      "TokenDataFacet": {
+        "address": "0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7"
+      },
+      "InterchainFacet": {
+        "address": "0x0355B7B8cb128fA5692729Ab3AAa199C1753f726"
+      },
+      "AxelarFacet": {
+        "address": "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB"
+      },
+      "HyperlaneFacet": {
+        "address": "0xf4B146FbA71F41E0592668ffbF264F1D186b2Ca8"
+      },
+      "LayerzeroFacet": {
+        "address": "0x172076E0166D1F9Cc711C77Adf8488051744980C"
+      },
+      "WormholeFacet": {
+        "address": "0x4EE6eCAD1c2Dae9f525404De8555724e3c35d07B"
+      },
+      "Diamond": {
+        "address": "0xBEc49fA140aCaA83533fB00A2BB19bDdd0290f25",
+        "deployArgs": [
+          [
+            {
+              "facetAddress": "0x4C4a2f8c81640e47606d3fd77B353E87Ba015584",
+              "action": 0,
+              "functionSelectors": [
+                "0xeb454826",
+                "0x1f931c1c"
+              ]
+            },
+            {
+              "facetAddress": "0x21dF544947ba3E8b3c32561399E88B52Dc8b2823",
+              "action": 0,
+              "functionSelectors": [
+                "0x5eb0f534",
+                "0xcdffacc6",
+                "0x52ef6b2c",
+                "0xadfca15e",
+                "0x7a0ed627",
+                "0x2c0ad2ad",
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0x2E2Ed0Cfd3AD2f1d34481277b3204d807Ca2F8c2",
+              "action": 0,
+              "functionSelectors": [
+                "0xb15a09e8",
+                "0x8da5cb5b",
+                "0xf2fde38b"
+              ]
+            },
+            {
+              "facetAddress": "0xD8a5a9b31c3C0232E196d518E89Fd8bF83AcAd43",
+              "action": 0,
+              "functionSelectors": [
+                "0x2bb117a9",
+                "0xd8929ea6"
+              ]
+            },
+            {
+              "facetAddress": "0xDC11f7E700A4c898AE5CAddB1082cFfa76512aDD",
+              "action": 0,
+              "functionSelectors": [
+                "0x7267a186",
+                "0xd8ced0ed",
+                "0x61d868fd",
+                "0xbbd63456",
+                "0x6ece1857",
+                "0xcd8ac8df",
+                "0xedd2f344",
+                "0xf21fe5e2",
+                "0xeb82e900",
+                "0xd1cf26f1",
+                "0xaf4316db",
+                "0x4f56bf4b"
+              ]
+            },
+            {
+              "facetAddress": "0x51A1ceB83B83F1985a81C295d1fF28Afef186E02",
+              "action": 0,
+              "functionSelectors": [
+                "0x56fd9644",
+                "0x08f99714",
+                "0xa543bc4b",
+                "0x4401d409",
+                "0xfedb41e2",
+                "0x402bdf6e",
+                "0x6b732d87",
+                "0x4bc27b63",
+                "0x3c8b0dcb",
+                "0xf20b7b31",
+                "0x4bf83d01",
+                "0x5587b594",
+                "0x2a13a5e8",
+                "0xf02e4b04",
+                "0xc6a8ade3",
+                "0x89a76332"
+              ]
+            },
+            {
+              "facetAddress": "0x36b58F5C1969B7b6591D752ea6F5486D069010AB",
+              "action": 0,
+              "functionSelectors": [
+                "0x00fdd58e",
+                "0x4e1273f4",
+                "0x090fa810",
+                "0x63892068",
+                "0xe985e9c5",
+                "0x78b27221",
+                "0x3b04ddc4",
+                "0xf9419088",
+                "0x4ac6acb6",
+                "0x06fdde03",
+                "0xf23a6e61",
+                "0x2eb2c2d6",
+                "0xf242432a",
+                "0xa22cb465",
+                "0x67db3b8f",
+                "0x8217b83a",
+                "0x95d89b41"
+              ]
+            },
+            {
+              "facetAddress": "0x8198f5d8F8CfFE8f9C413d98a0A55aEB8ab9FbB7",
+              "action": 0,
+              "functionSelectors": [
+                "0x80b20931",
+                "0x9cd86c08",
+                "0xcb086f9d",
+                "0x9fd71bde",
+                "0xa5767449",
+                "0x4f558e79",
+                "0xa1e26093",
+                "0x8ac7b7a5",
+                "0xadfd07a8",
+                "0x4ee52a62",
+                "0xd004b036",
+                "0xdbe16c07",
+                "0x01bc466a",
+                "0xc866dd0b",
+                "0x85bff2e7",
+                "0xbd85b039",
+                "0x88ff3907",
+                "0x9af793fb",
+                "0x27040961",
+                "0x8d938412",
+                "0x0fd38d11",
+                "0x0e89341c",
+                "0x748937f6",
+                "0x8a31d522"
+              ]
+            },
+            {
+              "facetAddress": "0x0355B7B8cb128fA5692729Ab3AAa199C1753f726",
+              "action": 0,
+              "functionSelectors": [
+                "0x4d703df9",
+                "0x210a854d"
+              ]
+            },
+            {
+              "facetAddress": "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB",
+              "action": 0,
+              "functionSelectors": [
+                "0xe0e93ba2",
+                "0x36e7a01d",
+                "0x49160658",
+                "0x1a98b2e0",
+                "0x116191b6",
+                "0x1e7e62dc",
+                "0x7e231db3",
+                "0x6d2acd61",
+                "0x8458bc1e",
+                "0xa4c2c4f2"
+              ]
+            },
+            {
+              "facetAddress": "0xf4B146FbA71F41E0592668ffbF264F1D186b2Ca8",
+              "action": 0,
+              "functionSelectors": [
+                "0xedce44d2",
+                "0x62b5cd23",
+                "0x56d5d475",
+                "0xa39410b4",
+                "0x4a6fe41a",
+                "0xceed9b7d",
+                "0x802480ac",
+                "0x7fcfaeac"
+              ]
+            },
+            {
+              "facetAddress": "0x172076E0166D1F9Cc711C77Adf8488051744980C",
+              "action": 0,
+              "functionSelectors": [
+                "0x9fbc3870",
+                "0xdecb6e13",
+                "0x40a7bb10",
+                "0x001d3567",
+                "0xd0638372",
+                "0xdf170459",
+                "0xcef171b7",
+                "0xc571b2e4",
+                "0x49d289c8"
+              ]
+            },
+            {
+              "facetAddress": "0x4EE6eCAD1c2Dae9f525404De8555724e3c35d07B",
+              "action": 0,
+              "functionSelectors": [
+                "0xf2bc8463",
+                "0x77f1b3b7",
+                "0xe08f9624",
+                "0x4d5c50aa",
+                "0xca13dcd5",
+                "0x9459dcfc",
+                "0xa01efa2a",
+                "0xdc270cf1",
+                "0x3315243d"
+              ]
+            }
+          ],
+          {
+            "owner": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+            "init": "0xc351628EB244ec633d5f21fBD6621e1a683B1181",
+            "initCalldata": "0xe1c7392a"
+          }
+        ]
+      }
+    },
+    "64165": {
+      "DiamondInit": {
+        "address": "0xd5E8Cb45C6aCC6E73b7BAEb871c21a25B04e2181"
+      },
+      "LibTasks": {
+        "address": "0xe69297cC39FAEfce30926b5DDE98721B91f92A12"
+      },
+      "LibTasksAudit": {
+        "address": "0x0788e748d927a854Bf28ba0998554304F92954aD"
+      },
+      "LibChat": {
+        "address": "0xed2C491B7DdC5a1251b2e171986567E0e6863891"
+      },
+      "LibWithdraw": {
+        "address": "0x5d5427468a12A359303C4D87F12a3d3F7405B545"
+      },
+      "LibTokens": {
+        "address": "0x25157be74Fff9c8Ed2E4f50A13956403144d47C0"
+      },
+      "LibTokenData": {
+        "address": "0x75a0cb4Ea557CBae7562C98503AD83fceC2a1660"
+      },
+      "LibInterchain": {
+        "address": "0xb65c6c79305211FcF234dd776285FcFE5B821c98"
+      },
+      "LibWitnetFacet": {
+        "address": "0x1e4864f5246F556D5998F4777461D9753e377CE7"
+      },
+      "DiamondCutFacet": {
+        "address": "0x84EfcAA45A3a12211b92208D650a6dD08747a851"
+      },
+      "DiamondLoupeFacet": {
+        "address": "0x21D3bDE567277F63E1feaf918553d73cD0466318"
+      },
+      "OwnershipFacet": {
+        "address": "0xfc990489592E270ee882BafC1C0025eaBFa8F83A"
+      },
+      "TaskCreateFacet": {
+        "address": "0xd15F8F215375aDF10F6220f34613Ce46792cA6d8"
+      },
+      "TaskDataFacet": {
+        "address": "0x188569857638E65d4dc74b078Ef5D7206aBb3b1F"
+      },
+      "AccountFacet": {
+        "address": "0x7B2a384dcE3e6cA4A2447e6D0A29829861923292"
+      },
+      "TokenFacet": {
+        "address": "0x0f32938a6A62e2Fd829Af14017c768487299b45F"
+      },
+      "TokenDataFacet": {
+        "address": "0x794040F914556758736141E3FC3Da889A6Ac92bE"
+      },
+      "InterchainFacet": {
+        "address": "0x3bc6b131A48d4C4080cf16b9b81e9e0f48499a7f"
+      },
+      "AxelarFacet": {
+        "address": "0xB3cb95A7F822d999b37B660C13A66fcba26B011e"
+      },
+      "HyperlaneFacet": {
+        "address": "0x706218583f188C804Be4074b9cC9891C7f607204"
+      },
+      "LayerzeroFacet": {
+        "address": "0x8f43ea96a51340AeCB547FEc3ca1e9719DCf4317"
+      },
+      "WormholeFacet": {
+        "address": "0x74A7ce709bF6A961c234b9e8fF5b5ed31B1Fa37E"
+      },
+      "Diamond": {
+        "address": "0x1A470BF7b607B3cd80A3c25C6e037e2878f7012c",
+        "deployArgs": [
+          [
+            {
+              "facetAddress": "0x84EfcAA45A3a12211b92208D650a6dD08747a851",
+              "action": 0,
+              "functionSelectors": [
+                "0xeb454826",
+                "0x1f931c1c"
+              ]
+            },
+            {
+              "facetAddress": "0x21D3bDE567277F63E1feaf918553d73cD0466318",
+              "action": 0,
+              "functionSelectors": [
+                "0x5eb0f534",
+                "0xcdffacc6",
+                "0x52ef6b2c",
+                "0xadfca15e",
+                "0x7a0ed627",
+                "0x2c0ad2ad",
+                "0x01ffc9a7"
+              ]
+            },
+            {
+              "facetAddress": "0xfc990489592E270ee882BafC1C0025eaBFa8F83A",
+              "action": 0,
+              "functionSelectors": [
+                "0xb15a09e8",
+                "0x8da5cb5b",
+                "0xf2fde38b"
+              ]
+            },
+            {
+              "facetAddress": "0xd15F8F215375aDF10F6220f34613Ce46792cA6d8",
+              "action": 0,
+              "functionSelectors": [
+                "0x2bb117a9",
+                "0xd8929ea6"
+              ]
+            },
+            {
+              "facetAddress": "0x188569857638E65d4dc74b078Ef5D7206aBb3b1F",
+              "action": 0,
+              "functionSelectors": [
+                "0x7267a186",
+                "0xd8ced0ed",
+                "0x61d868fd",
+                "0xbbd63456",
+                "0x6ece1857",
+                "0xcd8ac8df",
+                "0xedd2f344",
+                "0xf21fe5e2",
+                "0xeb82e900",
+                "0xd1cf26f1",
+                "0xaf4316db",
+                "0x4f56bf4b"
+              ]
+            },
+            {
+              "facetAddress": "0x7B2a384dcE3e6cA4A2447e6D0A29829861923292",
+              "action": 0,
+              "functionSelectors": [
+                "0x56fd9644",
+                "0x08f99714",
+                "0xa543bc4b",
+                "0x4401d409",
+                "0xfedb41e2",
+                "0x402bdf6e",
+                "0x6b732d87",
+                "0x4bc27b63",
+                "0x3c8b0dcb",
+                "0xf20b7b31",
+                "0x4bf83d01",
+                "0x5587b594",
+                "0x2a13a5e8",
+                "0xf02e4b04",
+                "0xc6a8ade3",
+                "0x89a76332"
+              ]
+            },
+            {
+              "facetAddress": "0x0f32938a6A62e2Fd829Af14017c768487299b45F",
+              "action": 0,
+              "functionSelectors": [
+                "0x00fdd58e",
+                "0x4e1273f4",
+                "0x090fa810",
+                "0x63892068",
+                "0xe985e9c5",
+                "0x78b27221",
+                "0x3b04ddc4",
+                "0xf9419088",
+                "0x4ac6acb6",
+                "0x06fdde03",
+                "0xf23a6e61",
+                "0x2eb2c2d6",
+                "0xf242432a",
+                "0xa22cb465",
+                "0x67db3b8f",
+                "0x8217b83a",
+                "0x95d89b41"
+              ]
+            },
+            {
+              "facetAddress": "0x794040F914556758736141E3FC3Da889A6Ac92bE",
+              "action": 0,
+              "functionSelectors": [
+                "0x80b20931",
+                "0x9cd86c08",
+                "0xcb086f9d",
+                "0x9fd71bde",
+                "0xa5767449",
+                "0x4f558e79",
+                "0xa1e26093",
+                "0x8ac7b7a5",
+                "0xadfd07a8",
+                "0x4ee52a62",
+                "0xd004b036",
+                "0xdbe16c07",
+                "0x01bc466a",
+                "0xc866dd0b",
+                "0x85bff2e7",
+                "0xbd85b039",
+                "0x88ff3907",
+                "0x9af793fb",
+                "0x27040961",
+                "0x8d938412",
+                "0x0fd38d11",
+                "0x0e89341c",
+                "0x748937f6",
+                "0x8a31d522"
+              ]
+            },
+            {
+              "facetAddress": "0x3bc6b131A48d4C4080cf16b9b81e9e0f48499a7f",
+              "action": 0,
+              "functionSelectors": [
+                "0x4d703df9",
+                "0x210a854d"
+              ]
+            },
+            {
+              "facetAddress": "0xB3cb95A7F822d999b37B660C13A66fcba26B011e",
+              "action": 0,
+              "functionSelectors": [
+                "0xe0e93ba2",
+                "0x36e7a01d",
+                "0x49160658",
+                "0x1a98b2e0",
+                "0x116191b6",
+                "0x1e7e62dc",
+                "0x7e231db3",
+                "0x6d2acd61",
+                "0x8458bc1e",
+                "0xa4c2c4f2"
+              ]
+            },
+            {
+              "facetAddress": "0x706218583f188C804Be4074b9cC9891C7f607204",
+              "action": 0,
+              "functionSelectors": [
+                "0xedce44d2",
+                "0x62b5cd23",
+                "0x56d5d475",
+                "0xa39410b4",
+                "0x4a6fe41a",
+                "0xceed9b7d",
+                "0x802480ac",
+                "0x7fcfaeac"
+              ]
+            },
+            {
+              "facetAddress": "0x8f43ea96a51340AeCB547FEc3ca1e9719DCf4317",
+              "action": 0,
+              "functionSelectors": [
+                "0x9fbc3870",
+                "0xdecb6e13",
+                "0x40a7bb10",
+                "0x001d3567",
+                "0xd0638372",
+                "0xdf170459",
+                "0xcef171b7",
+                "0xc571b2e4",
+                "0x49d289c8"
+              ]
+            },
+            {
+              "facetAddress": "0x74A7ce709bF6A961c234b9e8fF5b5ed31B1Fa37E",
+              "action": 0,
+              "functionSelectors": [
+                "0xf2bc8463",
+                "0x77f1b3b7",
+                "0xe08f9624",
+                "0x4d5c50aa",
+                "0xca13dcd5",
+                "0x9459dcfc",
+                "0xa01efa2a",
+                "0xdc270cf1",
+                "0x3315243d"
+              ]
+            }
+          ],
+          {
+            "owner": "0x65aD69b9F84BaA2F8dFeB6223dc1cB3Ee537f8C5",
+            "init": "0xd5E8Cb45C6aCC6E73b7BAEb871c21a25B04e2181",
+            "initCalldata": "0xe1c7392a"
+          }
+        ]
+      }
+    }
+  }
+}

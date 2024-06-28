@@ -98,7 +98,7 @@ const witnetSLA = {
   minerCommitRevealFee: 100000000, // 0.1 WIT
 };
 
-console.log(Object.values(witnetSLA));
+// console.log(Object.values(witnetSLA));
 
 const dodaoFacets = [
   {
@@ -109,7 +109,13 @@ const dodaoFacets = [
     name: "TaskDataFacet",
   },
   {
+    name: "TaskStatsFacet",
+  },
+  {
     name: "AccountFacet",
+  },
+  {
+    name: 'AccountDataFacet',
   },
   {
     name: "TokenFacet",
@@ -118,6 +124,9 @@ const dodaoFacets = [
   {
     name: "TokenDataFacet",
     libraries: ["LibTokenData"],
+  },
+  {
+    name: 'QuestboardFacet',
   },
   {
     name: 'InterchainFacet',
@@ -192,7 +201,8 @@ async function configureWitnet(){
 
 let deployedContracts;
 
-async function deployDiamond() {
+async function deployDiamond(mode = 'deploy') {
+  console.log('Deploying diamond...');
   await configureWitnet();
   const accounts = await ethers.getSigners();
   // console.log(accounts);
@@ -223,6 +233,8 @@ async function deployDiamond() {
   const diamondInit = await DiamondInit.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
   await diamondInit.deployed();
   console.log("DiamondInit deployed:", diamondInit.address);
+  await new Promise(resolve => setTimeout(resolve, 600));
+
 
   deployedContracts.deployArgs[hre.network.config.chainId]["DiamondInit"] = {};
   deployedContracts.deployArgs[hre.network.config.chainId]["DiamondInit"]['address'] = diamondInit.address;
@@ -285,9 +297,11 @@ async function deployDiamond() {
   contractAddresses.contracts[hre.network.config.chainId] = {};
   contractAddresses.contracts[hre.network.config.chainId]["Diamond"] = diamond.address;
 
-  await fs.writeFile(path.join(__dirname, `../abi/addresses.json`), JSON.stringify(contractAddresses, null, 2));
 
-  await fs.writeFile(`${hre.config.abiExporter[0].path}/addresses.json`, JSON.stringify(contractAddresses, null, 2));
+  if(mode == 'deploy'){
+    await fs.writeFile(path.join(__dirname, `../abi/addresses.json`), JSON.stringify(contractAddresses, null, 2));
+    await fs.writeFile(`${hre.config.abiExporter[0].path}/addresses.json`, JSON.stringify(contractAddresses, null, 2));
+  }
 
 
   deployedContracts.deployArgs[hre.network.config.chainId]["Diamond"] = {};
@@ -319,11 +333,13 @@ async function deployDiamond() {
   //   // }
   //   console.log(`${contractName} verified: ${contractAddress}`);
   // }
-  await fs.writeFile(path.join(__dirname, `../abi/deployed-contracts.json`), JSON.stringify(deployedContracts, null, 2));
+  if(mode == 'deploy'){
+    await fs.writeFile(path.join(__dirname, `../abi/deployed-contracts.json`), JSON.stringify(deployedContracts, null, 2));
+  }
 
 
   // returning the address of the diamond
-  console.log("deploy complete");
+  console.log('Diamond deployed at:', diamond.address);
   return { diamondAddress: diamond.address, facetCount: facetCuts.length };
 }
 
@@ -348,6 +364,10 @@ async function upgradeDiamondFacets(facets, libraries) {
     deployedContracts = {
       deployArgs: {},
     };
+    deployedContracts.deployArgs[hre.network.config.chainId] = {};
+  }
+
+  if(typeof deployedContracts.deployArgs[hre.network.config.chainId] === 'undefined'){
     deployedContracts.deployArgs[hre.network.config.chainId] = {};
   }
 
@@ -433,6 +453,7 @@ async function upgradeDiamondFacets(facets, libraries) {
       );
       receipt = await tx.wait();
       console.log(`${facet.name} removed`);
+      await new Promise(resolve => setTimeout(resolve, 600));
     } else {
       console.log(`facet ${facet.name} was not present in diamond`);
     }
@@ -445,6 +466,7 @@ async function upgradeDiamondFacets(facets, libraries) {
   // Any number of functions from any number of facets can be added/replaced/removed in a
   tx = await diamondCutFacet.diamondCut(facetCuts, ethers.constants.AddressZero, "0x", { type: 2 });
   receipt = await tx.wait();
+  await new Promise(resolve => setTimeout(resolve, 600));
   if (!receipt.status) {
     throw Error(`Diamond upgrade failed: ${tx.hash}`);
   }
@@ -480,11 +502,12 @@ async function deployLibs(libraries) {
     }
     const feeData = await ethers.provider.getFeeData();
     // const lib = await Lib.deploy({ type: 2, gasPrice: feeData.gasPrice });
-    const lib = await Lib.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas});
+    const lib = await Lib.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas*2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas});
     // const lib = await Lib.deploy({ type: 2, gasLimit: 20000, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas});
     await lib.deployed();
     libAddresses[library.name] = lib.address;
     console.log(`${library.name} deployed:`, lib.address);
+    await new Promise(resolve => setTimeout(resolve, 600));
 
     deployedContracts.deployArgs[hre.network.config.chainId][library.name] = {};
     deployedContracts.deployArgs[hre.network.config.chainId][library.name]['address'] = lib.address;
@@ -514,16 +537,17 @@ async function deployFacets(FacetInits, libAddresses) {
     if (typeof FacetInit.arguments != "undefined") {
       console.log('deploying facet');
       // facet = await Facet.deploy(...FacetInit.arguments, { type: 2, gasPrice: feeData.gasPrice });
-      facet = await Facet.deploy(...FacetInit.arguments, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+      facet = await Facet.deploy(...FacetInit.arguments, { type: 2, maxFeePerGas: feeData.maxFeePerGas*2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     } else {
       console.log('deploying facet');
       // facet = await Facet.deploy({ type: 2, gasPrice: feeData.gasPrice });
-      facet = await Facet.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+      facet = await Facet.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas*2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     }
 
     const tx = await facet.deployed();
     // const raw = hre.ethers.getRawTransaction(tx);
     console.log(`${FacetInit.name} deployed: ${facet.address}`);
+    await new Promise(resolve => setTimeout(resolve, 600));
     facetCuts.push({
       facetAddress: facet.address,
       action: FacetCutAction.Add,
@@ -556,6 +580,7 @@ async function deployFacets(FacetInits, libAddresses) {
 }
 
 async function verifyContracts(){
+  const mode = 'verify';
   // let deployedContracts;
   try{
     const existingDeployedContracts = await fs.readFile(path.join(__dirname, `../abi/deployed-contracts.json`));
@@ -568,22 +593,31 @@ async function verifyContracts(){
     };
   }
   for(const contractName of Object.keys(deployedContracts.deployArgs[hre.network.config.chainId])){
-    console.log(`verifying contract ${contractName}`)
-    const contractAddress = deployedContracts.deployArgs[hre.network.config.chainId][contractName]['address'];
-    const deployArgs = deployedContracts.deployArgs[hre.network.config.chainId][contractName]['deployArgs'];
-    if (typeof deployArgs != "undefined") {
-      deployedContracts.deployArgs[hre.network.config.chainId][FacetInit.name]["deployArgs"] = FacetInit.arguments;
-      await hre.run("verify:verify", {
-        address: contractAddress,
-        constructorArguments: deployArgs,
-      });
+    if(typeof deployedContracts.deployArgs[hre.network.config.chainId][contractName]['verified'] == 'undefined' || 
+        deployedContracts.deployArgs[hre.network.config.chainId][contractName]['verified'] != true){
+      const contractAddress = deployedContracts.deployArgs[hre.network.config.chainId][contractName]['address'];
+      const deployArgs = deployedContracts.deployArgs[hre.network.config.chainId][contractName]['deployArgs'];
+      console.log(`verifying contract ${contractName} ${contractAddress}`)
+      if (typeof deployArgs != "undefined") {
+        console.log(`${deployArgs}`)
+        await hre.run("verify:verify", {
+          address: contractAddress,
+          constructorArguments: deployArgs,
+        });
+        deployedContracts.deployArgs[hre.network.config.chainId][contractName]['verified'] = true;
+      }
+      else{
+        await hre.run("verify:verify", {
+          address: contractAddress
+        });
+        deployedContracts.deployArgs[hre.network.config.chainId][contractName]['verified'] = true;
+      }
+      if(mode == 'verify'){
+        await fs.writeFile(path.join(__dirname, `../abi/deployed-contracts.json`), JSON.stringify(deployedContracts, null, 2));
+      }
+      console.log(`${contractName} verified: ${contractAddress}`);
+      await new Promise(resolve => setTimeout(resolve, 5000));
     }
-    else{
-      await hre.run("verify:verify", {
-        address: contractAddress
-      });
-    }
-    console.log(`${contractName} verified: ${contractAddress}`);
   }
 }
 
@@ -591,7 +625,7 @@ async function verifyContracts(){
 // and properly handle errors.
 function run() {
   if (require.main === module) {
-    deployDiamond()
+    deployDiamond('deploy')
       .then(() => process.exit(0))
       .catch((error) => {
         console.error(error);
@@ -601,7 +635,7 @@ function run() {
 }
 
 if (require.main === module) {
-  deployDiamond()
+  deployDiamond('deploy')
     .then(() => process.exit(0))
     .catch((error) => {
       console.error(error);
@@ -613,7 +647,7 @@ task("diamondDeploy", "deploys Diamond'", async function (taskArguments, hre, ru
   console.log("deploying Diamond");
   console.log("");
   // console.log('Deploying facets')
-  await deployDiamond();
+  await deployDiamond('deploy');
 });
 
 task("diamondUpgrade", "upgrades Diamond'")

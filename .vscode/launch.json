@@ -50,7 +50,16 @@
         "name": "hardhat test",
         "skipFiles": ["<node_internals>/**"],
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
-        "args": ["test", "--network", "tanssi"],
+        "args": ["test", "--network", "tanssiSnap"],
+        "cwd": "${workspaceFolder}"
+    },
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "hardhat nftMint",
+        "skipFiles": ["<node_internals>/**"],
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/hardhat",
+        "args": ["nftMint", "--accounts", "2", "--names", "dodao,LFD", "--receivers", "0x23F59AE0cE190e566852595e152B86017132B7Ef,0x386f96C86D9C04786a1c8cd059f53298e27d47b7", "--network", "tanssiSnap"],
         "cwd": "${workspaceFolder}"
     },
     {

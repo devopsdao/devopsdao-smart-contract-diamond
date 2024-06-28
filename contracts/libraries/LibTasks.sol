@@ -16,6 +16,7 @@ import "../facets/TokenFacet.sol";
 import "../libraries/LibInterchain.sol";
 
 import "../interfaces/IAccountFacet.sol";
+import "../interfaces/ITokenDataFacet.sol";
 import "../interfaces/IInterchainFacet.sol";
 
 import {IERC165} from "../interfaces/IERC165.sol";
@@ -62,6 +63,7 @@ struct TaskStorage {
     mapping(address => bool) accountsMapping;
     address[] accountsBlacklist;
     mapping(address => bool) accountsBlacklistMapping;
+    mapping(string => address) identities;
     // mapping(address => address[]) ownerTasks;
     // mapping(address => address[]) participantTasks;
     // mapping(address => address[]) auditParticipantTasks;
@@ -125,7 +127,7 @@ struct Message {
 
 struct Account {
     address accountOwner;
-    string nickname;
+    string identity;
     string about;
     address[] ownerTasks;
     address[] participantTasks;
@@ -136,6 +138,14 @@ struct Account {
     address[] auditCompletedTasks;
     uint256[] customerRatings;
     uint256[] performerRatings;
+    address[] customerAgreedTasks;
+    address[] performerAuditedTasks;
+    address[] customerAuditedTasks;
+    address[] customerCompletedTasks;
+    string[] spentTokenNames;
+    mapping(string => uint256) spentTokenBalances;
+    string[] earnedTokenNames;
+    mapping(string => uint256) earnedTokenBalances;
 }
 
 struct Accounts {
@@ -376,7 +386,9 @@ library LibTasks {
                 _storage.task.taskState = _state;
                 _storage.task.participant = _participant;
                 _storage.task.messages.push(message);
-                IAccountFacet(_storage.task.contractParent).addAgreedTask(_participant, address(this));
+                IAccountFacet(_storage.task.contractParent).addPerformerAgreedTask(_participant, address(this));
+                IAccountFacet(_storage.task.contractParent).addCustomerAgreedTask(_storage.task.contractOwner, address(this));
+                // IAccountFacet(_storage.task.contractParent).addAgreedTask(_participant, _storage.task.contractOwner, address(this));
             } else {
                 revert("participant has not applied");
             }
@@ -451,8 +463,36 @@ library LibTasks {
             _storage.task.taskState = TASK_STATE_COMPLETED;
             _storage.task.performerRating = _rating;
             _storage.task.messages.push(message);
-            IAccountFacet(_storage.task.contractParent).addCompletedTask(_storage.task.participant, address(this));
+            // IAccountFacet(_storage.task.contractParent).addPerformerCompletedTask(_storage.task.participant, address(this));
+            // IAccountFacet(_storage.task.contractParent).addCustomerCompletedTask(_storage.task.contractOwner, address(this));
+            IAccountFacet(_storage.task.contractParent).addCompletedTask(_storage.task.participant, _storage.task.contractOwner, address(this));
             IAccountFacet(_storage.task.contractParent).addPerformerRating(_storage.task.participant, address(this), _rating);
+
+
+            for (uint i = 0; i < _storage.task.tokenContracts.length; i++){
+                string[] memory tokenNames;
+                if(_storage.task.tokenContracts[i] == address(0x0)){
+                    //do nothing if it's a native token
+                    tokenNames = new string[](1);
+                    tokenNames[0] = 'ETH';
+                }
+                else{
+                    tokenNames = new string[](_storage.task.tokenIds[i].length);
+                    tokenNames = ITokenDataFacet(_storage.task.contractParent).getTokenNames(_storage.task.tokenIds[i]);
+                }
+                // Add spent and earned tokens for performer
+
+                // IAccountFacet(_storage.task.contractParent).addPerformerSpentTokens(_storage.task.participant, tokenNames, _storage.task.tokenAmounts[i]);
+                IAccountFacet(_storage.task.contractParent).addPerformerEarnedTokens(_storage.task.participant, tokenNames, _storage.task.tokenAmounts[i]);
+                // Add spent and earned tokens for customer
+                // for (uint id = 0; id < _storage.task.tokenIds[i].length; id++){
+                    // string memory tokenName = ITokenDataFacet(_storage.task.contractParent).getTokenName(_storage.task.tokenIds[i]);
+                IAccountFacet(_storage.task.contractParent).addCustomerSpentTokens(_storage.task.contractOwner, tokenNames, _storage.task.tokenAmounts[i]);
+                // IAccountFacet(_storage.task.contractParent).addCustomerEarnedTokens(_storage.task.contractOwner, tokenNames, _storage.task.tokenAmounts[i]);
+                // }
+            }
+
+
         } else if (
             keccak256(bytes(_storage.task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) &&
             _sender == _storage.task.contractOwner &&
@@ -515,6 +555,8 @@ library LibTasks {
                     _storage.task.auditor = _participant;
                     _storage.task.messages.push(message);
                     IAccountFacet(_storage.task.contractParent).addAuditAgreedTask(_participant, address(this));
+                    IAccountFacet(_storage.task.contractParent).addPerformerAuditedTask(_storage.task.participant, address(this));
+                    IAccountFacet(_storage.task.contractParent).addCustomerAuditedTask(_storage.task.contractOwner, address(this));
                 } else {
                     revert("auditor has not applied");
                 }

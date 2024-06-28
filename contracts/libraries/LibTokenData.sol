@@ -308,27 +308,43 @@ library LibTokenData {
         return names;
     }
 
+    function tokensOfOwner(address owner) public view returns (uint256[] memory) {
+        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+        uint256[] storage allTokens = _tokenStorage.ownerTokens[owner];
+        uint256 activeTokenCount = allTokens.length - _tokenStorage.deletedCount[owner];
+        uint256[] memory activeTokens = new uint256[](activeTokenCount);
+        
+        uint256 index = 0;
+        for (uint256 i = 0; i < allTokens.length && index < activeTokenCount; i++) {
+            if (!_tokenStorage.deletedTokens[owner][allTokens[i]]) {
+                activeTokens[index] = allTokens[i];
+                index++;
+            }
+        }
+        
+        return activeTokens;
+    }
+
     function getTokenIds(
         address owner
     ) external view returns (uint256[] memory) {
-        // console.log(owner);
-        ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
-        return _tokenStorage.ownerTokens[owner];
+        return tokensOfOwner(owner);
     }
 
     function getTokenNames(
         address owner
     ) external view returns (string[] memory) {
-        // console.log(owner);
         ERC1155FacetStorage storage _tokenStorage = erc1155Storage();
+        uint256[] memory tokens = tokensOfOwner(owner);
         
-        string[] memory names = new string[](_tokenStorage.ownerTokens[owner].length);
-        for (uint256 i = 0; i < _tokenStorage.ownerTokens[owner].length; ++i) {
-            uint256 baseType = getNonFungibleBaseType(_tokenStorage.ownerTokens[owner][i]);
+        string[] memory names = new string[](tokens.length);
+        for (uint256 i = 0; i < tokens.length; ++i) {
+            uint256 baseType = getNonFungibleBaseType(tokens[i]);
             names[i] = _tokenStorage.tokenTypeNames[baseType];
         }
         return names;
     }
+
 
     function getCreatedTokenNames(
     ) external view returns (string[] memory) {

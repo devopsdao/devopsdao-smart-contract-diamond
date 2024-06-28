@@ -22,6 +22,23 @@ let contractAddresses;
 })()
 
 
+let nonces = {};
+
+async function getNonce(address, incremental) {
+  if(typeof nonces[address] == 'undefined'){
+    nonces[address] = await ethers.provider.getTransactionCount(address);
+  }
+  let currentNonce = nonces[address];
+  if(incremental == true){
+    nonces[address] = currentNonce + 1;
+  }
+  else{
+    nonces[address] = await ethers.provider.getTransactionCount(address);
+  }
+  console.log(`current nonce: ${currentNonce}`)
+  return currentNonce;
+}
+
 
 async function createNFT(nfType){
   const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
@@ -43,28 +60,91 @@ async function createNFT(nfType){
   return createdNFTbaseType
 }
 
-async function mintNFTs(nfType, receivers){
+async function mintNFTs(account, nfType, receivers){
+    signers = await ethers.getSigners();
     const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
-    console.log(`using Diamond: ${diamondAddress}`)
+    console.log(`using Diamond: ${diamondAddress} and ${signers[account].address} account`)
 
-    const metadataJSON = await fs.readFile(path.join(__dirname,`./metadata/${nfType}.json`), 'utf-8');
+    // const metadataJSON = await fs.readFile(path.join(__dirname,`./metadata/${nfType}.json`), 'utf-8');
     let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
     let tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress)
 
     const baseType = await tokenDataFacet.getTokenBaseType(nfType)
 
-    const mintNFT = await tokenFacet.mintNonFungible(baseType, receivers)
-    const mintNFTReceipt = await mintNFT.wait()
-    // console.log(mintNFTReceipt)
+    // console.log(receivers)
 
-    const ids = []
-    for(const event of mintNFTReceipt.events){
-      const mintNFTEvent = mintNFTReceipt.events[0]
-      const { operator, from, to, id, value } = mintNFTEvent.args
-      ids.push(id)
+    //gasPrice: ethers.utils.parseUnits('10', 'gwei'), gasLimit: 5000000
+    // const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, receivers, {nonce: await getNonce(signers[0].address, true), type: 2, maxFeePerGas: ethers.utils.parseUnits('10', 'gwei'), maxPriorityFeePerGas: ethers.utils.parseUnits('10', 'gwei') })
+    let feeData = await ethers.provider.getFeeData();
+    // console.log(feeData)
+    let mintNFTReceipt;
+    let gasMultiplier = 1;
+    let txSuccess = false;
+    while(!txSuccess){
+      try{
+        //your logic
+        console.log(`sending tx`)
+        const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, [signers[account].address], {nonce: await getNonce(signers[account].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas+gasMultiplier, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas+gasMultiplier  })
+        mintNFTReceipt = await mintNFT.wait()
+        txSuccess = true;
+      }catch(error){
+        console.log(error);
+        gasMultiplier = gasMultiplier+1;
+        console.log(`retrying with ${gasMultiplier} gasMultiplier`);
+        continue;
+      }
     }
 
-    return ids
+    // try {
+    //   const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, [signers[account].address], {nonce: await getNonce(signers[account].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas  })
+    //   mintNFTReceipt = await mintNFT.wait()
+    // } catch (error) {
+    //   console.log(error);
+    //   if(error.message === 'already known'){
+    //     console.log('resubmitting with a higher gas')
+    //     gasMultiplier = gasMultiplier+1;
+    //     try {
+    //       const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, [signers[account].address], {nonce: await getNonce(signers[account].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas*gasMultiplier, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas*gasMultiplier  })
+    //       mintNFTReceipt = await mintNFT.wait()
+    //     } catch (error) {
+    //       gasMultiplier = gasMultiplier+1;
+    //       try {
+    //         const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, [signers[account].address], {nonce: await getNonce(signers[account].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas*gasMultiplier, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas*gasMultiplier  })
+    //         mintNFTReceipt = await mintNFT.wait()
+    //       } catch (error) {
+    //         gasMultiplier = gasMultiplier+1;
+    //         const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, [signers[account].address], {nonce: await getNonce(signers[account].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas*gasMultiplier, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas*gasMultiplier  })
+    //         mintNFTReceipt = await mintNFT.wait()
+    //       }
+    //     }
+    //   }
+    //   else if(error.code === 'REPLACEMENT_UNDERPRICED'){
+    //     console.log('resubmitting with a higher gas')
+    //     gasMultiplier = gasMultiplier+2;
+    //     const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, [signers[account].address], {nonce: await getNonce(signers[account].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas*gasMultiplier, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas*gasMultiplier  })
+    //     mintNFTReceipt = await mintNFT.wait()
+    //   }
+    //   //error.name === 'ProviderError'
+    //   // if(error.message === 'already known'){
+    //   //   console.log('resubmitting with a higher gas')
+    //   //   const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, receivers, {nonce: await getNonce(signers[account].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas*5, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas*5  })
+    //   //   mintNFTReceipt = await mintNFT.wait()
+    //   // }
+    //   // console.log(error);
+    // }
+    // console.log(mintNFTReceipt)
+
+    if(typeof mintNFTReceipt !== 'undefined'){
+      const ids = []
+      for(const event of mintNFTReceipt.events){
+        const mintNFTEvent = mintNFTReceipt.events[0]
+        const { operator, from, to, id, value } = mintNFTEvent.args
+        ids.push(id)
+      }
+  
+      return ids
+    }
+
     // return 
 }
 
@@ -93,6 +173,17 @@ async function safeBatchTransferFrom(from, to, nftIds, values, data){
   return balance
 }
 
+async function getCreatedTokenNames(){
+  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
+  let tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress)
+  // console.log(`getting balance of ${account} ${nftId}`)
+  // const baseType = await tokenFacet.getTokenBaseType(nfType)
+  const names = await tokenDataFacet.getCreatedTokenNames()
+  // console.log(balance);
+  // assert.equal(uri, nftURI)
+  return names
+}
+
 async function balanceOf(account, nftId){
   const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
   let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
@@ -116,6 +207,20 @@ async function balanceOfName(account, name){
   // assert.equal(uri, nftURI)
   return balance
 }
+
+async function totalSupplyOfName(account, name){
+  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
+  let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+  let tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress)
+
+  // console.log(`getting balance of ${account} ${nftId}`)
+  // const baseType = await tokenFacet.getTokenBaseType(nfType)
+  const supply = await tokenDataFacet.connect(account).totalSupplyOfName(name)
+  // console.log(balance);
+  // assert.equal(uri, nftURI)
+  return supply
+}
+
 
 
 async function balanceOfBatchName(accounts, names){
@@ -215,9 +320,17 @@ async function arweaveUpload(data, contentType){
 task(
   "nftCreate",
   "create a NFT")
+  .addParam("accounts", "account ids")
   .addParam("names", "NFT names")
   .setAction(
   async function (taskArguments, hre, runSuper) {
+    let accounts = []
+    if(taskArguments.accounts.indexOf(',') != -1){
+      accounts = taskArguments.accounts.split(',')
+    }
+    else{
+      accounts.push(taskArguments.accounts)
+    }
     // signers = await ethers.getSigners();
     // console.log(signers)
     console.log(taskArguments)
@@ -232,10 +345,12 @@ task(
       nftNames.push(taskArguments.names)
     }
 
-    for(const nftName of nftNames){
-      console.log(`going to create ${nftName} token`)
-      const createdNFTbaseType = await createNFT(nftNames)
-      console.log(createdNFTbaseType)
+    for(const account of accounts){
+      for(const nftName of nftNames){
+        console.log(`going to create ${nftName} token`)
+        const createdNFTbaseType = await createNFT(nftNames)
+        console.log(createdNFTbaseType)
+      }
     }
   }
 );
@@ -243,11 +358,21 @@ task(
 task(
   "nftMint",
   "mint a NFT")
+  .addParam("accounts", "account ids")
   .addParam("names", "NFT names")
-  .addParam("receivers", "NFT receivers")
+  // .addParam("receivers", "NFT receivers")
   .setAction(
   async function (taskArguments, hre, runSuper) {
-    const nftNames = []
+
+    let accounts = []
+    if(taskArguments.accounts.indexOf(',') != -1){
+      accounts = taskArguments.accounts.split(',')
+    }
+    else{
+      accounts.push(taskArguments.accounts)
+    }
+
+    let nftNames = []
     if(taskArguments.names.indexOf(',') != -1){
       nftNames = taskArguments.names.split(',')
     }
@@ -255,19 +380,24 @@ task(
       nftNames.push(taskArguments.names)
     }
 
-    let nftReceivers = []
+    // let nftReceivers = []
 
-    if(taskArguments.receivers.indexOf(',') != -1){
-      nftReceivers = taskArguments.receivers.split(',')
-    }
-    else{
-      nftReceivers.push(taskArguments.receivers)
-    }
+    // if(taskArguments.receivers.indexOf(',') != -1){
+    //   nftReceivers = taskArguments.receivers.split(',')
+    // }
+    // else{
+    //   nftReceivers.push(taskArguments.receivers)
+    // }
     let nftIds = []
-    for(const nftName of nftNames){
-      console.log(`going to mint "${nftName}" token for: ${nftReceivers}`)
-      const nftId = await mintNFTs(nftName, nftReceivers)
-      nftIds.push(nftId)
+    for(const account of accounts){
+      for(const nftName of nftNames){
+        // console.log(`going to mint "${nftName}" from ${accounts} token for: ${nftReceivers}`)
+        console.log(`going to mint "${nftName}" from ${accounts} token`)
+        const nftId = await mintNFTs(account, nftName, {})
+        nftIds.push(nftId)
+        console.log(`minted`);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      }
     }
     console.log(`minted NFT ids ${nftIds}`)
   }
@@ -379,6 +509,21 @@ task(
 );
 
 
+
+
+
+task(
+  "nftCreatedTokenNames",
+  "get created token names")
+  .setAction(
+  async function (taskArguments, hre, runSuper) {
+    console.log(`get created token names`)
+    const names = await getCreatedTokenNames()
+    console.log(names.length)
+  }
+);
+
+
 task(
   "nftBalanceOf",
   "get NFT balance")
@@ -449,6 +594,42 @@ task(
     }
   }
 );
+
+task(
+  "nftTotalSupplyOfName",
+  "get NFT total supply")
+  .addParam("accounts", "NFT ids")
+  .addParam("names", "NFT names")
+  .setAction(
+  async function (taskArguments, hre, runSuper) {
+
+    const accounts = []
+    if(taskArguments.accounts.indexOf(',') != -1){
+      accounts = taskArguments.accounts.split(',')
+    }
+    else{
+      accounts.push(taskArguments.accounts)
+    }
+
+
+    const nftNames = []
+    if(taskArguments.names.indexOf(',') != -1){
+      nftNames = taskArguments.names.split(',')
+    }
+    else{
+      nftNames.push(taskArguments.names)
+    }
+
+    let id = 0;
+    for(const account of accounts){
+      console.log(`get "${account}" balance for ${nftNames[id]}`)
+      const balance = await totalSupplyOfName(account, nftNames[id])
+      console.log(balance);
+      id++;
+    }
+  }
+);
+
 
 task(
   "nftBalanceOfBatchName",

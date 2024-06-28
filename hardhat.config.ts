@@ -21,9 +21,11 @@ require("@matterlabs/hardhat-zksync-solc");
 
 require("./scripts/accounts.js");
 require("./scripts/deploy.js");
-// require("./scripts/hardhat-tasks-diamond.js");
+require("./scripts/hardhat-tasks-diamond.js");
+require("./scripts/hardhat-tasks-bridges.js");
 require("./scripts/hardhat-tasks-dodao.js");
 require("./scripts/hardhat-tasks-nft.js");
+require("./scripts/hardhat-tasks-questboard.js");
 require("./scripts/witnet.js");
 
 const fs = require("fs");
@@ -66,6 +68,16 @@ module.exports = {
         mnemonic: keys.mnemonic1,
       },
     },
+    tanssiSnap: {
+      url: "https://fraa-flashbox-2804-rpc.a.stagenet.tanssi.network", // URL of the zkSync network RPC
+      ethNetwork: "dodao", // Can also be the RPC URL of the Ethereum network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
+      zksync: false,
+      chainId: 855456,
+      accounts: {
+        mnemonic: keys.mnemonic1,
+        count: 21,
+      },
+    },
     zkSyncTestnet: {
       url: "https://zksync2-testnet.zksync.dev", // URL of the zkSync network RPC
       ethNetwork: "goerli", // Can also be the RPC URL of the Ethereum network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
@@ -89,6 +101,8 @@ module.exports = {
       witnet: true,
       // mnemonic: MNEMONIC
     },
+
+    
     // goerli: {
     //   // url: 'https://rpc.ankr.com/eth_goerli',
     //   // url: 'https://goerli.infura.io/v3/8fc30a844b8e42e794f1410dd02bc19e',
@@ -116,6 +130,15 @@ module.exports = {
       witnet: true,
       // mnemonic: MNEMONIC
     },
+    zkevm: {
+      url: "https://rpc.public.zkevm-test.net",
+      chainId: 1442,
+      accounts: {
+        mnemonic: keys.mnemonic1,
+      },
+      zksync: false,
+      // mnemonic: MNEMONIC
+    },
     ftmTestnet: {
       // url: "https://rpc.testnet.fantom.network",
       url: "https://fantom-testnet.blastapi.io/5adb17c5-f79f-4542-b37c-b9cf98d6b28f",
@@ -135,9 +158,46 @@ module.exports = {
       zksync: false,
       // mnemonic: MNEMONIC
     },
+    manta: {
+      url: "https://pacific-rpc.testnet.manta.network/http",
+      chainId: 3441005,
+      accounts: {
+        mnemonic: keys.mnemonic1,
+      },
+      zksync: false,
+      // mnemonic: MNEMONIC
+    },
+    satoshivm: {
+      url: "https://test-rpc-node-http.svmscan.io/",
+      chainId: 3110,
+      accounts: {
+        mnemonic: keys.mnemonic1,
+      },
+      zksync: false,
+      // mnemonic: MNEMONIC
+    },
+    bttc: {
+      url: "https://pre-rpc.bt.io",
+      chainId: 1029,
+      accounts: {
+        mnemonic: keys.mnemonic1,
+      },
+      zksync: false,
+      // mnemonic: MNEMONIC
+    },
     scrollSepolia: {
       url: "https://sepolia-rpc.scroll.io",
       chainId: 534351,
+      accounts: {
+        mnemonic: keys.mnemonic1,
+      },
+      zksync: false,
+      witnet: false,
+      // mnemonic: MNEMONIC
+    },
+    blastSepolia: {
+      url: "https://sepolia.blast.io",
+      chainId: 168587773,
       accounts: {
         mnemonic: keys.mnemonic1,
       },
@@ -172,7 +232,9 @@ module.exports = {
     // Obtain one at https://etherscan.io/
     apiKey: {
       ftmTestnet: keys.ftmscan,
-      "Fantom Sonic Testnet": "lore-public" // api key is not required for contract verification
+      "Fantom Sonic Testnet": "lore-public", // api key is not required for contract verification
+      scrollSepolia: 'abc',
+      blast_sepolia: "blast_sepolia", // apiKey is not required, just set a placeholder
 
     },
     customChains: [
@@ -182,6 +244,22 @@ module.exports = {
         urls: {
           apiURL: " https://api.lorescan.com/64165",
           browserURL: "https://sonicscan.io/"
+        }
+      },
+      {
+        network: 'scrollSepolia',
+        chainId: 534351,
+        urls: {
+          apiURL: 'https://sepolia-blockscout.scroll.io/api',
+          browserURL: 'https://sepolia-blockscout.scroll.io/',
+        },
+      },
+      {
+        network: "blast_sepolia",
+        chainId: 168587773,
+        urls: {
+          apiURL: "https://api.routescan.io/v2/network/testnet/evm/168587773/etherscan",
+          browserURL: "https://testnet.blastscan.io"
         }
       }
     ]
@@ -256,8 +334,32 @@ module.exports = {
       runOnCompile: true,
       // clear: true,
       // flat: true,
+      only: [":TaskStatsFacet$"],
+      rename: () => "TaskStatsFacet.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
       only: [":AccountFacet$"],
       rename: () => "AccountFacet.abi",
+      spacing: 2,
+      // pretty: true,
+      format: "json",
+    },
+    {
+      // path: '../devopsdao/build/abi',
+      path: "../devopsdao/lib/blockchain/abi",
+      runOnCompile: true,
+      // clear: true,
+      // flat: true,
+      only: [":AccountDataFacet$"],
+      rename: () => "AccountDataFacet.abi",
       spacing: 2,
       // pretty: true,
       format: "json",

@@ -9,10 +9,11 @@ import "../libraries/LibChat.sol";
 import "../libraries/LibWithdraw.sol";
 // import "../libraries/LibInterchain.sol";
 
-import "../facets/TokenDataFacet.sol";
+// import "../facets/TokenDataFacet.sol";
 
 import "../external/erc1155/Common.sol";
 import "../interfaces/IERC1155TokenReceiver.sol";
+import "../interfaces/ITokenDataFacet.sol";
 
 // import "../facets/DiamondLoupeFacet.sol";
 
@@ -108,8 +109,8 @@ contract TaskContract is ERC1155TokenReceiver, CommonConstants  {
         // to[0] = _sender;
         // amount[0] = uint256(1);
         // TokenFacet(_storage.task.contractParent).mintFungible(1, to, amount);
-        // uint256 balance = TokenDataFacet(_storage.task.contractParent).balanceOfName(msg.sender, 'auditor');
-        // // console.log(balance);
+        // uint256 balance = ITokenDataFacet(_storage.task.contractParent).balanceOfName(msg.sender, 'auditor');
+        // // // console.log(balance);
         // require(balance>0, 'must hold Auditor NFT to audit');
         
 
@@ -146,8 +147,8 @@ contract TaskContract is ERC1155TokenReceiver, CommonConstants  {
         uint256 rating
     ) external {
         // TaskStorage storage _storage = LibTasks.taskStorage();
-        // uint256 balance = TokenDataFacet(_storage.task.contractParent).balanceOfName(msg.sender, 'auditor');
-        // // console.log(balance);
+        // uint256 balance = ITokenDataFacet(_storage.task.contractParent).balanceOfName(msg.sender, 'auditor');
+        // // // console.log(balance);
         // require(balance>0, 'must hold Auditor NFT to audit');
 
         // if(msg.sender != _storageInterchain.configAxelar.sourceAddress 

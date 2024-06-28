@@ -76,6 +76,7 @@ library LibWithdraw {
         if(_sender != _storage.task.participant && _sender != _storage.task.contractOwner){
             revert('not a participant or contractOwner');
         }
+        require(_rating >= 0 && _rating <= 5, "Rating must be between 0 and 5");
 
         // address gateway_ = 0x5769D84DD62a6fD969856c75c7D321b84d455929;
 

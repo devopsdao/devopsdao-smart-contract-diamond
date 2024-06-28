@@ -21,4 +21,10 @@ struct ERC1155FacetStorage {
   mapping (uint256 => uint256) maxIndex;
   string[] createdTokenNames;
   bool shouldReject;
+  mapping(uint256 => bool) tempTokenTransferMapping;
+
+
+      // New fields for lazy deletion
+    mapping(address => mapping(uint256 => bool)) deletedTokens;
+    mapping(address => uint256) deletedCount;
 }

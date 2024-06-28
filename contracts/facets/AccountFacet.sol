@@ -19,7 +19,6 @@ import "../facets/TokenDataFacet.sol";
 import "hardhat/console.sol";
 
 
-
 contract AccountFacet  {
     bool public constant contractAccountFacet = true;
 
@@ -55,7 +54,7 @@ contract AccountFacet  {
         }
     }
 
-    function addAccountData(address _sender, string calldata nickname, string calldata about) external{
+    function addAccountData(address _sender, string calldata identity, string calldata about) external{
         InterchainStorage storage _storageInterchain = LibInterchain.interchainStorage();
         if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
             && msg.sender != _storageInterchain.configHyperlane.sourceAddress 
@@ -66,8 +65,9 @@ contract AccountFacet  {
         }
         require(msg.sender == _sender, 'sender must be account owner');
         TaskStorage storage _storage = LibTasks.taskStorage();
-        _storage.accounts[_sender].nickname = nickname;
-        _storage.accounts[_sender].nickname = about;
+        _storage.accounts[_sender].identity = identity;
+        _storage.accounts[_sender].about = about;
+        _storage.identities[identity] = _sender;
     }
 
     function addParticipantTask(address _sender, address taskAddress) external{
@@ -102,8 +102,28 @@ contract AccountFacet  {
         _storage.accounts[_sender].auditParticipantTasks.push(taskAddress);
     }
 
+    //for old task compatibility
+    function addAgreedTask(address _performer, address taskAddress) external{
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
+        require(msg.sender == taskAddress, 'sender must be task contract');
 
-    function addAgreedTask(address _sender, address taskAddress) external{
+        // if(_storage.accountsMapping[_sender] != true){
+        //     _storage.accountsList.push(_sender);
+        //     _storage.accountsMapping[_sender] = true;
+        // }
+        //set the account owner if it is not set
+        if(_storage.accounts[_performer].accountOwner == address(0x0)){
+            _storage.accounts[_performer].accountOwner = _performer;
+        }
+        // if(_storage.accounts[_customer].accountOwner == address(0x0)){
+        //     _storage.accounts[_customer].accountOwner = _customer;
+        // }
+        _storage.accounts[_performer].agreedTasks.push(taskAddress);
+        // _storage.accounts[_customer].customerAgreedTasks.push(taskAddress);
+    }
+
+    function addPerformerAgreedTask(address _sender, address taskAddress) external{
         TaskStorage storage _storage = LibTasks.taskStorage();
         require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
         require(msg.sender == taskAddress, 'sender must be task contract');
@@ -117,6 +137,22 @@ contract AccountFacet  {
             _storage.accounts[_sender].accountOwner = _sender;
         }
         _storage.accounts[_sender].agreedTasks.push(taskAddress);
+    }
+
+    function addCustomerAgreedTask(address _sender, address taskAddress) external{
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
+        require(msg.sender == taskAddress, 'sender must be task contract');
+
+        // if(_storage.accountsMapping[_sender] != true){
+        //     _storage.accountsList.push(_sender);
+        //     _storage.accountsMapping[_sender] = true;
+        // }
+        //set the account owner if it is not set
+        if(_storage.accounts[_sender].accountOwner == address(0x0)){
+            _storage.accounts[_sender].accountOwner = _sender;
+        }
+        _storage.accounts[_sender].customerAgreedTasks.push(taskAddress);
     }
 
     function addAuditAgreedTask(address _sender, address taskAddress) external{
@@ -135,7 +171,59 @@ contract AccountFacet  {
         _storage.accounts[_sender].auditAgreedTasks.push(taskAddress);
     }
 
-    function addCompetedTask(address _sender, address taskAddress) external{
+    function addPerformerAuditedTask(address _sender, address taskAddress) external{
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
+        require(msg.sender == taskAddress, 'sender must be task contract');
+
+        // if(_storage.accountsMapping[_sender] != true){
+        //     _storage.accountsList.push(_sender);
+        //     _storage.accountsMapping[_sender] = true;
+        // }
+        //set the account owner if it is not set
+        if(_storage.accounts[_sender].accountOwner == address(0x0)){
+            _storage.accounts[_sender].accountOwner = _sender;
+        }
+        _storage.accounts[_sender].performerAuditedTasks.push(taskAddress);
+    }
+
+    function addCustomerAuditedTask(address _sender, address taskAddress) external{
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
+        require(msg.sender == taskAddress, 'sender must be task contract');
+
+        // if(_storage.accountsMapping[_sender] != true){
+        //     _storage.accountsList.push(_sender);
+        //     _storage.accountsMapping[_sender] = true;
+        // }
+        //set the account owner if it is not set
+        if(_storage.accounts[_sender].accountOwner == address(0x0)){
+            _storage.accounts[_sender].accountOwner = _sender;
+        }
+        _storage.accounts[_sender].customerAuditedTasks.push(taskAddress);
+    }
+
+    function addCompletedTask(address _performer, address _customer, address taskAddress) external{
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
+        require(msg.sender == taskAddress, 'sender must be task contract');
+
+        // if(_storage.accountsMapping[_sender] != true){
+        //     _storage.accountsList.push(_sender);
+        //     _storage.accountsMapping[_sender] = true;
+        // }
+        //set the account owner if it is not set
+        if(_storage.accounts[_performer].accountOwner == address(0x0)){
+            _storage.accounts[_performer].accountOwner = _performer;
+        }
+        if(_storage.accounts[_customer].accountOwner == address(0x0)){
+            _storage.accounts[_customer].accountOwner = _customer;
+        }
+        _storage.accounts[_performer].completedTasks.push(taskAddress);
+        _storage.accounts[_customer].customerCompletedTasks.push(taskAddress);
+    }
+
+    function addPerformerCompletedTask(address _sender, address taskAddress) external{
         TaskStorage storage _storage = LibTasks.taskStorage();
         require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
         require(msg.sender == taskAddress, 'sender must be task contract');
@@ -149,6 +237,22 @@ contract AccountFacet  {
             _storage.accounts[_sender].accountOwner = _sender;
         }
         _storage.accounts[_sender].completedTasks.push(taskAddress);
+    }
+
+    function addCustomerCompletedTask(address _sender, address taskAddress) external{
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        require(_storage.taskContractsMapping[msg.sender] == true, 'task does not exist');
+        require(msg.sender == taskAddress, 'sender must be task contract');
+
+        // if(_storage.accountsMapping[_sender] != true){
+        //     _storage.accountsList.push(_sender);
+        //     _storage.accountsMapping[_sender] = true;
+        // }
+        //set the account owner if it is not set
+        if(_storage.accounts[_sender].accountOwner == address(0x0)){
+            _storage.accounts[_sender].accountOwner = _sender;
+        }
+        _storage.accounts[_sender].customerCompletedTasks.push(taskAddress);
     }
 
     function addAuditCompletedTask(address _sender, address taskAddress) external{
@@ -183,94 +287,70 @@ contract AccountFacet  {
         _storage.accounts[_account].customerRatings.push(rating);
     }
 
-    function getAccountsList()
-    external
-    view
-    returns (address[] memory)
-    {
+
+    function addTokenBalance(address account, string memory tokenName, uint256 tokenBalance, bool isSpent) internal {
         TaskStorage storage _storage = LibTasks.taskStorage();
-        // return _storage.accountsList;
-        // for (uint256 i = 0; i < _storage.accountsList.length; i++) {
-        //     if(_storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false)
-        //     {
-        //         taskCount++;
-        //     }
-        // }
-        address[] memory accounts = new address[](_storage.accountsList.length - _storage.accountsBlacklist.length);
-        uint256 accountId = 0;
-        for (uint256 i = 0; i < _storage.accountsList.length; i++) {
-            if(_storage.accountsBlacklistMapping[_storage.accountsList[i]] == false)
-            {
-                accounts[accountId] = _storage.accountsList[i];
-                accountId++;
+        
+        if (isSpent) {
+            if (_storage.accounts[account].spentTokenBalances[tokenName] == 0) {
+                _storage.accounts[account].spentTokenNames.push(tokenName);
             }
+            _storage.accounts[account].spentTokenBalances[tokenName] += tokenBalance;
+        } else {
+            if (_storage.accounts[account].earnedTokenBalances[tokenName] == 0) {
+                _storage.accounts[account].earnedTokenNames.push(tokenName);
+            }
+            _storage.accounts[account].earnedTokenBalances[tokenName] += tokenBalance;
         }
-        return accounts;
     }
 
-    function getAccountsBlacklist()
-    external
-    view
-    returns (address[] memory)
-    {
-        TaskStorage storage _storage = LibTasks.taskStorage();
-        return _storage.accountsBlacklist;
-    }
-
-    function getRawAccountsList()
-    external
-    view
-    returns (address[] memory)
-    {
-        TaskStorage storage _storage = LibTasks.taskStorage();
-        return _storage.accountsList;
-    }
-
-    function getAccountsData(address[] memory accountAddresses)
-    external
-    view
-    returns (Account[] memory)
-    {
-        TaskStorage storage _storage = LibTasks.taskStorage();
-        Account[] memory accounts = new Account[](accountAddresses.length);
-        for (uint256 i = 0; i < accountAddresses.length; i++) {
-            accounts[i] = _storage.accounts[accountAddresses[i]];
+    function addPerformerSpentTokens(address performer, string[] memory tokenNames, uint256[] memory tokenBalances) external {
+        // require(msg.sender == tx.origin, "Only EOA");
+        
+        // TaskStorage storage _storage = LibTasks.taskStorage();
+        // require(_storage.accounts[performer].accountOwner == performer, "Invalid performer");
+        
+        for (uint256 i = 0; i < tokenNames.length; i++) {
+            addTokenBalance(performer, tokenNames[i], tokenBalances[i], true);
         }
-        return accounts;
     }
 
-    // function getAccountsDataDyn(address[] memory accountAddresses)
-    // external
-    // view
-    // returns (Account[] memory)
-    // {
-    //     TaskStorage storage _storage = LibTasks.taskStorage();
-    //     Account[] memory accounts = new Account[](accountAddresses.length);
-    //     for (uint256 i = 0; i < accountAddresses.length; i++) {
-    //         Account memory account;
-    //         address[] memory customerContracts = getTaskContractsCustomer(accountAddresses[i]);
-    //         uint256 symbolCount = 0;
-    //         for (uint256 idx = 0; idx < customerContracts.length; idx++) {
-    //             Task memory task = TaskContract(customerContracts[idx]).getTaskData();
-    //             symbolCount = symbolCount + task.symbols.length;
-    //         }
-    //         string[] memory spentSymbols = new string[](symbolCount);
-    //         uint256[] memory spentSymbolAmounts = new uint256[](symbolCount);
-    //         uint256 symbolIdx = 0;
-    //         for (uint256 idx = 0; idx < customerContracts.length; idx++) {
-    //             Task memory task = TaskContract(customerContracts[idx]).getTaskData();
-    //             for (uint256 index = 0; index < task.symbols.length; index++) {
-    //                 spentSymbols[symbolIdx] = task.symbols[symbolIdx];
-    //                 spentSymbolAmounts[symbolIdx] = task.amounts[symbolIdx];
-    //                 symbolIdx++;
-    //             }
-    //         }
-    //         address[] memory performerContracts = getTaskContractsPerformer(accountAddresses[i]);
-    //         account.performerTaskCount = performerContracts.length;
-    //         accounts[i] = account;
-    //     }
-    //     return accounts;
-    // }
+    function addPerformerEarnedTokens(address performer, string[] memory tokenNames, uint256[] memory tokenBalances) external {
+        // require(msg.sender == tx.origin, "Only EOA");
+        
+        // TaskStorage storage _storage = LibTasks.taskStorage();
+        // require(_storage.accounts[performer].accountOwner == performer, "Invalid performer");
+        
+        for (uint256 i = 0; i < tokenNames.length; i++) {
+            addTokenBalance(performer, tokenNames[i], tokenBalances[i], false);
+        }
+    }
+
+    function addCustomerSpentTokens(address customer, string[] memory tokenNames, uint256[] memory tokenBalances) external {
+        // require(msg.sender == tx.origin, "Only EOA");
+        
+        // TaskStorage storage _storage = LibTasks.taskStorage();
+        // require(_storage.accounts[customer].accountOwner == customer, "Invalid customer");
+        
+        for (uint256 i = 0; i < tokenNames.length; i++) {
+            addTokenBalance(customer, tokenNames[i], tokenBalances[i], true);
+        }
+    }
+
+    function addCustomerEarnedTokens(address customer, string[] memory tokenNames, uint256[] memory tokenBalances) external {
+        // require(msg.sender == tx.origin, "Only EOA");
+        
+        // TaskStorage storage _storage = LibTasks.taskStorage();
+        // require(_storage.accounts[customer].accountOwner == customer, "Invalid customer");
+        
+        for (uint256 i = 0; i < tokenNames.length; i++) {
+            addTokenBalance(customer, tokenNames[i], tokenBalances[i], false);
+        }
+    }
+
+
+
+
 
 }
 

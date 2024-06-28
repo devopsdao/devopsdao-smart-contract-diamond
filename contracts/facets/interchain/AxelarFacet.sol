@@ -280,7 +280,7 @@ contract AxelarFacet is IAxelarExecutable {
         uint256 _rating
     );
 
-    event taskAuditDecisioning(
+    event TaskAuditDecisioning(
         address _sender,
         address _contractAddress,
         string _favour,
@@ -404,7 +404,7 @@ contract AxelarFacet is IAxelarExecutable {
                     funcPayload,
                     (address, address, string, string, uint256, uint256)
                 );
-            emit taskAuditDecisioning(
+            emit TaskAuditDecisioning(
                 _sender,
                 _contractAddress,
                 _favour,
