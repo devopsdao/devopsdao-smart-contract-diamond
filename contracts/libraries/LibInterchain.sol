@@ -59,6 +59,7 @@ import { LibDiamond } from "../libraries/LibDiamond.sol";
 
 
 library LibInterchain {
+    bool public constant contractLibInterchain = true;
 
 
     // struct ChainAddresses {

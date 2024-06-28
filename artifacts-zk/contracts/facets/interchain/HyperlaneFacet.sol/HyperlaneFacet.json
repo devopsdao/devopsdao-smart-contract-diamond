@@ -247,7 +247,7 @@
           "type": "uint256"
         }
       ],
-      "name": "taskAuditDecisioning",
+      "name": "TaskAuditDecisioning",
       "type": "event"
     },
     {

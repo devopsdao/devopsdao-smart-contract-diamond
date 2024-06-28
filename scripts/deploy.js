@@ -98,7 +98,7 @@ const witnetSLA = {
   minerCommitRevealFee: 100000000, // 0.1 WIT
 };
 
-console.log(Object.values(witnetSLA));
+// console.log(Object.values(witnetSLA));
 
 const dodaoFacets = [
   {
@@ -109,7 +109,13 @@ const dodaoFacets = [
     name: "TaskDataFacet",
   },
   {
+    name: "TaskStatsFacet",
+  },
+  {
     name: "AccountFacet",
+  },
+  {
+    name: 'AccountDataFacet',
   },
   {
     name: "TokenFacet",
@@ -120,7 +126,11 @@ const dodaoFacets = [
     libraries: ["LibTokenData"],
   },
   {
+    name: 'QuestboardFacet',
+  },
+  {
     name: 'InterchainFacet',
+    // libraries: ["LibInterchain", "LibTasks"],
   },
   {
     name: 'AxelarFacet',
@@ -189,7 +199,10 @@ async function configureWitnet(){
   }
 }
 
-async function deployDiamond() {
+let deployedContracts;
+
+async function deployDiamond(mode = 'deploy') {
+  console.log('Deploying diamond...');
   await configureWitnet();
   const accounts = await ethers.getSigners();
   // console.log(accounts);
@@ -197,7 +210,17 @@ async function deployDiamond() {
   console.log(`using wallet: ${contractOwner.address}`);
 
   
-
+  try{
+    const existingDeployedContracts = await fs.readFile(path.join(__dirname, `../abi/deployed-contracts.json`));
+    deployedContracts = JSON.parse(existingDeployedContracts);
+  }
+  catch{
+    console.log(`existing ../abi/deployed-contracts.json not found, will create new`);
+    deployedContracts = {
+      deployArgs: {},
+    };
+  }
+  deployedContracts.deployArgs[hre.network.config.chainId] = {};
 
   // Deploy DiamondInit
   // DiamondInit provides a function that is called when the diamond is upgraded or deployed to initialize state variables
@@ -210,6 +233,11 @@ async function deployDiamond() {
   const diamondInit = await DiamondInit.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
   await diamondInit.deployed();
   console.log("DiamondInit deployed:", diamondInit.address);
+  await new Promise(resolve => setTimeout(resolve, 600));
+
+
+  deployedContracts.deployArgs[hre.network.config.chainId]["DiamondInit"] = {};
+  deployedContracts.deployArgs[hre.network.config.chainId]["DiamondInit"]['address'] = diamondInit.address;
 
   const libAddresses = await deployLibs(libraries);
 
@@ -249,14 +277,18 @@ async function deployDiamond() {
   
   // const diamond = await Diamond.deploy(facetCuts, diamondArgs, { type: 2, gasPrice: feeData.gasPrice });
   const diamond = await Diamond.deploy(facetCuts, diamondArgs, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+
   await diamond.deployed();
   console.log("");
   console.log("Diamond deployed:", diamond.address);
 
-  const existingAddresses = await fs.readFile(`${hre.config.abiExporter[0].path}/addresses.json`);
-  if (typeof existingAddresses !== "undefined") {
+  let contractAddresses;
+  try{
+    const existingAddresses = await fs.readFile(path.join(__dirname, `../abi/addresses.json`));
     contractAddresses = JSON.parse(existingAddresses);
-  } else {
+  }
+  catch{
+    console.log(`existing ../abi/addresses.json not found, will create new`);
     contractAddresses = {
       contracts: {},
     };
@@ -265,12 +297,49 @@ async function deployDiamond() {
   contractAddresses.contracts[hre.network.config.chainId] = {};
   contractAddresses.contracts[hre.network.config.chainId]["Diamond"] = diamond.address;
 
-  await fs.writeFile(path.join(__dirname, `../abi/addresses.json`), JSON.stringify(contractAddresses));
 
-  await fs.writeFile(`${hre.config.abiExporter[0].path}/addresses.json`, JSON.stringify(contractAddresses));
+  if(mode == 'deploy'){
+    await fs.writeFile(path.join(__dirname, `../abi/addresses.json`), JSON.stringify(contractAddresses, null, 2));
+    await fs.writeFile(`${hre.config.abiExporter[0].path}/addresses.json`, JSON.stringify(contractAddresses, null, 2));
+  }
+
+
+  deployedContracts.deployArgs[hre.network.config.chainId]["Diamond"] = {};
+  deployedContracts.deployArgs[hre.network.config.chainId]["Diamond"]['address'] = diamond.address;
+  deployedContracts.deployArgs[hre.network.config.chainId]["Diamond"]["deployArgs"] = [facetCuts, diamondArgs];
+
+
+  // await hre.run("verify:verify", {
+  //   address: diamond.address,
+  //   constructorArguments: [facetCuts, diamondArgs],
+  // });
+
+
+  // for(const contractName of Object.keys(deployedContracts.deployArgs[hre.network.config.chainId])){
+  //   console.log(`verifying contract ${contractName}`)
+  //   const contractAddress = deployedContracts.deployArgs[hre.network.config.chainId][contractName]['address'];
+  //   const deployArgs = deployedContracts.deployArgs[hre.network.config.chainId][contractName]['deployArgs'];
+  //   if (typeof deployArgs != "undefined") {
+  //     deployedContracts.deployArgs[hre.network.config.chainId][FacetInit.name]["deployArgs"] = FacetInit.arguments;
+  //     // await hre.run("verify:verify", {
+  //     //   address: contractAddress,
+  //     //   constructorArguments: deployArgs,
+  //     // });
+  //   }
+  //   // else{
+  //   //   await hre.run("verify:verify", {
+  //   //     address: contractAddress
+  //   //   });
+  //   // }
+  //   console.log(`${contractName} verified: ${contractAddress}`);
+  // }
+  if(mode == 'deploy'){
+    await fs.writeFile(path.join(__dirname, `../abi/deployed-contracts.json`), JSON.stringify(deployedContracts, null, 2));
+  }
+
 
   // returning the address of the diamond
-  console.log("deploy complete");
+  console.log('Diamond deployed at:', diamond.address);
   return { diamondAddress: diamond.address, facetCount: facetCuts.length };
 }
 
@@ -285,29 +354,51 @@ async function upgradeDiamondFacets(facets, libraries) {
   const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]["Diamond"];
   console.log(`upgrading Diamond: ${diamondAddress}`);
 
+
+  try{
+    const existingDeployedContracts = await fs.readFile(path.join(__dirname, `../abi/deployed-contracts.json`));
+    deployedContracts = JSON.parse(existingDeployedContracts);
+  }
+  catch{
+    console.log(`existing ../abi/deployed-contracts.json not found, will create new`);
+    deployedContracts = {
+      deployArgs: {},
+    };
+    deployedContracts.deployArgs[hre.network.config.chainId] = {};
+  }
+
+  if(typeof deployedContracts.deployArgs[hre.network.config.chainId] === 'undefined'){
+    deployedContracts.deployArgs[hre.network.config.chainId] = {};
+  }
+
   const diamondLoupeFacet = await ethers.getContractAt("DiamondLoupeFacet", diamondAddress);
   const diamondCutFacet = await ethers.getContractAt("DiamondCutFacet", diamondAddress);
 
   console.log("getting existing facets and its libs from diamond");
-  let existingFacets = {};
-  let existingFacetSelectors = {};
+  let facetsDeployedByName = {};
+  let facetsCompiled = {};
+  let facetsCompiledSelectors = {};
+  let facetsDeployedSelectors = {};
   let libNames = [];
   const facetsDeployed = await diamondLoupeFacet.facets();
   for (const facet of facets) {
-    const existingFacet = await ethers.getContractAt(facet.name, diamondAddress);
-    if (typeof existingFacet != "undefined") {
+    const facetNameKeccak = ethers.utils.keccak256(ethers.utils.toUtf8Bytes('contract'+facet.name+'()')).substr(0, 10);
+    const facetCompiled = await ethers.getContractAt(facet.name, diamondAddress);
+    if (typeof facetCompiled != "undefined") {
       let equal;
       for (facetDeployed of facetsDeployed) {
         // console.log(`checking ${facet.name}`)
-        equal = _.isEqual(facetDeployed.functionSelectors, getSelectors(existingFacet));
-        if (equal) {
+        //equal = _.isEqual(facetDeployed.functionSelectors, getSelectors(facetCompiled));
+        found = _.contains(facetDeployed.functionSelectors, facetNameKeccak);
+        if (found) {
           break;
         }
       }
-      if (equal) {
+      if (found) {
         console.log(`found ${facet.name}`);
-        existingFacets[facet.name] = existingFacet;
-        existingFacetSelectors[facet.name] = getSelectors(existingFacet);
+        facetsDeployedSelectors[facet.name] = facetDeployed.functionSelectors;
+        // facetsCompiled[facet.name] = facetCompiled;
+        // facetsCompiledSelectors[facet.name] = getSelectors(facetCompiled);
       } else {
         console.log(`not found ${facet.name}`);
       }
@@ -343,30 +434,17 @@ async function upgradeDiamondFacets(facets, libraries) {
 
   const libAddresses = await deployLibs(libs);
 
-  console.log("removing existingFacetSelectors");
-  // console.log(existingFacets)
-  // console.log(facets)
-  // const facetsDeployed = await diamondLoupeFacet.facets()
-  // console.log(facetsDeployed)
+  console.log("removing facetsCompiledSelectors");
 
-  // console.log('test')
-  // console.log(facetsDeployed)
-  // console.log(facetsDeployed[3].functionSelectors)
-  // console.log('test2')
-  // console.log(getSelectors(existingFacets['TaskCreateFacet']))
-
-  // assert.sameMembers(facetsDeployed[10].functionSelectors, getSelectors(existingFacets['TaskCreateFacet']))
-
-  // assert.sameMembers(facetsDeployed[12].functionSelectors, getSelectors(existingFacets['TaskCreateFacet']))
 
   for (const facet of facets) {
-    if (typeof existingFacets[facet.name] != "undefined") {
+    if (typeof facetsDeployedSelectors[facet.name] != "undefined") {
       tx = await diamondCutFacet.diamondCut(
         [
           {
             facetAddress: ethers.constants.AddressZero,
             action: FacetCutAction.Remove,
-            functionSelectors: existingFacetSelectors[facet.name],
+            functionSelectors: facetsDeployedSelectors[facet.name],
           },
         ],
         ethers.constants.AddressZero,
@@ -375,6 +453,7 @@ async function upgradeDiamondFacets(facets, libraries) {
       );
       receipt = await tx.wait();
       console.log(`${facet.name} removed`);
+      await new Promise(resolve => setTimeout(resolve, 600));
     } else {
       console.log(`facet ${facet.name} was not present in diamond`);
     }
@@ -387,6 +466,7 @@ async function upgradeDiamondFacets(facets, libraries) {
   // Any number of functions from any number of facets can be added/replaced/removed in a
   tx = await diamondCutFacet.diamondCut(facetCuts, ethers.constants.AddressZero, "0x", { type: 2 });
   receipt = await tx.wait();
+  await new Promise(resolve => setTimeout(resolve, 600));
   if (!receipt.status) {
     throw Error(`Diamond upgrade failed: ${tx.hash}`);
   }
@@ -402,75 +482,6 @@ async function upgradeDiamondFacets(facets, libraries) {
   // }
 
   // const facetAddresses = await diamondLoupeFacet.facetAddresses()
-}
-
-async function upgradeDiamondAxelarFacet() {
-  const existingAddresses = await fs.readFile(`${hre.config.abiExporter[0].path}/addresses.json`);
-  let contractAddresses;
-  if (typeof existingAddresses !== "undefined") {
-    contractAddresses = JSON.parse(existingAddresses);
-  } else {
-    return false;
-  }
-  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]["Diamond"];
-  console.log(`upgrading Diamond: ${diamondAddress}`);
-
-  const diamondLoupeFacet = await ethers.getContractAt("DiamondLoupeFacet", diamondAddress);
-  const diamondCutFacet = await ethers.getContractAt("DiamondCutFacet", diamondAddress);
-  const existingAxelarGMPFacet = await ethers.getContractAt("AxelarGMP", diamondAddress);
-  const existingAxelarGMPFacetSelectors = getSelectors(existingAxelarGMPFacet);
-
-  // console.log(`existingAxelarGMPFacet: ${existingAxelarGMPFacet.address}`);
-
-  // tx = await diamondCutFacet.diamondCut(
-  //   [{
-  //     facetAddress: ethers.constants.AddressZero,
-  //     action: FacetCutAction.Remove,
-  //     functionSelectors: existingAxelarGMPFacetSelectors
-  //   }],
-  //   ethers.constants.AddressZero, '0x', { gasLimit: 800000 })
-  // receipt = await tx.wait()
-
-  goerliGateway = "0xe432150cce91c13a887f7D836923d5597adD8E31";
-  goerliGasService = "0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6";
-  moonbaseGateway = "0x5769D84DD62a6fD969856c75c7D321b84d455929";
-  moonbaseGasService = "0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6";
-
-  const AxelarGMP = await ethers.getContractFactory("AxelarGMP");
-  const axelarGMP = await AxelarGMP.deploy(goerliGateway, goerliGasService);
-  await axelarGMP.deployed();
-
-  // const facetCuts = []
-
-  // facetCuts.push({
-  //   facetAddress: axelarGMP.address,
-  //   action: FacetCutAction.Add,
-  //   functionSelectors: getSelectors(AxelarGMP)
-  // })
-
-  console.log(`axelarGMP facet deployed:`, axelarGMP.address);
-
-  // Any number of functions from any number of facets can be added/replaced/removed in a
-  // single transaction
-  const cut = [
-    {
-      facetAddress: axelarGMP.address,
-      action: FacetCutAction.Replace,
-      functionSelectors: getSelectors(AxelarGMP),
-    },
-  ];
-  tx = await diamondCutFacet.diamondCut(cut, ethers.constants.AddressZero, "0x", { type: 2 });
-  receipt = await tx.wait();
-  if (!receipt.status) {
-    throw Error(`Diamond upgrade failed: ${tx.hash}`);
-  }
-  console.log(`Diamond cut:`, tx);
-
-  const facets = await diamondLoupeFacet.facets();
-  // const facetAddresses = await diamondLoupeFacet.facetAddresses()
-  console.log(facets[findAddressPositionInFacets(axelarGMP.address, facets)][2]);
-  // console.log(getSelectors(TasksFacet))
-  // assert.sameMembers(facets[findAddressPositionInFacets(tasksFacet.address, facets)][1], getSelectors(TasksFacet))
 }
 
 async function deployLibs(libraries) {
@@ -491,11 +502,15 @@ async function deployLibs(libraries) {
     }
     const feeData = await ethers.provider.getFeeData();
     // const lib = await Lib.deploy({ type: 2, gasPrice: feeData.gasPrice });
-    const lib = await Lib.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas});
+    const lib = await Lib.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas*2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas});
     // const lib = await Lib.deploy({ type: 2, gasLimit: 20000, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas});
     await lib.deployed();
     libAddresses[library.name] = lib.address;
     console.log(`${library.name} deployed:`, lib.address);
+    await new Promise(resolve => setTimeout(resolve, 600));
+
+    deployedContracts.deployArgs[hre.network.config.chainId][library.name] = {};
+    deployedContracts.deployArgs[hre.network.config.chainId][library.name]['address'] = lib.address;
   }
   return libAddresses;
 }
@@ -522,31 +537,95 @@ async function deployFacets(FacetInits, libAddresses) {
     if (typeof FacetInit.arguments != "undefined") {
       console.log('deploying facet');
       // facet = await Facet.deploy(...FacetInit.arguments, { type: 2, gasPrice: feeData.gasPrice });
-      facet = await Facet.deploy(...FacetInit.arguments, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+      facet = await Facet.deploy(...FacetInit.arguments, { type: 2, maxFeePerGas: feeData.maxFeePerGas*2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     } else {
       console.log('deploying facet');
       // facet = await Facet.deploy({ type: 2, gasPrice: feeData.gasPrice });
-      facet = await Facet.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+      facet = await Facet.deploy({ type: 2, maxFeePerGas: feeData.maxFeePerGas*2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
     }
+
     const tx = await facet.deployed();
     // const raw = hre.ethers.getRawTransaction(tx);
     console.log(`${FacetInit.name} deployed: ${facet.address}`);
+    await new Promise(resolve => setTimeout(resolve, 600));
     facetCuts.push({
       facetAddress: facet.address,
       action: FacetCutAction.Add,
       functionSelectors: getSelectors(facet),
     });
     facetAddresses[facet.name] = facet.address;
+
+    // console.log('verifying contract')
+    deployedContracts.deployArgs[hre.network.config.chainId][FacetInit.name] = {};
+    deployedContracts.deployArgs[hre.network.config.chainId][FacetInit.name]['address'] = facet.address;
+    if (typeof FacetInit.arguments != "undefined") {
+      deployedContracts.deployArgs[hre.network.config.chainId][FacetInit.name]["deployArgs"] = FacetInit.arguments;
+    }
+    // if (typeof FacetInit.arguments != "undefined") {
+    //   deployedContracts.deployArgs[hre.network.config.chainId][FacetInit.name]["deployArgs"] = FacetInit.arguments;
+    //   await hre.run("verify:verify", {
+    //     address: facet.address,
+    //     constructorArguments: FacetInit.arguments,
+    //   });
+    // }
+    // else{
+    //   await hre.run("verify:verify", {
+    //     address: facet.address
+    //   });
+    // }
+    // console.log(`${FacetInit.name} verified: ${facet.address}`);
   }
 
   return { facetCuts, facetAddresses };
+}
+
+async function verifyContracts(){
+  const mode = 'verify';
+  // let deployedContracts;
+  try{
+    const existingDeployedContracts = await fs.readFile(path.join(__dirname, `../abi/deployed-contracts.json`));
+    deployedContracts = JSON.parse(existingDeployedContracts);
+  }
+  catch{
+    console.log(`existing ../abi/deployed-contracts.json not found, will create new`);
+    deployedContracts = {
+      deployArgs: {},
+    };
+  }
+  for(const contractName of Object.keys(deployedContracts.deployArgs[hre.network.config.chainId])){
+    if(typeof deployedContracts.deployArgs[hre.network.config.chainId][contractName]['verified'] == 'undefined' || 
+        deployedContracts.deployArgs[hre.network.config.chainId][contractName]['verified'] != true){
+      const contractAddress = deployedContracts.deployArgs[hre.network.config.chainId][contractName]['address'];
+      const deployArgs = deployedContracts.deployArgs[hre.network.config.chainId][contractName]['deployArgs'];
+      console.log(`verifying contract ${contractName} ${contractAddress}`)
+      if (typeof deployArgs != "undefined") {
+        console.log(`${deployArgs}`)
+        await hre.run("verify:verify", {
+          address: contractAddress,
+          constructorArguments: deployArgs,
+        });
+        deployedContracts.deployArgs[hre.network.config.chainId][contractName]['verified'] = true;
+      }
+      else{
+        await hre.run("verify:verify", {
+          address: contractAddress
+        });
+        deployedContracts.deployArgs[hre.network.config.chainId][contractName]['verified'] = true;
+      }
+      if(mode == 'verify'){
+        await fs.writeFile(path.join(__dirname, `../abi/deployed-contracts.json`), JSON.stringify(deployedContracts, null, 2));
+      }
+      console.log(`${contractName} verified: ${contractAddress}`);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 function run() {
   if (require.main === module) {
-    deployDiamond()
+    deployDiamond('deploy')
       .then(() => process.exit(0))
       .catch((error) => {
         console.error(error);
@@ -556,7 +635,7 @@ function run() {
 }
 
 if (require.main === module) {
-  deployDiamond()
+  deployDiamond('deploy')
     .then(() => process.exit(0))
     .catch((error) => {
       console.error(error);
@@ -568,7 +647,7 @@ task("diamondDeploy", "deploys Diamond'", async function (taskArguments, hre, ru
   console.log("deploying Diamond");
   console.log("");
   // console.log('Deploying facets')
-  await deployDiamond();
+  await deployDiamond('deploy');
 });
 
 task("diamondUpgrade", "upgrades Diamond'")
@@ -609,6 +688,13 @@ task("diamondUpgrade", "upgrades Diamond'")
     } else {
       console.log("please specify only existing facet contracts");
     }
+  });
+
+  task("diamondVerify", "verifies Diamond contracts", async function (taskArguments, hre, runSuper) {
+    console.log("verifying Diamond contracts");
+    console.log("");
+    // console.log('Deploying facets')
+    await verifyContracts();
   });
 
 exports.deployDiamond = deployDiamond;

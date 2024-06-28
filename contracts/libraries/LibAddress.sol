@@ -6,6 +6,7 @@ pragma solidity ^0.8.17;
  * Utility library of inline functions on addresses
  */
 library LibAddress {
+    bool public constant contractLibAddress = true;
 
     /**
      * Returns whether the target address is a contract

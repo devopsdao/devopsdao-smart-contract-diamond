@@ -10,9 +10,10 @@ import "../../contracts/TaskContract.sol";
 
 
 contract AxelarFacet is IAxelarExecutable {
+    bool public constant contractAxelarFacet = true;
     InterchainStorage internal _storage;
 
-    // IAxelarGateway public immutable gateway;
+    IAxelarGateway public gateway;
 
     function execute(
         bytes32 commandId,
@@ -21,8 +22,8 @@ contract AxelarFacet is IAxelarExecutable {
         bytes calldata payload
     ) external override {
         bytes32 payloadHash = keccak256(payload);
-        // if (!gateway.validateContractCall(commandId, sourceChain, sourceAddress, payloadHash))
-        //     revert NotApprovedByGateway();
+        if (!gateway.validateContractCall(commandId, sourceChain, sourceAddress, payloadHash))
+            revert NotApprovedByGateway();
         _execute(sourceChain, sourceAddress, payload);
     }
 
@@ -279,7 +280,7 @@ contract AxelarFacet is IAxelarExecutable {
         uint256 _rating
     );
 
-    event taskAuditDecisioning(
+    event TaskAuditDecisioning(
         address _sender,
         address _contractAddress,
         string _favour,
@@ -403,7 +404,7 @@ contract AxelarFacet is IAxelarExecutable {
                     funcPayload,
                     (address, address, string, string, uint256, uint256)
                 );
-            emit taskAuditDecisioning(
+            emit TaskAuditDecisioning(
                 _sender,
                 _contractAddress,
                 _favour,
@@ -443,5 +444,5 @@ contract AxelarFacet is IAxelarExecutable {
 
     //     TaskCreateFacet(address(this)).createTaskContract(_nanoId, _taskType, _title, _description, _symbol, _amount);
     // }
-    function gateway() external view override returns (IAxelarGateway) {}
+    // function gateway() external view override returns (IAxelarGateway) {}
 }

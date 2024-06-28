@@ -9,6 +9,7 @@ import "../../contracts/TaskContract.sol";
 
 
 contract WormholeFacet {
+    bool public constant contractWormholeFacet = true;
     InterchainStorage internal _storage;
 
     // This function defines a super simple Wormhole 'module'.
@@ -188,7 +189,7 @@ contract WormholeFacet {
         uint256 _rating
     );
 
-    event taskAuditDecisioning(
+    event TaskAuditDecisioning(
         address _sender,
         address _contractAddress,
         string _favour,
@@ -346,7 +347,7 @@ contract WormholeFacet {
                     funcPayload,
                     (address, address, string, string, uint256, uint256)
                 );
-            emit taskAuditDecisioning(
+            emit TaskAuditDecisioning(
                 _sender,
                 _contractAddress,
                 _favour,

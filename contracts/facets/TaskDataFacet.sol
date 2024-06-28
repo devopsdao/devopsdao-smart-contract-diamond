@@ -47,8 +47,8 @@ contract TaskDataFacet  {
     external
     {
         TaskStorage storage _storage = LibTasks.taskStorage();
-        // uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'auditor');
-        // require(balance > 0, 'must hold Auditor NFT to add to blacklist');
+        uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'governor');
+        require(balance > 0, 'must hold Governor NFT to add to blacklist');
         require(_storage.taskContractsBlacklistMapping[taskAddress] != true, 'task is already blacklisted');
         _storage.taskContractsBlacklist.push(taskAddress);
         _storage.taskContractsBlacklistMapping[taskAddress] = true;
@@ -56,8 +56,8 @@ contract TaskDataFacet  {
 
     function removeTaskFromBlacklist(address taskAddress) external{
         TaskStorage storage _storage = LibTasks.taskStorage();
-        uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'auditor');
-        require(balance > 0, 'must hold Auditor NFT to add to blacklist');
+        uint256 balance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'governor');
+        require(balance > 0, 'must hold Governor NFT to add to blacklist');
         for (uint256 index = 0; index < _storage.taskContractsBlacklist.length; index++) {
             if(_storage.taskContractsBlacklist[index] == taskAddress){
                 _storage.taskContractsBlacklistMapping[taskAddress] = false;
@@ -69,7 +69,7 @@ contract TaskDataFacet  {
         }
     }
 
-    function getTaskContracts()
+    function getRawTaskContracts()
     external
     view
     returns (address[] memory)
@@ -83,23 +83,89 @@ contract TaskDataFacet  {
         return _storage.taskContracts;
     }
 
-    function getTaskContractsByState(string calldata _taskState)
+    function getTaskContracts()
+    external
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        address[] memory taskContracts = new address[](_storage.taskContracts.length);
+        uint256 foundTaskId = 0;
+        for (uint256 i = 0; i < _storage.taskContracts.length; i++) {
+            if(
+             (_storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false))
+            {
+                taskContracts[foundTaskId] = _storage.taskContracts[i];
+                foundTaskId++;
+            }
+        }
+        assembly {
+                    mstore(taskContracts, foundTaskId)
+                }
+        return taskContracts;
+    }
+
+    function getTaskContractsCount()
+    external
+    view
+    returns (uint256)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        // uint256 taskCount = 0;
+        // for (uint256 i = 0; i < _storage.taskContracts.length; i++) {
+        //     if(_storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false){
+        //         taskCount++;
+        //     }
+        // }
+        return _storage.taskContracts.length;
+    }
+
+    function getTaskContractsBlacklist()
+    external
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        // TaskStorage storage _storage = LibTasks.taskStorage();
+        // console.log(
+        // "msg.sender %s",
+        //     msg.sender
+        // );
+        return _storage.taskContractsBlacklist;
+    }
+
+    function getTaskContractsBlacklistMapping()
     external
     view
     returns (address[] memory)
     {
         TaskStorage storage _storage = LibTasks.taskStorage();
         uint256 taskCount = 0;
-        for (uint256 i = 0; i < _storage.taskContracts.length; i++) {
-            Task memory task = TaskContract(payable(_storage.taskContracts[i])).getTaskData();
-            if(keccak256(bytes(task.taskState)) == keccak256(bytes(_taskState))
-            && ((keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false) 
-            || keccak256(bytes(task.taskState)) != keccak256(bytes(TASK_STATE_NEW)))
-            ){
+        for (uint256 i = 0; i < _storage.taskContractsBlacklist.length; i++) {
+            if(_storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false){
                 taskCount++;
             }
         }
         address[] memory taskContracts = new address[](taskCount);
+        uint256 foundTaskId = 0;
+        for (uint256 i = 0; i < _storage.taskContractsBlacklist.length; i++) {
+            if(
+             (_storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false))
+            {
+                taskContracts[foundTaskId] = _storage.taskContracts[i];
+                foundTaskId++;
+            }
+        }
+        return taskContracts;
+    }
+
+    function getTaskContractsByState(string calldata _taskState)
+    external
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        address[] memory taskContracts = new address[](_storage.taskContracts.length);
         uint256 foundTaskId = 0;
         for (uint256 i = 0; i < _storage.taskContracts.length; i++) {
             Task memory task = TaskContract(payable(_storage.taskContracts[i])).getTaskData();
@@ -111,9 +177,114 @@ contract TaskDataFacet  {
                 foundTaskId++;
             }
         }
+        assembly {
+            mstore(taskContracts, foundTaskId)
+                }
         return taskContracts;
     }
 
+    function getTaskContractsByAuditState(string calldata _taskAuditState)
+    external
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        address[] memory taskContracts = new address[](_storage.taskContracts.length);
+        uint256 foundTaskId = 0;
+        for (uint256 i = 0; i < _storage.taskContracts.length; i++) {
+            Task memory task = TaskContract(payable(_storage.taskContracts[i])).getTaskData();
+            if(keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_AUDIT))
+            && keccak256(bytes(task.auditState)) == keccak256(bytes(_taskAuditState))
+            ){
+                taskContracts[foundTaskId] = _storage.taskContracts[i];
+                foundTaskId++;
+            }
+        }
+        assembly {
+            mstore(taskContracts, foundTaskId)
+                }
+        return taskContracts;
+    }
+
+
+    function getTaskContractsByStateLimit(string calldata _taskState, uint256 offset, uint256 limit, uint256 fromTimestamp)
+    external
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        // uint256 taskCount = 0;
+        // for (uint256 i = offset; i < _storage.taskContracts.length && i < offset + limit; i++) {
+        //     Task memory task = TaskContract(payable(_storage.taskContracts[i])).getTaskData();
+        //     if(keccak256(bytes(task.taskState)) == keccak256(bytes(_taskState))
+        //     && ((keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false) 
+        //     || keccak256(bytes(task.taskState)) != keccak256(bytes(TASK_STATE_NEW)))
+        //     ){
+        //         taskCount++;
+        //     }
+        // }
+        address[] memory taskContracts = new address[](_storage.taskContracts.length );
+        uint256 foundTaskId = 0;
+        for (uint256 i = offset; i < _storage.taskContracts.length && i < offset + limit; i++) {
+            Task memory task = TaskContract(payable(_storage.taskContracts[i])).getTaskData();
+            Message memory lastMessage;
+            if(task.messages.length > 0){
+                lastMessage = task.messages[task.messages.length - 1];
+            }
+            
+            if(keccak256(bytes(task.taskState)) == keccak256(bytes(_taskState))
+            && ((keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false) 
+            || keccak256(bytes(task.taskState)) != keccak256(bytes(TASK_STATE_NEW)))
+            && ((task.messages.length > 0 && lastMessage.timestamp > fromTimestamp) || (task.messages.length == 0 && task.createTime > fromTimestamp))
+            ){
+                taskContracts[foundTaskId] = _storage.taskContracts[i];
+                foundTaskId++;
+            }
+        }
+        assembly {
+            mstore(taskContracts, foundTaskId)
+        }
+        return taskContracts;
+    }
+
+    function getTaskContractsByAuditStateLimit(string calldata _taskAuditState, uint256 offset, uint256 limit, uint256 fromTimestamp)
+    external
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        // uint256 taskCount = 0;
+        // for (uint256 i = offset; i < _storage.taskContracts.length && i < offset + limit; i++) {
+        //     Task memory task = TaskContract(payable(_storage.taskContracts[i])).getTaskData();
+        //     if(keccak256(bytes(task.taskState)) == keccak256(bytes(_taskState))
+        //     && ((keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false) 
+        //     || keccak256(bytes(task.taskState)) != keccak256(bytes(TASK_STATE_NEW)))
+        //     ){
+        //         taskCount++;
+        //     }
+        // }
+        address[] memory taskContracts = new address[](_storage.taskContracts.length );
+        uint256 foundTaskId = 0;
+        for (uint256 i = offset; i < _storage.taskContracts.length && i < offset + limit; i++) {
+            Task memory task = TaskContract(payable(_storage.taskContracts[i])).getTaskData();
+            Message memory lastMessage;
+            if(task.messages.length > 0){
+                lastMessage = task.messages[task.messages.length - 1];
+            }
+            
+            if(keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_AUDIT))
+            && keccak256(bytes(task.auditState)) == keccak256(bytes(_taskAuditState))
+            && ((task.messages.length > 0 && lastMessage.timestamp > fromTimestamp) || (task.messages.length == 0 && task.createTime > fromTimestamp))
+            ){
+                taskContracts[foundTaskId] = _storage.taskContracts[i];
+                foundTaskId++;
+            }
+        }
+        assembly {
+            mstore(taskContracts, foundTaskId)
+        }
+        return taskContracts;
+    }
 
     function getTaskContractsCustomers(address[] calldata contractOwners)
     public
@@ -165,6 +336,31 @@ contract TaskDataFacet  {
         return participantTasks;
     }
 
+    function getTaskContractsAuditors(address[] calldata participants)
+    public
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        // if(ownerTasks[contractOwner].length > 0){
+        //     return ownerTasks[contractOwner];
+        // }
+        uint256 contractCount = 0;
+        for (uint256 i = 0; i < participants.length; i++) {
+            // return _storage.accounts[contractOwner].ownerTasks;
+            contractCount = contractCount + _storage.accounts[participants[i]].auditParticipantTasks.length;
+        }
+
+        address[] memory participantTasks = new address[](contractCount);
+        for (uint256 i = 0; i < participants.length; i++) {
+            // return _storage.accounts[contractOwner].ownerTasks;
+            for(uint256 idx = 0; idx < _storage.accounts[participants[i]].auditParticipantTasks.length; idx++){
+                participantTasks[i] = _storage.accounts[participants[i]].auditParticipantTasks[idx];
+            }
+        }
+        return participantTasks;
+    }
+
 
     function getTaskContractsCustomer(address contractOwner)
     public
@@ -185,6 +381,15 @@ contract TaskDataFacet  {
     {
         TaskStorage storage _storage = LibTasks.taskStorage();
         return _storage.accounts[participant].participantTasks;
+    }
+
+    function getTaskContractsAuditor(address participant)
+    public
+    view
+    returns (address[] memory)
+    {
+        TaskStorage storage _storage = LibTasks.taskStorage();
+        return _storage.accounts[participant].auditParticipantTasks;
     }
 
     function getTasksData(address[] calldata taskContracts)

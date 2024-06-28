@@ -11,7 +11,7 @@ const network = "polygon.goerli";
 
 const witnetAddresses = require("witnet-solidity-bridge/migrations/witnet.addresses")[ecosystem][network];
 
-console.log(witnetAddresses)
+// console.log(witnetAddresses)
 
 let contractAddresses;
 

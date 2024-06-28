@@ -17,6 +17,7 @@ import "../facets/TokenFacet.sol";
 
 
 library LibChat {
+    bool public constant contractLibChat = true;
     event Logs(address contractAdr, string message);
 
     // function appStorage() internal pure returns (TaskStorage storage ds) {

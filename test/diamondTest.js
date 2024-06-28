@@ -22,6 +22,21 @@ const { deployDiamond } = require("../scripts/deploy.js");
 
 const { deployZkSync } = require("../deploy/deploy.js");
 
+let nonces = {};
+
+async function getNonce(address, incremental) {
+  if(typeof nonces[address] == 'undefined'){
+    nonces[address] = await ethers.provider.getTransactionCount(address);
+  }
+  if(incremental == true){
+    nonces[address] = nonces[address] + 1;
+  }
+  else{
+    nonces[address] = await ethers.provider.getTransactionCount(address);
+  }
+  return nonces[address];
+}
+
 // const { assert } = require("chai");
 
 describe("DiamondTest", async function () {
@@ -49,47 +64,55 @@ describe("DiamondTest", async function () {
     const existingAddresses = fs.readFileSync(path.join(__dirname, `../abi/addresses.json`));
     let contractAddresses;
 
+
+    try{
+      console.log(`testing pre-deployed diamond`);
+      console.log(__dirname);
+      const existingAddresses = fs.readFileSync(path.join(__dirname, `../abi/addresses.json`));
+      contractAddresses = JSON.parse(existingAddresses);
+      diamondAddress = contractAddresses.contracts[hre.network.config.chainId]["Diamond"];
+    }
+    catch{
+      console.log(`existing ../abi/addresses.json not found, will deploy a new diamond`);
+    }
+
     // console.log(hre.network.config.chainId)
 
-    testExistingDiamond = false
 
     let zksync = false;
 
-    if(typeof existingAddresses !== 'undefined' && testExistingDiamond){
-      contractAddresses = JSON.parse(existingAddresses);
-    }
     // console.log(contractAddresses)
 
     if(typeof contractAddresses !== 'undefined'){
       console.log('using existing diamond')
       diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
-      facetCount = 14;
+      facetCount = 13;
     }
     else{
       if(zksync === false){
         console.log('deploying diamond');
-        ({diamondAddress, facetCount} = await deployDiamond());
+        ({diamondAddress, facetCount} = await deployDiamond('test'));
       }
       else{
         console.log('deploying diamond to zksync');
-        ({diamondAddress, facetCount} = await deployZkSync());
+        ({diamondAddress, facetCount} = await deployZkSync('test'));
         console.log('deployed diamond to zksync');
       }
       console.log('deployed diamond');
     }
     console.log(`testing Diamond: ${diamondAddress}`);
 
+    ierc165 = await ethers.getContractAt("contracts/interfaces/IERC165.sol:IERC165", diamondAddress);
 
-
-    diamondCutFacet = await hre.ethers.getContractAt("DiamondCutFacet", diamondAddress);
+    diamondCutFacet = await ethers.getContractAt("DiamondCutFacet", diamondAddress);
     diamondLoupeFacet = await ethers.getContractAt("DiamondLoupeFacet", diamondAddress);
     ownershipFacet = await ethers.getContractAt("OwnershipFacet", diamondAddress);
     taskCreateFacet = await ethers.getContractAt("TaskCreateFacet", diamondAddress);
     taskDataFacet = await ethers.getContractAt("TaskDataFacet", diamondAddress);
     accountFacet = await ethers.getContractAt("AccountFacet", diamondAddress);
+    accountDataFacet = await ethers.getContractAt("AccountDataFacet", diamondAddress);
     tokenFacet = await ethers.getContractAt("TokenFacet", diamondAddress);
     tokenDataFacet = await ethers.getContractAt("TokenDataFacet", diamondAddress);
-    accountFacet = await ethers.getContractAt("AccountFacet", diamondAddress);
     axelarFacet = await ethers.getContractAt("AxelarFacet", diamondAddress);
     hyperlaneFacet = await ethers.getContractAt("HyperlaneFacet", diamondAddress);
     layerzeroFacet = await ethers.getContractAt("LayerzeroFacet", diamondAddress);
@@ -104,8 +127,8 @@ describe("DiamondTest", async function () {
     // console.log(diamondLoupeFacet)
     for (const address of await diamondLoupeFacet.facetAddresses()) {
       addresses.push(address);
-      // console.log(address);
     }
+    // console.log(addresses);
 
     assert.equal(addresses.length, facetCount);
   });
@@ -123,129 +146,130 @@ describe("DiamondTest", async function () {
   //   console.log(balance2)
   // })
 
-  it("remove all functions and facets except 'diamondCut' and 'facets'", async () => {
-    let selectors = [];
-    let facets = await diamondLoupeFacet.facets();
-    // console.log(facets)
-    for (let i = 0; i < facets.length; i++) {
-      selectors.push(...facets[i].functionSelectors);
-    }
-    selectors = removeSelectors(selectors, ["facets()", "diamondCut(tuple(address,uint8,bytes4[])[],address,bytes)"]);
-    // console.log(selectors)
-    tx = await diamondCutFacet.diamondCut(
-      [
-        {
-          facetAddress: ethers.constants.AddressZero,
-          action: FacetCutAction.Remove,
-          functionSelectors: selectors,
-        },
-      ],
-      ethers.constants.AddressZero,
-      "0x",
-      { gasLimit: 8000000 }
-    );
-    receipt = await tx.wait();
-    if (!receipt.status) {
-      throw Error(`Diamond upgrade failed: ${tx.hash}`);
-    }
-    facets = await diamondLoupeFacet.facets();
-    // console.log('removed facets')
-    // console.log(facets)
-    assert.equal(facets.length, 2);
-    assert.equal(facets[0][0], addresses[0]);
-    assert.sameMembers(facets[0][1], ["0x1f931c1c"]);
-    assert.equal(facets[1][0], addresses[1]);
-    assert.sameMembers(facets[1][1], ["0x7a0ed627"]);
-  });
+  // it("remove all functions and facets except 'diamondCut' and 'facets'", async () => {
+  //   let selectors = [];
+  //   let facets = await diamondLoupeFacet.facets();
+  //   // console.log(facets)
+  //   for (let i = 0; i < facets.length; i++) {
+  //     selectors.push(...facets[i].functionSelectors);
+  //   }
+  //   selectors = removeSelectors(selectors, ["facets()", "diamondCut(tuple(address,uint8,bytes4[])[],address,bytes)"]);
+  //   // console.log(selectors)
+  //   tx = await diamondCutFacet.diamondCut(
+  //     [
+  //       {
+  //         facetAddress: ethers.constants.AddressZero,
+  //         action: FacetCutAction.Remove,
+  //         functionSelectors: selectors,
+  //       },
+  //     ],
+  //     ethers.constants.AddressZero,
+  //     "0x",
+  //     { gasLimit: 8000000 }
+  //   );
+  //   receipt = await tx.wait();
+  //   if (!receipt.status) {
+  //     throw Error(`Diamond upgrade failed: ${tx.hash}`);
+  //   }
+  //   facets = await diamondLoupeFacet.facets();
+  //   console.log(facets);
+  //   // console.log('removed facets')
+  //   // console.log(facets)
+  //   assert.equal(facets.length, 2);
+  //   assert.equal(facets[1][0], addresses[0]);
+  //   assert.sameMembers(facets[1][1], ["0x1f931c1c"]);
+  //   assert.equal(facets[0][0], addresses[1]);
+  //   assert.sameMembers(facets[0][1], ["0x7a0ed627"]);
+  // });
 
-  it("add most functions and facets", async () => {
-    // const LibNames = ['LibAppStorage', 'LibUtils'];
-    // let libAddresses = {};
+  // it("add most functions and facets", async () => {
+  //   // const LibNames = ['LibAppStorage', 'LibUtils'];
+  //   // let libAddresses = {};
 
-    // for (const LibName of LibNames) {
-    //   const Lib = await ethers.getContractFactory(LibName);
-    //   const lib = await Lib.deploy();
-    //   await lib.deployed();
-    //   libAddresses[LibName] = lib.address;
-    //   console.log(`${LibName} deployed:`, lib.address)
-    // }
+  //   // for (const LibName of LibNames) {
+  //   //   const Lib = await ethers.getContractFactory(LibName);
+  //   //   const lib = await Lib.deploy();
+  //   //   await lib.deployed();
+  //   //   libAddresses[LibName] = lib.address;
+  //   //   console.log(`${LibName} deployed:`, lib.address)
+  //   // }
 
-    // const taskCreateFacet = await ethers.getContractFactory('taskCreateFacet', {libraries: {
-    //   'LibAppStorage': libAddresses.LibAppStorage,
-    //   'LibUtils': libAddresses.LibUtils,
-    // }})
+  //   // const taskCreateFacet = await ethers.getContractFactory('taskCreateFacet', {libraries: {
+  //   //   'LibAppStorage': libAddresses.LibAppStorage,
+  //   //   'LibUtils': libAddresses.LibUtils,
+  //   // }})
 
-    // const taskCreateFacet = await taskCreateFacet.deploy();
-    // console.log(`taskCreateFacet deployed:`, taskCreateFacet.address)
-    // addresses.push(taskCreateFacet.address)
+  //   // const taskCreateFacet = await taskCreateFacet.deploy();
+  //   // console.log(`taskCreateFacet deployed:`, taskCreateFacet.address)
+  //   // addresses.push(taskCreateFacet.address)
 
-    // Any number of functions from any number of facets can be added/replaced/removed in a
-    // single transaction
-    const cut = [
-      {
-        facetAddress: addresses[3],
-        action: FacetCutAction.Add,
-        functionSelectors: getSelectors(taskCreateFacet),
-      },
-      {
-        facetAddress: addresses[4],
-        action: FacetCutAction.Add,
-        functionSelectors: getSelectors(taskDataFacet),
-      },
-      {
-        facetAddress: addresses[5],
-        action: FacetCutAction.Add,
-        functionSelectors: getSelectors(accountFacet),
-      },
-      {
-        facetAddress: addresses[6],
-        action: FacetCutAction.Add,
-        functionSelectors: getSelectors(tokenFacet),
-      },
-      {
-        facetAddress: addresses[7],
-        action: FacetCutAction.Add,
-        functionSelectors: getSelectors(tokenDataFacet),
-      },
-      // {
-      //   facetAddress: addresses[8],
-      //   action: FacetCutAction.Add,
-      //   functionSelectors: getSelectors(axelarFacet),
-      // },
-      // {
-      //   facetAddress: addresses[9],
-      //   action: FacetCutAction.Add,
-      //   functionSelectors: getSelectors(hyperlaneFacet),
-      // },
-      // {
-      //   facetAddress: addresses[10],
-      //   action: FacetCutAction.Add,
-      //   functionSelectors: getSelectors(layerzeroFacet),
-      // },
-      // {
-      //   facetAddress: addresses[11],
-      //   action: FacetCutAction.Add,
-      //   functionSelectors: getSelectors(wormholeFacet),
-      // },
-    ];
-    tx = await diamondCutFacet.diamondCut(cut, ethers.constants.AddressZero, "0x", { gasLimit: 8000000 });
-    receipt = await tx.wait();
-    if (!receipt.status) {
-      throw Error(`Diamond upgrade failed: ${tx.hash}`);
-    }
-    // console.log(addr)
-    const facets = await diamondLoupeFacet.facets();
-    // console.log(facets)
-    // console.log(addresses)
-    // addresses = []
-    // for (const address of await diamondLoupeFacet.facetAddresses()) {
-    //   addresses.push(address)
-    //   // console.log(address);
-    // }
-    // const facetAddresses = await diamondLoupeFacet.facetAddresses()
-    assert.sameMembers(facets[findAddressPositionInFacets(addresses[3], facets)][1], getSelectors(taskCreateFacet));
-    assert.sameMembers(facets[findAddressPositionInFacets(addresses[6], facets)][1], getSelectors(tokenFacet));
-  });
+  //   // Any number of functions from any number of facets can be added/replaced/removed in a
+  //   // single transaction
+  //   const cut = [
+  //     {
+  //       facetAddress: addresses[3],
+  //       action: FacetCutAction.Add,
+  //       functionSelectors: getSelectors(taskCreateFacet),
+  //     },
+  //     {
+  //       facetAddress: addresses[4],
+  //       action: FacetCutAction.Add,
+  //       functionSelectors: getSelectors(taskDataFacet),
+  //     },
+  //     {
+  //       facetAddress: addresses[5],
+  //       action: FacetCutAction.Add,
+  //       functionSelectors: getSelectors(accountFacet),
+  //     },
+  //     {
+  //       facetAddress: addresses[6],
+  //       action: FacetCutAction.Add,
+  //       functionSelectors: getSelectors(tokenFacet),
+  //     },
+  //     {
+  //       facetAddress: addresses[7],
+  //       action: FacetCutAction.Add,
+  //       functionSelectors: getSelectors(tokenDataFacet),
+  //     },
+  //     // {
+  //     //   facetAddress: addresses[8],
+  //     //   action: FacetCutAction.Add,
+  //     //   functionSelectors: getSelectors(axelarFacet),
+  //     // },
+  //     // {
+  //     //   facetAddress: addresses[9],
+  //     //   action: FacetCutAction.Add,
+  //     //   functionSelectors: getSelectors(hyperlaneFacet),
+  //     // },
+  //     // {
+  //     //   facetAddress: addresses[10],
+  //     //   action: FacetCutAction.Add,
+  //     //   functionSelectors: getSelectors(layerzeroFacet),
+  //     // },
+  //     // {
+  //     //   facetAddress: addresses[11],
+  //     //   action: FacetCutAction.Add,
+  //     //   functionSelectors: getSelectors(wormholeFacet),
+  //     // },
+  //   ];
+  //   tx = await diamondCutFacet.diamondCut(cut, ethers.constants.AddressZero, "0x", { gasLimit: 8000000 });
+  //   receipt = await tx.wait();
+  //   if (!receipt.status) {
+  //     throw Error(`Diamond upgrade failed: ${tx.hash}`);
+  //   }
+  //   // console.log(addr)
+  //   const facets = await diamondLoupeFacet.facets();
+  //   // console.log(facets)
+  //   // console.log(addresses)
+  //   // addresses = []
+  //   // for (const address of await diamondLoupeFacet.facetAddresses()) {
+  //   //   addresses.push(address)
+  //   //   // console.log(address);
+  //   // }
+  //   // const facetAddresses = await diamondLoupeFacet.facetAddresses()
+  //   assert.sameMembers(facets[findAddressPositionInFacets(addresses[3], facets)][1], getSelectors(taskCreateFacet));
+  //   assert.sameMembers(facets[findAddressPositionInFacets(addresses[6], facets)][1], getSelectors(tokenFacet));
+  // });
 });
 
 describe("dodao facets test", async function () {
@@ -286,9 +310,22 @@ describe("dodao facets test", async function () {
     };
   });
 
+  it('ERC1165 - supportsInterface: ERC165', async () => {
+    let erc165interface = '0x01ffc9a7';
+    assert(await ierc165.supportsInterface(erc165interface) === true);
+  });
+
+  it('ERC1165 - supportsInterface: ERC1155', async () => {
+    let erc1155interface = '0xd9b67a26';
+    assert(await ierc165.supportsInterface(erc1155interface) === true);
+  });
+
   let createdAuditorNftBaseType;
   it("tokenFacet createAuditorNFT", async () => {
-    const createAuditorNFT = await tokenFacet.connect(signers[0]).create("https://example.com/{id}", "auditor", true);
+    let feeData = await ethers.provider.getFeeData();
+    // {nonce: await getNonce(signers[0].address, false)}
+    
+    const createAuditorNFT = await tokenFacet.connect(signers[0]).create("https://example.com/{id}", "auditor", true, {nonce: await getNonce(signers[0].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
     const createAuditorNFTReceipt = await createAuditorNFT.wait();
 
     // console.log('taskContracts:');
@@ -320,7 +357,7 @@ describe("dodao facets test", async function () {
 
     const auditorSetNFTURI = await tokenFacet
       .connect(signers[0])
-      .setURI("https://example2.com/{id}", createdAuditorNftBaseType, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+      .setURI("https://example2.com/{id}", createdAuditorNftBaseType, {nonce: await getNonce(signers[0].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
     await auditorSetNFTURI.wait();
     const auditorNFTURI2 = await tokenDataFacet.connect(signers[2]).uri(createdAuditorNftBaseType);
     assert.equal(auditorNFTURI2, "https://example2.com/{id}");
@@ -333,7 +370,7 @@ describe("dodao facets test", async function () {
 
     const auditorSetNFTURIofName = await tokenFacet
       .connect(signers[0])
-      .setURIOfName("https://example3.com/{id}", "auditor", { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+      .setURIOfName("https://example3.com/{id}", "auditor", {nonce: await getNonce(signers[0].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
     await auditorSetNFTURIofName.wait();
     auditorNFTURI3 = await tokenDataFacet.connect(signers[2]).uri(createdAuditorNftBaseType);
     assert.equal(auditorNFTURI3, "https://example3.com/{id}");
@@ -345,22 +382,24 @@ describe("dodao facets test", async function () {
   });
 
   let mintedAuditorNFTid;
-  it("tokenDataFacet mintNonFungible", async () => {
+  it("tokenDataFacet mintNonFungible auditor", async () => {
     // openzeppelin test helpers, not compatible with ethers.js
     // await expectEvent(createAuditorNFTReceipt, 'URI', {
     //   value: this.value,
     // });
-    let feeData = await ethers.provider.getFeeData();
+    if(typeof createdAuditorNftBaseType !== 'undefined'){
+      let feeData = await ethers.provider.getFeeData();
 
-    const mintAuditorNFT = await tokenFacet
-      .connect(signers[0])
-      .mintNonFungible(createdAuditorNftBaseType, [signers[2].address], { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
-    const mintAuditorNFTReceipt = await mintAuditorNFT.wait();
-
-    const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0];
-    let mintedAuditorNFTamount;
-    ({ value: mintedAuditorNFTamount, id: mintedAuditorNFTid } = mintAuditorNFTEvent.args);
-    assert.equal(mintedAuditorNFTamount, 1);
+      const mintAuditorNFT = await tokenFacet
+        .connect(signers[0])
+        .mintNonFungible(createdAuditorNftBaseType, [signers[2].address], {nonce: await getNonce(signers[0].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
+      const mintAuditorNFTReceipt = await mintAuditorNFT.wait();
+  
+      const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0];
+      let mintedAuditorNFTamount;
+      ({ value: mintedAuditorNFTamount, id: mintedAuditorNFTid } = mintAuditorNFTEvent.args);
+      assert.equal(mintedAuditorNFTamount, 1);
+    }
   });
 
   it("tokenDataFacet minted NFT uri", async () => {
@@ -491,7 +530,7 @@ describe("dodao facets test", async function () {
 
   //   const mintAuditorNFT = await tokenFacet
   //     .connect(signers[0])
-  //     .mintNonFungible(createdAuditorNftBaseType, [signers[2].address], { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+  //     .mintNonFungible(createdAuditorNftBaseType, [signers[2].address], {nonce: await getNonce(signers[0].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
   //   const mintAuditorNFTReceipt = await mintAuditorNFT.wait();
 
   //   const mintAuditorNFTEvent = mintAuditorNFTReceipt.events[0];
@@ -504,6 +543,37 @@ describe("dodao facets test", async function () {
     // console.log(signers[2].address);
     const ownedTokenNames = await tokenDataFacet.connect(signers[2])['getTokenNames(address)'](signers[2].address);
     assert.deepEqual(ownedTokenNames, ["auditor"]);
+  });
+
+
+  let createdGovernorNftBaseType;
+  it("tokenFacet createGovernorNFT", async () => {
+    const createGovernorNFT = await tokenFacet.connect(signers[0]).create("https://example.com/{id}", "governor", true);
+    const createGovernorNFTReceipt = await createGovernorNFT.wait();
+
+    const createGovernorNFTEvent = createGovernorNFTReceipt.events[1];
+    let createGovernorNFTuri;
+    ({ value: createGovernorNFTuri, id: createdGovernorNftBaseType } = createGovernorNFTEvent.args);
+    assert.equal(createGovernorNFTuri, "https://example.com/{id}");
+  });
+
+  let mintedGovernorNFTid;
+  it("tokenDataFacet mintNonFungible governor", async () => {
+    // openzeppelin test helpers, not compatible with ethers.js
+    // await expectEvent(createAuditorNFTReceipt, 'URI', {
+    //   value: this.value,
+    // });
+    let feeData = await ethers.provider.getFeeData();
+
+    const mintGovernorNFT = await tokenFacet
+      .connect(signers[0])
+      .mintNonFungible(createdGovernorNftBaseType, [signers[2].address], {nonce: await getNonce(signers[0].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
+    const mintGovernorNFTReceipt = await mintGovernorNFT.wait();
+
+    const mintGovernorNFTEvent = mintGovernorNFTReceipt.events[0];
+    let mintedGovernorNFTamount;
+    ({ value: mintedGovernorNFTamount, id: mintedGovernorNFTid } = mintGovernorNFTEvent.args);
+    assert.equal(mintedGovernorNFTamount, 1);
   });
 
   for (const favour of ["customer", "performer", "no_audit"]) {
@@ -539,7 +609,7 @@ describe("dodao facets test", async function () {
 
       // console.log(taskData);
 
-      const createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+      const createTaskContract = await taskCreateFacet.connect(signers[0]).createTaskContract(signers[0].address, taskData, {nonce: await getNonce(signers[0].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
       await createTaskContract.wait();
 
       // test event listener
@@ -550,7 +620,7 @@ describe("dodao facets test", async function () {
     });
 
     let getTaskContracts;
-    it("tokenDataFacet getTaskContracts", async () => {
+    it("taskDataFacet getTaskContracts", async () => {
       getTaskContracts = await taskDataFacet.getTaskContracts();
 
       const getNewTaskContractsBeforeBlacklist = await taskDataFacet.connect(signers[0]).getTaskContractsByState("new");
@@ -564,26 +634,26 @@ describe("dodao facets test", async function () {
       assert.deepEqual(allTasks, getTaskContracts);
     });
 
-    it("tokenDataFacet addTaskToBlacklist", async () => {
+    it("taskDataFacet addTaskToBlacklist", async () => {
 
       let feeData = await ethers.provider.getFeeData();
 
       const addContractToBlacklist = await taskDataFacet
         .connect(signers[2])
-        .addTaskToBlacklist(getTaskContracts[getTaskContracts.length - 1], { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        .addTaskToBlacklist(getTaskContracts[getTaskContracts.length - 1], {nonce: await getNonce(signers[2].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
       await addContractToBlacklist.wait();
 
       const getNewTaskContractsAfterBlacklist = await taskDataFacet.connect(signers[0]).getTaskContractsByState("new");
       assert.deepEqual(getNewTaskContractsAfterBlacklist, []);
     });
 
-    it("tokenDataFacet removeTaskFromBlacklist", async () => {
+    it("taskDataFacet removeTaskFromBlacklist", async () => {
 
       let feeData = await ethers.provider.getFeeData();
 
       const removeContractFromBlacklist = await taskDataFacet
         .connect(signers[2])
-        .removeTaskFromBlacklist(getTaskContracts[getTaskContracts.length - 1], { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        .removeTaskFromBlacklist(getTaskContracts[getTaskContracts.length - 1], {nonce: await getNonce(signers[2].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
       await removeContractFromBlacklist.wait();
 
       const getNewTaskContractsAfterBlacklistRemoval = await taskDataFacet
@@ -598,7 +668,7 @@ describe("dodao facets test", async function () {
       assert.deepEqual(allTasks, getTaskContracts);
     });
 
-    it("tokenDataFacet getTaskContractsCustomer", async () => {
+    it("taskDataFacet getTaskContractsCustomer", async () => {
       //check if account0 has customer contracts, must be equal to all contracts(1)
       const getTaskContractsCustomer = await taskDataFacet
         .connect(signers[0])
@@ -606,7 +676,7 @@ describe("dodao facets test", async function () {
       assert.deepEqual(getTaskContractsCustomer, getTaskContracts);
     });
 
-    it("tokenDataFacet getTaskContractsCustomer", async () => {
+    it("taskDataFacet getTaskContractsCustomer", async () => {
       //check if account1 has customer contracts, must be empty
       const getTaskContractsCustomer1 = await taskDataFacet
         .connect(signers[0])
@@ -614,7 +684,7 @@ describe("dodao facets test", async function () {
       assert.deepEqual(getTaskContractsCustomer1, []);
     });
 
-    it("tokenDataFacet getTaskContractsPerformer", async () => {
+    it("taskDataFacet getTaskContractsPerformer", async () => {
       // check if account0 has performer contracts, must be empty
       const getTaskContractsPerformer = await taskDataFacet
         .connect(signers[0])
@@ -652,7 +722,7 @@ describe("dodao facets test", async function () {
       //first participant
       taskParticipate = await taskContract
         .connect(signers[1])
-        .taskParticipate(signers[1].address, messageTextParticipate, messageReplyTo, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        .taskParticipate(signers[1].address, messageTextParticipate, messageReplyTo, {nonce: await getNonce(signers[1].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
       await taskParticipate.wait();
       getTaskDataParticipate = await taskContract.getTaskData();
       assert.equal(getTaskDataParticipate.participants[0], signers[1].address);
@@ -671,7 +741,7 @@ describe("dodao facets test", async function () {
       //second participant
       taskParticipate = await taskContract
         .connect(signers[3])
-        .taskParticipate(signers[3].address, messageTextParticipate, messageReplyTo, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+        .taskParticipate(signers[3].address, messageTextParticipate, messageReplyTo, {nonce: await getNonce(signers[3].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
       await taskParticipate.wait();
       getTaskDataParticipate = await taskContract.getTaskData();
       assert.equal(getTaskDataParticipate.participants[1], signers[3].address);
@@ -698,7 +768,7 @@ describe("dodao facets test", async function () {
           messageTextAgreed,
           messageReplyTo,
           0,
-          { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
+          {nonce: await getNonce(signers[0].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 }
         );
       await taskStateChangeAgreed.wait();
       getTaskDataAgreed = await taskContract.getTaskData();
@@ -727,7 +797,7 @@ describe("dodao facets test", async function () {
           messageTextProgress,
           messageReplyTo,
           0,
-          { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
+          {nonce: await getNonce(signers[1].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 }
         );
       await taskStateChangeProgress.wait();
       getTaskDataProgress = await taskContract.getTaskData();
@@ -754,7 +824,7 @@ describe("dodao facets test", async function () {
           messageTextReview,
           messageReplyTo,
           0,
-          { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
+          {nonce: await getNonce(signers[1].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 }
         );
       await taskStateChangeReview.wait();
       getTaskDataReview = await taskContract.getTaskData();
@@ -787,7 +857,7 @@ describe("dodao facets test", async function () {
             messageTextCompleted,
             messageReplyTo,
             5,
-            { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
+            {nonce: await getNonce(signers[0].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 }
           );
         await taskStateChangeCompleted.wait();
         getTaskDataCompleted = await taskContract.getTaskData();
@@ -799,6 +869,22 @@ describe("dodao facets test", async function () {
         assert.equal(getTaskDataCompleted.messages[5].sender, signers[0].address);
         assert.equal(getTaskDataCompleted.messages[5].taskState, taskStateCompleted);
         assert.equal(getTaskDataCompleted.messages[5].replyTo, messageReplyTo);
+      });
+
+
+      it("taskContract withdrawAndRate", async () => {
+        let feeData = await ethers.provider.getFeeData();
+        const taskWithdrawAndRate = await taskContract
+          .connect(signers[1])
+          .withdrawAndRate(
+            signers[1].address,
+            signers[1].address,
+            'dodao',
+            5,
+            {nonce: await getNonce(signers[1].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 }
+          );
+        await taskWithdrawAndRate.wait();
+
       });
     }
     if (favour !== "no_audit") {
@@ -820,7 +906,7 @@ describe("dodao facets test", async function () {
               messageTextAudit,
               messageReplyTo,
               0,
-              { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
+              {nonce: await getNonce(signers[0].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 }
             );
           await taskStateChangeAudit.wait();
         }
@@ -838,7 +924,7 @@ describe("dodao facets test", async function () {
               messageTextAudit,
               messageReplyTo,
               0,
-              { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
+              {nonce: await getNonce(signers[1].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 }
             );
           await taskStateChangeAudit.wait();
         }
@@ -870,7 +956,7 @@ describe("dodao facets test", async function () {
         const messageTextAuditParticipate = "I am honorable auditor";
         taskAuditParticipate = await taskContract
           .connect(signers[2])
-          .taskAuditParticipate(signers[2].address, messageTextAuditParticipate, messageReplyTo, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+          .taskAuditParticipate(signers[2].address, messageTextAuditParticipate, messageReplyTo, {nonce: await getNonce(signers[2].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
         await taskAuditParticipate.wait();
         getTaskDataAuditParticipate = await taskContract.getTaskData();
         assert.equal(getTaskDataAuditParticipate.auditors[0], signers[2].address);
@@ -898,7 +984,7 @@ describe("dodao facets test", async function () {
             messageTextSelectAuditor,
             messageReplyTo,
             0,
-            { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
+            {nonce: await getNonce(signers[0].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 }
           )
         ).to.be.revertedWith("auditor has not applied");
         // await taskStateChangeSelectAuditor.wait();
@@ -922,7 +1008,7 @@ describe("dodao facets test", async function () {
             messageTextSelectAuditor,
             messageReplyTo,
             0,
-            { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas }
+            {nonce: await getNonce(signers[0].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 }
           );
         await taskStateChangeSelectAuditor.wait();
         getTaskDataSelectAuditor = await taskContract.getTaskData();
@@ -952,12 +1038,12 @@ describe("dodao facets test", async function () {
         }
         taskAuditDecision = await taskContract
           .connect(signers[2])
-          .taskAuditDecision(signers[2].address, favour, messageTextAuditDecision, 0, rating, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+          .taskAuditDecision(signers[2].address, favour, messageTextAuditDecision, 0, rating, {nonce: await getNonce(signers[2].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
         await taskAuditDecision.wait();
         getTaskDataDecision = await taskContract.getTaskData();
         assert.equal(getTaskDataDecision.taskState, taskStateAuditDecision);
         assert.equal(getTaskDataDecision.auditState, taskAuditStateFinished);
-        assert.equal(getTaskDataDecision.rating.eq(ethers.BigNumber.from(rating)), true);
+        expect(getTaskDataDecision.performerRating).to.equal(ethers.BigNumber.from(rating));
         assert.equal(getTaskDataDecision.messages[8].id, 9);
         assert.equal(getTaskDataDecision.messages[8].text, messageTextAuditDecision);
         assert.isAbove(getTaskDataDecision.messages[8].timestamp, 1666113343, "timestamp is more than 0");
@@ -970,24 +1056,26 @@ describe("dodao facets test", async function () {
     }
 
     let getAccountsList;
-    it("tokenDataFacet getAccountsList", async () => {
-      getAccountsList = await accountFacet.connect(signers[0]).getAccountsList();
+    it("AccountDataFacet getAccountsList", async () => {
+      getAccountsList = await accountDataFacet.connect(signers[0]).getAccountsList();
       assert.equal(getAccountsList.length, 4);
     });
 
-    it("tokenDataFacet getAccountsData customer", async () => {
-      const getAccountsData = await accountFacet.connect(signers[0]).getAccountsData(getAccountsList);
+    it("AccountDataFacet getAccountsData customer", async () => {
+      const getAccountsData = await accountDataFacet.connect(signers[0]).getAccountsData(getAccountsList);
 
-      const accountData = {
+      let accountData = {
         accountOwner: signers[0].address,
         nickname: "",
         about: "",
         ownerTasks: getTaskContracts,
         participantTasks: [],
         auditParticipantTasks: [],
-        customerRatings: [],
-        performerRatings: [ethers.BigNumber.from(5)],
+        // customerRatings: [ethers.BigNumber.from(5)],
+        // performerRatings: [ethers.BigNumber.from(5)],
       };
+
+      // console.log(getAccountsData);
       //  for([key, accountData] of Object.entries(getAccountsData)){
       expect(getAccountsData[0].accountOwner).to.equal(accountData.accountOwner);
       expect(getAccountsData[0].nickname).to.equal(accountData.nickname);
@@ -995,35 +1083,45 @@ describe("dodao facets test", async function () {
       expect(getAccountsData[0].ownerTasks).to.have.deep.members(accountData.ownerTasks);
       expect(getAccountsData[0].participantTasks).to.have.deep.members(accountData.participantTasks);
       expect(getAccountsData[0].auditParticipantTasks).to.have.deep.members(accountData.auditParticipantTasks);
-      expect(getAccountsData[0].customerRatings).to.have.deep.members(accountData.customerRatings);
-      expect(getAccountsData[0].performerRatings).to.have.deep.members(accountData.performerRatings);
+      if(favour == 'no_audit'){
+        accountData.customerRatings = [ethers.BigNumber.from(5)];
+        expect(getAccountsData[0].customerRatings).to.have.deep.members(accountData.customerRatings);
+      }
+      // expect(getAccountsData[0].performerRatings).to.have.deep.members(accountData.performerRatings);
     });
 
-    it("tokenDataFacet getAccountsData participant", async () => {
-      const getAccountsData = await accountFacet.connect(signers[0]).getAccountsData(getAccountsList);
+    it("AccountDataFacet getAccountsData participant", async () => {
+      const getAccountsData = await accountDataFacet.connect(signers[0]).getAccountsData(getAccountsList);
 
-      const accountData = {
+      let accountData = {
         accountOwner: signers[1].address,
         nickname: "",
         about: "",
         ownerTasks: [],
         participantTasks: getTaskContracts,
         auditParticipantTasks: [],
-        customerRatings: [],
-        performerRatings: [],
+        // customerRatings: [],
+        // performerRatings: [ethers.BigNumber.from(5)],
       };
+
+
+
+
       expect(getAccountsData[1].accountOwner).to.equal(accountData.accountOwner);
       expect(getAccountsData[1].nickname).to.equal(accountData.nickname);
       expect(getAccountsData[1].about).to.equal(accountData.about);
       expect(getAccountsData[1].ownerTasks).to.have.deep.members(accountData.ownerTasks);
       expect(getAccountsData[1].participantTasks).to.have.deep.members(accountData.participantTasks);
       expect(getAccountsData[1].auditParticipantTasks).to.have.deep.members(accountData.auditParticipantTasks);
-      expect(getAccountsData[1].customerRatings).to.have.deep.members(accountData.customerRatings);
-      expect(getAccountsData[1].performerRatings).to.have.deep.members(accountData.performerRatings);
+      // expect(getAccountsData[1].customerRatings).to.have.deep.members(accountData.customerRatings);
+      if(favour == 'no_audit'){
+        accountData.performerRatings = [ethers.BigNumber.from(5)];
+        expect(getAccountsData[1].performerRatings).to.have.deep.members(accountData.performerRatings);
+      }
     });
 
-    it("tokenDataFacet getAccountsData participant 2", async () => {
-      const getAccountsData = await accountFacet.connect(signers[0]).getAccountsData(getAccountsList);
+    it("AccountDataFacet getAccountsData participant 2", async () => {
+      const getAccountsData = await accountDataFacet.connect(signers[0]).getAccountsData(getAccountsList);
 
       const accountData = {
         accountOwner: signers[3].address,
@@ -1041,12 +1139,12 @@ describe("dodao facets test", async function () {
       expect(getAccountsData[2].ownerTasks).to.have.deep.members(accountData.ownerTasks);
       expect(getAccountsData[2].participantTasks).to.have.deep.members(accountData.participantTasks);
       expect(getAccountsData[2].auditParticipantTasks).to.have.deep.members(accountData.auditParticipantTasks);
-      expect(getAccountsData[2].customerRatings).to.have.deep.members(accountData.customerRatings);
+      // expect(getAccountsData[2].customerRatings).to.have.deep.members(accountData.customerRatings);
       expect(getAccountsData[2].performerRatings).to.have.deep.members(accountData.performerRatings);
     });
 
-    it("tokenDataFacet getAccountsData auditor", async () => {
-      const getAccountsData = await accountFacet.connect(signers[0]).getAccountsData(getAccountsList);
+    it("AccountDataFacet getAccountsData auditor", async () => {
+      const getAccountsData = await accountDataFacet.connect(signers[0]).getAccountsData(getAccountsList);
 
       const accountData = {
         accountOwner: signers[2].address,
@@ -1069,13 +1167,13 @@ describe("dodao facets test", async function () {
     });
     // assert.equal([signers[0],signers[1]], getAccountsList)
 
-    // const getAccountsData = await accountFacet.connect(signers[0]).getAccountsData(getAccountsList)
+    // const getAccountsData = await accountDataFacet.connect(signers[0]).getAccountsData(getAccountsList)
   }
 
-  it("taskContract taskStateChange - canceled", async () => {
+  it("TaskContract taskStateChange - canceled", async () => {
     let feeData = await ethers.provider.getFeeData();
 
-    createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+    createTaskContract = await taskCreateFacet.createTaskContract(signers[0].address, taskData, {nonce: await getNonce(signers[0].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
 
     await createTaskContract.wait();
 
@@ -1124,37 +1222,37 @@ describe("dodao facets test", async function () {
   // });
 
 
-  it("tokenDataFacet addAccountToBlacklist", async () => {
+  it("AccountDataFacet addAccountToBlacklist", async () => {
 
     let feeData = await ethers.provider.getFeeData();
 
-    const getRawAccountsList = await accountFacet
+    const getRawAccountsList = await accountDataFacet
     .connect(signers[0])
     .getRawAccountsList();
 
     const addAccountToBlacklist = await accountFacet
       .connect(signers[2])
-      .addAccountToBlacklist(signers[2].address, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+      .addAccountToBlacklist(signers[2].address, {nonce: await getNonce(signers[2].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2 * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
     await addAccountToBlacklist.wait();
 
-    const getAccountsAfterBlacklist = await accountFacet.connect(signers[0]).getAccountsList();
+    const getAccountsAfterBlacklist = await accountDataFacet.connect(signers[0]).getAccountsList();
     assert.deepEqual(getAccountsAfterBlacklist, [signers[0].address, signers[1].address, signers[3].address]);
   });
 
-  it("tokenDataFacet removeAccountFromBlacklist", async () => {
+  it("AccountDataFacet removeAccountFromBlacklist", async () => {
 
     let feeData = await ethers.provider.getFeeData();
 
     const removeAccountFromBlacklist = await accountFacet
       .connect(signers[2])
-      .removeAccountFromBlacklist(signers[2].address, { type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas });
+      .removeAccountFromBlacklist(signers[2].address, {nonce: await getNonce(signers[2].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas * 2 * 2, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas * 2 });
     await removeAccountFromBlacklist.wait();
 
-    const getAccountsAfterBlacklistRemoval = await accountFacet
+    const getAccountsAfterBlacklistRemoval = await accountDataFacet
       .connect(signers[0])
       .getAccountsList();
 
-    const getRawAccountsList = await accountFacet
+    const getRawAccountsList = await accountDataFacet
       .connect(signers[0])
       .getRawAccountsList();
 

@@ -43,7 +43,9 @@ contract TaskCreateFacet {
     payable
     returns (address)
     {
+
         TaskStorage storage _storage = LibTasks.taskStorage();
+        require(_storage.accountsBlacklistMapping[_sender] != true, 'account is blacklisted');
 
         InterchainStorage storage _storageInterchain = LibInterchain.interchainStorage();
         // address sender;

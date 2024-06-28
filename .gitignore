@@ -9,3 +9,13 @@ keys.json
 cache
 artifacts
 .env
+
+#dev
+merge.diff
+devcreatetasks.sh
+devmintnft.sh
+devpushtasks*.sh
+devtasksauto.sh
+merged-contracts-for-claude.sol.txt
+examples
+message_texts

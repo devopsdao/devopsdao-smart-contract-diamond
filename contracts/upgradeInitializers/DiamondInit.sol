@@ -24,6 +24,7 @@ import { ERC1155Metadata_URI } from "../interfaces/IERC1155Metadata.sol";
 // DiamondInit contract reusable accross upgrades, and can be used for multiple diamonds.
 
 contract DiamondInit {    
+    bool public constant contractDiamondInit = true;
 
     // You can add parameters to this function in order to pass in 
     // data to set your own state variables

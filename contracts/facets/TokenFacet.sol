@@ -6,6 +6,7 @@ import {LibDiamond} from "../libraries/LibDiamond.sol";
 import "../libraries/LibTokens.sol";
 import "../libraries/LibTokenData.sol";
 import "../facets/tokenstorage/ERC1155StorageFacet.sol";
+import "./TokenDataFacet.sol";
 import "../interfaces/IERC1155.sol";
 import "../interfaces/IERC1155TokenReceiver.sol";
 
@@ -37,6 +38,11 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
         uint256 _type,
         address[] calldata _to
     ) external {
+        string memory _name = TokenDataFacet(address(this)).getTokenName(_type);
+        if(keccak256(bytes(_name)) == keccak256(bytes('governor'))){
+            uint256 tokenBalance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'governor');
+            require(tokenBalance > 0, 'must hold Governor NFT to mint');
+        }
         LibTokens.mintNonFungible(_type, _to);
     }
 
@@ -44,6 +50,10 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
         string calldata _name,
         address[] calldata _to
     ) external {
+        if(keccak256(bytes(_name)) == keccak256(bytes('governor'))){
+            uint256 tokenBalance = TokenDataFacet(address(this)).balanceOfName(msg.sender, 'governor');
+            require(tokenBalance > 0, 'must hold Governor NFT to mint');
+        }
         LibTokens.mintNonFungibleByName(_name, _to);
     }
 
@@ -75,6 +85,12 @@ contract TokenFacet is ERC1155StorageFacet, IERC1155 {
         string calldata _name
     ) external {
         LibTokens.setURIOfName(_uri, _name);
+    }
+
+    function balance(
+        address account_
+    ) external view returns (uint256) {
+        return address(account_).balance;
     }
 
     function balanceOf(

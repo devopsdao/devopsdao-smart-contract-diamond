@@ -7,6 +7,7 @@ import "../../external/layerzero/interfaces/ILayerZeroReceiver.sol";
 import "../TaskCreateFacet.sol";
 
 contract LayerzeroFacet is ILayerZeroReceiver {
+    bool public constant contractLayerzeroFacet = true;
     InterchainStorage internal _storage;
 
     event ReceiveMsg(
@@ -214,7 +215,7 @@ contract LayerzeroFacet is ILayerZeroReceiver {
         uint256 _rating
     );
 
-    event taskAuditDecisioning(
+    event TaskAuditDecisioning(
         address _sender,
         address _contractAddress,
         string _favour,
@@ -353,7 +354,7 @@ contract LayerzeroFacet is ILayerZeroReceiver {
                     funcPayload,
                     (address, address, string, string, uint256, uint256)
                 );
-            emit taskAuditDecisioning(
+            emit TaskAuditDecisioning(
                 _sender,
                 _contractAddress,
                 _favour,

@@ -13,6 +13,7 @@ import { LibDiamond } from "../libraries/LibDiamond.sol";
 error AddressAndCalldataLengthDoNotMatch(uint256 _addressesLength, uint256 _calldataLength);
 
 contract DiamondMultiInit {    
+    bool public constant contractDiamondMultiInit = true;
 
     // This function is provided in the third parameter of the `diamondCut` function.
     // The `diamondCut` function executes this function to execute multiple initializer functions for a single upgrade.

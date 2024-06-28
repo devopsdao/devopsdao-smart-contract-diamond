@@ -140,6 +140,12 @@ const dodaoFacets = [
     name: 'AccountFacet',
   },
   {
+    name: 'AccountDataFacet',
+  },
+  {
+    name: 'AccountDataFacet',
+  },
+  {
     name: 'TokenFacet',
     libraries: [
       'LibTokens',
@@ -151,6 +157,9 @@ const dodaoFacets = [
     libraries: [
       'LibTokenData',
     ]
+  },
+  {
+    name: 'QuestboardFacet',
   },
   // {
   //   name: 'InterchainFacet',
@@ -191,7 +200,7 @@ const {
 let deployer;
 
 
-async function deployZkSync(){
+async function deployZkSync(mode = 'test'){
  
 
   console.log(`Running deploy script`);
@@ -218,7 +227,7 @@ async function deployZkSync(){
   // await depositHandle.wait();
 
   // console.log(`deposited ${depositAmount}`)
-  await deployDiamond();
+  await deployDiamond('deploy');
 
 }
 
@@ -726,7 +735,7 @@ async function deployFacets(FacetInits, libAddresses){
 // and properly handle errors.
 function run(){
   if (require.main === module) {
-    deployDiamond()
+    deployDiamond('deploy')
       .then(() => process.exit(0))
       .catch(error => {
         console.error(error)
@@ -736,7 +745,7 @@ function run(){
 }
 
 if (require.main === module) {
-  deployDiamond()
+  deployDiamond('deploy')
     .then(() => process.exit(0))
     .catch(error => {
       console.error(error)

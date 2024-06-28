@@ -47,7 +47,7 @@ contract ERC1155MockReceiver is ERC1155TokenReceiver, CommonConstants {
     }
 
     // ERC165 interface support
-    function supportsInterface(bytes4 interfaceID) external view returns (bool) {
+    function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
         return  interfaceID == 0x01ffc9a7 ||    // ERC165
                 interfaceID == 0x4e2312e0;      // ERC1155_ACCEPTED ^ ERC1155_BATCH_ACCEPTED;
     }

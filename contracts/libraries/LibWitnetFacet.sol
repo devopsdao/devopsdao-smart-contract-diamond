@@ -5,6 +5,7 @@ import "witnet-solidity-bridge/contracts/WitnetRequestBoard.sol";
 import "witnet-solidity-bridge/contracts/requests/WitnetRequest.sol";
 
 library LibWitnetFacet {
+    bool public constant contractLibWitnetFacet = true;
 
     // using Witnet for Witnet.Result;
     // using WitnetCBOR for WitnetCBOR.CBOR;

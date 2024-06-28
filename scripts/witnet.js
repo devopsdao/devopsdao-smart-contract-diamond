@@ -691,7 +691,7 @@ async function configureWitnet() {
   console.log("updating WitnetFacet with NewSlaHash");
   console.log(requestHashes.hashes[hre.network.config.chainId].NewSlaHash);
 
-  await fs.writeFile(path.join(__dirname, `../abi/witnet-requesthashes.json`), JSON.stringify(requestHashes));
+  await fs.writeFile(path.join(__dirname, `../abi/witnet-requesthashes.json`), JSON.stringify(requestHashes, null, 2));
 
 
 

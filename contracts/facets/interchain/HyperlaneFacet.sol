@@ -7,6 +7,7 @@ import '../../external/hyperlane/interfaces/IOutbox.sol';
 import "../TaskCreateFacet.sol";
 
 contract HyperlaneFacet {
+    bool public constant contractHyperlaneFacet = true;
     InterchainStorage internal _storage;
 
     event SentMessage(uint32 destinationDomain, address destinationAddress, bytes payload);
@@ -176,7 +177,7 @@ contract HyperlaneFacet {
         uint256 _rating
     );
 
-    event taskAuditDecisioning(
+    event TaskAuditDecisioning(
         address _sender,
         address _contractAddress,
         string _favour,
@@ -296,7 +297,7 @@ contract HyperlaneFacet {
                     funcPayload,
                     (address, address, string, string, uint256, uint256)
                 );
-            emit taskAuditDecisioning(
+            emit TaskAuditDecisioning(
                 _sender,
                 _contractAddress,
                 _favour,

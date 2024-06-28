@@ -26,6 +26,7 @@ import {IERC721} from "../interfaces/IERC721.sol";
 
 
 library LibWithdraw {
+    bool public constant contractLibWithdraw = true;
     event Logs(address contractAdr, string message);
 
     function appStorage() internal pure returns (TaskStorage storage ds) {
@@ -60,6 +61,7 @@ library LibWithdraw {
     function withdraw(address _sender, address payable _addressToSend, string memory _chain, uint256 _rating) external{
         
         TaskStorage storage _storage = taskStorage();
+        require(_storage.accountsBlacklistMapping[_sender] != true, 'account is blacklisted');
 
         InterchainStorage storage _storageInterchain = LibInterchain.interchainStorage();
         if(msg.sender != _storageInterchain.configAxelar.sourceAddress 
@@ -74,11 +76,36 @@ library LibWithdraw {
         if(_sender != _storage.task.participant && _sender != _storage.task.contractOwner){
             revert('not a participant or contractOwner');
         }
+        require(_rating >= 0 && _rating <= 5, "Rating must be between 0 and 5");
 
         // address gateway_ = 0x5769D84DD62a6fD969856c75c7D321b84d455929;
 
         if (keccak256(bytes(_storage.task.taskState)) == keccak256(bytes(TASK_STATE_CANCELED)) && _sender == _storage.task.contractOwner) {
             _storage.task.contractOwner.transfer(address(this).balance);
+            if (address(this).balance!= 0) {
+                emit Logs(address(this), string.concat("withdrawing ETH to Ethereum address: ",LibUtils.addressToString(_storage.task.participant)));
+                _storage.task.contractOwner.transfer(address(this).balance);
+            }
+
+            for (uint i = 0; i < _storage.task.tokenContracts.length; i++){
+                if(_storage.task.tokenContracts[i] == address(0x0)){
+                    //do nothing if it's a native token
+                }
+                else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(0x4e2312e0)){
+                    IERC1155(_storage.task.tokenContracts[i]).safeBatchTransferFrom(address(this), _storage.task.contractOwner, _storage.task.tokenIds[i], _storage.task.tokenAmounts[i], bytes(''));
+                }
+                else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(type(IERC20).interfaceId)){
+                    IERC20(_storage.task.tokenContracts[i]).transferFrom(address(this), _storage.task.contractOwner, _storage.task.tokenAmounts[i][0]);
+                }
+                else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(type(IERC721).interfaceId)){
+                    for (uint id = 0; id < _storage.task.tokenIds[i].length; id++){
+                        IERC721(_storage.task.tokenContracts[i]).safeTransferFrom(address(this), _storage.task.contractOwner, _storage.task.tokenIds[i][id]);
+                    }
+                }
+            }
+
+            // IAccountFacet(_storage.task.contractParent).addCustomerRating(_sender, address(this), _rating);
+
         } else if (
             keccak256(bytes(_storage.task.taskState)) == keccak256(bytes(TASK_STATE_COMPLETED)) && _sender == _storage.task.participant
         ) {
@@ -93,19 +120,21 @@ library LibWithdraw {
                     //do nothing if it's a native token
                 }
                 else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(0x4e2312e0)){
-                    IERC1155(_storage.task.tokenContracts[i]).safeBatchTransferFrom(address(this), _addressToSend, _storage.task.tokenIds[i], _storage.task.tokenAmounts[i], bytes(''));
+                    IERC1155(_storage.task.tokenContracts[i]).safeBatchTransferFrom(address(this), _storage.task.participant, _storage.task.tokenIds[i], _storage.task.tokenAmounts[i], bytes(''));
                 }
                 else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(type(IERC20).interfaceId)){
-                    IERC20(_storage.task.tokenContracts[i]).transferFrom(address(this), _addressToSend, _storage.task.tokenAmounts[i][0]);
+                    IERC20(_storage.task.tokenContracts[i]).transferFrom(address(this), _storage.task.participant, _storage.task.tokenAmounts[i][0]);
                 }
                 else if(IERC165(_storage.task.tokenContracts[i]).supportsInterface(type(IERC721).interfaceId)){
                     for (uint id = 0; id < _storage.task.tokenIds[i].length; id++){
-                        IERC721(_storage.task.tokenContracts[i]).safeTransferFrom(address(this), _addressToSend, _storage.task.tokenIds[i][id]);
+                        IERC721(_storage.task.tokenContracts[i]).safeTransferFrom(address(this), _storage.task.participant, _storage.task.tokenIds[i][id]);
                     }
                 }
             }
 
-            IAccountFacet(_storage.task.contractParent).addCustomerRating(_sender, address(this), _rating);
+            _storage.task.customerRating = _rating;
+
+            IAccountFacet(_storage.task.contractParent).addCustomerRating(_storage.task.contractOwner, address(this), _rating);
 
 
             // for(uint i; i < _storage.task.symbols.length; i++) {

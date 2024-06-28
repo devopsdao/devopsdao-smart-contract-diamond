@@ -16,6 +16,7 @@ import { IERC1155 } from "../interfaces/IERC1155.sol";
 
 
 contract DiamondLoupeFacet is IDiamondLoupe, IERC165 {
+    bool public constant contractDiamondLoupeFacet = true;
     // Diamond Loupe Functions
     ////////////////////////////////////////////////////////////////////
     /// These functions are expected to be called frequently by tools.

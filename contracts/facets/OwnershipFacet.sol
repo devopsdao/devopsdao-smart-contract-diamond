@@ -10,6 +10,7 @@ import { LibDiamond } from "../libraries/LibDiamond.sol";
 import { IERC173 } from "../interfaces/IERC173.sol";
 
 contract OwnershipFacet is IERC173 {
+    bool public constant contractOwnershipFacet = true;
     function transferOwnership(address _newOwner) external override {
         LibDiamond.enforceIsContractOwner();
         LibDiamond.setContractOwner(_newOwner);
