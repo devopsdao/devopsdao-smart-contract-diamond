@@ -207,25 +207,61 @@ contract TaskDataFacet  {
     }
 
 
+    // function getTaskContractsByStateLimit(string calldata _taskState, uint256 offset, uint256 limit, uint256 fromTimestamp)
+    // external
+    // view
+    // returns (address[] memory)
+    // {
+    //     TaskStorage storage _storage = LibTasks.taskStorage();
+    //     // uint256 taskCount = 0;
+    //     // for (uint256 i = offset; i < _storage.taskContracts.length && i < offset + limit; i++) {
+    //     //     Task memory task = TaskContract(payable(_storage.taskContracts[i])).getTaskData();
+    //     //     if(keccak256(bytes(task.taskState)) == keccak256(bytes(_taskState))
+    //     //     && ((keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false) 
+    //     //     || keccak256(bytes(task.taskState)) != keccak256(bytes(TASK_STATE_NEW)))
+    //     //     ){
+    //     //         taskCount++;
+    //     //     }
+    //     // }
+    //     address[] memory taskContracts = new address[](_storage.taskContracts.length );
+    //     uint256 foundTaskId = 0;
+    //     for (uint256 i = offset; i < _storage.taskContracts.length && i < offset + limit; i++) {
+    //         Task memory task = TaskContract(payable(_storage.taskContracts[i])).getTaskData();
+    //         Message memory lastMessage;
+    //         if(task.messages.length > 0){
+    //             lastMessage = task.messages[task.messages.length - 1];
+    //         }
+            
+    //         if(keccak256(bytes(task.taskState)) == keccak256(bytes(_taskState))
+    //         && ((keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false) 
+    //         || keccak256(bytes(task.taskState)) != keccak256(bytes(TASK_STATE_NEW)))
+    //         && ((task.messages.length > 0 && lastMessage.timestamp > fromTimestamp) || (task.messages.length == 0 && task.createTime > fromTimestamp))
+    //         ){
+    //             taskContracts[foundTaskId] = _storage.taskContracts[i];
+    //             foundTaskId++;
+    //         }
+    //     }
+    //     assembly {
+    //         mstore(taskContracts, foundTaskId)
+    //     }
+    //     return taskContracts;
+    // }
+
+
     function getTaskContractsByStateLimit(string calldata _taskState, uint256 offset, uint256 limit, uint256 fromTimestamp)
     external
     view
     returns (address[] memory)
     {
         TaskStorage storage _storage = LibTasks.taskStorage();
-        // uint256 taskCount = 0;
-        // for (uint256 i = offset; i < _storage.taskContracts.length && i < offset + limit; i++) {
-        //     Task memory task = TaskContract(payable(_storage.taskContracts[i])).getTaskData();
-        //     if(keccak256(bytes(task.taskState)) == keccak256(bytes(_taskState))
-        //     && ((keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false) 
-        //     || keccak256(bytes(task.taskState)) != keccak256(bytes(TASK_STATE_NEW)))
-        //     ){
-        //         taskCount++;
-        //     }
-        // }
-        address[] memory taskContracts = new address[](_storage.taskContracts.length );
+        address[] memory taskContracts = new address[](limit);
         uint256 foundTaskId = 0;
-        for (uint256 i = offset; i < _storage.taskContracts.length && i < offset + limit; i++) {
+        
+        // Calculate the starting index from the end of the array
+        uint256 startIndex = _storage.taskContracts.length > offset ? _storage.taskContracts.length - offset - 1 : 0;
+        uint256 endIndex = startIndex >= limit ? startIndex - limit + 1 : 0;
+        
+        for (uint256 i = startIndex; i >= endIndex && foundTaskId < limit; i--) {
             Task memory task = TaskContract(payable(_storage.taskContracts[i])).getTaskData();
             Message memory lastMessage;
             if(task.messages.length > 0){
@@ -233,17 +269,22 @@ contract TaskDataFacet  {
             }
             
             if(keccak256(bytes(task.taskState)) == keccak256(bytes(_taskState))
-            && ((keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false) 
-            || keccak256(bytes(task.taskState)) != keccak256(bytes(TASK_STATE_NEW)))
-            && ((task.messages.length > 0 && lastMessage.timestamp > fromTimestamp) || (task.messages.length == 0 && task.createTime > fromTimestamp))
+                && ((keccak256(bytes(task.taskState)) == keccak256(bytes(TASK_STATE_NEW)) && _storage.taskContractsBlacklistMapping[_storage.taskContracts[i]] == false)
+                || keccak256(bytes(task.taskState)) != keccak256(bytes(TASK_STATE_NEW)))
+                && ((task.messages.length > 0 && lastMessage.timestamp > fromTimestamp) || (task.messages.length == 0 && task.createTime > fromTimestamp))
             ){
                 taskContracts[foundTaskId] = _storage.taskContracts[i];
                 foundTaskId++;
             }
+            
+            if (i == 0) break; // Prevent underflow
         }
+        
+        // Resize the array to match the number of found tasks
         assembly {
             mstore(taskContracts, foundTaskId)
         }
+        
         return taskContracts;
     }
 

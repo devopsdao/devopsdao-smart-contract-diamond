@@ -1,0 +1,18 @@
+diff --git a/test/diamondTest.js b/test/diamondTest.js
+index c50908b..e671fa0 100644
+--- a/test/diamondTest.js
++++ b/test/diamondTest.js
+@@ -117,6 +117,13 @@ describe("DiamondTest", async function () {
+     hyperlaneFacet = await ethers.getContractAt("HyperlaneFacet", diamondAddress);
+     layerzeroFacet = await ethers.getContractAt("LayerzeroFacet", diamondAddress);
+     wormholeFacet = await ethers.getContractAt("WormholeFacet", diamondAddress);
++    fd
++    asdfsac
++    vczx
++    vcxz
++    v
++    saf
++    va
+ 
+     signers = await ethers.getSigners();
+     // console.log(signers);

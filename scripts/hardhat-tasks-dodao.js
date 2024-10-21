@@ -363,15 +363,26 @@ task("devGetTasksData", "get task data for a list of task contracts")
     console.log(JSON.stringify(accountStats, null, 2));
   });
 
-  task("devGetAccountCount", "Get account count")
+  task("devGetRawAccountCount", "Get account count")
   .setAction(async (taskArgs, hre) => {
     const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
 
-    const accountFacet = await ethers.getContractAt('AccountFacet', diamondAddress);
+    const accountDataFacet = await ethers.getContractAt('AccountDataFacet', diamondAddress);
 
-    const accountCount = await accountFacet.getRawAccountsCount();
+    const accountCount = await accountDataFacet.getRawAccountsCount();
 
     console.log(JSON.stringify(accountCount, null, 2));
+  });
+
+  task("devGetAccountsList", "Get accounts list")
+  .setAction(async (taskArgs, hre) => {
+    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
+
+    const accountDataFacet = await ethers.getContractAt('AccountDataFacet', diamondAddress);
+
+    const accountList = await accountDataFacet.getAccountsList();
+
+    console.log(JSON.stringify(accountList, null, 2));
   });
 
 task("devGetTaskStatsWithTimestamps", "Get task stats with timestamps")

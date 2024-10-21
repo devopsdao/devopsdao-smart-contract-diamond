@@ -469,27 +469,27 @@ library LibTasks {
             IAccountFacet(_storage.task.contractParent).addPerformerRating(_storage.task.participant, address(this), _rating);
 
 
-            for (uint i = 0; i < _storage.task.tokenContracts.length; i++){
+            for (uint i = 0; i < _storage.task.tokenContracts.length; i++) {
                 string[] memory tokenNames;
-                if(_storage.task.tokenContracts[i] == address(0x0)){
-                    //do nothing if it's a native token
+                uint256[] memory tokenAmounts;
+
+                if (_storage.task.tokenContracts[i] == address(0x0)) {
+                    // Handle native token (ETH)
                     tokenNames = new string[](1);
                     tokenNames[0] = 'ETH';
-                }
-                else{
-                    tokenNames = new string[](_storage.task.tokenIds[i].length);
+                    tokenAmounts = new uint256[](1);
+                    tokenAmounts[0] = _storage.task.tokenAmounts[i][0];
+                } else {
+                    // Handle ERC20, ERC721, or ERC1155 tokens
                     tokenNames = ITokenDataFacet(_storage.task.contractParent).getTokenNames(_storage.task.tokenIds[i]);
+                    tokenAmounts = _storage.task.tokenAmounts[i];
                 }
-                // Add spent and earned tokens for performer
 
-                // IAccountFacet(_storage.task.contractParent).addPerformerSpentTokens(_storage.task.participant, tokenNames, _storage.task.tokenAmounts[i]);
-                IAccountFacet(_storage.task.contractParent).addPerformerEarnedTokens(_storage.task.participant, tokenNames, _storage.task.tokenAmounts[i]);
-                // Add spent and earned tokens for customer
-                // for (uint id = 0; id < _storage.task.tokenIds[i].length; id++){
-                    // string memory tokenName = ITokenDataFacet(_storage.task.contractParent).getTokenName(_storage.task.tokenIds[i]);
-                IAccountFacet(_storage.task.contractParent).addCustomerSpentTokens(_storage.task.contractOwner, tokenNames, _storage.task.tokenAmounts[i]);
-                // IAccountFacet(_storage.task.contractParent).addCustomerEarnedTokens(_storage.task.contractOwner, tokenNames, _storage.task.tokenAmounts[i]);
-                // }
+                // Add earned tokens for performer
+                IAccountFacet(_storage.task.contractParent).addPerformerEarnedTokens(_storage.task.participant, tokenNames, tokenAmounts);
+
+                // Add spent tokens for customer
+                IAccountFacet(_storage.task.contractParent).addCustomerSpentTokens(_storage.task.contractOwner, tokenNames, tokenAmounts);
             }
 
 

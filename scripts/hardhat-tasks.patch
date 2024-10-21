@@ -1,0 +1,938 @@
+diff --git a/scripts/hardhat-tasks-diamond.js b/scripts/hardhat-tasks-diamond.js
+index 1234567..2345678 100644
+--- a/scripts/hardhat-tasks-diamond.js
++++ b/scripts/hardhat-tasks-diamond.js
+@@ -1,6 +1,5 @@
+ const Arweave = require('arweave');
+ const fsSync = require('fs');
+-const fs = require('fs/promises');
+ const path = require('node:path');
+ 
+ let contractAddresses;
+@@ -8,7 +7,7 @@ let contractAddresses;
+ (async () => {
+   const contractAddressesJson = await fs.readFile(path.join(__dirname, `../abi/addresses.json`));
+   if (typeof contractAddressesJson !== 'undefined') {
+-    contractAddresses = JSON.parse(contractAddressesJson);
++    contractAddresses = JSON.parse(contractAddressesJson.toString());
+   } else {
+     console.log(`contract addresses file not found at ../abi/addresses.json`);
+   }
+@@ -16,7 +15,7 @@ let contractAddresses;
+ 
+ task("diamondLoupe-facets", "Get all facets and functions")
+   .setAction(async (taskArgs, hre) => {
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     const diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress);
+     const facets = await diamondLoupeFacet.facets();
+ 
+@@ -24,7 +23,7 @@ task("diamondLoupe-facets", "Get all facets and functions")
+     const deployedContractsJson = JSON.parse(await fs.readFile(path.join(__dirname, `../abi/deployed-contracts.json`), 'utf8'));
+     const deployedContracts = deployedContractsJson.deployArgs[hre.network.config.chainId];
+ 
+-    // Create a map of facet addresses to contract names
++    // Create a map of facet addresses to contract names
+     const facetAddressToName = {};
+     for (const contractName in deployedContracts) {
+       if (contractName !== 'Diamond') {
+@@ -33,7 +32,7 @@ task("diamondLoupe-facets", "Get all facets and functions")
+       }
+     }
+ 
+-    // Display facet information with contract names
++    // Display facet information with contract names
+     for (const facet of facets) {
+       const facetAddress = facet.facetAddress.toLowerCase();
+       const contractName = facetAddressToName[facetAddress] || "Unknown";
+@@ -48,7 +47,7 @@ task("diamondLoupe-facets", "Get all facets and functions")
+ 
+ task("diamondLoupe-facetAddresses", "Get all facet addresses")
+   .setAction(async (taskArgs, hre) => {
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     const diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress);
+     const facetAddresses = await diamondLoupeFacet.facetAddresses();
+     console.log(facetAddresses);
+@@ -57,7 +56,7 @@ task("diamondLoupe-facetAddresses", "Get all facet addresses")
+ task("diamondLoupe-facetAddress", "Get facet address for function")
+   .addParam("func", "Function selector")  
+   .setAction(async (taskArgs, hre) => {
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     const diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress);
+     const facetAddress = await diamondLoupeFacet.facetAddress(taskArgs.func);
+     console.log(facetAddress);
+@@ -66,7 +65,7 @@ task("diamondLoupe-facetAddress", "Get facet address for function")
+ task("diamondLoupe-facetFunctionSelectors", "Get all selectors for facet")
+   .addParam("facet", "Facet address")
+   .setAction(async (taskArgs, hre) => {
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     const diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress);
+     const selectors = await diamondLoupeFacet.facetFunctionSelectors(taskArgs.facet);
+     console.log(selectors);
+@@ -77,7 +76,7 @@ task("diamondCut", "Upgrade diamond")
+   .addOptionalParam("initAddress", "Address of init contract")
+   .addOptionalParam("initData", "Init calldata")
+   .setAction(async (taskArgs, hre) => {
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     const signers = await ethers.getSigners();
+     const diamondCutFacet = await ethers.getContractAt('DiamondCutFacet', diamondAddress);
+ 
+@@ -87,12 +86,12 @@ task("diamondCut", "Upgrade diamond")
+ 
+     let facetCuts = JSON.parse(taskArgs.facetCuts);
+     
+-    let initAddress = ethers.constants.AddressZero;
++    let initAddress = ethers.constants.AddressZero;
+     if(taskArgs.initAddress !== undefined) {
+       initAddress = taskArgs.initAddress;
+     }
+ 
+-    let initData = "0x";
++    let initData = "0x";
+     if(taskArgs.initData !== undefined) {
+       initData = taskArgs.initData;
+     } 
+@@ -114,7 +113,7 @@ task("diamondCut", "Upgrade diamond")
+ task("diamondCut-removeAllFunctionsOfFacet", "Remove all functions of a specific facet")
+   .addParam("facetAddress", "The address of the facet to remove all functions from")
+   .setAction(async (taskArgs, hre) => {
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     const signers = await ethers.getSigners();
+     const diamondCutFacet = await ethers.getContractAt('DiamondCutFacet', diamondAddress);
+     const diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress);
+@@ -124,7 +123,7 @@ task("diamondCut-removeAllFunctionsOfFacet", "Remove all functions of a specific
+     }
+ 
+     const facetAddress = taskArgs.facetAddress;
+-
++
+     // Get all the function selectors of the facet
+     const selectors = await diamondLoupeFacet.facetFunctionSelectors(facetAddress);
+ 
+@@ -135,7 +134,7 @@ task("diamondCut-removeAllFunctionsOfFacet", "Remove all functions of a specific
+       console.log(`- ${selector} (${functionName})`);
+     }
+ 
+-    // Create the facet cut to remove all the selectors
++    // Create the facet cut to remove all the selectors
+     const facetCuts = [
+       {
+         facetAddress: ethers.constants.AddressZero,
+@@ -158,7 +157,7 @@ task("diamondCut-removeAllFunctionsOfFacet", "Remove all functions of a specific
+   
+   function getSelectors(abi, contractName) {
+     const selectors = {};
+-    for (const item of abi) {
++    for (const item of abi) {
+       if (item.type === 'function') {
+         const signature = `${item.name}(${item.inputs.map(input => input.type).join(',')})`;
+         const selector = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(signature)).slice(0, 10);
+@@ -176,7 +175,7 @@ task("diamondCut-removeAllFunctionsOfFacet", "Remove all functions of a specific
+     let jsonFiles = [];
+     const files = fsSync.readdirSync(dir);
+     for (const file of files) {
+-      const filePath = path.join(dir, file);
++      const filePath = path.join(dir, file);
+       const stat = fsSync.statSync(filePath);
+       if (stat.isDirectory()) {
+         jsonFiles = jsonFiles.concat(findJsonFiles(filePath));
+@@ -190,7 +189,7 @@ task("diamondCut-removeAllFunctionsOfFacet", "Remove all functions of a specific
+   task("calculateSelectors", "Calculate selectors for each contract ABI")
+     .setAction(async (taskArgs, hre) => {
+       const artifactsDir = path.join(__dirname, '../artifacts', 'contracts');
+-      const jsonFiles = findJsonFiles(artifactsDir);
++      const jsonFiles = findJsonFiles(artifactsDir);
+   
+       const contracts = {};
+   
+@@ -208,7 +207,7 @@ task("diamondCut-removeAllFunctionsOfFacet", "Remove all functions of a specific
+           output[contractName][functionName] = selector;
+         }
+       }
+-  
++  
+       console.log(JSON.stringify(output, null, 2));
+     });
+ 
+diff --git a/scripts/hardhat-tasks-dodao.js b/scripts/hardhat-tasks-dodao.js
+index 9876543..8765432 100644
+--- a/scripts/hardhat-tasks-dodao.js
++++ b/scripts/hardhat-tasks-dodao.js
+@@ -5,9 +5,9 @@ const path = require('node:path');
+ let contractAddresses;
+ 
+ (async () => {
+-  const contractAddressesJson = await fs.readFile(path.join(__dirname, `../abi/addresses.json`));
++  const contractAddressesJson = await fs.readFile(path.join(__dirname, '../abi/addresses.json'));
+   if (typeof contractAddressesJson !== 'undefined') {
+-    contractAddresses = JSON.parse(contractAddressesJson);
++    contractAddresses = JSON.parse(contractAddressesJson.toString());
+   } else {
+     console.log(`contract addresses file not found at ../abi/addresses.json`);
+   }
+@@ -28,7 +28,7 @@ function fromAscii(str, padding) {
+     const code = str.charCodeAt(i);
+     const n = code.toString(16);
+     hex += n.length < 2 ? '0' + n : n;
+-  }
++  }
+   return hex + '0'.repeat(padding * 2 - hex.length + 2);
+ }
+ 
+@@ -75,7 +75,7 @@ task("devCreateTask", "create a dodao task")
+   .addParam("tokens", "task reward symbols(DEV, aUSDC, NFT tokens)")
+   .addParam("amounts", "symbol amounts")
+   .setAction(async function (taskArguments, hre, runSuper) {
+-    const signers = await ethers.getSigners();
++    const signers = await ethers.getSigners();
+     const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
+     const taskCreateFacet = await ethers.getContractAt('TaskCreateFacet', diamondAddress);
+ 
+@@ -95,7 +95,7 @@ task("devCreateTask", "create a dodao task")
+         description: taskArguments.description,
+         repository: "",
+         tags: tags,
+-        tokenContracts: ["0x0000000000000000000000000000000000000000"],
++        tokenContracts: [ethers.constants.AddressZero],
+         tokenIds: [[0]],
+         tokenAmounts: [[0]],
+       };
+@@ -103,7 +103,7 @@ task("devCreateTask", "create a dodao task")
+       console.log(taskData);
+       console.log(`using Diamond: ${diamondAddress} and ${signers[account].address} account`);
+ 
+-      let feeData = await ethers.provider.getFeeData();
++      const feeData = await ethers.provider.getFeeData();
+       // console.log(feeData);
+       let gasMultiplier = 1;
+       let txSuccess = false;
+@@ -143,7 +143,7 @@ task("devTaskParticipate", "participate in a dodao task")
+   .addParam("message", "message text")
+   .setAction(async function (taskArguments, hre, runSuper) {
+     const signers = await ethers.getSigners();
+-    const taskContract = await ethers.getContractAt('TaskContract', taskArguments.taskcontract);
++    const taskContract = await ethers.getContractAt('TaskContract', taskArguments.taskContract);
+     const tx = await taskContract.connect(signers[taskArguments.account]).taskParticipate(signers[taskArguments.account].address, taskArguments.message, 0);
+     const receipt = await tx.wait();
+     const event = receipt.events[0];
+@@ -156,7 +156,7 @@ task("devTaskAuditParticipate", "participate in a dodao task audit")
+   .addParam("taskContract", "task contract")
+   .addParam("messagetext", "message text")
+   .setAction(async function (taskArguments, hre, runSuper) {
+-    const signers = await ethers.getSigners();
++    const signers = await ethers.getSigners();
+     const taskContract = await ethers.getContractAt('TaskContract', taskArguments.taskcontract);
+     const tx = await taskContract.connect(signers[taskArguments.account]).taskAuditParticipate(signers[taskArguments.account].address, taskArguments.messagetext, 0);
+     const receipt = await tx.wait();
+@@ -174,8 +174,8 @@ task("devTaskStateChange", "change dodao task state")
+   .addParam("messagetext", "message text")
+   .addOptionalParam("participant", "participant address")
+   .setAction(async function (taskArguments, hre, runSuper) {
+-    const signers = await ethers.getSigners();
+-    const participant = taskArguments.participant || '0x0000000000000000000000000000000000000000';
++    const signers = await ethers.getSigners();
++    const participant = taskArguments.participant || ethers.constants.AddressZero;
+     const taskContract = await ethers.getContractAt('TaskContract', taskArguments.taskcontract);
+ 
+     if (@@ -211,7 +211,7 @@ task("devTaskAuditDecision", "take dodao task audit decision")
+   .addParam("rating", "rating of the performer")
+   .setAction(async function (taskArguments, hre, runSuper) {
+     const signers = await ethers.getSigners();
+-    if (taskArguments.favour !== 'customer' && taskArguments.favour !== 'performer') {
++    if (!['customer', 'performer'].includes(taskArguments.favour)) {
+       console.log(`task audit can be settled either in customer or performer favour`);
+     } else {
+       const rating = taskArguments.rating || 0;
+@@ -231,7 +231,7 @@ task("devAddTaskToBlacklist", "add task")
+   .addParam("account", "account id")
+   .addParam("taskContract", "task contract")
+   .setAction(async function (taskArguments, hre, runSuper) {
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     const signers = await ethers.getSigners();
+     const taskContract = await ethers.getContractAt('TaskDataFacet', diamondAddress);
+     const tx = await taskContract.connect(signers[taskArguments.account]).addTaskToBlacklist(taskArguments.taskContract);
+@@ -242,10 +242,10 @@ task("devAddTaskToBlacklist", "add task")
+ task("devGetTaskContractsByState", "Get task contracts by state")
+   .addParam("taskState", "The task state to filter by")
+   .setAction(async (taskArgs, hre) => {
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     // console.log(`Calling ${diamondAddress}`);
+ 
+-    const taskContract = await ethers.getContractAt('TaskDataFacet', diamondAddress);
++    const taskDataFacet = await ethers.getContractAt('TaskDataFacet', diamondAddress);
+     const taskContractsByState = await taskContract.getTaskContractsByState(taskArgs.taskState);
+     console.log(taskContractsByState);
+   });
+@@ -255,10 +255,10 @@ task("devGetTaskContractsByStateLimit", "Get task contracts by state")
+   .addParam("offset", "Offet")
+   .addParam("limit", "Limit")
+   .setAction(async (taskArgs, hre) => {
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     // console.log(`Calling ${diamondAddress}`);
+ 
+-    const taskContract = await ethers.getContractAt('TaskDataFacet', diamondAddress);
++    const taskDataFacet = await ethers.getContractAt('TaskDataFacet', diamondAddress);
+     const taskContractsByState = await taskContract.getTaskContractsByStateLimit(taskArgs.taskState, taskArgs.offset, taskArgs.limit);
+     console.log(JSON.stringify(taskContractsByState, null, 4)); 
+   });
+@@ -269,10 +269,10 @@ task("devGetTaskContractsByStateLimitCount", "Get task contracts by state")
+   .addParam("offset", "Offet")
+   .addParam("limit", "Limit")
+   .setAction(async (taskArgs, hre) => {
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     // console.log(`Calling ${diamondAddress}`);
+ 
+-    const taskContract = await ethers.getContractAt('TaskDataFacet', diamondAddress);
++    const taskDataFacet = await ethers.getContractAt('TaskDataFacet', diamondAddress);
+     const taskContractsByState = await taskContract.getTaskContractsByStateLimit(taskArgs.taskState, taskArgs.offset, taskArgs.limit);
+     console.log(taskContractsByState.length);
+   });
+@@ -280,9 +280,9 @@ task("devGetTaskContractsByStateLimitCount", "Get task contracts by state")
+ task("devGetTaskContractsCustomer", "get task contracts for a customer")
+   .addParam("address", "customer address")
+   .setAction(async function (taskArguments, hre, runSuper) {
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     // console.log(`calling ${diamondAddress}`);
+-
++
+     const taskContract = await ethers.getContractAt('TaskDataFacet', diamondAddress);
+     const call = await taskContract.getTaskContractsCustomer(taskArguments.address);
+     console.log(call);
+@@ -292,10 +292,10 @@ task("devGetTaskContractsCustomer", "get task contracts for a customer")
+ task("devGetTaskContractsPerformer", "Get task contracts for a given performer")
+   .addParam("address", "The address of the performer")
+   .setAction(async (taskArgs, hre) => {
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     // console.log(`Calling ${diamondAddress}`);
+ 
+-    const taskContract = await ethers.getContractAt('TaskDataFacet', diamondAddress);
++    const taskDataFacet = await ethers.getContractAt('TaskDataFacet', diamondAddress);
+     const performerTaskContracts = await taskContract.getTaskContractsPerformer(taskArgs.address);
+     console.log(performerTaskContracts);
+   });
+@@ -303,10 +303,10 @@ task("devGetTaskContractsPerformer", "Get task contracts for a given performer")
+ 
+ task("devGetTaskContracts", "Get task contracts")
+ .setAction(async (taskArgs, hre) => {
+-  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+   // console.log(`Calling ${diamondAddress}`);
+ 
+-  const taskContract = await ethers.getContractAt('TaskDataFacet', diamondAddress);
++  const taskDataFacet = await ethers.getContractAt('TaskDataFacet', diamondAddress);
+   const taskContracts = await taskContract.getTaskContracts();
+   // console.log(taskContracts);
+   console.log(JSON.stringify(taskContracts, null, 4)); 
+@@ -314,10 +314,10 @@ task("devGetTaskContracts", "Get task contracts")
+ 
+ task("devGetTaskContractsCount", "Get task contracts count")
+ .setAction(async (taskArgs, hre) => {
+-  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+   // console.log(`Calling ${diamondAddress}`);
+ 
+-  const taskContract = await ethers.getContractAt('TaskDataFacet', diamondAddress);
++  const taskDataFacet = await ethers.getContractAt('TaskDataFacet', diamondAddress);
+   const taskContractsCount = await taskContract.getTaskContractsCount();
+   // console.log(taskContracts);
+   console.log(JSON.stringify(taskContractsCount, null, 4)); 
+@@ -325,10 +325,10 @@ task("devGetTaskContractsCount", "Get task contracts count")
+ 
+ task("devGetTaskContractsBlacklist", "Get blacklisted task contracts")
+ .setAction(async (taskArgs, hre) => {
+-  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+   // console.log(`Calling ${diamondAddress}`);
+ 
+-  const taskContract = await ethers.getContractAt('TaskDataFacet', diamondAddress);
++  const taskDataFacet = await ethers.getContractAt('TaskDataFacet', diamondAddress);
+   const blacklistedTaskContracts = await taskContract.getTaskContractsBlacklistMapping();
+   console.log(blacklistedTaskContracts);
+ });
+@@ -336,15 +336,15 @@ task("devGetTaskContractsBlacklist", "Get blacklisted task contracts")
+ task("devGetTasksData", "get task data for a list of task contracts")
+   .addParam("taskcontracts", "array of task contract addresses")
+   .setAction(async function (taskArguments, hre, runSuper) {
+-
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+ 
+     console.log(taskArguments.taskcontracts);
+     const taskContracts = JSON.parse(taskArguments.taskcontracts);
+     // console.log(`calling ${diamondAddress}`);
+ 
+-    const taskContract = await ethers.getContractAt('TaskDataFacet', diamondAddress);
+-    const tasksData = await taskContract.getTasksData(taskContracts);
++    const taskDataFacet = await ethers.getContractAt('TaskDataFacet', diamondAddress);
++    const tasksData = await taskDataFacet.getTasksData(taskContracts);
+     console.log(tasksData);
+   });
+ 
+@@ -352,15 +352,15 @@ task("devGetTasksData", "get task data for a list of task contracts")
+   task("devGetTasksDataCount", "get task data for a list of task contracts")
+   .addParam("taskcontracts", "array of task contract addresses")
+   .setAction(async function (taskArguments, hre, runSuper) {
+-
+-    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
++
++    const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+ 
+     console.log(taskArguments.taskcontracts);
+     const taskContracts = JSON.parse(taskArguments.taskcontracts);
+     // console.log(`calling ${diamondAddress}`);
+ 
+-    const taskContract = await ethers.getContractAt('TaskDataFacet', diamondAddress);
+-    const tasksData = await taskContract.getTasksData(taskContracts);
++    const taskDataFacet = await ethers.getContractAt('TaskDataFacet', diamondAddress);
++    const tasksData = await taskDataFacet.getTasksData(taskContracts);
+     console.log(tasksData.length);
+   });
+ 
+@@ -372,12 +372,12 @@ task("devGetTasksData", "get task data for a list of task contracts")
+     const taskStatsContract = await ethers.getContractAt('TaskStatsFacet', diamondAddress);
+ 
+     const accountStats = await taskStatsContract.getAccountStats(0, 100);
+-
++
+     console.log(JSON.stringify(accountStats, null, 2));
+   });
+ 
+   task("devGetAccountCount", "Get account count")
+-  .setAction(async (taskArgs, hre) => {
++  .setAction(async (_taskArgs, hre) => {
+     const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+ 
+     const accountFacet = await ethers.getContractAt('AccountFacet', diamondAddress);
+@@ -388,12 +388,12 @@ task("devGetTasksData", "get task data for a list of task contracts")
+   });
+ 
+ task("devGetTaskStatsWithTimestamps", "Get task stats with timestamps")
+-  .setAction(async (taskArgs, hre) => {
++  .setAction(async (_taskArgs, hre) => {
+     const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+ 
+     const taskStatsContract = await ethers.getContractAt('TaskStatsFacet', diamondAddress);
+ 
+-    const taskStats = await taskStatsContract.getTaskStatsWithTimestamps(0, 50);
++    const taskStats = await taskStatsContract.getTaskStatsWithTimestamps(0, 50);
+ 
+     console.log(JSON.stringify(taskStats, null, 2));
+   });
+@@ -401,7 +401,7 @@ task("devGetTaskStatsWithTimestamps", "Get task stats with timestamps")
+ task("devTokenGetBalanceOf", "get token balance")
+   .addParam("address", "customer address")
+   .addParam("id", "token ID")
+-  .setAction(async function (taskArguments, hre, runSuper) {
++  .setAction(async function (taskArguments, hre, _runSuper) {
+     const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     // console.log(`calling ${diamondAddress}`);
+ 
+@@ -419,7 +419,7 @@ task("devBalanceOfName", "Get the balance of an NFT by name for a given account"
+   .setAction(async (taskArgs, hre) => {
+     const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     // console.log(`Calling ${diamondAddress}`);
+-
++
+     const tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress);
+ 
+     const balance = await tokenDataFacet.balanceOfName(taskArgs.address, taskArgs.name);
+@@ -432,7 +432,7 @@ task("devTransferNFT", "send NFT")
+   .addParam("address", "destination address")
+   .addParam("id", "token id")
+   .addParam("amount", "amount")
+-  .setAction(async function (taskArguments, hre, runSuper) {
++  .setAction(async function (taskArguments, hre, _runSuper) {
+     const diamondAddress = contractAddresses.contracts[hre.network.config.chainId].Diamond;
+     // console.log(`calling ${diamondAddress}`);
+ 
+@@ -454,7 +454,7 @@ task("devWithdrawAndRate", "withdraw funds and rate the task")
+   .addParam("addressToSend", "address to send the funds")
+   .addParam("chain", "chain name or ID")
+   .addParam("rating", "rating for the task")
+-  .setAction(async function (taskArguments, hre, runSuper) {
++  .setAction(async function (taskArguments, hre, _runSuper) {
+     const signers = await ethers.getSigners();
+     const taskContract = await ethers.getContractAt('TaskContract', taskArguments.taskContract);
+ 
+@@ -477,7 +477,7 @@ task("devSendMessage", "Send a message for a task")
+   .addParam("messagetext", "The message text.addParam("messagetext", "The message text")
+   .addParam("replyto", "The ID of the message to reply to (0 for a new message)")
+   .addOptionalParam("to", "The address to send the message to (optional)")
+-  .setAction(async (taskArgs, hre, runSuper) => {
++  .setAction(async (taskArgs, hre, _runSuper) => {
+     const signers = await ethers.getSigners();
+-    const taskContract = await ethers.getContractAt('TaskContract', taskArgs.taskcontract);
++    const taskContract = await ethers.getContractAt('TaskContract', taskArgs.taskContract);
+ 
+     let tx;
+     if (taskArgs.to) {
+       tx = await taskContract.connect(signers[taskArgs.account]).sendMessage(
+         signers[taskArgs.account].address,
+         taskArgs.messagetext,
+-        taskArgs.replyto,
++        taskArgs.replyTo,
+         taskArgs.to
+       );
+     } else {
+       tx = await taskContract.connect(signers[taskArgs.account]).sendMessage(
+         signers[taskArgs.account].address,
+         taskArgs.messagetext,
+-        taskArgs.replyto
++        taskArgs.replyTo
+       );
+     }
+ 
+     const receipt = await tx.wait();
+     const event = receipt.events[0];
+     const { contractAdr, message, timestamp } = event.args;
+     console.log(`Updated task contract ${contractAdr}`);
+   });
+
+diff --git a/scripts/hardhat-tasks-nft.js b/scripts/hardhat-tasks-nft.js
+index abcdef0..bcdef01 100644
+--- a/scripts/hardhat-tasks-nft.js
++++ b/scripts/hardhat-tasks-nft.js
+@@ -1,23 +1,22 @@
+-// const { ethers } = require("hardhat");
+ const Arweave = require('arweave')
+ const fs = require('fs/promises')
+ const path = require('node:path');
+ 
+-
+-// async function main(){
+-
+-//     await mintNFTs();
+-
+-// }
+ let contractAddresses;
+ 
+ (async() => {
+-  const contractAddressesJson = await fs.readFile(path.join(__dirname, `../abi/addresses.json`));
+-  if(typeof contractAddressesJson !== 'undefined'){
+-    contractAddresses = JSON.parse(contractAddressesJson);
++  try {
++    const contractAddressesJson = await fs.readFile(path.join(__dirname, '../abi/addresses.json'));
++    if(typeof contractAddressesJson !== 'undefined'){
++      contractAddresses = JSON.parse(contractAddressesJson.toString());
++    }
++    else{
++      console.log(`contract addresses file not found at ../abi/addresses.json`)
++    }
+   }
+-  else{
+-    console.log(`contract addresses file not found at ../abi/addresses.json`)
++  catch (error) {
++    console.error('Error reading contract addresses:', error);
++    process.exit(1);
+ }
+ })()
+ 
+@@ -25,14 +24,14 @@ let contractAddresses;
+ let nonces = {};
+ 
+ async function getNonce(address, incremental) {
+-  if(typeof nonces[address] == 'undefined'){
++  if(typeof nonces[address] === 'undefined'){
+     nonces[address] = await ethers.provider.getTransactionCount(address);
+   }
+   let currentNonce = nonces[address];
+-  if(incremental == true){
++  if(incremental === true){
+     nonces[address] = currentNonce + 1;
+   }
+-  else{
++  else {
+     nonces[address] = await ethers.provider.getTransactionCount(address);
+   }
+   console.log(`current nonce: ${currentNonce}`)
+@@ -41,11 +40,11 @@ async function getNonce(address, incremental) {
+ 
+ 
+ async function createNFT(nfType){
+-  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
++  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId].Diamond;
+   console.log(`using Diamond: ${diamondAddress}`)
+ 
+   const metadataJSON = await fs.readFile(path.join(__dirname,`./metadata/${nfType}.json`), 'utf-8');
+-  let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
++  const tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+ 
+   // const metadataURI = await uploadMetadata(nfType)
+   const metadataURI = 'https://example.com'
+@@ -62,8 +61,8 @@ async function createNFT(nfType){
+ 
+ async function mintNFTs(account, nfType, receivers){
+     signers = await ethers.getSigners();
+-    const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
+-    console.log(`using Diamond: ${diamondAddress} and ${signers[account].address} account`)
++    const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId].Diamond;
++    console.log(`using Diamond: ${diamondAddress} and ${signers[account].address} account`);
+ 
+     // const metadataJSON = await fs.readFile(path.join(__dirname,`./metadata/${nfType}.json`), 'utf-8');
+     let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+@@ -74,9 +73,9 @@ async function mintNFTs(account, nfType, receivers){
+     // console.log(receivers)
+ 
+     //gasPrice: ethers.utils.parseUnits('10', 'gwei'), gasLimit: 5000000
+-    // const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, receivers, {nonce: await getNonce(signers[0].address, true), type: 2, maxFeePerGas: ethers.utils.parseUnits('10', 'gwei'), maxPriorityFeePerGas: ethers.utils.parseUnits('10', 'gwei') })
+-    let feeData = await ethers.provider.getFeeData();
+-    // console.log(feeData)
++    const feeData = await ethers.provider.getFeeData();
++    console.log('Fee data:', feeData);
++
+     let mintNFTReceipt;
+     let gasMultiplier = 1;
+     let txSuccess = false;
+@@ -84,8 +83,18 @@ async function mintNFTs(account, nfType, receivers){
+       try{
+         //your logic
+         console.log(`sending tx`)
+-        const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, [signers[account].address], {nonce: await getNonce(signers[account].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas+gasMultiplier, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas+gasMultiplier  })
+-        mintNFTReceipt = await mintNFT.wait()
++        const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(
++          baseType, 
++          [signers[account].address], 
++          {
++            nonce: await getNonce(signers[account].address, false), 
++            type: 2, 
++            maxFeePerGas: feeData.maxFeePerGas.add(gasMultiplier), 
++            maxPriorityFeePerGas: feeData.maxPriorityFeePerGas.add(gasMultiplier)
++          }
++        );
++        mintNFTReceipt = await mintNFT.wait();
++        console.log('Transaction receipt:', mintNFTReceipt);
+         txSuccess = true;
+       }catch(error){
+         console.log(error);
+@@ -94,31 +103,6 @@ async function mintNFTs(account, nfType, receivers){
+         continue;
+       }
+     }
+-
+-    // try {
+-    //   const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, [signers[account].address], {nonce: await getNonce(signers[account].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas  })
+-    //   mintNFTReceipt = await mintNFT.wait()
+-    // } catch (error) {
+-    //   console.log(error);
+-    //   if(error.message === 'already known'){
+-    //     console.log('resubmitting with a higher gas')
+-    //     gasMultiplier = gasMultiplier+1;
+-    //     try {
+-    //       const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, [signers[account].address], {nonce: await getNonce(signers[account].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas*gasMultiplier, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas*gasMultiplier  })
+-    //       mintNFTReceipt = await mintNFT.wait()
+-    //     } catch (error) {
+-    //       gasMultiplier = gasMultiplier+1;
+-    //       try {
+-    //         const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, [signers[account].address], {nonce: await getNonce(signers[account].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas*gasMultiplier, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas*gasMultiplier  })
+-    //         mintNFTReceipt = await mintNFT.wait()
+-    //       } catch (error) {
+-    //         gasMultiplier = gasMultiplier+1;
+-    //         const mintNFT = await tokenFacet.connect(signers[account]).mintNonFungible(baseType, [signers[account].address], {nonce: await getNonce(signers[account].address, false), type: 2, maxFeePerGas: feeData.maxFeePerGas*gasMultiplier, maxPriorityFeePerGas: feeData.maxPriorityFeePerGas*gasMultiplier  })
+-    //         mintNFTReceipt = await mintNFT.wait()
+-    //       }
+-    //     }
+-    //   }
+-    // }
+     // console.log(mintNFTReceipt)
+ 
+     if(typeof mintNFTReceipt !== 'undefined'){
+@@ -135,7 +119,7 @@ async function mintNFTs(account, nfType, receivers){
+ }
+ 
+ async function setURIOfName(metadataURI, nfType){
+-  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
++  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId].Diamond;
+   let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+   console.log(`setting URI for ${nfType} to ${metadataURI}`)
+   // const baseType = await tokenFacet.getTokenBaseType(nfType)
+@@ -148,7 +132,7 @@ async function setURIOfName(metadataURI, nfType){
+ }
+ 
+ async function safeBatchTransferFrom(from, to, nftIds, values, data){
+-  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
++  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId].Diamond;
+   let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+   // console.log(`getting balance of ${account} ${nftId}`)
+   // const baseType = await tokenFacet.getTokenBaseType(nfType)
+@@ -159,7 +143,7 @@ async function safeBatchTransferFrom(from, to, nftIds, values, data){
+ }
+ 
+ async function getCreatedTokenNames(){
+-  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
++  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId].Diamond;
+   let tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress)
+   // console.log(`getting balance of ${account} ${nftId}`)
+   // const baseType = await tokenFacet.getTokenBaseType(nfType)
+@@ -170,7 +154,7 @@ async function getCreatedTokenNames(){
+ }
+ 
+ async function balanceOf(account, nftId){
+-  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
++  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId].Diamond;
+   let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+   // console.log(`getting balance of ${account} ${nftId}`)
+   // const baseType = await tokenFacet.getTokenBaseType(nfType)
+@@ -181,7 +165,7 @@ async function balanceOf(account, nftId){
+ }
+ 
+ async function balanceOfName(account, name){
+-  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
++  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId].Diamond;
+   let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+   let tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress)
+ 
+@@ -194,7 +178,7 @@ async function balanceOfName(account, name){
+ }
+ 
+ async function totalSupplyOfName(account, name){
+-  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId]['Diamond'];
++  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId].Diamond;
+   let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+   let tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress)
+ 
+@@ -209,7 +193,7 @@ async function totalSupplyOfName(account, name){
+ 
+ 
+ async function balanceOfBatchName(accounts, names){
+-  const diamondAddress = contractAddresses.contracts[this.__hard-  const diamondAddress = contractAddresses.contracts[this.__hard
++  const diamondAddress = contractAddresses.contracts[this.__hardhatContext.environment.network.config.chainId].Diamond;
+   let tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress)
+   let tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress)
+ 
+@@ -220,7 +204,7 @@ async function balanceOfBatchName(accounts, names){
+ 
+ 
+ function fromAscii(str, padding) {
+-  var hex = '0x';
++  let hex = '0x';
+   for (var i = 0; i < str.length; i++) {
+       var code = str.charCodeAt(i);
+       var n = code.toString(16);
+@@ -232,7 +216,7 @@ function fromAscii(str, padding) {
+ 
+ async function uploadMetadata(nfType){
+     const metadataJSON = await fs.readFile(path.join(__dirname,`./metadata/${nfType}.json`), 'utf-8');
+-    // console.log(metadataJSON)
++    console.log('Metadata JSON:', metadataJSON);
+     let metadata = {}
+     if(typeof metadataJSON !== 'undefined'){
+       metadata = JSON.parse(metadataJSON)
+@@ -240,7 +224,7 @@ async function uploadMetadata(nfType){
+     const image = await fs.readFile(path.join(__dirname,`./metadata/images/${nfType}.png`));
+     
+     // Or to specify a gateway when running from NodeJS you might use
+-
++
+     console.log('uploading image')
+     const imageURI = await arweaveUpload(image, 'image/png')
+ 
+@@ -248,7 +232,7 @@ async function uploadMetadata(nfType){
+ 
+     console.log('uploading metadata')
+     const metadataURI = await arweaveUpload(JSON.stringify(metadata), 'application/json')
+-
++
+     // let key = await arweave.wallets.generate();
+     // Plain text
+     // return `ar://${transaction.id}`
+@@ -257,12 +241,12 @@ async function uploadMetadata(nfType){
+ 
+ async function arweaveUploadFile(fileName, contentType){
+   const data = await fs.readFile(path.join(__dirname,`./${fileName}`));
+-  await arweaveUpload(data, contentType)
++  return await arweaveUpload(data, contentType);
+ }
+ 
+ async function arweaveUpload(data, contentType){
+-
+-  const arweave = Arweave.init({
++
++  const arweave = Arweave.init({
+     host: 'arweave.net',
+     port: 443,
+     protocol: 'https'
+@@ -272,13 +256,13 @@ async function arweaveUpload(data, contentType){
+   let keyJSON = await fs.readFile(path.join(__dirname, `../../keys/arweave-key-yR1-xOZST_-iN5C-GM68V9d0HHpVSwUru0FOp5zBp2A.json`))
+   let key = JSON.parse(keyJSON)
+ 
+-
++
+   let transaction = await arweave.createTransaction({
+       data: data
+   }, key)
+ 
+   // // Buffer
+-  // let transactionB = await arweave.createTransaction({
++  // let transactionB = await arweave.createTransaction({
+   //     data: Buffer.from('Some data', 'utf8')
+   // }, key);
+ 
+@@ -289,13 +273,13 @@ async function arweaveUpload(data, contentType){
+   let uploader = await arweave.transactions.getUploader(transaction)
+ 
+   while (!uploader.isComplete) {
+-      await uploader.uploadChunk()
++      await uploader.uploadChunk();
+       console.log(`${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`)
+   }
+ 
+   // console.log(transaction)
+   console.log(`https://arweave.net/${transaction.id}`)
+-  return `https://arweave.net/${transaction.id}`
++  return `https://arweave.net/${transaction.id}`;
+ }
+ 
+ 
+@@ -305,7 +289,7 @@ task(
+   .addParam("accounts", "account ids")
+   .addParam("names", "NFT names")
+   .setAction(
+-  async function (taskArguments, hre, runSuper) {
++  async function (taskArguments, hre, _runSuper) {
+     let accounts = []
+     if(taskArguments.accounts.indexOf(',') != -1){
+       accounts = taskArguments.accounts.split(',')
+@@ -313,8 +297,6 @@ task(
+     else{
+       accounts.push(taskArguments.accounts)
+     }
+-    // signers = await ethers.getSigners();
+-    // console.log(signers)
+     console.log(taskArguments)
+     console.log("creating NFTs");
+     console.log('')
+@@ -338,7 +320,7 @@ task(
+   .addParam("names", "NFT names")
+   // .addParam("receivers", "NFT receivers")
+   .setAction(
+-  async function (taskArguments, hre, runSuper) {
++  async function (taskArguments, hre, _runSuper) {
+ 
+     let accounts = []
+     if(taskArguments.accounts.indexOf(',') != -1){
+@@ -355,14 +337,6 @@ task(
+       nftNames.push(taskArguments.names)
+     }
+ 
+-    // let nftReceivers = []
+-
+-    // if(taskArguments.receivers.indexOf(',') != -1){
+-    //   nftReceivers = taskArguments.receivers.split(',')
+-    // }
+-    // else{
+-    //   nftReceivers.push(taskArguments.receivers)
+-    // }
+     let nftIds = []
+     for(const account of accounts){
+       for(const nftName of nftNames){
+@@ -383,7 +357,7 @@ task(
+   .addParam("names", "NFT names")
+   .addParam("uris", "NFT URIs")
+   .setAction(
+-  async function (taskArguments, hre, runSuper) {
++  async function (taskArguments, hre, _runSuper) {
+     const nftNames = []
+     if(taskArguments.names.indexOf(',') != -1){
+       nftNames = taskArguments.names.split(',')
+@@ -422,7 +396,7 @@ task(
+   "nftUpdateMetadata",
+   "update NFT metadata")
+   .addParam("names", "NFT names")
+-  .setAction(
++  .setAction(
+   async function (taskArguments, hre, runSuper) {
+     const nftNames = []
+     if(taskArguments.names.indexOf(',') != -1){
+@@ -436,7 +410,7 @@ task(
+     for(const nftName of nftNames){
+       console.log(`going to set "${nftName}" metadata`)
+       const metadataURI = await uploadMetadata(nftName)
+-      // const metadataURI = 'https://example.com'
++      // const metadataURI = 'https://example.com'
+       const nftID = await setURIOfName(metadataURI, nftName)
+       nftIds.push(nftID)
+     }
+@@ -455,7 +429,7 @@ task(
+   .addParam("ids", "NFT ids")
+   .addParam("values", "values")
+   .setAction(
+-  async function (taskArguments, hre, runSuper) {
++  async function (taskArguments, hre, _runSuper) {
+ 
+     const nftIds = []
+     if(taskArguments.ids.indexOf(',') != -1){
+@@ -484,7 +458,7 @@ task(
+ task(
+   "nftCreatedTokenNames",
+   "get created token names")
+-  .setAction(
++  .setAction(
+   async function (taskArguments, hre, runSuper) {
+     console.log(`get created token names`)
+     const names = await getCreatedTokenNames()
+@@ -497,7 +471,7 @@ task(
+   "get NFT balance")
+   .addParam("accounts", "NFT ids")
+   .addParam("ids", "NFT ids")
+-  .setAction(
++  .setAction(
+   async function (taskArguments, hre, runSuper) {
+ 
+     const accounts = []
+@@ -530,7 +504,7 @@ task(
+   "get NFT balance")
+   .addParam("accounts", "NFT ids")
+   .addParam("names", "NFT names")
+-  .setAction(
++  .setAction(
+   async function (taskArguments, hre, runSuper) {
+ 
+     const accounts = []
+@@ -563,7 +537,7 @@ task(
+   "get NFT total supply")
+   .addParam("accounts", "NFT ids")
+   .addParam("names", "NFT names")
+-  .setAction(
++  .setAction(
+   async function (taskArguments, hre, runSuper) {
+ 
+     const accounts = []
+@@ -596,7 +570,7 @@ task(
+   "get NFT balance")
+   .addParam("accounts", "NFT ids")
+   .addParam("names", "NFT names")
+-  .setAction(
++  .setAction(
+   async function (taskArguments, hre, runSuper) {
+ 
+     const accounts = []
+@@ -622,7 +596,7 @@ task(
+   "upload files to Arweave")
+   .addParam("filenames", "file names")
+   .addParam("mimes", "mime types")
+-  .setAction(
++  .setAction(
+   async function (taskArguments, hre, runSuper) {
+     const nftNames = []
+     if(taskArguments.names.indexOf(',') != -1){
+@@ -649,8 +623,3 @@ task(
+     console.log(`updated NFT URIs ${nftIds}`)
+   }
+ );
+-
+-
+-// (async() => {
+-//     await main()
+-//   })()

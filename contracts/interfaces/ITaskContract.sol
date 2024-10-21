@@ -1,51 +1,78 @@
-// SPDX-License-Identifier: CC0-1.0
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
 
+interface ITaskContract {
+    // Struct definitions
+    struct Task {
+        string nanoId;
+        uint256 createTime;
+        string taskType;
+        string title;
+        string description;
+        string repository;
+        string[] tags;
+        uint256[] tagsNFT;
+        address[] tokenContracts;
+        uint256[][] tokenIds;
+        uint256[][] tokenAmounts;
+        string taskState;
+        string auditState;
+        uint256 performerRating;
+        uint256 customerRating;
+        address payable contractOwner;
+        address payable participant;
+        address auditInitiator;
+        address auditor;
+        address[] participants;
+        address[] funders;
+        address[] auditors;
+        Message[] messages;
+        address contractParent;
+    }
 
-// import "../libraries/LibTasks.sol";
+    struct Message {
+        uint256 id;
+        string text;
+        uint256 timestamp;
+        address sender;
+        string taskState;
+        uint256 replyTo;
+    }
 
-interface ITaskContract2 {
-
-    // struct TaskStorage {
-    //     mapping(address => ITaskContract) tasks;
-    //     // address contractOwner;
-    //     uint256 countNew;
-    //     uint256 countAgreed;
-    //     uint256 countProgress;
-    //     uint256 countReview;
-    //     uint256 countCompleted;
-    //     uint256 countCanceled;
-    //     string stateNew;
-    // }
+    // Function declarations
+    function getTaskData() external view returns (Task memory);
     
-    // struct Task {
-    //     address[] participants;
-    //     address[] auditors;
-    //     string nanoId;
-    //     string title;
-    //     string description;
-    //     string jobState;
-    //     uint256 index;
+    function taskParticipate(address _sender, string memory _message, uint256 _replyTo) external;
     
-    //     string name;
-    //     uint256 price;
-    //     address contractParent;
-    //     address contractAddress;
-    //     address contractOwner;
-    //     address payable participant;
-    //     uint256 createTime;
-    //     address[] _destinationAddresses;
-    //     string symbol;
-    //     uint256 amount;
-    //     uint256 rating;
-    //     address auditInitiator;
-    //     string auditState;
-    //     address auditor;
-    // }
+    function taskAuditParticipate(address _sender, string memory _message, uint256 _replyTo) external;
     
-    // function getJobInfo() external;
-    // function getJobInfo() external view returns (ITaskContract taskContract);
-
-    // function jobParticipate(address _participant) external ;
+    function taskStateChange(
+        address _sender,
+        address payable _participant,
+        string memory _state,
+        string memory _message,
+        uint256 _replyTo,
+        uint256 _rating
+    ) external;
     
+    function taskAuditDecision(
+        address _sender,
+        string memory _favour,
+        string memory _message,
+        uint256 _replyTo,
+        uint256 rating
+    ) external;
+    
+    function sendMessage(
+        address _sender,
+        string memory _message,
+        uint256 _replyTo
+    ) external;
+    
+    function withdrawAndRate(
+        address _sender,
+        address payable _addressToSend,
+        string memory _chain,
+        uint256 rating
+    ) external payable;
 }

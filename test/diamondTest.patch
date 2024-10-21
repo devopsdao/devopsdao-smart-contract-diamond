@@ -1,0 +1,196 @@
+diff --git a/test/diamondTest.js b/test/diamondTest.js
+index c50908b..e671fa0 100644
+--- a/test/diamondTest.js
++++ b/test/diamondTest.js
+@@ -1,5 +1,7 @@
+ /* global describe it before ethers */
+ const { ethers } = require("hardhat");
++const { expect } = require("chai");
++const { time } = require("@openzeppelin/test-helpers");
+ // const crypto = require('crypto');
+ const path = require("node:path");
+ const fs = require("fs");
+@@ -26,17 +28,24 @@ const { deployZkSync } = require("../deploy/deploy.js");
+ 
+ let nonces = {};
+ 
+-async function getNonce(address, incremental) {
+-  if(typeof nonces[address] == 'undefined'){
+-    nonces[address] = await ethers.provider.getTransactionCount(address);
+-  }
+-  if(incremental == true){
+-    nonces[address] = nonces[address] + 1;
+-  }
+-  else{
+-    nonces[address] = await ethers.provider.getTransactionCount(address);
+-  }
+-  return nonces[address];
++describe("DiamondTest", function () {
++  let diamondAddress;
++  let diamondCutFacet;
++  let diamondLoupeFacet;
++  let ownershipFacet;
++  let taskCreateFacet;
++  let taskDataFacet;
++  let accountFacet;
++  let tokenFacet;
++  let signers;
++
++  beforeEach(async function () {
++    signers = await ethers.getSigners();
++
++    // Deploy Diamond
++    const Diamond = await ethers.getContractFactory('Diamond')
++    const diamond = await Diamond.deploy(facets, diamondArgs);
++    await diamond.deployed();
++    diamondAddress = diamond.address;
++
++    // Get facets
++    diamondCutFacet = await ethers.getContractAt('DiamondCutFacet', diamondAddress);
++    diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress);
++    ownershipFacet = await ethers.getContractAt('OwnershipFacet', diamondAddress);
++    taskCreateFacet = await ethers.getContractAt('TaskCreateFacet', diamondAddress);
++    taskDataFacet = await ethers.getContractAt('TaskDataFacet', diamondAddress);
++    accountFacet = await ethers.getContractAt('AccountFacet', diamondAddress);
++    tokenFacet = await ethers.getContractAt('TokenFacet', diamondAddress);
++  });
++
++  describe("Diamond deployment", function () {
++    it("should deploy with correct number of facets", async function () {
++      const facets = await diamondLoupeFacet.facetAddresses();
++      expect(facets.length).to.equal(7); // Adjust this number based on your actual facet count
++    });
++
++    it("should set the correct owner", async function () {
++      const contractOwner = await ownershipFacet.owner();
++      expect(contractOwner).to.equal(signers[0].address);
++    });
++  });
++
++  describe("TaskCreateFacet", function () {
++    it("should create a new task", async function () {
++      const taskData = {
++        nanoId: "testTask",
++        taskType: "private",
++        title: "Test Task",
++        description: "This is a test task",
++        repository: "",
++        tags: ["test"],
++        tokenContracts: [],
++        tokenIds: [],
++        tokenAmounts: []
++      };
++
++      await expect(taskCreateFacet.connect(signers[0]).createTaskContract(signers[0].address, taskData))
++        .to.emit(taskCreateFacet, "TaskCreated")
++        .withArgs(ethers.utils.isAddress, "createTaskContract", ethers.BigNumber.from);
++    });
++
++    it("should not allow creating a task with empty nanoId", async function () {
++      const invalidTaskData = {
++        nanoId: "",
++        taskType: "private",
++        title: "Invalid Task",
++        description: "This task should not be created",
++        repository: "",
++        tags: [],
++        tokenContracts: [],
++        tokenIds: [],
++        tokenAmounts: []
++      };
++
++      await expect(taskCreateFacet.connect(signers[0]).createTaskContract(signers[0].address, invalidTaskData))
++        .to.be.revertedWith("NanoId cannot be empty");
++    });
++  });
++
++  describe("TaskDataFacet", function () {
++    it("should return correct task data", async function () {
++      // First, create a task
++      const taskData = {
++        nanoId: "testTask",
++        taskType: "private",
++        title: "Test Task",
++        description: "This is a test task",
++        repository: "",
++        tags: ["test"],
++        tokenContracts: [],
++        tokenIds: [],
++        tokenAmounts: []
++      };
++
++      await taskCreateFacet.connect(signers[0]).createTaskContract(signers[0].address, taskData);
++
++      // Get all task contracts
++      const taskContracts = await taskDataFacet.getTaskContracts();
++
++      // Get data for the created task
++      const [retrievedTaskData] = await taskDataFacet.getTasksData([taskContracts[0]]);
++
++      expect(retrievedTaskData.task.nanoId).to.equal(taskData.nanoId);
++      expect(retrievedTaskData.task.title).to.equal(taskData.title);
++      expect(retrievedTaskData.task.description).to.equal(taskData.description);
++    });
++  });
++
++  describe("AccountFacet", function () {
++    it("should add account to blacklist", async function () {
++      await accountFacet.connect(signers[0]).addAccountToBlacklist(signers[1].address);
++      const blacklist = await accountFacet.getAccountsBlacklist();
++      expect(blacklist).to.include(signers[1].address);
++    });
++
++    it("should remove account from blacklist", async function () {
++      await accountFacet.connect(signers[0]).addAccountToBlacklist(signers[1].address);
++      await accountFacet.connect(signers[0]).removeAccountFromBlacklist(signers[1].address);
++      const blacklist = await accountFacet.getAccountsBlacklist();
++      expect(blacklist).to.not.include(signers[1].address);
++    });
++  });
++
++  describe("TokenFacet", function () {
++    it("should create and mint a non-fungible token", async function () {
++      await tokenFacet.connect(signers[0]).create("https://example.com/token", "TestToken", true);
++      await tokenFacet.connect(signers[0]).mintNonFungible(1, [signers[1].address]);
++      const balance = await tokenFacet.balanceOf(signers[1].address, 1);
++      expect(balance).to.equal(1);
++    });
++
++    it("should not allow minting to zero address", async function () {
++      await tokenFacet.connect(signers[0]).create("https://example.com/token", "TestToken", true);
++      await expect(tokenFacet.connect(signers[0]).mintNonFungible(1, [ethers.constants.AddressZero]))
++        .to.be.revertedWith("Cannot mint to zero address");
++    });
++  });
+ }
+ 
+-// const { assert } = require("chai");
+-
+-describe("DiamondTest", async function () {
+-  let diamondAddress;
+-  let facetCount;
+-  let diamondCutFacet;
+-  let diamondLoupeFacet;
+-  let ownershipFacet;
+-  let tx;
+-  let receipt;
+-  let result;
+-  let addresses = [];
+-
+-  before(async function () {
++async function getNonce(address, incremental) {
++  if(typeof nonces[address] == 'undefined'){
++    nonces[address] = await ethers.provider.getTransactionCount(address);
++  }
++  if(incremental == true){
++    nonces[address] = nonces[address] + 1;
++  }
++  else{
++    nonces[address] = await ethers.provider.getTransactionCount(address);
++  }
++  return nonces[address];
++}
+ 
+-    // signers = await ethers.getSigners();
+-    // console.log(signers)
++// Rest of the existing code...

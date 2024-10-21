@@ -2,7 +2,7 @@
 const Arweave = require('arweave')
 const fs = require('fs/promises')
 const path = require('node:path');
-
+const ProgressBar = require('progress');
 
 // async function main(){
 
@@ -221,6 +221,41 @@ async function totalSupplyOfName(account, name){
   return supply
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function getTop100NFTsByTotalSupply(delayMs = 1000, progressCallback) {
+  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
+  let tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress);
+
+  // Get all created token names
+  const names = await tokenDataFacet.getCreatedTokenNames();
+  const totalTokens = names.length;
+
+  // Get total supply for each token name with delay
+  const supplies = [];
+  for (let i = 0; i < names.length; i++) {
+    const name = names[i];
+    const supply = await tokenDataFacet.totalSupplyOfName(name);
+    supplies.push({ name, supply: supply.toNumber() });
+    
+    // Call progress callback
+    if (progressCallback) {
+      progressCallback(i + 1, totalTokens);
+    }
+    
+    await sleep(delayMs); // Delay between requests
+  }
+
+  // Sort by total supply in descending order
+  supplies.sort((a, b) => b.supply - a.supply);
+
+  // Take top 100
+  const top100 = supplies.slice(0, 100);
+
+  return top100;
+}
 
 
 async function balanceOfBatchName(accounts, names){
@@ -504,7 +539,7 @@ task(
     }
 
     const tx = await safeBatchTransferFrom(taskArguments.from, taskArguments.to, nftIds, values, fromAscii(''))
-
+    console.log(tx);
   }
 );
 
@@ -519,7 +554,7 @@ task(
   async function (taskArguments, hre, runSuper) {
     console.log(`get created token names`)
     const names = await getCreatedTokenNames()
-    console.log(names.length)
+    console.log(names)
   }
 );
 
@@ -563,7 +598,7 @@ task(
 task(
   "nftBalanceOfName",
   "get NFT balance")
-  .addParam("accounts", "NFT ids")
+  .addParam("accounts", "accounts")
   .addParam("names", "NFT names")
   .setAction(
   async function (taskArguments, hre, runSuper) {
@@ -629,6 +664,101 @@ task(
     }
   }
 );
+
+
+
+
+task(
+  "nftTop100BySupply",
+  "Get top 100 NFTs by total supply"
+)
+.addOptionalParam("delay", "Delay in milliseconds between requests", 100, types.int)
+.setAction(async function (taskArguments, hre, runSuper) {
+  console.log(`Getting top 100 NFTs by total supply with ${taskArguments.delay}ms delay...`);
+  
+  const progressBar = new ProgressBar('Processing NFTs [:bar] :current/:total (:percent) - ETA: :etas', {
+    total: 100,
+    width: 40,
+    complete: '=',
+    incomplete: ' '
+  });
+
+  const top100 = await getTop100NFTsByTotalSupply(taskArguments.delay, (current, total) => {
+    progressBar.total = total;
+    progressBar.tick();
+  });
+  
+  console.log("\nTop 100 NFTs by total supply:");
+  top100.forEach((nft, index) => {
+    console.log(`${index + 1}. ${nft.name}: ${nft.supply}`);
+  });
+});
+
+
+async function getTotalMintedNFTs(delayMs = 1000, progressCallback) {
+  const diamondAddress = contractAddresses.contracts[hre.network.config.chainId]['Diamond'];
+  let tokenDataFacet = await ethers.getContractAt('TokenDataFacet', diamondAddress);
+
+  // Get all created token names
+  const names = await tokenDataFacet.getCreatedTokenNames();
+  const totalCollections = names.length;
+
+  let totalMinted = ethers.BigNumber.from(0);
+  let collectionSupplies = [];
+
+  for (let i = 0; i < names.length; i++) {
+    const name = names[i];
+    try {
+      const supply = await tokenDataFacet.totalSupplyOfName(name);
+      totalMinted = totalMinted.add(supply);
+      collectionSupplies.push({ name, supply: supply.toString() });
+    } catch (error) {
+      console.error(`Error getting supply for ${name}: ${error.message}`);
+      collectionSupplies.push({ name, supply: '0' });
+    }
+    
+    // Call progress callback
+    if (progressCallback) {
+      progressCallback(i + 1, totalCollections);
+    }
+    
+    await sleep(delayMs); // Delay between requests
+  }
+
+  return { totalMinted: totalMinted.toString(), collectionSupplies };
+}
+
+task(
+  "nftTotalMinted",
+  "Get total minted NFTs count for all collections"
+)
+.addOptionalParam("delay", "Delay in milliseconds between requests", 100, types.int)
+.setAction(async function (taskArguments, hre, runSuper) {
+  console.log(`Getting total minted NFTs count with ${taskArguments.delay}ms delay...`);
+  
+  let progressBar;
+  try {
+    progressBar = new ProgressBar('Processing collections [:bar] :current/:total (:percent) - ETA: :etas', {
+      total: 100,
+      width: 40,
+      complete: '=',
+      incomplete: ' '
+    });
+
+    const { totalMinted, collectionSupplies } = await getTotalMintedNFTs(taskArguments.delay, (current, total) => {
+      progressBar.total = total;
+      progressBar.tick();
+    });
+    
+    console.log("\nTotal minted NFTs across all collections:", totalMinted);
+    console.log("\nSupply per collection:");
+    collectionSupplies.forEach(({ name, supply }) => {
+      console.log(`${name}: ${supply}`);
+    });
+  } catch (error) {
+    console.error(`An error occurred: ${error.message}`);
+  }
+});
 
 
 task(
